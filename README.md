@@ -1,68 +1,87 @@
 # 14_BinaryMinds
 FFSD project on Digital Governance and E-Services
-# Digital Application, Approval & Licensing System
+# Digital Application Approval & Licensing  System
 
----
-
-##  Domain
+## Domain
 Digital Governance and E-Services
 
 ---
 
-##  Problem Statement
+## Problem Statement
 
-Government licensing processes are often manual, slow, and lack transparency. Applicants face uncertainty in tracking their progress, while officers deal with disorganized paperwork and slow verification steps.
+Traditional licensing mechanisms rely on manual documentation, disconnected verification stages, and limited lifecycle visibility. These limitations result in:
 
-This system digitizes the entire lifecycle from the first click to the final license issuance making the process faster, clearer, and more accountable.
+- Processing delays  
+- Inconsistent validation  
+- Weak accountability  
+- Limited transparency  
+
+A centralized digital system is required to enforce structured validation and ensure end-to-end traceability.
 
 ---
 
-## Identified Actors
+## Overview
+
+The Digital Application Approval & Licensing Management System is an end-to-end e-Governance platform designed to manage the complete lifecycle of license and permit applications.
+
+The system supports structured workflows for:
+
+- Application Submission  
+- Document Verification  
+- Approval Decision  
+- License Issuance  
+- License Renewal  
+- Compliance Monitoring  
+
+It replaces fragmented paper-based processes with standardized, traceable, and accountable digital workflows.  
+
+---
+
+## Actors and Functional Responsibilities
 
 ### Applicant
-The citizen applying for, tracking, and managing their licenses.
+
+- Initiate Application Submission  
+- Upload and manage required documents  
+- Track Application Status  
+- Receive system notifications  
+- Initiate License Renewal  
+
+---
 
 ### Field Officer
-The first-level checker who validates documents and conducts inspections.
+
+- Perform Document Verification  
+- Conduct inspections  
+- Prepare Inspection Reports
+- Submit Compliance Reports
+- Forward applications with recommendations  
+
+---
 
 ### Department Officer
-The final authority who makes the ultimate **Approve** or **Reject** decision.
+
+- Record Approval Decision (Approved / Rejected)  
+- Authorize License Issuance  
+- Apply Digital Signature to approved licenses  
+- Monitor SLA compliance  
+- Oversee Compliance Monitoring  
 
 ---
 
-##  Planned Features
+## Governance and Control Mechanisms
 
-###  Applicant Features
-
-- Online Application Form  
-- Easy Document Upload  
-- Live Progress Tracker (Shows whether the file is with the Verifying Officer or the Department Officer)  
-- Smart Notifications (Auto-alerts via Email/SMS)  
-- My License Folder (Download licenses and apply for renewals)
+- Role-Based Access Control (RBAC)  
+- Mandatory Decision Justification  
+- Full Decision Traceability  
 
 ---
 
-###  Field Officer Features
+## Workflow Summary
 
-- Task List (Queue of new applications waiting for verification)  
-- Document Review Tool (Accept/Reject specific files with remarks)  
-- Inspection Reports (Upload notes and photos from site visits)  
-- Eligibility Check (Checklist to ensure requirements are met)  
-- Forwarding System (Sends verified applications to the Department Officer)
-
----
-
-### Department Officer Features
-
-- Final Review Management 
-- One-Click Approve/Reject (With mandatory reason recording)  
-- Department Analytics (Overview of approvals and processing delays)  
-- Digital Stamp & Signature (Official seal applied to approved licenses)  
-- Rule Management (Update license requirements or policy terms)
-
----
-
-##  Objective
-
-To create a transparent and user-friendly digital licensing system that improves operational efficiency and simplifies the process for both citizens and government officers.
-
+1. Applicant completes Application Submission.  
+2. Field Officer performs Document Verification.  
+3. Inspection Report is recorded.  
+4. Department Officer records Approval Decision.  
+5. Approved licenses are digitally signed and issued.  
+6. Compliance Monitoring continues post-issuance.  
