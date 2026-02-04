@@ -48,7 +48,7 @@ Instead of citizens waiting in long queues or repeatedly following up, the syste
 | Application Submission | Process where citizen submits required form and documents |
 | Document Verification | Checking authenticity and completeness of submitted records |
 | Application Review | Internal evaluation before approval decision |
-| Approval Authority | Officer who gives final decision |
+| Approval Authority/Department officer | Officer who gives final decision |
 | Rejection Notice | Official communication when application is denied |
 | License Issuance | Granting of legal permission certificate |
 | Compliance Monitoring | Ensuring license holder follows regulations |
@@ -77,7 +77,7 @@ Description of at least 2–3 real workflows as explained by the domain expert.
 
 - **Steps involved:**
   - Applicant logs into the digital portal using credentials  
-  - Fills out dynamic online forms  
+  - Fills out online forms  
   - Uploads required documents  
   - Reviews the details and submits the application  
 
@@ -91,12 +91,12 @@ Description of at least 2–3 real workflows as explained by the domain expert.
   This workflow begins after the application is submitted.
 
 - **Steps involved:**
-  - Department officer receives the application  
+  - Field officer receives the application  
   - Officer verifies application details and documents  
   - If documents are incomplete, clarification is requested  
   - Applicant resubmits corrected documents within a defined time limit  
   - Field officer re-checks the updated documents  
-  - If requirements are met, the application proceeds for approval  
+  - If requirements are met, the application proceeds for approval  at high level (Department officer).
   - If not, the application may be permanently rejected  
 
 - **Outcome / End condition:**  
@@ -176,4 +176,6 @@ Every approval or rejection decision must be formally recorded in the system; ve
 - RBAC will restrict actions based on defined roles:
   - Applicant: Submit and track applications  
   - Field Officer: Verify documents and update review status  
-  - Department Officer: Approve or reject applications  
+  - Department Officer: Approve or reject applications
+- An audit trail means a record of everything that happens in the system, like:
+who logged in who approved or rejected an application  system will retain all these for few years
