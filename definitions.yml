@@ -1,4 +1,4 @@
-name: "Digital Application Approval & Licensing Management"
+name: "Digital Application Approval & Licensing system"
 domainVisionStatement: >
   To digitally manage the complete lifecycle of license applications
   from submission and verification to approval, issuance,
@@ -15,14 +15,14 @@ terms:
     aliases:
       - Application Filing
 
-  - name: Application Tracking ID
+  - name: Application ID
     definition: >
       A system-generated unique identifier assigned to each
       application for tracking and reference.
     example: >
       The applicant uses the tracking ID to monitor progress.
     aliases:
-      - Tracking Number
+      - Application Number
 
   - name: Application Status
     definition: >
