@@ -9,7 +9,7 @@ Digital Governance and E-Services
 
 ## Problem Statement
 
-Traditional licensing mechanisms rely on manual documentation, disconnected verification stages, and limited lifecycle visibility. These limitations result in:
+Traditional trade licensing mechanisms rely on manual documentation, disconnected verification stages, and limited lifecycle visibility. These limitations result in:
 
 - Processing delays  
 - Inconsistent validation  
@@ -22,7 +22,7 @@ A centralized digital system is required to enforce structured validation and en
 
 ## Overview
 
-The Digital Application Approval & Licensing Management System is an end-to-end e-Governance platform designed to manage the complete lifecycle of license and permit applications.
+The Digital Trade License Application, Approval & Management System is an end-to-end e-Governance platform designed to manage the complete lifecycle of license and permit applications.
 
 The system supports structured workflows for:
 
