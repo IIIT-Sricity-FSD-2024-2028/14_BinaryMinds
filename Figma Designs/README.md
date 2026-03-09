@@ -1,4 +1,6 @@
-# Figma Designs
+
+## Figma Project Link
+https://www.figma.com/proto/Iiqre44YvcYXJNjQL2TrvM/Untitled?node-id=0-1&t=zQ3YCmnjzbMcmmah-1
 
 This folder contains the complete UI/UX design prototypes for the **Digital Application, Approval & Licensing Management System**.  
 The designs were created using **Figma** to visualize the layout, user interactions, and workflow of the licensing platform before development.
@@ -56,5 +58,3 @@ Department officers can:
 
 ## Design Tool
 All interface designs were created using **Figma**.
-
-## Figma Project Link
