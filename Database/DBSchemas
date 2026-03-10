@@ -1,5 +1,13 @@
+ -- ============================================================
+--  DIGITAL APPLICATION, APPROVAL & TRADE LICENSING SYSTEM
+--  Database Schema — 14_BinaryMinds | FFSD Project
+--  GitHub: /Database/DBschema.sql
+-- ============================================================
+
 CREATE DATABASE IF NOT EXISTS licensing_system;
 USE licensing_system;
+
+
 -- ============================================================
 -- TABLE 1 : users
 -- Stores all system users — Applicant, Field Officer, Dept Officer
@@ -18,7 +26,9 @@ CREATE TABLE users (
                      )                  NOT NULL,     -- RBAC role assignment
     created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Account creation time
 );
- ============================================================
+
+
+-- ============================================================
 -- TABLE 2 : applications
 -- Stores trade license applications submitted by Applicants
 -- ============================================================
@@ -39,7 +49,7 @@ CREATE TABLE applications (
     city                VARCHAR(100),                    -- City
     district            VARCHAR(100),                    -- District
     state               VARCHAR(100),                    -- State
-    pincode             VARCHAR(10),                    
+    pincode             VARCHAR(10),                     -- Postal code
     business_start_date DATE,                            -- Date business started
     application_status  ENUM(
                              'submitted',
@@ -55,3 +65,237 @@ CREATE TABLE applications (
     FOREIGN KEY (applicant_id) REFERENCES users(user_id)
 );
 
+
+-- ============================================================
+-- TABLE 3 : documents
+-- Stores documents uploaded by Applicant for an application
+-- ============================================================
+
+CREATE TABLE documents (
+    document_id         INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique document identifier
+    application_id      INT NOT NULL,                    -- FK → applications(application_id)
+    document_type       ENUM(
+                             'aadhar_card',
+                             'business_affidavit',
+                             'passport_photo'
+                        ) NOT NULL,                     -- Type of uploaded document
+    file_path           VARCHAR(255) NOT NULL,           -- Server path to stored file
+    verification_status ENUM(
+                             'pending',
+                             'verified',
+                             'rejected'
+                        ) DEFAULT 'pending',            -- Field Officer verification result
+    uploaded_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Upload timestamp
+
+    FOREIGN KEY (application_id) REFERENCES applications(application_id)
+);
+
+
+-- ============================================================
+-- TABLE 4 : payments
+-- Stores payment records for application fees
+-- ============================================================
+
+CREATE TABLE payments (
+    payment_id            INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique payment identifier
+    application_id        INT           NOT NULL,          -- FK → applications(application_id)
+    amount                DECIMAL(10,2) NOT NULL,          -- Fee amount paid
+    transaction_reference VARCHAR(100),                    -- Payment gateway reference number
+    payment_status        ENUM(
+                               'pending',
+                               'success',
+                               'failed'
+                          ) DEFAULT 'pending',            -- Payment outcome
+    payment_date          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Payment timestamp
+
+    FOREIGN KEY (application_id) REFERENCES applications(application_id)
+);
+
+
+-- ============================================================
+-- TABLE 5 : document_verifications
+-- Records Field Officer document verification decisions
+-- ============================================================
+
+CREATE TABLE document_verifications (
+    verification_id     INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique verification record
+    application_id      INT NOT NULL,                    -- FK → applications(application_id)
+    field_officer_id    INT NOT NULL,                    -- FK → users(user_id) | Who verified
+    verification_status ENUM(
+                             'pending',
+                             'approved_for_inspection',
+                             'rejected_on_verification'
+                        ) DEFAULT 'pending',            -- Verification decision
+    rejection_reason    TEXT,                            -- Reason if rejected (stored in history)
+    verified_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Verification timestamp
+
+    FOREIGN KEY (application_id)   REFERENCES applications(application_id),
+    FOREIGN KEY (field_officer_id) REFERENCES users(user_id)
+);
+
+
+-- ============================================================
+-- TABLE 6 : field_officer_assignments
+-- Tracks which Field Officer is assigned to which application + SLA deadline
+-- ============================================================
+
+CREATE TABLE field_officer_assignments (
+    assignment_id           INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique assignment identifier
+    application_id          INT  NOT NULL,                   -- FK → applications(application_id)
+    field_officer_id        INT  NOT NULL,                   -- FK → users(user_id) | Assigned officer
+    assigned_at             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Assignment timestamp
+    inspection_date         DATE,                            -- Scheduled inspection date
+    sla_deadline            DATE,                            -- 7-day SLA deadline from assignment
+    assignment_status       ENUM(
+                                 'assigned',
+                                 'inspection_scheduled',
+                                 'inspection_completed',
+                                 'sla_escalated'
+                            ) DEFAULT 'assigned',           -- Current assignment stage
+    escalated_to_department BOOLEAN DEFAULT FALSE,           -- TRUE if SLA breached & escalated
+
+    FOREIGN KEY (application_id)   REFERENCES applications(application_id),
+    FOREIGN KEY (field_officer_id) REFERENCES users(user_id)
+);
+
+
+-- ============================================================
+-- TABLE 7 : inspections
+-- Stores physical inspection reports submitted by Field Officer
+-- ============================================================
+
+CREATE TABLE inspections (
+    inspection_id     INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique inspection identifier
+    application_id    INT  NOT NULL,                   -- FK → applications(application_id)
+    field_officer_id  INT  NOT NULL,                   -- FK → users(user_id) | Who inspected
+    inspection_date   DATE,                            -- Date inspection was conducted
+    inspection_report TEXT,                            -- Detailed observations written by officer
+    inspection_result ENUM(
+                           'approved',
+                           'rejected'
+                      ),                              -- Final inspection outcome
+    submitted_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Report submission timestamp
+
+    FOREIGN KEY (application_id)   REFERENCES applications(application_id),
+    FOREIGN KEY (field_officer_id) REFERENCES users(user_id)
+);
+
+
+-- ============================================================
+-- TABLE 8 : department_reviews
+-- Records Department Officer approval/rejection decisions
+-- ============================================================
+
+CREATE TABLE department_reviews (
+    review_id             INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique review identifier
+    application_id        INT  NOT NULL,                   -- FK → applications(application_id)
+    department_officer_id INT  NOT NULL,                   -- FK → users(user_id) | Who reviewed
+    review_type           ENUM(
+                               'normal_review',
+                               'sla_escalation'
+                          ) DEFAULT 'normal_review',      -- Whether triggered by SLA breach
+    review_status         ENUM(
+                               'approved',
+                               'rejected'
+                          ),                              -- Final approval decision
+    review_comments       TEXT,                            -- Mandatory justification / comments
+    digital_signature     VARCHAR(255),                    -- Officer's digital signature string
+    reviewed_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Review timestamp
+
+    FOREIGN KEY (application_id)        REFERENCES applications(application_id),
+    FOREIGN KEY (department_officer_id) REFERENCES users(user_id)
+);
+
+
+-- ============================================================
+-- TABLE 9 : licenses
+-- Stores issued trade licenses after Department Officer approval
+-- ============================================================
+
+CREATE TABLE licenses (
+    license_id     INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique license identifier
+    application_id INT         NOT NULL,            -- FK → applications(application_id)
+    license_number VARCHAR(50) UNIQUE,              -- Unique license certificate number
+    issue_date     DATE,                            -- Date license was issued
+    expiry_date    DATE,                            -- License validity end date
+    license_status ENUM(
+                        'active',
+                        'renewal_required',
+                        'expired',
+                        'suspended',
+                        'cancelled'
+                   ) DEFAULT 'active',             -- Current license status
+
+    FOREIGN KEY (application_id) REFERENCES applications(application_id)
+);
+
+
+-- ============================================================
+-- TABLE 10 : license_renewals
+-- Tracks renewal requests for existing licenses
+-- ============================================================
+
+CREATE TABLE license_renewals (
+    renewal_id      INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique renewal identifier
+    license_id      INT           NOT NULL,          -- FK → licenses(license_id)
+    renewal_fee     DECIMAL(10,2),                   -- Fee paid for renewal
+    renewal_status  ENUM(
+                         'submitted',
+                         'inspection_scheduled',
+                         'inspection_completed',
+                         'department_review',
+                         'approved',
+                         'rejected'
+                    ) DEFAULT 'submitted',           -- Current renewal stage
+    new_expiry_date DATE,                            -- Updated expiry date after renewal
+    submitted_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Renewal request timestamp
+
+    FOREIGN KEY (license_id) REFERENCES licenses(license_id)
+);
+
+
+-- ============================================================
+-- TABLE 11 : compliance_violations
+-- Records compliance violations reported against license holders
+-- ============================================================
+
+CREATE TABLE compliance_violations (
+    violation_id          INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique violation identifier
+    license_id            INT  NOT NULL,                   -- FK → licenses(license_id)
+    reported_by           INT  NOT NULL,                   -- FK → users(user_id) | Reporting officer
+    violation_type        VARCHAR(150),                    -- Category of violation
+    violation_description TEXT,                            -- Detailed description of violation
+    action_taken          ENUM(
+                               'warning',
+                               'fine',
+                               'suspended',
+                               'license_cancelled'
+                          ),                              -- Action taken by Department Officer
+    reported_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Violation report timestamp
+
+    FOREIGN KEY (license_id)  REFERENCES licenses(license_id),
+    FOREIGN KEY (reported_by) REFERENCES users(user_id)
+);
+
+
+-- ============================================================
+-- TABLE 12 : field_officer_warnings
+-- Records SLA breach warnings issued to Field Officers
+-- ============================================================
+
+CREATE TABLE field_officer_warnings (
+    warning_id       INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique warning identifier
+    field_officer_id INT          NOT NULL,           -- FK → users(user_id) | Officer warned
+    application_id   INT          NOT NULL,           -- FK → applications(application_id)
+    warning_reason   VARCHAR(255),                    -- Reason for warning (SLA breach description)
+    warning_date     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Warning issued timestamp
+
+    FOREIGN KEY (field_officer_id) REFERENCES users(user_id),
+    FOREIGN KEY (application_id)   REFERENCES applications(application_id)
+);
+
+
+-- ============================================================
+--  END OF SCHEMA — 12 Tables | licensing_system
+--  Document prepared by: 14_BinaryMinds | FFSD Review 2
+-- ============================================================
