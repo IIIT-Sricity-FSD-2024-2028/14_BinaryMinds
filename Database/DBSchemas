@@ -1,57 +1,74 @@
- -- ============================================================
---  DIGITAL APPLICATION, APPROVAL & TRADE LICENSING SYSTEM
---  Database Schema — 14_BinaryMinds | FFSD Project
---  GitHub: /Database/DBschema.sql
--- ============================================================
-
-CREATE DATABASE IF NOT EXISTS licensing_system;
+ CREATE DATABASE IF NOT EXISTS licensing_system;
 USE licensing_system;
 
 
--- ============================================================
--- TABLE 1 : users
--- Stores all system users — Applicant, Field Officer, Dept Officer
--- ============================================================
-
 CREATE TABLE users (
-    user_id          INT AUTO_INCREMENT PRIMARY KEY,   -- PK | Unique user identifier
-    full_name        VARCHAR(120)        NOT NULL,     -- User's full name
-    email            VARCHAR(120) UNIQUE NOT NULL,     -- Unique login email
-    phone            VARCHAR(15)  UNIQUE NOT NULL,     -- Unique contact number
-    password_hash    VARCHAR(255)        NOT NULL,     -- Bcrypt hashed password
-    role             ENUM(
-                         'applicant',
-                         'field_officer',
-                         'department_officer'
-                     )                  NOT NULL,     -- RBAC role assignment
-    created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Account creation time
+/*
+| Entity        | Description                                         |
+|---------------|-----------------------------------------------------|
+| user_id       | PK - Unique user identifier                         |
+| full_name     | User full name                                      |
+| email         | Unique login email                                  |
+| phone         | Unique contact number                               |
+| password_hash | Bcrypt hashed password                              |
+| role          | RBAC role: applicant / field_officer /              |
+|               | department_officer                                  |
+| created_at    | Account creation timestamp                          |
+*/
+    user_id        INT          AUTO_INCREMENT PRIMARY KEY,
+    full_name      VARCHAR(120) NOT NULL,
+    email          VARCHAR(120) UNIQUE NOT NULL,
+    phone          VARCHAR(15)  UNIQUE NOT NULL,
+    password_hash  VARCHAR(255) NOT NULL,
+    role           ENUM('applicant','field_officer','department_officer') NOT NULL,
+    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
--- ============================================================
--- TABLE 2 : applications
--- Stores trade license applications submitted by Applicants
--- ============================================================
-
 CREATE TABLE applications (
-    application_id      INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique application identifier
-    applicant_id        INT          NOT NULL,           -- FK → users(user_id) | Who submitted
-    full_name           VARCHAR(120) NOT NULL,           -- Applicant full name on form
-    father_name         VARCHAR(120),                    -- Father's name
-    date_of_birth       DATE,                            -- Date of birth
-    gender              VARCHAR(20),                     -- Gender
-    aadhaar_number      VARCHAR(20) UNIQUE,              -- Unique Aadhaar number
-    applicant_phone     VARCHAR(15),                     -- Contact phone on application
-    business_name       VARCHAR(150) NOT NULL,           -- Registered business name
-    business_type       VARCHAR(100),                    -- Type of business
-    trade_category      VARCHAR(100),                    -- Trade license category
-    shop_address        TEXT,                            -- Full shop/business address
-    city                VARCHAR(100),                    -- City
-    district            VARCHAR(100),                    -- District
-    state               VARCHAR(100),                    -- State
-    pincode             VARCHAR(10),                     -- Postal code
-    business_start_date DATE,                            -- Date business started
-    application_status  ENUM(
+/*
+| Entity              | Description                                     |
+|---------------------|-------------------------------------------------|
+| application_id      | PK - Unique application identifier              |
+| applicant_id        | FK - users(user_id) - Who submitted             |
+| full_name           | Applicant full name on form                     |
+| father_name         | Father name                                     |
+| date_of_birth       | Date of birth                                   |
+| gender              | Gender                                          |
+| aadhaar_number      | Unique Aadhaar number                           |
+| applicant_phone     | Contact phone on application                    |
+| business_name       | Registered business name                        |
+| business_type       | Type of business                                |
+| trade_category      | Trade license category                          |
+| shop_address        | Full shop / business address                    |
+| city                | City                                            |
+| district            | District                                        |
+| state               | State                                           |
+| pincode             | Postal code                                     |
+| business_start_date | Date business started                           |
+| application_status  | submitted / documents_uploaded /                |
+|                     | inspection_scheduled / inspection_completed /   |
+|                     | department_review / approved / rejected         |
+| submitted_at        | Submission timestamp                            |
+*/
+    application_id       INT          AUTO_INCREMENT PRIMARY KEY,
+    applicant_id         INT          NOT NULL,
+    full_name            VARCHAR(120) NOT NULL,
+    father_name          VARCHAR(120),
+    date_of_birth        DATE,
+    gender               VARCHAR(20),
+    aadhaar_number       VARCHAR(20)  UNIQUE,
+    applicant_phone      VARCHAR(15),
+    business_name        VARCHAR(150) NOT NULL,
+    business_type        VARCHAR(100),
+    trade_category       VARCHAR(100),
+    shop_address         TEXT,
+    city                 VARCHAR(100),
+    district             VARCHAR(100),
+    state                VARCHAR(100),
+    pincode              VARCHAR(10),
+    business_start_date  DATE,
+    application_status   ENUM(
                              'submitted',
                              'documents_uploaded',
                              'inspection_scheduled',
@@ -59,243 +76,273 @@ CREATE TABLE applications (
                              'department_review',
                              'approved',
                              'rejected'
-                         ) DEFAULT 'submitted',         -- Current application stage
-    submitted_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Submission timestamp
+                         ) DEFAULT 'submitted',
+    submitted_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (applicant_id) REFERENCES users(user_id)
 );
 
 
--- ============================================================
--- TABLE 3 : documents
--- Stores documents uploaded by Applicant for an application
--- ============================================================
-
 CREATE TABLE documents (
-    document_id         INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique document identifier
-    application_id      INT NOT NULL,                    -- FK → applications(application_id)
-    document_type       ENUM(
-                             'aadhar_card',
-                             'business_affidavit',
-                             'passport_photo'
-                        ) NOT NULL,                     -- Type of uploaded document
-    file_path           VARCHAR(255) NOT NULL,           -- Server path to stored file
-    verification_status ENUM(
-                             'pending',
-                             'verified',
-                             'rejected'
-                        ) DEFAULT 'pending',            -- Field Officer verification result
-    uploaded_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Upload timestamp
+/*
+| Entity              | Description                                     |
+|---------------------|-------------------------------------------------|
+| document_id         | PK - Unique document identifier                 |
+| application_id      | FK - applications(application_id)               |
+| document_type       | aadhar_card / business_affidavit /              |
+|                     | passport_photo                                  |
+| file_path           | Server path to stored file                      |
+| verification_status | pending / verified / rejected                   |
+| uploaded_at         | Upload timestamp                                |
+*/
+    document_id          INT          AUTO_INCREMENT PRIMARY KEY,
+    application_id       INT          NOT NULL,
+    document_type        ENUM('aadhar_card','business_affidavit','passport_photo') NOT NULL,
+    file_path            VARCHAR(255) NOT NULL,
+    verification_status  ENUM('pending','verified','rejected') DEFAULT 'pending',
+    uploaded_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (application_id) REFERENCES applications(application_id)
 );
 
-
--- ============================================================
--- TABLE 4 : payments
--- Stores payment records for application fees
--- ============================================================
 
 CREATE TABLE payments (
-    payment_id            INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique payment identifier
-    application_id        INT           NOT NULL,          -- FK → applications(application_id)
-    amount                DECIMAL(10,2) NOT NULL,          -- Fee amount paid
-    transaction_reference VARCHAR(100),                    -- Payment gateway reference number
-    payment_status        ENUM(
-                               'pending',
-                               'success',
-                               'failed'
-                          ) DEFAULT 'pending',            -- Payment outcome
-    payment_date          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Payment timestamp
+/*
+| Entity                | Description                                   |
+|-----------------------|-----------------------------------------------|
+| payment_id            | PK - Unique payment identifier                |
+| application_id        | FK - applications(application_id)             |
+| amount                | Fee amount paid                               |
+| transaction_reference | Payment gateway reference number              |
+| payment_status        | pending / success / failed                    |
+| payment_date          | Payment timestamp                             |
+*/
+    payment_id             INT           AUTO_INCREMENT PRIMARY KEY,
+    application_id         INT           NOT NULL,
+    amount                 DECIMAL(10,2) NOT NULL,
+    transaction_reference  VARCHAR(100),
+    payment_status         ENUM('pending','success','failed') DEFAULT 'pending',
+    payment_date           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (application_id) REFERENCES applications(application_id)
 );
 
 
--- ============================================================
--- TABLE 5 : document_verifications
--- Records Field Officer document verification decisions
--- ============================================================
-
 CREATE TABLE document_verifications (
-    verification_id     INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique verification record
-    application_id      INT NOT NULL,                    -- FK → applications(application_id)
-    field_officer_id    INT NOT NULL,                    -- FK → users(user_id) | Who verified
-    verification_status ENUM(
+/*
+| Entity              | Description                                     |
+|---------------------|-------------------------------------------------|
+| verification_id     | PK - Unique verification record                 |
+| application_id      | FK - applications(application_id)               |
+| field_officer_id    | FK - users(user_id) - Officer who verified      |
+| verification_status | pending / approved_for_inspection /             |
+|                     | rejected_on_verification                        |
+| rejection_reason    | Reason if rejected - stored in history          |
+| verified_at         | Verification timestamp                          |
+*/
+    verification_id      INT  AUTO_INCREMENT PRIMARY KEY,
+    application_id       INT  NOT NULL,
+    field_officer_id     INT  NOT NULL,
+    verification_status  ENUM(
                              'pending',
                              'approved_for_inspection',
                              'rejected_on_verification'
-                        ) DEFAULT 'pending',            -- Verification decision
-    rejection_reason    TEXT,                            -- Reason if rejected (stored in history)
-    verified_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Verification timestamp
+                         ) DEFAULT 'pending',
+    rejection_reason     TEXT,
+    verified_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (application_id)   REFERENCES applications(application_id),
     FOREIGN KEY (field_officer_id) REFERENCES users(user_id)
 );
 
 
--- ============================================================
--- TABLE 6 : field_officer_assignments
--- Tracks which Field Officer is assigned to which application + SLA deadline
--- ============================================================
-
 CREATE TABLE field_officer_assignments (
-    assignment_id           INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique assignment identifier
-    application_id          INT  NOT NULL,                   -- FK → applications(application_id)
-    field_officer_id        INT  NOT NULL,                   -- FK → users(user_id) | Assigned officer
-    assigned_at             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Assignment timestamp
-    inspection_date         DATE,                            -- Scheduled inspection date
-    sla_deadline            DATE,                            -- 7-day SLA deadline from assignment
-    assignment_status       ENUM(
+/*
+| Entity                  | Description                                 |
+|-------------------------|---------------------------------------------|
+| assignment_id           | PK - Unique assignment identifier           |
+| application_id          | FK - applications(application_id)           |
+| field_officer_id        | FK - users(user_id) - Assigned officer      |
+| assigned_at             | Assignment timestamp                        |
+| inspection_date         | Scheduled inspection date                   |
+| sla_deadline            | 7-day SLA deadline from assignment date     |
+| assignment_status       | assigned / inspection_scheduled /           |
+|                         | inspection_completed / sla_escalated        |
+| escalated_to_department | TRUE if SLA breached and escalated          |
+*/
+    assignment_id            INT      AUTO_INCREMENT PRIMARY KEY,
+    application_id           INT      NOT NULL,
+    field_officer_id         INT      NOT NULL,
+    assigned_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    inspection_date          DATE,
+    sla_deadline             DATE,
+    assignment_status        ENUM(
                                  'assigned',
                                  'inspection_scheduled',
                                  'inspection_completed',
                                  'sla_escalated'
-                            ) DEFAULT 'assigned',           -- Current assignment stage
-    escalated_to_department BOOLEAN DEFAULT FALSE,           -- TRUE if SLA breached & escalated
+                             ) DEFAULT 'assigned',
+    escalated_to_department  BOOLEAN DEFAULT FALSE,
 
     FOREIGN KEY (application_id)   REFERENCES applications(application_id),
     FOREIGN KEY (field_officer_id) REFERENCES users(user_id)
 );
 
-
--- ============================================================
--- TABLE 7 : inspections
--- Stores physical inspection reports submitted by Field Officer
--- ============================================================
 
 CREATE TABLE inspections (
-    inspection_id     INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique inspection identifier
-    application_id    INT  NOT NULL,                   -- FK → applications(application_id)
-    field_officer_id  INT  NOT NULL,                   -- FK → users(user_id) | Who inspected
-    inspection_date   DATE,                            -- Date inspection was conducted
-    inspection_report TEXT,                            -- Detailed observations written by officer
-    inspection_result ENUM(
-                           'approved',
-                           'rejected'
-                      ),                              -- Final inspection outcome
-    submitted_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Report submission timestamp
+/*
+| Entity            | Description                                       |
+|-------------------|---------------------------------------------------|
+| inspection_id     | PK - Unique inspection identifier                 |
+| application_id    | FK - applications(application_id)                 |
+| field_officer_id  | FK - users(user_id) - Officer who inspected       |
+| inspection_date   | Date inspection was conducted                     |
+| inspection_report | Detailed observations written by officer          |
+| inspection_result | approved / rejected                               |
+| submitted_at      | Report submission timestamp                       |
+*/
+    inspection_id     INT  AUTO_INCREMENT PRIMARY KEY,
+    application_id    INT  NOT NULL,
+    field_officer_id  INT  NOT NULL,
+    inspection_date   DATE,
+    inspection_report TEXT,
+    inspection_result ENUM('approved','rejected'),
+    submitted_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (application_id)   REFERENCES applications(application_id),
     FOREIGN KEY (field_officer_id) REFERENCES users(user_id)
 );
 
 
--- ============================================================
--- TABLE 8 : department_reviews
--- Records Department Officer approval/rejection decisions
--- ============================================================
-
 CREATE TABLE department_reviews (
-    review_id             INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique review identifier
-    application_id        INT  NOT NULL,                   -- FK → applications(application_id)
-    department_officer_id INT  NOT NULL,                   -- FK → users(user_id) | Who reviewed
-    review_type           ENUM(
-                               'normal_review',
-                               'sla_escalation'
-                          ) DEFAULT 'normal_review',      -- Whether triggered by SLA breach
-    review_status         ENUM(
-                               'approved',
-                               'rejected'
-                          ),                              -- Final approval decision
-    review_comments       TEXT,                            -- Mandatory justification / comments
-    digital_signature     VARCHAR(255),                    -- Officer's digital signature string
-    reviewed_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Review timestamp
+/*
+| Entity                | Description                                   |
+|-----------------------|-----------------------------------------------|
+| review_id             | PK - Unique review identifier                 |
+| application_id        | FK - applications(application_id)             |
+| department_officer_id | FK - users(user_id) - Officer who reviewed    |
+| review_type           | normal_review / sla_escalation                |
+| review_status         | approved / rejected                           |
+| review_comments       | Mandatory justification / decision comments   |
+| digital_signature     | Officer digital signature string              |
+| reviewed_at           | Review timestamp                              |
+*/
+    review_id              INT  AUTO_INCREMENT PRIMARY KEY,
+    application_id         INT  NOT NULL,
+    department_officer_id  INT  NOT NULL,
+    review_type            ENUM('normal_review','sla_escalation') DEFAULT 'normal_review',
+    review_status          ENUM('approved','rejected'),
+    review_comments        TEXT,
+    digital_signature      VARCHAR(255),
+    reviewed_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (application_id)        REFERENCES applications(application_id),
     FOREIGN KEY (department_officer_id) REFERENCES users(user_id)
 );
 
 
--- ============================================================
--- TABLE 9 : licenses
--- Stores issued trade licenses after Department Officer approval
--- ============================================================
-
 CREATE TABLE licenses (
-    license_id     INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique license identifier
-    application_id INT         NOT NULL,            -- FK → applications(application_id)
-    license_number VARCHAR(50) UNIQUE,              -- Unique license certificate number
-    issue_date     DATE,                            -- Date license was issued
-    expiry_date    DATE,                            -- License validity end date
-    license_status ENUM(
+/*
+| Entity         | Description                                      |
+|----------------|--------------------------------------------------|
+| license_id     | PK - Unique license identifier                   |
+| application_id | FK - applications(application_id)                |
+| license_number | Unique license certificate number                |
+| issue_date     | Date license was issued                          |
+| expiry_date    | License validity end date                        |
+| license_status | active / renewal_required / expired /            |
+|                | suspended / cancelled                            |
+*/
+    license_id      INT         AUTO_INCREMENT PRIMARY KEY,
+    application_id  INT         NOT NULL,
+    license_number  VARCHAR(50) UNIQUE,
+    issue_date      DATE,
+    expiry_date     DATE,
+    license_status  ENUM(
                         'active',
                         'renewal_required',
                         'expired',
                         'suspended',
                         'cancelled'
-                   ) DEFAULT 'active',             -- Current license status
+                    ) DEFAULT 'active',
 
     FOREIGN KEY (application_id) REFERENCES applications(application_id)
 );
 
 
--- ============================================================
--- TABLE 10 : license_renewals
--- Tracks renewal requests for existing licenses
--- ============================================================
-
 CREATE TABLE license_renewals (
-    renewal_id      INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique renewal identifier
-    license_id      INT           NOT NULL,          -- FK → licenses(license_id)
-    renewal_fee     DECIMAL(10,2),                   -- Fee paid for renewal
-    renewal_status  ENUM(
+/*
+| Entity          | Description                                     |
+|-----------------|-------------------------------------------------|
+| renewal_id      | PK - Unique renewal identifier                  |
+| license_id      | FK - licenses(license_id)                       |
+| renewal_fee     | Fee paid for renewal                            |
+| renewal_status  | submitted / inspection_scheduled /              |
+|                 | inspection_completed / department_review /      |
+|                 | approved / rejected                             |
+| new_expiry_date | Updated expiry date after renewal approval      |
+| submitted_at    | Renewal request timestamp                       |
+*/
+    renewal_id       INT           AUTO_INCREMENT PRIMARY KEY,
+    license_id       INT           NOT NULL,
+    renewal_fee      DECIMAL(10,2),
+    renewal_status   ENUM(
                          'submitted',
                          'inspection_scheduled',
                          'inspection_completed',
                          'department_review',
                          'approved',
                          'rejected'
-                    ) DEFAULT 'submitted',           -- Current renewal stage
-    new_expiry_date DATE,                            -- Updated expiry date after renewal
-    submitted_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Renewal request timestamp
+                     ) DEFAULT 'submitted',
+    new_expiry_date  DATE,
+    submitted_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (license_id) REFERENCES licenses(license_id)
 );
 
 
--- ============================================================
--- TABLE 11 : compliance_violations
--- Records compliance violations reported against license holders
--- ============================================================
-
 CREATE TABLE compliance_violations (
-    violation_id          INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique violation identifier
-    license_id            INT  NOT NULL,                   -- FK → licenses(license_id)
-    reported_by           INT  NOT NULL,                   -- FK → users(user_id) | Reporting officer
-    violation_type        VARCHAR(150),                    -- Category of violation
-    violation_description TEXT,                            -- Detailed description of violation
-    action_taken          ENUM(
-                               'warning',
-                               'fine',
-                               'suspended',
-                               'license_cancelled'
-                          ),                              -- Action taken by Department Officer
-    reported_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Violation report timestamp
+/*
+| Entity                | Description                                   |
+|-----------------------|-----------------------------------------------|
+| violation_id          | PK - Unique violation identifier              |
+| license_id            | FK - licenses(license_id)                     |
+| reported_by           | FK - users(user_id) - Officer who reported    |
+| violation_type        | Category of violation                         |
+| violation_description | Detailed description of violation             |
+| action_taken          | warning / fine / suspended /                  |
+|                       | license_cancelled                             |
+| reported_at           | Violation report timestamp                    |
+*/
+    violation_id           INT  AUTO_INCREMENT PRIMARY KEY,
+    license_id             INT  NOT NULL,
+    reported_by            INT  NOT NULL,
+    violation_type         VARCHAR(150),
+    violation_description  TEXT,
+    action_taken           ENUM('warning','fine','suspended','license_cancelled'),
+    reported_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (license_id)  REFERENCES licenses(license_id),
     FOREIGN KEY (reported_by) REFERENCES users(user_id)
 );
 
 
--- ============================================================
--- TABLE 12 : field_officer_warnings
--- Records SLA breach warnings issued to Field Officers
--- ============================================================
-
 CREATE TABLE field_officer_warnings (
-    warning_id       INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique warning identifier
-    field_officer_id INT          NOT NULL,           -- FK → users(user_id) | Officer warned
-    application_id   INT          NOT NULL,           -- FK → applications(application_id)
-    warning_reason   VARCHAR(255),                    -- Reason for warning (SLA breach description)
-    warning_date     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Warning issued timestamp
+/*
+| Entity           | Description                                    |
+|------------------|------------------------------------------------|
+| warning_id       | PK - Unique warning identifier                 |
+| field_officer_id | FK - users(user_id) - Officer who was warned   |
+| application_id   | FK - applications(application_id)              |
+| warning_reason   | Reason for warning - SLA breach description    |
+| warning_date     | Warning issued timestamp                       |
+*/
+    warning_id        INT  AUTO_INCREMENT PRIMARY KEY,
+    field_officer_id  INT  NOT NULL,
+    application_id    INT  NOT NULL,
+    warning_reason    VARCHAR(255),
+    warning_date      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (field_officer_id) REFERENCES users(user_id),
     FOREIGN KEY (application_id)   REFERENCES applications(application_id)
 );
-
-
--- ============================================================
---  END OF SCHEMA — 12 Tables | licensing_system
---  Document prepared by: 14_BinaryMinds | FFSD Review 2
--- ============================================================
