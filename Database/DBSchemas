@@ -1,1 +1,57 @@
+CREATE DATABASE IF NOT EXISTS licensing_system;
+USE licensing_system;
+-- ============================================================
+-- TABLE 1 : users
+-- Stores all system users — Applicant, Field Officer, Dept Officer
+-- ============================================================
+
+CREATE TABLE users (
+    user_id          INT AUTO_INCREMENT PRIMARY KEY,   -- PK | Unique user identifier
+    full_name        VARCHAR(120)        NOT NULL,     -- User's full name
+    email            VARCHAR(120) UNIQUE NOT NULL,     -- Unique login email
+    phone            VARCHAR(15)  UNIQUE NOT NULL,     -- Unique contact number
+    password_hash    VARCHAR(255)        NOT NULL,     -- Bcrypt hashed password
+    role             ENUM(
+                         'applicant',
+                         'field_officer',
+                         'department_officer'
+                     )                  NOT NULL,     -- RBAC role assignment
+    created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Account creation time
+);
+ ============================================================
+-- TABLE 2 : applications
+-- Stores trade license applications submitted by Applicants
+-- ============================================================
+
+CREATE TABLE applications (
+    application_id      INT AUTO_INCREMENT PRIMARY KEY,  -- PK | Unique application identifier
+    applicant_id        INT          NOT NULL,           -- FK → users(user_id) | Who submitted
+    full_name           VARCHAR(120) NOT NULL,           -- Applicant full name on form
+    father_name         VARCHAR(120),                    -- Father's name
+    date_of_birth       DATE,                            -- Date of birth
+    gender              VARCHAR(20),                     -- Gender
+    aadhaar_number      VARCHAR(20) UNIQUE,              -- Unique Aadhaar number
+    applicant_phone     VARCHAR(15),                     -- Contact phone on application
+    business_name       VARCHAR(150) NOT NULL,           -- Registered business name
+    business_type       VARCHAR(100),                    -- Type of business
+    trade_category      VARCHAR(100),                    -- Trade license category
+    shop_address        TEXT,                            -- Full shop/business address
+    city                VARCHAR(100),                    -- City
+    district            VARCHAR(100),                    -- District
+    state               VARCHAR(100),                    -- State
+    pincode             VARCHAR(10),                    
+    business_start_date DATE,                            -- Date business started
+    application_status  ENUM(
+                             'submitted',
+                             'documents_uploaded',
+                             'inspection_scheduled',
+                             'inspection_completed',
+                             'department_review',
+                             'approved',
+                             'rejected'
+                         ) DEFAULT 'submitted',         -- Current application stage
+    submitted_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Submission timestamp
+
+    FOREIGN KEY (applicant_id) REFERENCES users(user_id)
+);
 
