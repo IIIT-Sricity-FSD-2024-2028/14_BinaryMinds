@@ -1,6 +1,6 @@
 // Track Application button → goes to track page
 document.getElementById('trackBtn').addEventListener('click', function () {
-  window.location.href = 'track.html';
+  window.location.href = '../Track_Application_Status/';
 });
 
 // Download Receipt button → triggers browser print/save

@@ -1,11 +1,11 @@
 // Retry Payment → go to payment page
 document.getElementById('retryBtn').addEventListener('click', function () {
-  window.location.href = 'payment.html';
+  window.location.href = '../paynow/';
 });
 
 // Back to Payment History
 document.getElementById('historyBtn').addEventListener('click', function () {
-  window.location.href = 'payments.html';
+  window.location.href = '../payments/';
 });
 
 // Cancel → go back

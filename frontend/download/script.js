@@ -22,6 +22,6 @@ function handleCancel() {
   if (confirmed) {
     alert("Action cancelled. Redirecting to Dashboard...");
     // In a real project, this would go to the dashboard page
-    // window.location.href = "dashboard.html";
+    window.location.href = "../Applicant_dashboard/";
   }
 }
