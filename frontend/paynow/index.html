@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TradeZo - Complete Your Payment</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- WHITE TOP BAR with Indian Emblem -->
+  <div class="topbar">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Indian Emblem" class="emblem">
+    <div>
+      <p class="gov">Government of India</p>
+      <p class="brand">TradeZo</p>
+    </div>
+  </div>
+
+  <!-- BLUE NAVIGATION BAR -->
+  <div class="navbar">
+    <a href="#">Dashboard</a>
+    <a href="#">Home</a>
+    <a href="#">Apply License</a>
+    <a href="#">Track Application</a>
+    <a href="#">Download License</a>
+    <a href="#">Login</a>
+    <a href="#">Register</a>
+    <a href="#">Payments</a>
+    <a href="#">Profile</a>
+  </div>
+
+  <!-- PAGE BODY -->
+  <div class="page">
+
+    <h1 class="title">Complete Your Payment</h1>
+
+    <!-- STEP PROGRESS -->
+    <div class="steps-bar">
+
+      <div class="step">
+        <div class="dot green">&#10003;</div>
+        <div class="step-text">
+          <span class="step-num">STEP 1</span>
+          <span class="step-name">Application Form</span>
+        </div>
+      </div>
+
+      <div class="step-line"></div>
+
+      <div class="step">
+        <div class="dot green">&#10003;</div>
+        <div class="step-text">
+          <span class="step-num">STEP 2</span>
+          <span class="step-name">Documents</span>
+        </div>
+      </div>
+
+      <div class="step-line"></div>
+
+      <div class="step">
+        <div class="dot blue">&#128179;</div>
+        <div class="step-text">
+          <span class="step-num">STEP 3</span>
+          <span class="step-name">Payment</span>
+        </div>
+      </div>
+
+      <div class="step-line"></div>
+
+      <div class="step">
+        <div class="dot grey">&#9654;</div>
+        <div class="step-text">
+          <span class="step-num">STEP 4</span>
+          <span class="step-name">Submitted</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TWO COLUMN LAYOUT -->
+    <div class="columns">
+
+      <!-- LEFT COLUMN -->
+      <div class="col-left">
+
+        <!-- Application Summary Card -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">&#128196; Application Summary</span>
+            <span class="ref-no">REF: TRD-2023-8042</span>
+          </div>
+
+          <div class="info-grid">
+            <div>
+              <p class="lbl">Trade Name</p>
+              <p class="val">Jiya Enterprises Private Limited</p>
+            </div>
+            <div>
+              <p class="lbl">License Category</p>
+              <p class="val">General Trade &amp; Commerce</p>
+            </div>
+            <div>
+              <p class="lbl">Validity Period</p>
+              <p class="val">1 Year (2023-2024)</p>
+            </div>
+            <div>
+              <p class="lbl">Establishment Type</p>
+              <p class="val">Commercial / Retail</p>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <div class="fee-row"><span>Processing Fee</span><span>&#8377;2000.00</span></div>
+          <div class="fee-row"><span>Service Tax (18% GST + Cess)</span><span>&#8377;100.00</span></div>
+          <div class="fee-row total"><span>Total Payable Amount</span><span>&#8377;2100.00</span></div>
+        </div>
+
+        <!-- Select Payment Method Card -->
+        <div class="card">
+          <p class="card-title">&#128203; Select Payment Method</p>
+
+          <label class="pay-opt active" id="upi-label">
+            <input type="radio" name="method" value="upi" checked> &#128241; UPI / QR Code
+          </label>
+
+          <label class="pay-opt" id="card-label">
+            <input type="radio" name="method" value="card"> &#128179; Debit / Credit Card
+          </label>
+
+          <label class="pay-opt" id="net-label">
+            <input type="radio" name="method" value="net"> &#127981; Net Banking
+          </label>
+
+          <button class="pay-btn" onclick="doPayment()">&#128274; Pay Now &#8377;2100.00</button>
+          <p class="small-note">By clicking "Pay Now" you agree to our Terms of Service and Privacy Policy.</p>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="col-right">
+
+        <!-- Payment Assistance Card -->
+        <div class="card">
+          <p class="card-title">&#128737; Payment Assistance</p>
+
+          <div class="assist-item">
+            <span class="assist-icon">&#128205;</span>
+            <div>
+              <p class="assist-head">Secure Transaction</p>
+              <p class="assist-body">Your transaction is protected by 256-bit SSL encryption provided by National Informatics Centre.</p>
+            </div>
+          </div>
+
+          <div class="assist-item">
+            <span class="assist-icon">&#129534;</span>
+            <div>
+              <p class="assist-head">Instant Receipt</p>
+              <p class="assist-body">The payment confirmation and license receipt will be generated immediately after a successful transaction.</p>
+            </div>
+          </div>
+
+          <div class="assist-item">
+            <span class="assist-icon">&#127911;</span>
+            <div>
+              <p class="assist-head">24/7 Support</p>
+              <p class="assist-body">In case of any payment failures or double deductions, please contact 1800-11-9000 or raise a ticket.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Need Help Card -->
+        <div class="card help-card">
+          <p class="need-help-title">NEED HELP?</p>
+          <a href="#" class="help-link">&#128214; View Payment User Guide</a>
+          <a href="#" class="help-link">&#10067; Frequently Asked Questions</a>
+
+          <!-- Phone illustration (bottom right of figma) -->
+          <div class="phone-illustration">
+            <div class="phone-img">&#128242;&#10003;</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

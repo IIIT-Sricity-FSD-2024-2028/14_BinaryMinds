@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TradeZo - Trade License</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+ 
+ <!-- TOP BAR -->
+<div class="topbar">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" 
+       alt="India Emblem" class="emblem-img">
+  <div class="topbar-text">
+    <span class="gov-text">Government of India</span>
+    <span class="brand-name">TradeZo</span>
+  </div>
+</div>
+ 
+  <!-- NAVIGATION LINKS -->
+  <div class="navbar">
+    <a href="#">Dashboard</a>
+    <a href="#">Home</a>
+    <a href="#">Apply License</a>
+    <a href="#">Track Application</a>
+    <a href="#">Download License</a>
+    <a href="#">Login</a>
+    <a href="#">Register</a>
+    <a href="#">Payments</a>
+    <a href="#">Profile</a>
+  </div>
+ 
+  <!-- PAGE TITLE -->
+  <div class="page-title">
+    <h2>Trade License</h2>
+    <p>View and download your approved trade license.</p>
+  </div>
+ 
+  <!-- MAIN CONTENT: Left + Right -->
+  <div class="main-layout">
+ 
+    <!-- LEFT SIDE: License Details -->
+    <div class="left-section">
+      <div class="license-card">
+ 
+        <div class="card-header">
+          <h3><span>🛡</span> License Details</h3>
+          <span class="badge-active">✅ ACTIVE</span>
+        </div>
+ 
+        <div class="details-grid">
+          <div class="detail-item">
+            <label>License Number</label>
+            <p>LIC-2026-001245</p>
+          </div>
+          <div class="detail-item">
+            <label>Applicant Name</label>
+            <p>JIYA ENTERPRISES PRIVATE LIMITED</p>
+          </div>
+          <div class="detail-item">
+            <label>Trade Category</label>
+            <p>General Trade & Commerce</p>
+          </div>
+          <div class="detail-item">
+            <label>Issue Date</label>
+            <p>20 March 2026</p>
+          </div>
+          <div class="detail-item">
+            <label>Expiry Date</label>
+            <p>20 March 2027</p>
+          </div>
+          <div class="detail-item">
+            <label>Status</label>
+            <p class="active-text">✔ Active</p>
+          </div>
+        </div>
+ 
+        <div class="card-footer">
+          <p>Licensing Authority</p>
+          <div class="qr-box">QR</div>
+        </div>
+ 
+        <p class="verified-text">
+          Verification Status: <strong>Digitally Verified</strong> by Licensing Authority, Ministry of Commerce and Industry
+        </p>
+ 
+      </div>
+ 
+      <!-- Cancel Button -->
+      <button class="cancel-btn" onclick="handleCancel()">+ Cancel</button>
+    </div>
+ 
+    <!-- RIGHT SIDE: Preview + Help -->
+    <div class="right-section">
+ 
+      <div class="preview-card">
+        <h4>License Preview</h4>
+ 
+        <!-- Fake document lines to look like a license -->
+        <div class="license-preview-box">
+          <h5>Trade License</h5>
+          <div class="fake-line"></div>
+          <div class="fake-line short"></div>
+          <div class="fake-line"></div>
+          <div class="fake-line short"></div>
+          <div class="fake-line"></div>
+          <div class="fake-line short"></div>
+        </div>
+ 
+        <button class="btn-download" onclick="handleDownload()">⬇ Download License PDF</button>
+        <button class="btn-print" onclick="handlePrint()">🖨 Print License</button>
+      </div>
+ 
+      <!-- Help Section -->
+      <div class="help-box">
+        <h4>❓ Need Help?</h4>
+        <p>Having issues with your license download or details/discrepancy?</p>
+        <p>📧 <a href="mailto:support@tradezco.gov.in">support@tradezco.gov.in</a></p>
+        <p>📞 <a href="tel:18001112344">1800-111-2344 (Toll Free)</a></p>
+      </div>
+ 
+    </div>
+  </div>
+ 
+  <!-- Link to JavaScript file -->
+  <script src="script.js"></script>
+ 
+</body>
+</html>

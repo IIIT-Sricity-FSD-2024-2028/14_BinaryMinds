@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+  <div class="brand">
+    <span>Government of India</span>
+    <strong>TradeZo</strong>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <a href="dashboard.html" class="active">Dashboard</a>
+  <a href="#">Home</a>
+  <a href="#">Apply License</a>
+  <a href="track.html">Track Application</a>
+  <a href="#">Download License</a>
+  <a href="register.html">Register</a>
+  <a href="payments.html">Payments</a>
+  <a href="profile.html">Profile</a>
+</div>
+
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <p class="active">Dashboard</p>
+    <p>Apply License</p>
+    <p>Application Review</p>
+    <p>Renew Licenses</p>
+    <p>Logout</p>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- WELCOME CARD -->
+    <div class="card welcome">
+      <div>
+        <h2 id="welcomeText">Welcome</h2>
+        <p>Applicant ID: APP-1024</p>
+      </div>
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+    </div>
+
+    <!-- STATUS + LICENSE -->
+    <div class="grid">
+
+      <div class="card">
+        <h3>My Application Status</h3>
+
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Business</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+          <tr>
+            <td>TL-001</td>
+            <td>Grocery Shop</td>
+            <td><span class="badge">UNDER VERIFICATION</span></td>
+            <td>21 Mar 2026</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>My Current License</h3>
+        <p><b>License No:</b> TL-2026-001</p>
+        <p><b>Business:</b> Grocery Shop</p>
+        <p><b>Valid:</b> 2026 - 2027</p>
+
+        <button>Download License</button>
+      </div>
+
+    </div>
+
+    <!-- TASKS -->
+    <div class="card">
+      <h3>Pending Tasks</h3>
+
+      <div class="task">
+        <span>Upload Aadhaar Card</span>
+        <button>Upload</button>
+      </div>
+
+      <div class="task">
+        <span>Pay License Fee ₹2000</span>
+        <button onclick="goPayment()">Pay Now</button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+
+<script>
+// Load user name
+let user = JSON.parse(localStorage.getItem("user"));
+if (user) {
+  document.getElementById("welcomeText").innerText =
+    "Welcome, " + user.name;
+}
+
+function goPayment() {
+  window.location.href = "payments.html";
+}
+</script>
+
+</body>
+</html>

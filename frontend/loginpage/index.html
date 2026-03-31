@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TradeZo - Trade License Portal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <div class="top-header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem" class="emblem" />
+    <div>
+      <p class="gov-text">Government of India</p>
+      <p class="brand-name">TradeZo</p>
+    </div>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <nav class="navbar">
+    <a href="#">Home</a>
+    <a href="#">Login</a>
+    <a href="#">Register</a>
+    <a href="#">Help</a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- LEFT SIDE - IMAGE CARD -->
+    <div class="left-card">
+      <img src="https://img.freepik.com/free-vector/business-people-working-office_74855-6578.jpg" alt="Office" class="office-img" />
+      <h2>Trade License Portal</h2>
+      <p>Manage your trade licenses efficiently online</p>
+    </div>
+
+    <!-- RIGHT SIDE - LOGIN FORM -->
+    <div class="login-card">
+      <h3>Login to Trade License Portal</h3>
+
+      <input type="text" placeholder="Enter Email or Phone Number" />
+
+      <input type="password" placeholder="Enter Password" />
+
+      <select>
+        <option value="">Login As</option>
+        <option value="applicant">Applicant</option>
+        <option value="field officer">field Officer</option>
+        <option value="department officer">department Officer</option>
+      </select>
+
+      <button onclick="handleLogin()">Login</button>
+
+      <div class="row-links">
+        <label>
+          <input type="checkbox" checked /> Remember Me
+        </label>
+        <a href="#">Forgot Password?</a>
+      </div>
+
+      <p class="register-text">
+        New Applicant? <a href="#">Register Here</a>
+      </p>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

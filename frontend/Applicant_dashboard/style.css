@@ -1,0 +1,139 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f4f6f9;
+}
+
+/* TOP BAR (FIXED) */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  background: #f8f9fb;   /* lighter clean bg */
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* LOGO */
+.top-bar img {
+  width: 42px;
+  height: 42px;
+}
+
+/* BRAND TEXT (IMPORTANT FIX) */
+.brand {
+  display: flex;
+  flex-direction: column;   /* 🔥 THIS FIXES YOUR ISSUE */
+  justify-content: center;
+}
+
+/* Government text */
+.brand span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* TradeZo */
+.brand strong {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1f3c88;
+  line-height: 1.2;
+}
+
+/* NAVBAR */
+.navbar {
+  background: #1f3c88;
+  padding: 10px;
+}
+
+.navbar a {
+  color: white;
+  margin-right: 15px;
+  text-decoration: none;
+}
+
+/* LAYOUT */
+.main {
+  display: flex;
+}
+
+.sidebar {
+  width: 200px;
+  background: #eaeaea;
+  padding: 15px;
+}
+
+.sidebar p {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.sidebar .active {
+  background: #d0d8ff;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}
+
+/* CARDS */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.welcome img {
+  width: 100px;
+}
+
+/* GRID */
+.grid {
+  display: flex;
+  gap: 20px;
+}
+
+.grid .card {
+  flex: 1;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+}
+
+.badge {
+  background: orange;
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+}
+
+/* TASK */
+.task {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+button {
+  background: #1f3c88;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+}
