@@ -23,6 +23,15 @@ function handleLogin() {
     return;
   }
  
-  // If all filled, show success message
-  alert("Login Successful! Welcome to TradeZo.");
+  // Store user info in localStorage
+  localStorage.setItem("user", JSON.stringify({ name: email, role: role }));
+ 
+  // Redirect based on role
+  if (role === "applicant") {
+    window.location.href = "../Applicant_dashboard/";
+  } else if (role === "field officer") {
+    window.location.href = "../fodashboard/";
+  } else if (role === "department officer") {
+    window.location.href = "../details/";
+  }
 }
