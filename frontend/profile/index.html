@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Field Officer Profile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 🔷 Header -->
+<header class="top-header">
+    <div class="logo-section">
+        <img src="../assets/icons/emblem.png">
+        <div>
+            <h4>Government of India</h4>
+            <h2>TradeZo</h2>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="user-info">
+            <span>Welcome</span>
+            <b>Myra</b>
+        </div>
+
+        <div class="header-icons">
+            <img src="../assets/icons/Bell.png" class="header-icon">
+            <span class="dot"></span>
+            <img src="../assets/icons/logout.png" class="header-icon">
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+<!-- 🔷 Main Layout -->
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul>
+            <li>
+                <img src="../assets/icons/db.png" class="icon">
+                Dashboard
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification.png" class="icon">
+                Verification
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection.png" class="icon">
+                Record Inspection
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification-history.png" class="icon">
+                Verification History
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection-history.png" class="icon">
+                Inspection History
+            </li>
+
+            <li class="active">
+                <img src="../assets/icons/profile.png" class="icon">
+                Profile
+            </li>
+        </ul>
+    </aside>
+
+
+<!-- 🔷 Content -->
+<main class="content">
+
+    <h1>Field Officer Profile</h1>
+    <p class="subtitle">Manage your profile and view performance statistics.</p>
+
+    <div class="profile-container">
+
+        <!-- LEFT CARD -->
+        <div class="profile-card">
+            <div class="avatar">M</div>
+            <h2>Myra</h2>
+            <p>FO-2026-042</p>
+            <span class="role">Senior Field Officer</span>
+
+            <hr>
+
+            <p><b>Department:</b> Trade License Department</p>
+            <p><b>Email:</b> myra@gov.in</p>
+            <p><b>Phone:</b> +91 98765 43210</p>
+            <p><b>Location:</b> Municipal Corporation, Delhi</p>
+            <p><b>Join Date:</b> Jan 15, 2024</p>
+
+            <button class="edit-btn">Edit Profile</button>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="right-section">
+
+            <!-- Stats -->
+            <div class="stats">
+
+                <div class="stat-card blue">
+                    <p>Total Inspections</p>
+                    <h2>248</h2>
+                    <img src="../assets/icons/applications.png" class="stat-img">
+                </div>
+
+                <div class="stat-card green">
+                    <p>Completed Inspections</p>
+                    <h2>232</h2>
+                    <img src="../assets/icons/completed.png" class="stat-img">
+                </div>
+
+                <div class="stat-card orange">
+                    <p>Pending Inspections</p>
+                    <h2>16</h2>
+                    <img src="../assets/icons/pending.png" class="stat-img">
+                </div>
+
+                <div class="stat-card purple">
+                    <p>Warnings Received</p>
+                    <h2>0</h2>
+                    <img src="../assets/icons/alerts.png" class="stat-img">
+                </div>
+
+            </div>
+
+            <!-- Activity -->
+            <div class="activity">
+                <h3>Recent Activity</h3>
+
+                <div class="activity-item">✅ Completed inspection - Green Valley Restaurant</div>
+                <div class="activity-item">⚠ Filed violation - Tech Hub Electronics</div>
+                <div class="activity-item">🕒 Started inspection - Fresh Mart Grocery</div>
+                <div class="activity-item">✅ Approved license - Urban Fitness Center</div>
+            </div>
+
+            <!-- Performance -->
+            <div class="performance">
+                ⭐ Outstanding Performance  
+                <span style="float:right;">4.8/5</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+</div>
+
+<script>
+function go(path){
+    window.location.href = path;
+}
+</script>
+
+</body>
+</html>
