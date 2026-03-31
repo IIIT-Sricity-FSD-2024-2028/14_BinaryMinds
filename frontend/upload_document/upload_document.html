@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Documents - TradeZo</title>
+  <link rel="stylesheet" href="upload_document.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo"><img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45"></div>
+      <div>
+        <small>Government of India</small>
+        <strong>TradeZo</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav>
+    <a href="#">Dashboard</a>
+    <a href="#">Home</a>
+    <a href="#">Apply License</a>
+    <a href="#">Track Application</a>
+    <a href="#">Download License</a>
+    <a href="#">Login</a>
+    <a href="#">Register</a>
+    <a href="#">Payments</a>
+    <a href="#">Profile</a>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+
+    <!-- Page Title + Progress -->
+    <div class="page-top">
+      <div>
+        <h2>Upload Required Documents</h2>
+        <p>Step 3 of 4. Please upload the required documents for verification.</p>
+      </div>
+      <div class="progress-box">
+        <span>75% Completed</span>
+        <div class="progress-bg">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Note -->
+    <div class="info-note">
+      Allowed file types: JPG, PNG or PDF. Max file size: 5MB per document.
+    </div>
+
+    <!-- Document 1 -->
+    <div class="doc-card">
+      <div class="doc-header">
+        <strong>Aadhaar Card</strong>
+        <span>Identity proof of the applicant (Front & Back)</span>
+      </div>
+      <div class="upload-area">
+        <button onclick="document.getElementById('file1').click()">Upload File</button>
+        <span>Drag & drop files here, or <label for="file1" class="browse">Browse Files</label></span>
+        <input type="file" id="file1" accept=".jpg,.png,.pdf" onchange="handleUpload(this,'status1','err1')">
+      </div>
+      <div id="status1" class="file-status"></div>
+      <div id="err1" class="error"></div>
+    </div>
+
+    <!-- Document 2 -->
+    <div class="doc-card">
+      <div class="doc-header">
+        <strong>Business Address Proof</strong>
+        <span>Property tax receipt, utility bill, or rent agreement</span>
+      </div>
+      <div class="upload-area">
+        <button onclick="document.getElementById('file2').click()">Upload File</button>
+        <span>Drag & drop files here, or <label for="file2" class="browse">Browse Files</label></span>
+        <input type="file" id="file2" accept=".jpg,.png,.pdf" onchange="handleUpload(this,'status2','err2')">
+      </div>
+      <div id="status2" class="file-status"></div>
+      <div id="err2" class="error"></div>
+    </div>
+
+    <!-- Document 3 -->
+    <div class="doc-card">
+      <div class="doc-header">
+        <strong>Shop</strong>
+        <span>Front view of shop with board name visible</span>
+      </div>
+      <div class="upload-area">
+        <button onclick="document.getElementById('file2').click()">Upload File</button>
+        <span>Drag & drop files here, or <label for="file3" class="browse">Browse Files</label></span>
+        <input type="file" id="file3" accept=".jpg,.png,.pdf" onchange="handleUpload(this,'status3','err3')">
+      </div>
+      <div id="status3" class="file-status"></div>
+      <div id="err3" class="error"></div>
+    </div>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verification History - TradeZo</title>
+  <link rel="stylesheet" href="verification_history.css">
+</head>
+<body>
+
+<!-- TOP WHITE BAR -->
+<div class="top-bar">
+  <div class="brand">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+    <div><span class="gov">Government of India</span><span class="name">TradeZo</span></div>
+  </div>
+  <div class="top-right">
+    <span class="welcome">Welcome<br><strong>Myra</strong></span>
+    <span class="bell">🔔</span>
+    <span class="logout" onclick="logout()">🚪</span>
+  </div>
+</div>
+
+<!-- LAYOUT: sidebar + main -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <a href="#">🏠 Dashboard</a>
+    <a href="#">📋 Verification</a>
+    <a href="#">📝 Record Inspection</a>
+    <a href="#" class="active">🗂 Verification History</a>
+    <a href="#">⏱ Inspection History</a>
+    <a href="#">👤 Profile</a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <div class="main-top">
+      <div>
+        <h1>Verification History</h1>
+        <p class="sub">Review rejected applications and reasons</p>
+      </div>
+      <div class="red-badge" id="rejectedCount">0 Rejected</div>
+    </div>
+
+    <!-- CARDS LIST -->
+    <div id="cardsList"></div>
+
+  </div>
+</div>
+
+<script src="verification_history.js"></script>
+</body>
+</html>

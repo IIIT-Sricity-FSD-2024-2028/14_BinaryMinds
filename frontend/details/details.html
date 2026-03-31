@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Details - TradeZo</title>
+  <link rel="stylesheet" href="details.css">
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="brand">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+    <div><span class="gov">Government of India</span><span class="name">TradeZo</span></div>
+  </div>
+  <div class="top-right">
+    <span class="welcome">Welcome<br><strong>Myra</strong></span>
+    <span class="icon">&#9711;</span>
+    <span class="icon" onclick="logout()">&#8594;</span>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <a href="#">Dashboard</a>
+    <a href="#">Verification</a>
+    <a href="#" class="active">Record Inspection</a>
+    <a href="#">Verification History</a>
+    <a href="#">Inspection History</a>
+    <a href="#">Profile</a>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <h1>Details</h1>
+    <p class="sub">Complete information about the inspection assignment.</p>
+
+    <!-- BUSINESS INFO CARD -->
+    <div class="card">
+      <h2>&#9632; Business Information</h2>
+      <div class="grid">
+        <div class="field"><label>Application ID</label><p id="appId">TL-2026-001</p></div>
+        <div class="field"><label>Contact Number</label><p id="contact">+91 98765 43210</p></div>
+        <div class="field"><label>Applicant Name</label><p id="appName">Rajesh Kumar</p></div>
+        <div class="field"><label>Email Address</label><p id="email">rajesh.kumar@greenvalley.com</p></div>
+        <div class="field"><label>Business Name</label><p id="bizName">Green Valley Restaurant</p></div>
+        <div class="field"><label>Full Address</label><p id="address">123 Main Street, Sector 45, Gurugram, Haryana 122003</p></div>
+        <div class="field"><label>Trade Category</label><p id="category">Food & Beverage</p></div>
+      </div>
+    </div>
+
+    <!-- UPLOADED DOCUMENTS CARD -->
+    <div class="card">
+      <div class="card-top">
+        <h2>&#9632; Uploaded Documents</h2>
+        <button class="view-btn">&#128065; View All Documents</button>
+      </div>
+      <div class="docs-grid">
+        <div class="doc-box blue"><p class="doc-title">Aadhar Card</p><p class="doc-file">aadhar_rajesh_kumar.pdf</p><p class="doc-meta">245 KB • Uploaded Feb 20, 2026</p></div>
+        <div class="doc-box green"><p class="doc-title">Business Affidavit</p><p class="doc-file">business_affidavit.pdf</p><p class="doc-meta">512 KB • Uploaded Feb 21, 2026</p></div>
+        <div class="doc-box purple"><p class="doc-title">Passport Photo</p><p class="doc-file">passport_photo.jpg</p><p class="doc-meta">128 KB • Uploaded Feb 20, 2026</p></div>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="action-btns">
+      <button class="approve-btn" onclick="approve()">Approve Application ✓</button>
+      <button class="reject-btn" onclick="reject()">Reject Application ✕</button>
+    </div>
+
+    <!-- BACK -->
+    <div class="back" onclick="window.history.back()">&#8617;</div>
+
+  </div>
+</div>
+
+<script src="details.js"></script>
+</body>
+</html>

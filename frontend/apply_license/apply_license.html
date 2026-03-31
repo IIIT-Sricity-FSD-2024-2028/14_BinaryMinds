@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Apply for Trade License - TradeZo</title>
+  <link rel="stylesheet" href="apply_license.css">
+</head>
+<body>
+
+<div class="top-bar">
+ <img src="ashoka_emblem.png" height="45">
+  <div><span class="brand-gov">Government of India</span><span class="brand-name">TradeZo</span></div>
+</div>
+
+<nav>
+  <a href="#">Dashboard</a><a href="#" class="active">Apply License</a><a href="#">Track Application</a>
+  <a href="#">Download License</a><a href="#">Login</a><a href="#">Register</a><a href="#">Payments</a><a href="#">Profile</a>
+</nav>
+
+<div class="page">
+  <h1>Apply for Trade License</h1>
+  <p class="sub">Fill the form below to submit your trade license application</p>
+
+  <div class="steps">
+    <div class="step active"><div class="circle active">1</div><p>Applicant Detail</p></div>
+    <div class="line"></div>
+    <div class="step"><div class="circle">2</div><p>Business Details</p></div>
+    <div class="line"></div>
+    <div class="step"><div class="circle">3</div><p>Document Upload</p></div>
+    <div class="line"></div>
+    <div class="step"><div class="circle">4</div><p>Payment</p></div>
+  </div>
+
+  <div class="card">
+    <h2>👤 Applicant Details</h2>
+    <div class="grid">
+      <div class="fg"><label>Full Name *</label><input type="text" id="f1" placeholder="Enter full name"><span class="err" id="e1">Required</span></div>
+      <div class="fg"><label>Email Address *</label><input type="email" id="f2" placeholder="Enter email address"><span class="err" id="e2">Required</span></div>
+      <div class="fg"><label>Phone Number *</label><input type="text" id="f3" placeholder="Enter 10-digit mobile number" maxlength="10"><span class="err" id="e3">Enter 10 digits</span></div>
+      <div class="fg"><label>Aadhaar Number *</label><input type="text" id="f4" placeholder="Enter 12-digit Aadhaar number" maxlength="12"><span class="err" id="e4">Enter 12 digits</span></div>
+      <div class="fg"><label>Mother's Name *</label><input type="text" id="f5" placeholder="Enter full name"><span class="err" id="e5">Required</span></div>
+      <div class="fg"><label>Gender *</label><select id="f6"><option value="">Select Gender</option><option>Male</option><option>Female</option><option>Other</option></select><span class="err" id="e6">Required</span></div>
+      <div class="fg"><label>Father's Name *</label><input type="text" id="f7" placeholder="Enter full name"><span class="err" id="e7">Required</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🏢 Business Details</h2>
+    <div class="grid">
+      <div class="fg"><label>Business Name *</label><input type="text" id="f8" placeholder="Enter registered business name"><span class="err" id="e8">Required</span></div>
+      <div class="fg"><label>Business Type *</label><select id="f9"><option>Retail Shop</option><option>Wholesale</option><option>Manufacturer</option><option>Service</option></select></div>
+      <div class="fg full"><label>Shop Address *</label><input type="text" id="f10" placeholder="Enter Shop/Plot No, Street, Landmark"><span class="err" id="e10">Required</span></div>
+      <div class="fg"><label>City *</label><input type="text" id="f11" placeholder="Enter City"><span class="err" id="e11">Required</span></div>
+      <div class="fg"><label>District *</label><input type="text" id="f12" placeholder="Enter District"><span class="err" id="e12">Required</span></div>
+      <div class="fg"><label>State *</label><input type="text" id="f13" placeholder="Enter State"><span class="err" id="e13">Required</span></div>
+      <div class="fg"><label>Pincode *</label><input type="text" id="f14" placeholder="Enter 6-digit Pincode" maxlength="6"><span class="err" id="e14">Enter 6 digits</span></div>
+      <div class="fg"><label>Trade Category</label><input type="text" id="f15" placeholder=""></div>
+      <div class="fg"><label>Shop Area (sq.ft)</label><input type="number" id="f16" placeholder="Enter area"></div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="cancel-btn" onclick="window.history.back()">Cancel</button>
+    <button class="next-btn" onclick="go()">Next →</button>
+  </div>
+
+  <div class="info-row">
+    <div class="info-box"><strong>ℹ️ E-KYC Ready</strong><p>Ensure your Aadhaar is linked with your mobile number for OTP.</p></div>
+    <div class="info-box"><strong>🛡️ Data Privacy</strong><p>All information is processed per the National Data Security Policy.</p></div>
+    <div class="info-box"><strong>🎧 Need Help?</strong><p>Call 1800-GOV-HELP for any assistance with the application form.</p></div>
+  </div>
+</div>
+
+<script src="apply_license.js"></script>
+</body>
+</html>
