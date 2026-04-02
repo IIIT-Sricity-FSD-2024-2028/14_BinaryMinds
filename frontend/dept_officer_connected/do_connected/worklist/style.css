@@ -1,0 +1,64 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { display: flex; font-family: 'Segoe UI', sans-serif; font-size: 14px; background: #f4f6fb; color: #222; height: 100vh; overflow: hidden; }
+ 
+/* Sidebar */
+.sidebar { width: 220px; background: #1a2b5e; color: #fff; display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0; }
+.header { display: flex; align-items: center; gap: 12px; padding: 0 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.header img { width: 36px; height: 36px; object-fit: contain; }
+.header-text { font-size: 11px; opacity: 0.75; display: flex; flex-direction: column; }
+.header-text span { font-size: 18px; font-weight: 700; opacity: 1; color: #fff; }
+nav { margin-top: 16px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.75); text-decoration: none; cursor: pointer; transition: background 0.2s; }
+.nav-item:hover { background: rgba(255,255,255,0.08); }
+.nav-item.active { background: #2d4aa0; color: #fff; border-radius: 0; }
+.nav-icon { font-size: 16px; }
+ 
+/* Main */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 32px; background: #fff; border-bottom: 1px solid #e5e7ef; }
+.logout-btn { background: none; border: none; color: #e53e3e; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+ 
+.content { padding: 32px; overflow-y: auto; }
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+.page-header h1 { font-size: 22px; font-weight: 700; }
+.page-header p { color: #666; font-size: 13px; margin-top: 4px; }
+.export-btn { background: #1a2b5e; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; }
+ 
+/* Filters */
+.filters { display: flex; gap: 8px; margin-bottom: 16px; }
+.filter-btn { border: 1px solid #dde1ec; background: #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; color: #444; }
+.filter-btn.active { background: #1a2b5e; color: #fff; border-color: #1a2b5e; }
+ 
+/* Search */
+.search-bar { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #dde1ec; border-radius: 8px; padding: 10px 16px; margin-bottom: 20px; }
+.search-bar input { border: none; outline: none; width: 100%; font-size: 13px; color: #555; }
+.search-icon { color: #888; }
+ 
+/* Table */
+.table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.table thead tr { background: #f9fafc; }
+.table th { padding: 12px 16px; text-align: left; font-size: 12px; color: #888; font-weight: 600; border-bottom: 1px solid #eef0f6; }
+.table td { padding: 14px 16px; border-bottom: 1px solid #f0f2f8; vertical-align: middle; }
+.table tr:last-child td { border-bottom: none; }
+.table tr.highlighted { border-left: 3px solid #f5a623; }
+.app-id { color: #1a2b5e; font-weight: 600; }
+.app-id.muted { color: #555; font-weight: 500; }
+.company-name { font-weight: 600; color: #222; }
+.company-sub { font-size: 12px; color: #888; margin-top: 2px; }
+ 
+/* Badges */
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+.badge.pending { background: #fff7e6; color: #d97706; }
+.badge.reviewing { background: #e8f0fe; color: #3b6fcf; }
+.badge.awaiting { background: #e8f8f0; color: #2f9e5c; }
+ 
+/* Action Buttons */
+.action-btn { border: none; cursor: pointer; font-size: 13px; font-weight: 600; padding: 8px 18px; border-radius: 6px; }
+.action-btn.primary { background: #1a2b5e; color: #fff; }
+.action-btn.link { background: none; color: #1a2b5e; }
+ 
+/* Pagination */
+.pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; font-size: 13px; color: #666; }
+.page-controls { display: flex; gap: 6px; }
+.page-controls button { border: 1px solid #dde1ec; background: #fff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+ 

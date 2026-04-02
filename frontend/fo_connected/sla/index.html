@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SLA Monitoring</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="top-header">
+    <div class="logo-section">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+        <div>
+            <h4>Government of India</h4>
+            <h2>TradeZo</h2>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="user-info">
+            <span>Welcome</span>
+            <b>Myra</b>
+        </div>
+
+        <div class="header-icons">
+            <img src="../assets/icons/bell.png" class="header-icon">
+            <span class="dot"></span>
+            <img src="../assets/icons/logout.png" class="header-icon" onclick="foLogout()" style="cursor:pointer" title="Logout">
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <ul>
+        <li><img src="../assets/icons/db.png" class="icon"><span>Dashboard</span></li>
+        <li><img src="../assets/icons/verification.png" class="icon"><span>Verification</span></li>
+        <li><img src="../assets/icons/inspection.png" class="icon"><span>Record Inspection</span></li>
+        <li><img src="../assets/icons/verification-history.png" class="icon"><span>Verification History</span></li>
+        <li><img src="../assets/icons/inspection-history.png" class="icon"><span>Inspection History</span></li>
+        <li><img src="../assets/icons/profile.png" class="icon"><span>Profile</span></li>
+    </ul>
+</aside>
+
+<!-- CONTENT -->
+<main class="content">
+
+    <h1>SLA Monitoring</h1>
+    <p class="subtitle">Track and manage inspection SLA deadlines.</p>
+
+    <!-- CARDS -->
+    <div class="sla-cards">
+
+        <div class="sla-card orange">
+            <p>Approaching Deadline</p>
+            <h2>5</h2>
+        </div>
+
+        <div class="sla-card red">
+            <p>Overdue Inspections</p>
+            <h2>1</h2>
+        </div>
+
+        <div class="sla-card purple">
+            <p>Escalated Cases</p>
+            <h2>2</h2>
+        </div>
+
+    </div>
+
+    <!-- WORKFLOW -->
+    <div class="workflow">
+        <h3>Inspection Workflow</h3>
+
+        <div class="steps">
+
+    <div class="step done">
+        <div class="circle">✔</div>
+        <span>Submitted</span>
+    </div>
+
+    <div class="line active"></div>
+
+    <div class="step done">
+        <div class="circle">✔</div>
+        <span>Assigned</span>
+    </div>
+
+    <div class="line active"></div>
+
+    <div class="step current">
+        <div class="circle">⏰</div>
+        <span>Inspection Scheduled</span>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="step">
+        <div class="circle">•</div>
+        <span>Inspection Completed</span>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="step">
+        <div class="circle">•</div>
+        <span>Department Review</span>
+    </div>
+
+</div>
+    </div>
+
+    <!-- LIST -->
+    <div class="sla-list">
+        <h3>SLA Status Overview</h3>
+
+        <div class="sla-item red">
+            <div>
+                <b>TL-2026-001</b><br>
+                Green Valley Restaurant
+            </div>
+            <span class="tag overdue">Overdue</span>
+            <button onclick="window.location.href='../detail/index.html'">View →</button>
+        </div>
+
+        <div class="sla-item orange">
+            <div>
+                <b>TL-2026-005</b><br>
+                Urban Fitness Center
+            </div>
+            <span class="tag critical">Critical</span>
+            <button onclick="window.location.href='../detail/index.html'">View →</button>
+        </div>
+
+        <div class="sla-item yellow">
+            <div>
+                <b>TL-2026-012</b><br>
+                Tech Hub Electronics
+            </div>
+            <span class="tag approaching">Approaching</span>
+            <button onclick="window.location.href='../detail/index.html'">View →</button>
+        </div>
+
+    </div>
+
+</main>
+</div>
+
+<script src="../fo_nav.js"></script>
+</body>
+</html>

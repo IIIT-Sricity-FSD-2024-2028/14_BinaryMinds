@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track Application - TradeZo</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<script src="../session_guard.js"></script>
+</head>
+<body>
+
+  <div class="top-bar">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo"/>
+    <div class="brand">
+      <span>Government of India</span>
+      <strong>TradeZo</strong>
+    </div>
+  </div>
+
+  <nav>
+    <a href="../Applicant dashboard/index.html">Dashboard</a>
+    <a href="../landing page/index.html">Home</a>
+    <a href="../apply_license/apply_license.html">Apply License</a>
+    <a href="index.html" class="active">Track Application</a>
+    <a href="../download/index.html">Download License</a>
+    <a href="#" onclick="handleLogout ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a>
+    
+    <a href="../payments/index.html">Payments</a>
+    <a href="../Profile/index.html">Profile</a>
+  </nav>
+
+  <main>
+    <div class="content">
+
+      <div class="left">
+        <h1>Track Application Status</h1>
+        <p class="sub">Monitor the current status of your trade license application.</p>
+
+        <div class="app-card">
+          <div class="app-info">
+            <div>
+              <small>APPLICATION ID</small>
+              <strong>TL-2023-8842</strong>
+            </div>
+            <div>
+              <small>APPLICATION DATE</small>
+              <strong>08 March 2026</strong>
+            </div>
+            <div>
+              <small>APPLICANT NAME</small>
+              <strong>Jiya Enterprises Private Limited</strong>
+            </div>
+          </div>
+
+          <div class="stepper">
+            <div class="step">
+              <div class="circle"><i class="fa-solid fa-check"></i></div>
+              <span>Submitted</span>
+              <small>08 Mar 2026</small>
+            </div>
+            <div class="line"></div>
+            <div class="step">
+              <div class="circle"><i class="fa-solid fa-check"></i></div>
+              <span>Documents Verified</span>
+              <small>10 Mar 2026</small>
+            </div>
+            <div class="line"></div>
+            <div class="step">
+              <div class="circle"><i class="fa-solid fa-check"></i></div>
+              <span>Inspection Scheduled</span>
+              <small>12 Mar 2026</small>
+            </div>
+            <div class="line"></div>
+            <div class="step">
+              <div class="circle"><i class="fa-solid fa-check"></i></div>
+              <span>Review Done</span>
+              <small>17 Mar 2026</small>
+            </div>
+            <div class="line"></div>
+            <div class="step">
+              <div class="circle"><i class="fa-solid fa-check"></i></div>
+              <span>Approved</span>
+              <small>20 Mar 2026</small>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-left">
+              <p class="detail-title"><i class="fa-solid fa-circle-info"></i> Detailed Status</p>
+              <small>CURRENT STATUS</small>
+              <p class="status-approved">Approved</p>
+              <small>EXPECTED UPDATE</small>
+              <p><strong>License issued successfully</strong></p>
+            </div>
+            <div class="detail-right">
+              <small>OFFICER REMARK</small>
+              <p>Application is approved. License is now available for download.</p>
+              <p class="officer"><i class="fa-solid fa-location-dot"></i> Zonal Officer, West Zone</p>
+            </div>
+          </div>
+
+          <div class="view-btn-row">
+            <button class="btn-view" onclick="window.location.href='../download/index.html'">View License</button>
+          </div>
+        </div>
+
+        <button class="btn-cancel" onclick="window.location.href='../Applicant dashboard/index.html'">← Back to Dashboard</button>
+      </div>
+
+      <div class="right">
+        <div class="notif-card">
+          <div class="notif-header">
+            <h3>Recent Notifications</h3>
+            <span class="badge-num">3</span>
+          </div>
+          <div class="notif-item">
+            <strong>Inspection Completed</strong>
+            <p>The site inspection for TL-2023-8842 has been marked as completed.</p>
+            <small>2 hours ago</small>
+          </div>
+          <div class="notif-item">
+            <strong>Fee Payment Verified</strong>
+            <p>Your application fee payment of ₹2,500 has been verified.</p>
+            <small>1 day ago</small>
+          </div>
+          <div class="notif-item">
+            <strong>Document Verification</strong>
+            <p>Initial document verification has been successful.</p>
+            <small>2 days ago</small>
+          </div>
+          <a href="#" class="view-all" onclick="event.preventDefault(); alert('Loading all notifications...')">View All Notifications</a>
+        </div>
+
+        <div class="assist-card">
+          <i class="fa-solid fa-circle-question fa-2x"></i>
+          <h3>Need Assistance?</h3>
+          <p>Contact support for application queries or report technical issues.</p>
+          <button class="btn-support" onclick="window.location.href='../helpdesk/index.html'">Contact Support</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+<script src="../../../mockdata.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

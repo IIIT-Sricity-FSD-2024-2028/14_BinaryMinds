@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment Success – TradeZo</title>
+  <link rel="stylesheet" href="style.css" />
+<script src="../session_guard.js"></script>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo" />
+    <div class="brand">
+      <span>Government of India</span>
+      <strong>TradeZo</strong>
+    </div>
+  </header>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a href="../Applicant dashboard/index.html">Dashboard</a>
+    <a href="../landing page/index.html">Home</a>
+    <a href="../apply_license/apply_license.html">Apply License</a>
+    <a href="../Track Application Status/index.html">Track Application</a>
+    <a href="../download/index.html">Download License</a>
+    <a href="#" onclick="handleLogout ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a>
+    
+    <a href="../payments/index.html" class="active">Payments</a>
+    <a href="../Profile/index.html">Profile</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    <h1 class="page-title">Payment Successful</h1>
+    <p class="subtitle">Your payment has been completed and application submitted successfully.</p>
+
+    <div class="grid">
+
+      <!-- LEFT CARD -->
+      <div class="card">
+        <div class="check-icon">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="26" cy="26" r="25" stroke="#4CAF50" stroke-width="2" fill="#e8f5e9"/>
+            <polyline points="14,27 22,35 38,18" stroke="#4CAF50" stroke-width="3"
+              stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+
+        <h2>Application Submitted Successfully</h2>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label>APPLICATION ID</label>
+            <span>TL-2023-8842</span>
+          </div>
+          <div class="info-item">
+            <label>TRANSACTION ID</label>
+            <span>TXN-45678231</span>
+          </div>
+          <div class="info-item">
+            <label>AMOUNT PAID</label>
+            <span>₹2,100.00</span>
+          </div>
+          <div class="info-item">
+            <label>SUBMISSION DATE</label>
+            <span>08 March 2026</span>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-primary" id="trackBtn">&#x1F4CB; Track Application</button>
+          <button class="btn-outline" id="downloadBtn">&#x2B07; Download Receipt</button>
+        </div>
+
+        <p class="note">
+          Your application will now proceed for verification. A copy of the receipt
+          has been sent to your registered email address.
+        </p>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="side">
+        <div class="side-card">
+          <h3>&#x2139; Next Steps</h3>
+          <ol>
+            <li>Your submitted documents will be verified by the zonal licensing officer.</li>
+            <li>A physical inspection of the business premises may be scheduled if required.</li>
+            <li>Real-time status updates will be available in your application dashboard.</li>
+          </ol>
+        </div>
+
+        <div class="side-card help-card">
+          <h3>Need Help?</h3>
+          <p>Facing issues with your application tracking or receipt?</p>
+          <a href="../helpdesk/index.html">Contact Support →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CANCEL BUTTON -->
+    <button class="btn-cancel" id="cancelBtn">&#8592; Cancel</button>
+
+  </main>
+
+  <script src="../../../mockdata.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

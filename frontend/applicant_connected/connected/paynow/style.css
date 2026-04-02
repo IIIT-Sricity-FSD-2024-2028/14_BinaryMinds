@@ -1,0 +1,128 @@
+/* RESET */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+body { background: #f0f4f8; color: #333; }
+
+/* ── WHITE TOP BAR ── */
+.topbar {
+  background: white;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.emblem { height: 45px; }
+.gov { font-size: 12px; color: #444; }
+.brand { font-size: 20px; font-weight: bold; color: #1a1a1a; }
+
+/* ── BLUE NAVBAR ── */
+.navbar {
+  background: #1E3A8A;
+  padding: 8px 20px;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.navbar a {
+  color: #c8d4ea;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+.navbar a:hover { color: white; background: rgba(255,255,255,0.15); }
+
+/* ── PAGE ── */
+.page { max-width: 1200px; margin: 24px auto; padding: 0 16px; }
+.title { font-size: 22px; color: #1E3A8A; font-weight: bold; margin-bottom: 18px; }
+
+/* ── STEP PROGRESS BAR ── */
+.steps-bar {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 6px;
+}
+.step { display: flex; align-items: center; gap: 8px; }
+.dot {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: white; flex-shrink: 0;
+}
+.green { background: #22c55e; }
+.blue  { background: #1E3A8A; }
+.grey  { background: #bbb; color: #666; }
+.step-text { display: flex; flex-direction: column; }
+.step-num  { font-size: 10px; color: #999; }
+.step-name { font-size: 12px; font-weight: bold; color: #333; }
+.step-line { flex: 1; height: 2px; background: #ddd; min-width: 20px; }
+
+/* ── TWO COLUMNS ── */
+.columns { display: flex; gap: 18px; }
+.col-left  { flex: 2; display: flex; flex-direction: column; gap: 16px; }
+.col-right { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+
+/* ── CARD ── */
+.card {
+  background: white;
+  border: 1px solid #e0e8f0;
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* ── APPLICATION SUMMARY ── */
+.card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.card-title { font-size: 15px; font-weight: bold; color: #1E3A8A; display: block; margin-bottom: 14px; }
+.ref-no { font-size: 11px; color: #999; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.lbl { font-size: 11px; color: #999; margin-bottom: 2px; }
+.val { font-size: 13px; font-weight: bold; color: #222; }
+.divider { border: none; border-top: 1px solid #eee; margin: 10px 0; }
+.fee-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; padding: 4px 0; }
+.fee-row.total { font-size: 15px; font-weight: bold; color: #1E3A8A; border-top: 1px solid #eee; padding-top: 10px; margin-top: 6px; }
+
+/* ── PAYMENT OPTIONS ── */
+.pay-opt {
+  display: flex; align-items: center; gap: 10px;
+  border: 1px solid #ddd; border-radius: 6px;
+  padding: 12px 14px; margin: 8px 0;
+  font-size: 14px; cursor: pointer; color: #333;
+}
+.pay-opt.active { border-color: #1E3A8A; background: #eff6ff; }
+.pay-opt input[type="radio"] { accent-color: #1E3A8A; width: 16px; height: 16px; }
+.pay-btn {
+  width: 100%; background: #1E3A8A; color: white;
+  font-size: 15px; padding: 13px;
+  border: none; border-radius: 6px; cursor: pointer; margin-top: 10px;
+}
+.pay-btn:hover { background: #163070; }
+.small-note { font-size: 11px; color: #aaa; text-align: center; margin-top: 8px; }
+
+/* ── PAYMENT ASSISTANCE ── */
+.assist-item { display: flex; gap: 12px; margin-top: 14px; align-items: flex-start; }
+.assist-icon { font-size: 18px; margin-top: 2px; }
+.assist-head { font-size: 13px; font-weight: bold; color: #1E3A8A; margin-bottom: 3px; }
+.assist-body { font-size: 12px; color: #666; line-height: 1.5; }
+
+/* ── NEED HELP CARD ── */
+.help-card { position: relative; min-height: 140px; }
+.need-help-title { font-size: 11px; font-weight: bold; color: #999; margin-bottom: 10px; letter-spacing: 0.5px; }
+.help-link { display: block; font-size: 13px; color: #1E3A8A; text-decoration: none; margin-bottom: 8px; }
+.help-link:hover { text-decoration: underline; }
+
+/* Phone illustration (mimics the figma graphic) */
+.phone-illustration {
+  position: absolute; bottom: 10px; right: 14px;
+  width: 80px; height: 80px;
+  background: linear-gradient(135deg, #e0eaff, #c7d7ff);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+  box-shadow: 0 2px 8px rgba(30,58,138,0.15);
+}

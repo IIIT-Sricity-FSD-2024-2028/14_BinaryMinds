@@ -1,0 +1,119 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:sans-serif;
+  }
+  
+  body{
+    background:#f4f6fb;
+  }
+  
+  /* ===== TOP HEADER ===== */
+  .top-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#fff;
+    padding:10px 20px;
+    border-bottom:1px solid #ddd;
+  }
+  
+  .header{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  
+  .header img{
+    width:40px;   /* BLACK emblem (no filter) */
+  }
+  
+  .header-text{
+    font-size:12px;
+    color:#333;
+  }
+  
+  .header-text span{
+    display:block;
+    font-size:18px;
+    font-weight:bold;
+  }
+  
+  /* ===== LAYOUT ===== */
+  .container{
+    display:flex;
+    height:calc(100vh - 60px);
+  }
+  
+  /* ===== SIDEBAR ===== */
+  .sidebar{
+    width:220px;
+    background:#102a72;
+    color:#fff;
+    padding-top:20px;
+  }
+  
+  .nav-item{
+    padding:12px 20px;
+    cursor:pointer;
+  }
+  
+  .nav-item.active,
+  .nav-item:hover{
+    background:#2d4aa0;
+  }
+  
+  /* ===== MAIN ===== */
+  .main{
+    flex:1;
+    padding:20px;
+  }
+  
+  /* Top section */
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:20px;
+  }
+  
+  .logout-btn{
+    border:none;
+    color:red;
+    background:none;
+    cursor:pointer;
+  }
+  
+  /* ===== CARDS ===== */
+  .cards{
+    display:flex;
+    gap:15px;
+    margin-bottom:20px;
+  }
+  
+  .card{
+    flex:1;
+    background:#fff;
+    padding:15px;
+    border-radius:8px;
+  }
+  
+  /* ===== CHART ===== */
+  .chart-box{
+    background:#fff;
+    padding:15px;
+    border-radius:8px;
+    margin-bottom:20px;
+  }
+  
+  /* ===== ACTIVITY ===== */
+  .activity{
+    background:#fff;
+    padding:15px;
+    border-radius:8px;
+  }
+  
+  .activity-item{
+    padding:10px 0;
+    border-bottom:1px solid #eee;
+  }

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment Failed – TradeZo</title>
+  <link rel="stylesheet" href="style.css" />
+<script src="../session_guard.js"></script>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo" />
+    <div class="brand">
+      <span>Government of India</span>
+      <strong>TradeZo</strong>
+    </div>
+  </header>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a href="../Applicant dashboard/index.html">Dashboard</a>
+    <a href="../landing page/index.html">Home</a>
+    <a href="../apply_license/apply_license.html" class="active">Apply License</a>
+    <a href="../Track Application Status/index.html">Track Application</a>
+    <a href="../download/index.html">Download License</a>
+    <a href="#" onclick="handleLogout ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a>
+    
+    <a href="../payments/index.html">Payments</a>
+    <a href="../Profile/index.html">Profile</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    <h1>Payment Failed</h1>
+    <p class="subtitle">Your payment could not be completed. Please try again.</p>
+
+    <div class="grid">
+
+      <!-- LEFT CARD -->
+      <div class="card">
+        <div class="error-icon">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="26" cy="26" r="25" fill="#ffe5e5" stroke="#e53935" stroke-width="2"/>
+            <text x="26" y="34" text-anchor="middle" font-size="24" fill="#e53935">!</text>
+          </svg>
+        </div>
+
+        <h2>Transaction Failed</h2>
+        <p class="desc">Your payment was unsuccessful due to a transaction error.<br>
+          This could be due to connectivity issues or bank decline.</p>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label>APPLICATION ID</label>
+            <span>TL-2023-8842</span>
+          </div>
+          <div class="info-item">
+            <label>TRANSACTION ID</label>
+            <span>TXN-45678255</span>
+          </div>
+          <div class="info-item">
+            <label>AMOUNT</label>
+            <span class="red">₹2,100.00</span>
+          </div>
+          <div class="info-item">
+            <label>DATE & TIME</label>
+            <span>20 March 2026, 02:45 PM</span>
+          </div>
+        </div>
+
+        <!-- REASON BOX -->
+        <div class="reason-box">
+          <span class="reason-title">⊘ Reason for Failure</span>
+          <p>Payment timeout / Bank declined transaction. Please ensure your card has international
+            transactions enabled or try a different method.</p>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-primary" id="retryBtn">&#x21BB; Retry Payment</button>
+          <button class="btn-outline" id="historyBtn">&#x1F4C5; Back to Payment History</button>
+        </div>
+
+        <p class="note">
+          &#x26D4; No amount has been deducted. If amount was deducted from your bank account,
+          it will be refunded automatically within 5-7 working days.
+        </p>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="side">
+        <div class="side-card">
+          <h3>&#128161; What You Can Do Next</h3>
+          <ol>
+            <li><strong>Retry payment</strong><br>Wait for 5 minutes and try paying again.</li>
+            <li><strong>Check bank balance</strong><br>Ensure you have sufficient funds in your account.</li>
+            <li><strong>Use another method</strong><br>Try UPI, Net Banking or a different Debit/Credit Card.</li>
+          </ol>
+        </div>
+
+        <div class="side-card help-card">
+          <h3>&#x2753; Need Help?</h3>
+          <p>If you are facing repeated payment failures, please reach out to our support team.</p>
+          <div class="contact-box">
+            <span>&#128222;</span>
+            <div>
+              <small>TOLL FREE</small>
+              <strong>1800-123-4567</strong>
+            </div>
+          </div>
+          <div class="contact-box">
+            <span>&#9993;</span>
+            <div>
+              <small>EMAIL SUPPORT</small>
+              <strong>support.tlms@gov.in</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div style="margin-top: 30px;">
+      <button class="btn-cancel">← Cancel</button>
+    </div>
+  </main>
+
+  <script src="../../../mockdata.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

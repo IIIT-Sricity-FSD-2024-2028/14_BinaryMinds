@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Review Application – TradeZo</title>
+  <link rel="stylesheet" href="application_review.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<!-- TOP WHITE BAR -->
+<div class="top-bar">
+ <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+  <div class="brand-text">
+    <span class="brand-gov">Government of India</span>
+    <span class="brand-name">TradeZo</span>
+  </div>
+</div>
+
+<!-- BLUE NAVBAR BELOW -->
+<nav class="navbar">
+  <div class="nav-links">
+    <a href="../../Applicant dashboard/index.html">Dashboard</a>
+    <a href="../../landing page/index.html">Home</a>
+    <a href="../../apply_license/apply_license.html" class="active">Apply License</a>
+    <a href="../../Track Application Status/index.html">Track Application</a>
+    <a href="../../download/index.html">Download License</a>
+    <a href="../../login/index.html">Login</a>
+    <a href="../../Register/index.html">Register</a>
+    <a href="../../payments/index.html">Payments</a>
+    <a href="../../Profile/index.html">Profile</a>
+  </div>
+</nav>
+<!-- PAGE -->
+<div class="page">
+
+  <h1>Review Your Application</h1>
+  <p class="subtitle">Please review all information before final submission.</p>
+
+  <!-- CARD 1: Applicant Details -->
+  <div class="card">
+    <div class="card-top">
+      <h2>Applicant Details</h2>
+      <button class="edit-btn">✏ Edit</button>
+    </div>
+    <div class="grid">
+      <div class="field"><label>Full Name</label><p>Jiya Mugale</p></div>
+      <div class="field"><label>Email Address</label><p>jiya@email.com</p></div>
+      <div class="field"><label>Father's Name</label><p>Prashant Mugale</p></div>
+      <div class="field"><label>Gender</label><p>Female</p></div>
+      <div class="field"><label>Mother's Name</label><p>Surekha Mugale</p></div>
+      <div class="field"><label>Aadhaar Number</label><p>XXXX-XXXX-4582</p></div>
+      <div class="field"><label>Date of Birth</label><p>17/09/2006</p></div>
+      <div class="field"><label>Phone Number</label><p>+91 8483916284</p></div>
+    </div>
+  </div>
+
+  <!-- CARD 2: Business Details -->
+  <div class="card">
+    <div class="card-top">
+      <h2>Business Details</h2>
+      <button class="edit-btn">✏ Edit</button>
+    </div>
+    <div class="grid">
+      <div class="field"><label>Business Name</label><p>Greenwood Organics Pvt Ltd</p></div>
+      <div class="field"><label>District</label><p>Bangalore Urban</p></div>
+      <div class="field"><label>Business Type</label><p>Retailer / Wholesale</p></div>
+      <div class="field"><label>State</label><p>Karnataka</p></div>
+      <div class="field"><label>Trade Category</label><p>General Trading (Non-Hazardous)</p></div>
+      <div class="field"><label>Pincode</label><p>560001</p></div>
+      <div class="field"><label>Shop Address</label><p>Flat 402, Sunshine Plaza, MG Road</p></div>
+      <div class="field"><label>Shop Area</label><p>450 Sq. Ft.</p></div>
+      <div class="field"><label>City</label><p>Bangalore</p></div>
+    </div>
+  </div>
+
+  <!-- CARD 3: Uploaded Documents -->
+  <div class="card">
+    <div class="card-top">
+      <h2>Uploaded Documents</h2>
+      <div>
+        <input type="file" id="replaceFile" style="display:none" onchange="replaceDoc()">
+        <button class="edit-btn" onclick="document.getElementById('replaceFile').click()">↺ Replace Document</button>
+      </div>
+    </div>
+    <div class="doc-item"><span class="tick">✔</span> Aadhaar Card — Uploaded</div>
+    <div class="doc-item"><span class="tick">✔</span> Business Affidavit — Uploaded</div>
+    <div class="doc-item"><span class="tick">✔</span> Passport Photo — Uploaded</div>
+  </div>
+
+  <!-- DECLARATION -->
+  <div class="card">
+    <div class="declaration">
+      <input type="checkbox" id="agree">
+      <label for="agree">I hereby declare that all information provided is true and correct.</label>
+    </div>
+    <span class="error" id="declError">Please accept the declaration before submitting.</span>
+    <p class="note">By clicking Submit, you agree to our Terms and Conditions.</p>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="buttons">
+    <button class="cancel-btn" onclick="window.history.back()">← Previous</button>
+    <button class="submit-btn" onclick="submitForm()">Submit Application</button>
+  </div>
+
+  <!-- SUCCESS MESSAGE -->
+  <div class="success" id="successMsg">✅ Application submitted successfully! Reference No: <strong id="refNo"></strong></div>
+
+</div>
+
+<script src="application_review.js"></script>
+</body>
+</html>

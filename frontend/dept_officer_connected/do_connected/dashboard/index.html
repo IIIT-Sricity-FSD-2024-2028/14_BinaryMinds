@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../mockdata.js"></script>
+<script src="../session_guard.js"></script>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<!-- ===== TOP HEADER ===== -->
+<div class="top-header">
+  <div class="header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo">
+    <div class="header-text">
+      Government of India
+      <span>TradeZo</span>
+    </div>
+  </div>
+
+  <button class="logout-btn">Logout</button>
+</div>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="container">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="nav-item active">Dashboard</div>
+    <div class="nav-item">Worklist</div>
+    <div class="nav-item">Final Authorization</div>
+    <div class="nav-item">Reports</div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main">
+
+    <!-- Title -->
+    <div class="topbar">
+      <h2>Department Officer Dashboard</h2>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards">
+      <div class="card">
+        <p>Pending Applications</p>
+        <h2>1,284</h2>
+      </div>
+
+      <div class="card">
+        <p>Licenses Issued</p>
+        <h2>45,920</h2>
+      </div>
+
+      <div class="card">
+        <p>SLA Compliance</p>
+        <h2>132 / 142</h2>
+      </div>
+    </div>
+
+    <div style="margin:16px 0"><button onclick="doNav('worklist')" style="background:#0d1b4b;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">☰ Open Worklist →</button>
+<button onclick="doNav('compliance')" style="background:#fff;color:#0d1b4b;border:1.5px solid #0d1b4b;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-left:12px;">📈 Compliance Reports →</button></div>
+<!-- Chart -->
+    <div class="chart-box">
+      <h3>Weekly Application Volume</h3>
+      <canvas id="chart"></canvas>
+    </div>
+
+    <!-- Activity -->
+    <div class="activity">
+      <h3>Recent Activity</h3>
+      <div class="activity-item" onclick="doNav('worklist')" style="cursor:pointer">✔ License approved → <span style="color:#0d1b4b;font-weight:600">View Worklist</span></div>
+      <div class="activity-item">⚠ Clarification requested</div>
+      <div class="activity-item" onclick="doNav('worklist')" style="cursor:pointer">📦 New batch assigned → <span style="color:#0d1b4b;font-weight:600">View Worklist</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== JS ===== -->
+<script src="script.js"></script>
+
+<script src="../do_nav.js"></script>
+
+<script>
+function doLogout() {
+  if (confirm("Are you sure you want to logout?")) {
+    sessionStorage.clear();
+    window.location.href = "../../../applicant_connected/connected/login/index.html";
+  }
+}
+function doNav(p) {
+  var pages = {
+    dashboard:"../dashboard/index.html", worklist:"../worklist/index.html",
+    review:"../review/index.html", authorization:"../authorization/index.html",
+    compliance:"../compliance/index.html"
+  };
+  if (pages[p]) window.location.href = pages[p];
+}
+</script>
+</body>
+</html>

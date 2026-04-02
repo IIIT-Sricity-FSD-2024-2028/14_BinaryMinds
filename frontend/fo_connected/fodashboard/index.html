@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="../../mockdata.js"></script>
+<script src="../session_guard.js"></script>
+    <meta charset="UTF-8">
+    <title>Field Officer Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 🔷 Top Header -->
+<header class="top-header">
+    <div class="logo-section">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+        <div>
+            <h4>Government of India</h4>
+            <h2>TradeZo</h2>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="user-info">
+            <span>Welcome</span>
+            <b>Myra</b>
+        </div>
+
+        <div class="header-icons">
+            <img src="../assets/icons/bell.png" class="header-icon">
+            <span class="dot"></span>
+
+            <img src="../assets/icons/logout.png" class="header-icon" onclick="foLogout()" style="cursor:pointer" title="Logout">
+        </div>
+    </div>
+</header>
+
+<!-- 🔷 Main Layout -->
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul>
+            <li class="active">
+                <img src="../assets/icons/db1.png" class="icon">
+                Dashboard
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification.png" class="icon">
+                Verification
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection.png" class="icon">
+                Record Inspection
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification-history.png" class="icon">
+                Verification History
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection-history.png" class="icon">
+                Inspection History
+            </li>
+
+            <li>
+                <img src="../assets/icons/profile.png" class="icon">
+                Profile
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+
+        <h1>Dashboard</h1>
+        <p class="subtitle">Welcome back! Here's your inspection overview.</p>
+
+        <!-- Stats Cards -->
+        <div class="cards">
+
+            <div class="card blue">
+                <div class="card-top">
+                    <p>Applications Submitted</p>
+                    <img src="../assets/icons/applications.png" class="card-icon">
+                </div>
+                <h2>24</h2>
+            </div>
+
+            <div class="card orange">
+                <div class="card-top">
+                    <p>Pending Inspections</p>
+                    <img src="../assets/icons/pending.png" class="card-icon">
+                </div>
+                <h2>12</h2>
+            </div>
+
+            <div class="card green">
+                <div class="card-top">
+                    <p>Completed Today</p>
+                    <img src="../assets/icons/completed.png" class="card-icon">
+                </div>
+                <h2>8</h2>
+            </div>
+
+            <div class="card red">
+                <div class="card-top">
+                    <p>SLA Alerts</p>
+                    <img src="../assets/icons/alerts.png" class="card-icon">
+                </div>
+                <h2>2</h2>
+            </div>
+
+        </div>
+
+        <!-- SLA Alert -->
+       <div class="sla">
+    <div class="sla-text">
+        <div class="sla-top">
+            <img src="../assets/icons/AlertTriangle.png" class="sla-icon">
+            <b>SLA Alert</b>
+        </div>
+        <p>2 inspections approaching SLA deadline</p>
+    </div>
+
+    <button onclick="foNav('sla')">View Urgent Cases</button>
+</div>
+        <!-- Search -->
+        <div class="search-box">
+            <img src="../assets/icons/search.png" class="search-icon">
+            <input type="text" id="search" placeholder="Search by Application ID, Business Name, or Location">
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="bottom-section">
+
+            <!-- Table -->
+            <div class="table-section">
+                <h3>Today's Assigned Inspections</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Application ID</th>
+                            <th>Business Name</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- JS will fill -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Illustration -->
+            <div class="illustration">
+                <img src="../assets/icons/dashboard-illustration.png">
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<script src="db.js"></script>
+<script src="../fo_nav.js"></script>
+</body>
+</html>

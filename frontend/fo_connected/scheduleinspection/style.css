@@ -1,0 +1,207 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f6fa;
+}
+
+/* Header */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 12px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-section img {
+    width: 40px;
+}
+
+.logo-section div {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-section h4 {
+    margin: 0;
+    font-size: 13px;
+    color: #555;
+}
+
+.logo-section h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-info {
+    text-align: right;
+    font-size: 14px;
+}
+
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+.header-icon {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+}
+
+/* notification dot */
+.dot {
+    width: 8px;
+    height: 8px;
+    background: red;
+    border-radius: 50%;
+    position: absolute;
+    top: -2px;
+    left: 18px;
+}
+
+/* Layout */
+.container {
+    display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    background: #f8f9fc;
+    height: 100vh;
+    padding-top: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    margin: 6px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #555;
+    transition: 0.3s;
+}
+
+.sidebar .icon {
+    width: 18px;
+    height: 18px;
+}
+
+.sidebar li.active {
+    background: linear-gradient(to right, #2f5bea, #4a90e2);
+    color: white;
+}
+
+.sidebar li.active img {
+    filter: brightness(0) invert(1);
+}
+
+.sidebar li:hover {
+    background: #eef2ff;
+}
+
+/* Content */
+.content {
+    flex: 1;
+    padding: 30px;
+}
+
+h1 {
+  font-size: 26px;
+}
+
+.subtitle {
+  color: gray;
+  margin-bottom: 20px;
+}
+
+/* SUCCESS BOX */
+.success-box {
+  background: #e6f9ec;
+  border-left: 5px solid green;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+/* CARD */
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+/* DETAILS */
+.details-grid {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* NOTE */
+.note-box {
+  background: #eef2ff;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+/* FORM */
+.form-grid {
+  display: flex;
+  gap: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+/* ACTIONS */
+.actions {
+  display: flex;
+  gap: 15px;
+}
+
+.cancel {
+  padding: 10px 20px;
+  border: none;
+  background: #ddd;
+  border-radius: 8px;
+}
+
+.submit {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: #2f5bea;
+  color: white;
+  border-radius: 10px;
+}

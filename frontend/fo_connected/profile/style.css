@@ -1,0 +1,235 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f6fa;
+}
+
+/* Header */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 12px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-section img {
+    width: 40px;
+}
+
+.logo-section div {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-section h4 {
+    margin: 0;
+    font-size: 13px;
+    color: #555;
+}
+
+.logo-section h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-info {
+    text-align: right;
+    font-size: 14px;
+}
+
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+.header-icon {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+}
+
+/* notification dot */
+.dot {
+    width: 8px;
+    height: 8px;
+    background: red;
+    border-radius: 50%;
+    position: absolute;
+    top: -2px;
+    left: 18px;
+}
+
+/* Layout */
+.container {
+    display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    background: #f8f9fc;
+    height: 100vh;
+    padding-top: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    margin: 6px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #555;
+    transition: 0.3s;
+}
+
+.sidebar .icon {
+    width: 18px;
+    height: 18px;
+}
+
+.sidebar li.active {
+    background: linear-gradient(to right, #2f5bea, #4a90e2);
+    color: white;
+}
+
+.sidebar li.active img {
+    filter: brightness(0) invert(1);
+}
+
+.sidebar li:hover {
+    background: #eef2ff;
+}
+
+/* Content */
+.content {
+    flex: 1;
+    padding: 30px;
+}
+
+
+/* Profile Layout */
+.profile-container {
+    display: flex;
+    gap: 25px;
+}
+
+/* Profile Card */
+.profile-card {
+    width: 500px;
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.avatar {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(to right,#2f5bea,#4a90e2);
+    border-radius: 50%;
+    color: white;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+.role {
+    background: #e0e7ff;
+    color: #2f5bea;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+.edit-btn {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    background: #2f5bea;
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Right */
+.right-section {
+    flex: 1;
+}
+
+/* Stats */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 22px;
+}
+
+.stat-card {
+    background: white;
+    padding: 18px;
+    border-radius: 16px;
+    position: relative;width: 300px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+
+.stat-img {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    width: 30px;
+}
+
+/* Colors */
+.blue { border-top: 4px solid #2f5bea; }
+.green { border-top: 4px solid green; }
+.orange { border-top: 4px solid orange; }
+.purple { border-top: 4px solid purple; }
+
+/* Activity */
+.activity {
+    background: white;
+    margin-top: 20px;
+    padding: 22px;
+    border-radius: 16px;
+}
+
+.activity-item {
+    padding: 10px;
+    background: #f9fafb;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* Performance */
+.performance {
+    margin-top: 20px;
+    padding: 18px;
+    background: linear-gradient(to right,#2f5bea,#4a90e2);
+    color: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(47,91,234,0.3);
+}

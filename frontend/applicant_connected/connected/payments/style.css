@@ -1,0 +1,305 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #eef1f5;
+  color: #1f2937;
+}
+
+/* HEADER */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.top-bar img {
+  width:42px;
+  height: 40px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;   /* 🔥 THIS FIXES IT */
+  justify-content: center;
+}
+
+.brand span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.brand strong {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a3a8f;
+  line-height: 1.2;
+}
+
+/* NAV */
+nav {
+  background: #1a3a8f;
+  display: flex;
+  padding: 0 16px;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 16px;
+  font-size: 13px;
+}
+
+nav a:hover,
+nav a.active {
+  background: #0f2660;
+}
+
+/* MAIN */
+main {
+  max-width: 1200px;   /* 🔥 FIXED WIDTH */
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.sub {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+/* SUMMARY CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 26px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.card i {
+  font-size: 28px;
+  color: #1a3a8f;
+}
+
+.card small {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.card h2 {
+  font-size: 22px;
+}
+
+/* BOTTOM LAYOUT */
+.bottom {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* LEFT PANEL */
+.left-panel {
+  background: #fff;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+h3 {
+  font-size: 16px;
+  margin-bottom: 14px;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  text-align: left;
+  color: #9ca3af;
+  font-size: 11px;
+  padding: 10px 6px;
+  border-bottom: 1px solid #eee;
+}
+
+td {
+  padding: 12px 6px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+td a {
+  color: #1a3a8f;
+  font-weight: 500;
+}
+
+/* BADGES */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge.success {
+  background: #e6f9ee;
+  color: #1a7a3f;
+}
+
+.badge.failed {
+  background: #fde8e8;
+  color: #c0392b;
+}
+
+/* TIMELINE */
+.timeline {
+  list-style: none;
+  margin-top: 10px;
+}
+
+.timeline li {
+  padding: 10px 0 10px 20px;
+  border-left: 2px solid #1a3a8f;
+  position: relative;
+  font-size: 13px;
+}
+
+.timeline li::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background: #1a3a8f;
+  border-radius: 50%;
+  position: absolute;
+  left: -6px;
+  top: 12px;
+}
+
+.timeline span {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* SUMMARY CARD */
+.summary-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.summary-list {
+  list-style: none;
+  margin-bottom: 18px;
+}
+
+.summary-list li {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+/* PRINT BUTTON */
+.btn-print {
+  width: 100%;
+  background: #1a3a8f;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-print:hover {
+  background: #0f2660;
+}
+
+/* ASSIST BOX */
+.assist-box {
+  background: #e0e7ff;   /* 🔥 brighter */
+  border: 1px solid #c7d2fe;
+  border-radius: 12px;
+  padding: 18px;
+  font-size: 13px;
+}
+
+.assist-box h3 {
+  color: #1a3a8f;
+  margin-top: 6px;
+}
+
+/* RECEIPTS */
+.receipts-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.dot.green {
+  background: #1a7a3f;
+}
+
+/* CANCEL */
+.btn-cancel {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Field Officer Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+<script src="../session_guard.js"></script>
+</head>
+<body>
+
+<!-- 🔷 Top Header -->
+<header class="top-header">
+    <div class="logo-section">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+        <div>
+            <h4>Government of India</h4>
+            <h2>TradeZo</h2>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="user-info">
+            <span>Welcome</span>
+            <b>Myra</b>
+        </div>
+
+        <div class="header-icons">
+            <img src="../assets/icons/bell.png" class="header-icon">
+            <span class="dot"></span>
+
+            <img src="../assets/icons/logout.png" class="header-icon" onclick="foLogout()" style="cursor:pointer" title="Logout">
+        </div>
+    </div>
+</header>
+
+<!-- 🔷 Main Layout -->
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul>
+            <li>
+                <img src="../assets/icons/db.png" class="icon">
+                Dashboard
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification.png" class="icon">
+                Verification
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection.png" class="icon">
+                Record Inspection
+            </li>
+
+            <li class="active">
+                <img src="../assets/icons/verification-history.png" class="icon">
+                Verification History
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection-history.png" class="icon">
+                Inspection History
+            </li>
+
+            <li>
+                <img src="../assets/icons/profile.png" class="icon">
+                Profile
+            </li>
+        </ul>
+    </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <div class="main-top">
+      <div>
+        <h1>Verification History</h1>
+        <p class="sub">Review rejected applications and reasons</p>
+      </div>
+      <div class="red-badge" id="rejectedCount">0 Rejected</div>
+    </div>
+
+    <!-- CARDS LIST -->
+    <div id="cardsList"></div>
+
+  </div>
+</div>
+
+<script src="../../mockdata.js"></script>
+<script src="script.js"></script>
+<script src="../fo_nav.js"></script>
+</body>
+</html>

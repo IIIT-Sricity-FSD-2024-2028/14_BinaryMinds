@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="../mockdata.js"></script>
+<script src="session_guard.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TradeZo - Super User Panel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+ 
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <!-- Government of India Emblem -->
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+      <div>
+        <div class="logo-gov">Government of India</div>
+        <div class="logo-title">TradeZo</div>
+        <div class="logo-sub">Licensing System</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-link active" onclick="showPage('dashboard', this)">
+        <span class="nav-icon">&#9783;</span> Dashboard
+      </a>
+      <a href="#" class="nav-link" onclick="showPage('user-management', this)">
+        <span class="nav-icon">&#9786;</span> User Management
+      </a>
+      <a href="#" class="nav-link" onclick="showPage('applications', this)">
+        <span class="nav-icon">&#9998;</span> Applications Overview
+      </a>
+      <a href="#" class="nav-link" onclick="showPage('licenses', this)">
+        <span class="nav-icon">&#9733;</span> License Management
+      </a>
+      <a href="#" class="nav-link" onclick="showPage('settings', this)">
+        <span class="nav-icon">&#9881;</span> System Settings
+      </a>
+      <a href="#" class="nav-link" onclick="showPage('audit', this)">
+        <span class="nav-icon">&#9776;</span> Audit Logs
+      </a>
+    </nav>
+    <div class="sidebar-footer">&#169; 2026 Government of India</div>
+  </aside>
+ 
+  <!-- ===== MAIN WRAPPER ===== -->
+  <div class="main-wrapper">
+ 
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <!-- Government of India Emblem -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+        <div>
+          <div class="gov-title">Government of India</div>
+          <div class="gov-sub">Ministry of Commerce &amp; Industry</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="bell-wrap">
+          <span class="bell-icon">&#128276;</span>
+          <span class="bell-dot"></span>
+        </div>
+        <div class="user-info">
+          <div class="user-avatar">SU</div>
+          <div>
+            <div class="user-name">Admin User</div>
+            <div class="user-email">admin@tradezo.gov.in</div>
+          </div>
+        </div>
+        <button class="btn-signout" onclick="signOut()">&#10148; Sign Out</button>
+      </div>
+    </div>
+ 
+    <!-- ==================== PAGE: DASHBOARD ==================== -->
+    <div id="page-dashboard" class="page active">
+      <div class="content">
+        <div class="page-heading">Dashboard Overview</div>
+        <div class="page-sub">Welcome to TradeZo Licensing Management System</div>
+ 
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-left">
+              <div class="stat-label">Total Users</div>
+              <div class="stat-value">12,458</div>
+              <div class="stat-change green">&#8593; +12% from last month</div>
+            </div>
+            <div class="stat-icon">&#128100;</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-left">
+              <div class="stat-label">Pending Applications</div>
+              <div class="stat-value">234</div>
+              <div class="stat-change red">&#8595; -8% from last week</div>
+            </div>
+            <div class="stat-icon">&#128203;</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-left">
+              <div class="stat-label">Issued Licenses</div>
+              <div class="stat-value">8,967</div>
+              <div class="stat-change green">&#8593; +5% from last month</div>
+            </div>
+            <div class="stat-icon">&#127981;</div>
+          </div>
+ 
+        </div>
+ 
+        <div class="card">
+          <div class="card-title">Recent Activity</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Action</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody id="activity-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ==================== PAGE: USER MANAGEMENT ==================== -->
+    <div id="page-user-management" class="page">
+      <div class="content">
+        <div class="page-top-bar">
+          <div>
+            <div class="page-heading">User Management</div>
+            <div class="page-sub">Manage system users, officers, and applicants</div>
+          </div>
+          <button class="btn-primary" onclick="openAddModal()">+ Add New Officer</button>
+        </div>
+ 
+        <div class="card">
+          <div class="um-filter-bar">
+            <div class="um-stats">
+              <span>Total Users: <strong id="total-users">0</strong></span>
+              <span class="green">Active: <strong id="active-users">0</strong></span>
+              <span class="blue">Officers: <strong id="officer-count">0</strong></span>
+            </div>
+            <input type="text" class="search-input" placeholder="Search by name, email, ID, or role..." oninput="searchUsers(this.value)" />
+          </div>
+ 
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+          <div class="pagination" id="users-pagination"></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ==================== PAGE: APPLICATIONS OVERVIEW ==================== -->
+    <div id="page-applications" class="page">
+      <div class="content">
+        <div class="page-heading">Applications Overview</div>
+        <div class="page-sub">Monitor and manage all trade license applications</div>
+ 
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-left">
+              <div class="stat-label">Total Applications</div>
+              <div class="stat-value" id="app-total">0</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-left">
+              <div class="stat-label">Pending Review</div>
+              <div class="stat-value orange" id="app-pending">0</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-left">
+              <div class="stat-label">Approved</div>
+              <div class="stat-value green" id="app-approved">0</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-left">
+              <div class="stat-label">Rejected</div>
+              <div class="stat-value red" id="app-rejected">0</div>
+            </div>
+          </div>
+        </div>
+ 
+        <div class="card">
+          <div class="filter-bar">
+            <input type="text" class="search-input" placeholder="Search by applicant, ID, business name..." oninput="filterApplications()" id="app-search" />
+            <select class="filter-select" id="app-status-filter" onchange="filterApplications()">
+              <option value="">All Status</option>
+              <option value="Pending">Pending</option>
+              <option value="Under Review">Under Review</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+            <select class="filter-select" id="app-category-filter" onchange="filterApplications()">
+              <option value="">All Categories</option>
+              <option value="Retail">Retail</option>
+              <option value="Wholesale">Wholesale</option>
+              <option value="Manufacturing">Manufacturing</option>
+              <option value="Food & Beverages">Food &amp; Beverages</option>
+              <option value="Healthcare">Healthcare</option>
+            </select>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Application ID</th>
+                <th>Applicant Name</th>
+                <th>Business Name</th>
+                <th>Trade Category</th>
+                <th>Submitted Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="apps-tbody"></tbody>
+          </table>
+          <div class="pagination" id="apps-pagination"></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ==================== PAGE: LICENSE MANAGEMENT ==================== -->
+    <div id="page-licenses" class="page">
+      <div class="content">
+        <div class="page-heading">License Management</div>
+        <div class="page-sub">View, manage and revoke issued trade licenses</div>
+ 
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-left"><div class="stat-label">Total Issued</div><div class="stat-value" id="lic-total">0</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-left"><div class="stat-label">Active</div><div class="stat-value green" id="lic-active">0</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-left"><div class="stat-label">Expiring Soon</div><div class="stat-value orange" id="lic-expiring">0</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-left"><div class="stat-label">Revoked</div><div class="stat-value red" id="lic-revoked">0</div></div>
+          </div>
+        </div>
+ 
+        <div class="card">
+          <div class="filter-bar">
+            <input type="text" class="search-input" placeholder="Search by business name, owner, license ID..." oninput="filterLicenses()" id="lic-search" />
+            <select class="filter-select" id="lic-status-filter" onchange="filterLicenses()">
+              <option value="">All Status</option>
+              <option value="Active">Active</option>
+              <option value="Expired">Expired</option>
+              <option value="Expiring Soon">Expiring Soon</option>
+              <option value="Revoked">Revoked</option>
+            </select>
+            <select class="filter-select" id="lic-category-filter" onchange="filterLicenses()">
+              <option value="">All Categories</option>
+              <option value="Retail">Retail</option>
+              <option value="Wholesale">Wholesale</option>
+              <option value="Manufacturing">Manufacturing</option>
+              <option value="Food & Beverages">Food &amp; Beverages</option>
+              <option value="Healthcare">Healthcare</option>
+            </select>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>License ID</th>
+                <th>Business Name</th>
+                <th>Owner Name</th>
+                <th>Trade Category</th>
+                <th>Issue Date</th>
+                <th>Expiry Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="licenses-tbody"></tbody>
+          </table>
+          <div class="pagination" id="licenses-pagination"></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ==================== PAGE: SYSTEM SETTINGS ==================== -->
+    <div id="page-settings" class="page">
+      <div class="content">
+        <div class="page-heading">System Settings</div>
+        <div class="page-sub">Configure system parameters and application settings</div>
+ 
+        <div class="alert-banner blue-banner">
+          <strong>Important:</strong> Changes made to system settings will affect all users and applications. Please review carefully before saving.
+        </div>
+ 
+        <!-- Trade Category Management -->
+        <div class="card">
+          <div class="card-top-bar">
+            <div>
+              <div class="card-title">Trade Category Management</div>
+              <div class="card-sub">Manage trade categories for license applications</div>
+            </div>
+            <button class="btn-primary" onclick="openCategoryModal()">+ Add Category</button>
+          </div>
+          <div id="categories-list"></div>
+        </div>
+ 
+        <!-- Fee Configuration -->
+        <div class="card">
+          <div class="card-title">Fee Configuration</div>
+          <div class="card-sub">Configure fees for license applications and services</div>
+          <br/>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>New Application Fee *</label>
+              <input type="number" id="fee-new" class="form-input" value="5000" />
+              <div class="form-hint">Fee charged for new license applications</div>
+            </div>
+            <div class="form-group">
+              <label>Renewal Fee *</label>
+              <input type="number" id="fee-renewal" class="form-input" value="3000" />
+              <div class="form-hint">Fee charged for license renewals</div>
+            </div>
+          </div>
+          <div class="fee-summary-box">
+            <div class="fee-summary-title">Current Fee Structure</div>
+            <div class="fee-summary-row-2">
+              <div><div class="fee-label">New Application</div><div class="fee-val" id="display-fee-new">&#8377;5,000</div></div>
+              <div><div class="fee-label">Renewal</div><div class="fee-val" id="display-fee-renewal">&#8377;3,000</div></div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-outline" onclick="resetFees()">&#8635; Reset</button>
+            <button class="btn-primary" onclick="saveFees()">&#128190; Save Changes</button>
+          </div>
+        </div>
+ 
+        <!-- System Information -->
+        <div class="card">
+          <div class="card-title">System Information</div>
+          <div class="sys-info-row">
+            <div class="sys-info-item"><div class="sys-info-label">System Version</div><div class="sys-info-val">v2.4.1</div></div>
+            <div class="sys-info-item"><div class="sys-info-label">Last Updated</div><div class="sys-info-val">March 28, 2026</div></div>
+            <div class="sys-info-item"><div class="sys-info-label">Database Status</div><div class="sys-info-val"><span class="green-dot"></span> Operational</div></div>
+          </div>
+        </div>
+ 
+        <!-- Setting Cards -->
+        <div class="settings-grid">
+          <div class="settings-card" onclick="openModal('modal-notifications')">
+            <div class="settings-card-title">&#128276; Notification Settings</div>
+            <div class="settings-card-sub">Configure email and SMS notifications</div>
+            <span class="settings-link">Configure Notifications &#8594;</span>
+          </div>
+          <div class="settings-card" onclick="openModal('modal-security')">
+            <div class="settings-card-title">&#128274; Security Settings</div>
+            <div class="settings-card-sub">Manage authentication and access controls</div>
+            <span class="settings-link">Manage Security &#8594;</span>
+          </div>
+          <div class="settings-card" onclick="openModal('modal-backup')">
+            <div class="settings-card-title">&#128190; Backup &amp; Recovery</div>
+            <div class="settings-card-sub">Configure automated backups and recovery options</div>
+            <span class="settings-link">Configure Backups &#8594;</span>
+          </div>
+          <div class="settings-card" onclick="showPage('audit', document.querySelector('[onclick*=audit]'))">
+            <div class="settings-card-title">&#128221; Audit Logs</div>
+            <div class="settings-card-sub">View system activity and change history</div>
+            <span class="settings-link">View Audit Logs &#8594;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ==================== PAGE: AUDIT LOGS ==================== -->
+    <div id="page-audit" class="page">
+      <div class="content">
+        <div class="page-top-bar">
+          <div>
+            <div class="page-heading">Audit Logs</div>
+            <div class="page-sub">Complete system activity and change history</div>
+          </div>
+          <button class="btn-outline" onclick="exportAuditCSV()">&#8659; Export CSV</button>
+        </div>
+ 
+        <div class="card">
+          <div class="filter-bar">
+            <input type="text" class="search-input" placeholder="Search by user..." oninput="filterAudit()" id="audit-search" />
+            <select class="filter-select" id="audit-action-filter" onchange="filterAudit()">
+              <option value="">All Actions</option>
+              <option value="Login">Login</option>
+              <option value="Create">Create</option>
+              <option value="Update">Update</option>
+              <option value="Delete">Delete</option>
+              <option value="Approve">Approve</option>
+              <option value="Reject">Reject</option>
+            </select>
+            <select class="filter-select" id="audit-role-filter" onchange="filterAudit()">
+              <option value="">All Roles</option>
+              <option value="Super User">Super User</option>
+              <option value="Department Officer">Department Officer</option>
+              <option value="Field Officer">Field Officer</option>
+              <option value="Applicant">Applicant</option>
+            </select>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>User Name</th>
+                <th>Role</th>
+                <th>Action</th>
+                <th>Module</th>
+                <th>Description</th>
+                <th>IP Address</th>
+              </tr>
+            </thead>
+            <tbody id="audit-tbody"></tbody>
+          </table>
+          <div class="pagination" id="audit-pagination"></div>
+        </div>
+      </div>
+    </div>
+ 
+  </div><!-- end main-wrapper -->
+ 
+  <!-- ==================== MODAL: ADD OFFICER ==================== -->
+  <div class="modal-overlay" id="modal-add">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Add New Officer</div>
+          <div class="modal-sub">Fill in the details to add a new user to the system</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-add')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="add-name" class="form-input" placeholder="Enter full name" />
+          <div class="error-msg" id="err-add-name"></div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="add-email" class="form-input" placeholder="example@tradezo.gov.in" />
+            <div class="error-msg" id="err-add-email"></div>
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="text" id="add-phone" class="form-input" placeholder="+91 XXXXX XXXXX" />
+            <div class="error-msg" id="err-add-phone"></div>
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Role *</label>
+            <select id="add-role" class="form-input">
+              <option value="">Select Role</option>
+              <option value="Field Officer">Field Officer</option>
+              <option value="Department Officer">Department Officer</option>
+            </select>
+            <div class="error-msg" id="err-add-role"></div>
+          </div>
+          <div class="form-group">
+            <label>Status *</label>
+            <select id="add-status" class="form-input">
+              <option value="">Select Status</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+            <div class="error-msg" id="err-add-status"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Employee ID *</label>
+          <input type="text" id="add-empid" class="form-input" placeholder="EMP-XXXXX" />
+          <div class="error-msg" id="err-add-empid"></div>
+        </div>
+        <div class="form-group">
+          <label>Joining Date *</label>
+          <input type="date" id="add-date" class="form-input" />
+          <div class="error-msg" id="err-add-date"></div>
+        </div>
+        <div class="info-note">
+          <strong>Note:</strong> All officers will receive an email with login credentials and system access instructions. Please ensure the email address is correct.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeModal('modal-add')">Cancel</button>
+        <button class="btn-primary" onclick="addOfficer()">Add Officer</button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- ==================== MODAL: EDIT OFFICER ==================== -->
+  <div class="modal-overlay" id="modal-edit">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Edit Officer Details</div>
+          <div class="modal-sub">Update the information for this system user</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-edit')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-id" />
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="edit-name" class="form-input" />
+          <div class="error-msg" id="err-edit-name"></div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="edit-email" class="form-input" />
+            <div class="error-msg" id="err-edit-email"></div>
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="text" id="edit-phone" class="form-input" />
+            <div class="error-msg" id="err-edit-phone"></div>
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Role *</label>
+            <select id="edit-role" class="form-input">
+              <option value="Field Officer">Field Officer</option>
+              <option value="Department Officer">Department Officer</option>
+            </select>
+            <div class="error-msg" id="err-edit-role"></div>
+          </div>
+          <div class="form-group">
+            <label>Status *</label>
+            <select id="edit-status" class="form-input">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Employee ID (cannot be changed)</label>
+          <input type="text" id="edit-empid" class="form-input disabled-input" disabled />
+        </div>
+        <div class="form-group">
+          <label>Joining Date *</label>
+          <input type="date" id="edit-date" class="form-input" />
+          <div class="error-msg" id="err-edit-date"></div>
+        </div>
+        <div class="info-note">
+          <strong>Note:</strong> Employee ID cannot be modified. Contact system administrator for ID changes.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeModal('modal-edit')">Cancel</button>
+        <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- ==================== MODAL: ADD CATEGORY ==================== -->
+  <div class="modal-overlay" id="modal-category">
+    <div class="modal modal-small">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="cat-modal-title">Add Trade Category</div>
+          <div class="modal-sub">Enter category details below</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-category')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="cat-edit-id" />
+        <div class="form-group">
+          <label>Category Name *</label>
+          <input type="text" id="cat-name" class="form-input" placeholder="e.g. Retail" />
+          <div class="error-msg" id="err-cat-name"></div>
+        </div>
+        <div class="form-group">
+          <label>Description *</label>
+          <input type="text" id="cat-desc" class="form-input" placeholder="Short description of the category" />
+          <div class="error-msg" id="err-cat-desc"></div>
+        </div>
+        <div class="form-group">
+          <label>Status *</label>
+          <select id="cat-status" class="form-input">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeModal('modal-category')">Cancel</button>
+        <button class="btn-primary" onclick="saveCategory()">Save Category</button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- ==================== MODAL: VIEW APPLICATION ==================== -->
+  <div class="modal-overlay" id="modal-view-app">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Application Details</div>
+          <div class="modal-sub">Full information about this application</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-view-app')">&times;</button>
+      </div>
+      <div class="modal-body" id="view-app-body"></div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeModal('modal-view-app')">Close</button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- ==================== MODAL: NOTIFICATION SETTINGS ==================== -->
+  <div class="modal-overlay" id="modal-notifications">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">&#128276; Notification Settings</div>
+          <div class="modal-sub">Configure email and SMS notifications for the system</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-notifications')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Email Notifications</label>
+          <select class="form-input" id="notif-email">
+            <option value="enabled">Enabled</option>
+            <option value="disabled">Disabled</option>
+          </select>
+          <div class="form-hint">Send email alerts to officers and applicants on status updates</div>
+        </div>
+        <div class="form-group">
+          <label>SMS Notifications</label>
+          <select class="form-input" id="notif-sms">
+            <option value="enabled">Enabled</option>
+            <option value="disabled">Disabled</option>
+          </select>
+          <div class="form-hint">Send SMS alerts to applicants on application status changes</div>
+        </div>
+        <div class="form-group">
+          <label>Notify on Application Submission</label>
+          <select class="form-input">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Notify on License Approval</label>
+          <select class="form-input">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Notify on License Expiry (days before)</label>
+          <input type="number" class="form-input" value="30" min="1" max="90" />
+          <div class="form-hint">Send expiry reminder this many days before license expires</div>
+        </div>
+        <div class="form-group">
+          <label>System Notification Email Address</label>
+          <input type="email" class="form-input" value="notifications@tradezo.gov.in" />
+          <div class="form-hint">All system alerts will be sent from this address</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeModal('modal-notifications')">Cancel</button>
+        <button class="btn-primary" onclick="saveNotifications()">&#128190; Save Settings</button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- ==================== MODAL: SECURITY SETTINGS ==================== -->
+  <div class="modal-overlay" id="modal-security">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">&#128274; Security Settings</div>
+          <div class="modal-sub">Manage authentication and access controls</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-security')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Session Timeout (minutes)</label>
+          <input type="number" class="form-input" id="sec-timeout" value="30" min="5" max="120" />
+          <div class="form-hint">Automatically log out inactive users after this duration</div>
+        </div>
+        <div class="form-group">
+          <label>Maximum Login Attempts</label>
+          <input type="number" class="form-input" id="sec-attempts" value="5" min="3" max="10" />
+          <div class="form-hint">Lock account after this many failed login attempts</div>
+        </div>
+        <div class="form-group">
+          <label>Password Minimum Length</label>
+          <input type="number" class="form-input" id="sec-passlen" value="8" min="6" max="20" />
+        </div>
+        <div class="form-group">
+          <label>Two-Factor Authentication (2FA)</label>
+          <select class="form-input" id="sec-2fa">
+            <option value="disabled">Disabled</option>
+            <option value="optional">Optional</option>
+            <option value="required">Required for all users</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Force Password Reset (days)</label>
+          <input type="number" class="form-input" id="sec-passreset" value="90" min="30" max="365" />
+          <div class="form-hint">Prompt users to reset password every this many days</div>
+        </div>
+        <div class="info-note">
+          <strong>Note:</strong> Changes to security settings will take effect at next login for all users.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeModal('modal-security')">Cancel</button>
+        <button class="btn-primary" onclick="saveSecurity()">&#128190; Save Settings</button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- ==================== MODAL: BACKUP & RECOVERY ==================== -->
+  <div class="modal-overlay" id="modal-backup">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">&#128190; Backup &amp; Recovery</div>
+          <div class="modal-sub">Configure automated backups and recovery options</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-backup')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Automatic Backup</label>
+          <select class="form-input" id="backup-auto">
+            <option value="enabled">Enabled</option>
+            <option value="disabled">Disabled</option>
+          </select>
+          <div class="form-hint">Automatically back up system data on a schedule</div>
+        </div>
+        <div class="form-group">
+          <label>Backup Frequency</label>
+          <select class="form-input" id="backup-freq">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Backup Time</label>
+          <input type="time" class="form-input" id="backup-time" value="02:00" />
+          <div class="form-hint">Backup will run at this time (24-hour format)</div>
+        </div>
+        <div class="form-group">
+          <label>Retain Backups For (days)</label>
+          <input type="number" class="form-input" id="backup-retain" value="30" min="7" max="365" />
+          <div class="form-hint">Older backups will be automatically deleted</div>
+        </div>
+        <div class="form-group">
+          <label>Last Backup Status</label>
+          <div style="padding:10px 14px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; font-size:13px; color:#15803d; font-weight:600;">
+            &#10003; Last backup completed on March 28, 2026 at 02:00 AM — 142 MB
+          </div>
+        </div>
+        <div class="info-note">
+          <strong>Note:</strong> Manual backup can be triggered anytime. Ensure sufficient storage is available before enabling automatic backups.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeModal('modal-backup')">Cancel</button>
+        <button class="btn-primary" onclick="triggerManualBackup()">&#9654; Run Manual Backup</button>
+        <button class="btn-primary" onclick="saveBackup()">&#128190; Save Settings</button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- ==================== TOAST NOTIFICATION ==================== -->
+  <div class="toast" id="toast"></div>
+ 
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Field Officer Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+<script src="../session_guard.js"></script>
+</head>
+<body>
+
+<!-- 🔷 Top Header -->
+<header class="top-header">
+    <div class="logo-section">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+        <div>
+            <h4>Government of India</h4>
+            <h2>TradeZo</h2>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="user-info">
+            <span>Welcome</span>
+            <b>Myra</b>
+        </div>
+
+        <div class="header-icons">
+            <img src="../assets/icons/bell.png" class="header-icon">
+            <span class="dot"></span>
+
+            <img src="../assets/icons/logout.png" class="header-icon" onclick="foLogout()" style="cursor:pointer" title="Logout">
+        </div>
+    </div>
+</header>
+
+<!-- 🔷 Main Layout -->
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul>
+            <li>
+                <img src="../assets/icons/db.png" class="icon">
+                Dashboard
+            </li>
+
+            <li class="active">
+                <img src="../assets/icons/verification.png" class="icon">
+                Verification
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection.png" class="icon">
+                Record Inspection
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification-history.png" class="icon">
+                Verification History
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection-history.png" class="icon">
+                Inspection History
+            </li>
+
+            <li>
+                <img src="../assets/icons/profile.png" class="icon">
+                Profile
+            </li>
+        </ul>
+    </aside>
+
+
+    <!-- Main Content -->
+    <div class="main">
+      <h2>Verification</h2>
+      <p class="subtitle">Review and verify submitted trade license applications.</p>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" id="searchInput" placeholder="Search by business name..." onkeyup="searchCards()">
+      </div>
+
+      <p class="count" id="countText">Showing 5 application(s)</p>
+
+      <!-- Cards Grid -->
+      <div class="cards-grid" id="cardsGrid">
+
+        <div class="card">
+          <div class="card-top"></div>
+          <div class="card-body">
+            <h3>Green Valley Restaurant</h3>
+            <p class="app-id">TL-2026-001</p>
+            <p><span class="ci">&#128196;</span> Food & Beverage</p>
+            <p><span class="ci">&#128205;</span> 123 Main Street, Sector 45, Gurugram, Haryana</p>
+            <p><span class="ci">&#128197;</span> March 8, 2026</p>
+            <button onclick="viewDetails('TL-2026-001')">&#128065; View Details</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top"></div>
+          <div class="card-body">
+            <h3>Tech Hub Electronics</h3>
+            <p class="app-id">TL-2026-002</p>
+            <p><span class="ci">&#128196;</span> Retail</p>
+            <p><span class="ci">&#128205;</span> 456 MG Road, Koramangala, Bangalore, Karnataka</p>
+            <p><span class="ci">&#128197;</span> March 9, 2026</p>
+            <button onclick="viewDetails('TL-2026-002')">&#128065; View Details</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top"></div>
+          <div class="card-body">
+            <h3>Fresh Mart Grocery</h3>
+            <p class="app-id">TL-2026-003</p>
+            <p><span class="ci">&#128196;</span> Retail</p>
+            <p><span class="ci">&#128205;</span> 789 Connaught Place, New Delhi</p>
+            <p><span class="ci">&#128197;</span> March 8, 2026</p>
+            <button onclick="viewDetails('TL-2026-003')">&#128065; View Details</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top"></div>
+          <div class="card-body">
+            <h3>Urban Fitness Center</h3>
+            <p class="app-id">TL-2026-004</p>
+            <p><span class="ci">&#128196;</span> Health & Fitness</p>
+            <p><span class="ci">&#128205;</span> 321 Bandra West, Mumbai, Maharashtra</p>
+            <p><span class="ci">&#128197;</span> March 10, 2026</p>
+            <button onclick="viewDetails('TL-2026-004')">&#128065; View Details</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top"></div>
+          <div class="card-body">
+            <h3>Elite Fashion Boutique</h3>
+            <p class="app-id">TL-2026-005</p>
+            <p><span class="ci">&#128196;</span> Retail</p>
+            <p><span class="ci">&#128205;</span> 567 Park Street, Kolkata, West Bengal</p>
+            <p><span class="ci">&#128197;</span> March 11, 2026</p>
+            <button onclick="viewDetails('TL-2026-005')">&#128065; View Details</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="../../mockdata.js"></script>
+<script src="script.js"></script>
+<script src="../fo_nav.js"></script>
+</body>
+</html>
