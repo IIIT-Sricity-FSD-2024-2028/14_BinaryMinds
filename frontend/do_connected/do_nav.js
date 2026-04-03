@@ -8,6 +8,7 @@ var DO_PAGES = {
   review:        '../review/index.html',
   authorization: '../authorization/index.html',
   compliance:    '../compliance/index.html',
+  inspection:    '../inspection-report/index.html',
   login: '../../../applicant_connected/connected/login/index.html'
 };
 

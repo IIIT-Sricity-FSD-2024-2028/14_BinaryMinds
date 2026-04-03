@@ -23,7 +23,7 @@
   <nav>
     <a href="../Applicant dashboard/index.html">Dashboard</a><a href="../landing page/index.html">Home</a><a href="../apply_license/apply_license.html">Apply License</a>
     <a href="../Track Application Status/index.html">Track Application</a><a href="../download/index.html">Download License</a>
-    <a href="#" onclick="handleLogout ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a><a href="index.html" class="active">Payments</a><a href="../Profile/index.html">Profile</a>
+    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a><a href="index.html" class="active">Payments</a><a href="../Profile/index.html">Profile</a>
   </nav>
 
   <!-- MAIN -->
@@ -44,7 +44,7 @@
         <i class="fa-regular fa-calendar"></i>
         <div>
           <small>LAST PAYMENT DATE</small>
-          <h2>20 March 2026</h2>
+          <h2 id="lastPaymentDate">20 March 2026</h2>
         </div>
       </div>
     </div>

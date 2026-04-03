@@ -139,7 +139,7 @@ body {
 .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
 
 /* FIELDS GRID */
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 32px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px 32px; }
 .field label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 3px; }
 .field p { font-size: 13px; font-weight: 500; }
 

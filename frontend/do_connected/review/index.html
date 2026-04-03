@@ -8,27 +8,38 @@
 <script src="../session_guard.js"></script>
 </head>
 <body>
- 
-  <!-- Top Header -->
-  <div class="top-header">
-    <div class="left">
-      <div class="header">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo">
-        <div class="header-text">
-          Government of India
-          <span>TradeZo</span>
-        </div>
-      </div>
-      <div class="app-id-block">
-        <div class="app-id-label">APPLICATION ID</div>
-        <div class="app-id">#APP-2024-0501</div>
-      </div>
+
+<!-- ===== TOP HEADER ===== -->
+<div class="top-header">
+  <div class="header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo">
+    <div class="header-text">
+      Government of India
+      <span>TradeZo</span>
     </div>
-    <button class="logout-btn">⬛ Logout</button>
   </div>
- 
-  <div class="page">
- 
+  <button class="logout-btn">Logout</button>
+</div>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="container">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Worklist</div>
+    <div class="nav-item">Final Authorization</div>
+    <div class="nav-item active">Reports</div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main">
+
+    <!-- Title -->
+    <div class="topbar">
+      <h2>Application Review</h2>
+    </div>
+
     <!-- Company Header Card -->
     <div class="card company-card">
       <div class="badge-pending">PENDING FINAL DECISION</div>
@@ -134,21 +145,6 @@
 <script src="script.js"></script>
 <script src="../do_nav.js"></script>
 
-<script>
-function doLogout() {
-  if (confirm("Are you sure you want to logout?")) {
-    sessionStorage.clear();
-    window.location.href = "../../../applicant_connected/connected/login/index.html";
-  }
-}
-function doNav(p) {
-  var pages = {
-    dashboard:"../dashboard/index.html", worklist:"../worklist/index.html",
-    review:"../review/index.html", authorization:"../authorization/index.html",
-    compliance:"../compliance/index.html"
-  };
-  if (pages[p]) window.location.href = pages[p];
-}
-</script>
+
 </body>
 </html>

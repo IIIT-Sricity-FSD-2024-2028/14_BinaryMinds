@@ -98,6 +98,21 @@ body { font-family: Arial, sans-serif; background: #f4f6f9; }
   background: #fff;
 }
 
+.login-card select option[value=""] {
+  color: #888;
+  opacity: 0.7;
+}
+
+.login-card select:invalid {
+  color: #888;
+  opacity: 0.7;
+}
+
+.login-card select option:not([value=""]) {
+  color: #000;
+  opacity: 1;
+}
+
 .login-card button {
   width: 100%;
   padding: 14px;

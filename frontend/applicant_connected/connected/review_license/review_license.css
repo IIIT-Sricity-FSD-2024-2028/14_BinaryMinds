@@ -6,7 +6,9 @@
 body { font-family: Arial, sans-serif; background: #f1f5f9; color: #1e293b; }
 
 /* ---- NAVBAR ---- */
-.navbar { background: #1E3A8A; padding: 0 32px; display: flex; }
+.navbar { background: #1E3A8A; padding: 14px 32px; display: flex; gap: 28px; align-items: center; }
+.navbar a { color: white; text-decoration: none; font-size: 14px; font-weight: 500; transition: opacity 0.2s; }
+.navbar a:hover { opacity: 0.8; }
 .navbar-OLD {
   background: #1E3A8A;
   display: flex;

@@ -85,19 +85,19 @@
         <!-- LEFT CARD -->
         <div class="profile-card">
             <div class="avatar">M</div>
-            <h2>Myra</h2>
+            <h2 id="dispName">Myra</h2>
             <p>FO-2026-042</p>
-            <span class="role">Senior Field Officer</span>
+            <span class="role" id="dispRole">Senior Field Officer</span>
 
             <hr>
 
-            <p><b>Department:</b> Trade License Department</p>
-            <p><b>Email:</b> myra@gov.in</p>
-            <p><b>Phone:</b> +91 98765 43210</p>
-            <p><b>Location:</b> Municipal Corporation, Delhi</p>
+            <p><b>Department:</b> <span id="dispDept">Trade License Department</span></p>
+            <p><b>Email:</b> <span id="dispEmail">myra@gov.in</span></p>
+            <p><b>Phone:</b> <span id="dispPhone">+91 98765 43210</span></p>
+            <p><b>Location:</b> <span id="dispLocation">Municipal Corporation, Delhi</span></p>
             <p><b>Join Date:</b> Jan 15, 2024</p>
 
-            <button class="edit-btn">Edit Profile</button>
+
         </div>
 
         <!-- RIGHT -->
@@ -160,6 +160,20 @@
 function go(path){
     window.location.href = path;
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var stored = {};
+    try {
+        stored = JSON.parse(localStorage.getItem('fo_profile_data')) || {};
+    } catch(e) {}
+    
+    if (stored.name) document.getElementById('dispName').textContent = stored.name;
+    if (stored.role) document.getElementById('dispRole').textContent = stored.role;
+    if (stored.dept) document.getElementById('dispDept').textContent = stored.dept;
+    if (stored.email) document.getElementById('dispEmail').textContent = stored.email;
+    if (stored.phone) document.getElementById('dispPhone').textContent = stored.phone;
+    if (stored.location) document.getElementById('dispLocation').textContent = stored.location;
+});
 </script>
 
 <script src="../fo_nav.js"></script>

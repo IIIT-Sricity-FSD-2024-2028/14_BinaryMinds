@@ -52,23 +52,8 @@
     <p class="subtitle">Track and manage inspection SLA deadlines.</p>
 
     <!-- CARDS -->
-    <div class="sla-cards">
-
-        <div class="sla-card orange">
-            <p>Approaching Deadline</p>
-            <h2>5</h2>
-        </div>
-
-        <div class="sla-card red">
-            <p>Overdue Inspections</p>
-            <h2>1</h2>
-        </div>
-
-        <div class="sla-card purple">
-            <p>Escalated Cases</p>
-            <h2>2</h2>
-        </div>
-
+    <div class="sla-cards" id="slaCards">
+        <!-- Dynamic CARDS GO HERE -->
     </div>
 
     <!-- WORKFLOW -->
@@ -114,41 +99,16 @@
     </div>
 
     <!-- LIST -->
-    <div class="sla-list">
+    <div class="sla-list" id="slaList">
         <h3>SLA Status Overview</h3>
-
-        <div class="sla-item red">
-            <div>
-                <b>TL-2026-001</b><br>
-                Green Valley Restaurant
-            </div>
-            <span class="tag overdue">Overdue</span>
-            <button onclick="window.location.href='../detail/index.html'">View →</button>
-        </div>
-
-        <div class="sla-item orange">
-            <div>
-                <b>TL-2026-005</b><br>
-                Urban Fitness Center
-            </div>
-            <span class="tag critical">Critical</span>
-            <button onclick="window.location.href='../detail/index.html'">View →</button>
-        </div>
-
-        <div class="sla-item yellow">
-            <div>
-                <b>TL-2026-012</b><br>
-                Tech Hub Electronics
-            </div>
-            <span class="tag approaching">Approaching</span>
-            <button onclick="window.location.href='../detail/index.html'">View →</button>
-        </div>
-
+        <!-- Dynamic CONTENT GOES HERE -->
     </div>
 
 </main>
 </div>
 
+<script src="../../mockdata.js"></script>
+<script src="script.js"></script>
 <script src="../fo_nav.js"></script>
 </body>
 </html>

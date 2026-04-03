@@ -26,7 +26,7 @@
     <a href="../apply_license/apply_license.html">Apply License</a>
     <a href="../Track Application Status/index.html">Track Application</a>
     <a href="index.html">Download License</a>
-    <a href="#" onclick="handleLogout ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a>
+    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a>
     
     <a href="../payments/index.html">Payments</a>
     <a href="../Profile/index.html">Profile</a>
@@ -47,33 +47,33 @@
  
         <div class="card-header">
           <h3><span>🛡</span> License Details</h3>
-          <span class="badge-active">✅ ACTIVE</span>
+          <span class="badge-active" id="licenseBadge">✅ ACTIVE</span>
         </div>
  
         <div class="details-grid">
           <div class="detail-item">
             <label>License Number</label>
-            <p>LIC-2026-001245</p>
+            <p class="license-number">—</p>
           </div>
           <div class="detail-item">
             <label>Applicant Name</label>
-            <p>JIYA ENTERPRISES PRIVATE LIMITED</p>
+            <p class="applicant-name">—</p>
           </div>
           <div class="detail-item">
             <label>Trade Category</label>
-            <p>General Trade & Commerce</p>
+            <p class="trade-category">—</p>
           </div>
           <div class="detail-item">
             <label>Issue Date</label>
-            <p>20 March 2026</p>
+            <p class="issue-date">—</p>
           </div>
           <div class="detail-item">
             <label>Expiry Date</label>
-            <p>20 March 2027</p>
+            <p class="expiry-date">—</p>
           </div>
           <div class="detail-item">
             <label>Status</label>
-            <p class="active-text">✔ Active</p>
+            <p class="active-text" id="licenseStatus">—</p>
           </div>
         </div>
  

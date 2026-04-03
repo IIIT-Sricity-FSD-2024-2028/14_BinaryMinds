@@ -210,16 +210,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Update notification items based on status
   var notifItems = document.querySelectorAll('.notif-item');
-  var notifData = [
-    { title: 'Application Submitted',    msg: 'Your application ' + app.id + ' has been received.',           time: app.submittedDate || 'Recently' },
-    { title: 'Documents Under Review',   msg: 'Field officer is reviewing your submitted documents.',          time: '' },
-    { title: 'Inspection Scheduled',     msg: 'Inspection scheduled for ' + (app.inspectionDate || 'TBD'),   time: '' }
-  ];
-  if (app.status === 'Approved') {
+  var notifData = [];
+  
+  if (app.status === 'Pending Inspection' || app.status === 'Scheduled') {
+    var inspDate = app.inspectionDate || 'TBD';
+    var inspTime = app.inspectionTime || 'TBD';
+    notifData = [
+      { title: 'Inspection Scheduled 📅', msg: 'Physical inspection is scheduled for ' + inspDate + ' at ' + inspTime + '.', time: 'Recently' },
+      { title: 'Documents Verified! ✅',   msg: 'Your submitted documents have been successfully verified.',  time: '' },
+      { title: 'Application Submitted',  msg: 'Your application ' + app.id + ' has been received.',           time: app.submittedDate || '' }
+    ];
+  } else if (app.status === 'Inspection Recorded' || app.status === 'Inspection Completed') {
+    var reports = [];
+    try { reports = JSON.parse(localStorage.getItem('tz_inspection_reports') || '[]'); } catch(e){}
+    var myReport = reports.find(r => r.appId === app.id);
+    var inspResult = myReport ? myReport.result : 'Completed';
+    var inspEmoji = inspResult === 'Approved' ? '✅' : (inspResult === 'Rejected' ? '❌' : '📋');
+    
+    notifData = [
+      { title: 'Inspection ' + inspResult + ' ' + inspEmoji, msg: 'Field inspection recorded. Status: ' + inspResult + '.', time: 'Recently' },
+      { title: 'Documents Verified! ✅',   msg: 'Your submitted documents have been approved.',  time: '' },
+      { title: 'Application Submitted',  msg: 'Your application ' + app.id + ' has been received.',           time: app.submittedDate || '' }
+    ];
+  } else if (app.status === 'Rejected') {
+    notifData = [
+      { title: 'Application Rejected ❌', msg: 'Your application has been rejected. Check remarks for details.', time: 'Recently' },
+      { title: 'Application Submitted',  msg: 'Your application ' + app.id + ' has been received.',           time: app.submittedDate || '' },
+      { title: 'Action Required', msg: 'Please resolve the identified issues and re-apply.', time: '' }
+    ];
+  } else if (app.status === 'Approved') {
     notifData = [
       { title: 'License Approved! 🎉',   msg: 'Your trade license has been issued. You can download it now.', time: 'Today' },
       { title: 'Inspection Completed',   msg: 'Site inspection for ' + app.id + ' completed successfully.',  time: app.inspectionDate || '' },
       { title: 'Documents Verified',     msg: 'All your submitted documents have been verified.',              time: '' }
+    ];
+  } else {
+    notifData = [
+      { title: 'Application Submitted',    msg: 'Your application ' + app.id + ' has been received.',           time: app.submittedDate || 'Recently' },
+      { title: 'Documents Under Review',   msg: 'Field officer is reviewing your submitted documents.',          time: '' },
+      { title: 'Inspection Scheduled',     msg: 'Pending document verification.',   time: '' }
     ];
   }
 

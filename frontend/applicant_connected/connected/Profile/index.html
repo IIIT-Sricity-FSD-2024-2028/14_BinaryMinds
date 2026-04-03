@@ -20,7 +20,7 @@
   <nav>
     <a href="../Applicant dashboard/index.html">Dashboard</a><a href="../landing page/index.html">Home</a><a href="../apply_license/apply_license.html">Apply License</a>
     <a href="../Track Application Status/index.html">Track Application</a><a href="../download/index.html">Download License</a>
-    <a href="#" onclick="handleLogout ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a><a href="../payments/index.html">Payments</a>
+    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a><a href="../payments/index.html">Payments</a>
     <a href="index.html" class="active">Profile</a>
   </nav>
 
@@ -40,9 +40,10 @@
             <div class="cam-icon"><i class="fa-solid fa-camera"></i></div>
           </div>
           <div class="profile-info">
-            <h2>Jiya Mugale</h2>
-            <p><i class="fa-solid fa-at"></i> jiya.mugale@gmail.com</p>
-            <p><i class="fa-solid fa-phone"></i> +91 8483916284</p>
+            <h2 id="dispName">Jiya Mugale</h2>
+            <p><i class="fa-solid fa-at"></i> <span id="dispEmail">jiya.mugale@gmail.com</span></p>
+            <p><i class="fa-solid fa-phone"></i> <span id="dispPhone">+91 8483916284</span></p>
+            <button onclick="window.location.href='../Profile_edit/index.html'" style="margin-top:14px; background:#1e3a8a; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;"><i class="fa-solid fa-pen" style="margin-right:6px;"></i>Edit Profile</button>
           </div>
         </div>
 
@@ -51,16 +52,13 @@
           <div class="detail-grid">
             <div>
               <small>AADHAAR NUMBER</small>
-              <p>XXXX-XXXX-4582</p>
+              <p id="dispAadhaar">XXXX-XXXX-4582</p>
             </div>
             <div>
               <small>GENDER</small>
-              <p>Female</p>
+              <p id="dispGender">Female</p>
             </div>
-            <div>
-              <small>DATE OF BIRTH</small>
-              <p>17/09/2006</p>
-            </div>
+
             <div>
               <small>NATIONALITY</small>
               <p>Indian</p>
@@ -68,7 +66,8 @@
           </div>
           <div class="address-block">
             <small>ADDRESS</small>
-            <p>Flat 402, Sunshine Plaza, MG Road,<br/>Bangalore, Karnataka, 560001</p>
+            <p id="dispAddress" style="white-space: pre-wrap;">Flat 402, Sunshine Plaza, MG Road,
+Bangalore, Karnataka, 560001</p>
           </div>
         </div>
 
@@ -157,6 +156,47 @@
 
   <script src="../../../mockdata.js"></script>
   <script src="../session_guard.js"></script>
-  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var loggedIn = {};
+        try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser')) || {}; } catch(e) {}
+
+        var stored = {};
+        try { stored = JSON.parse(localStorage.getItem('applicant_profile_data')) || {}; } catch(e) {}
+        
+        var appAddress = '';
+        var apps = [];
+        try { apps = JSON.parse(localStorage.getItem('applications') || '[]'); } catch(e){}
+        var userApp = apps.find(function(a) { 
+            return (a.email && a.email.toLowerCase() === (loggedIn.email || '').toLowerCase()) || 
+                   (a.applicantName && a.applicantName.toLowerCase() === (loggedIn.name || '').toLowerCase());
+        });
+        
+        if (userApp) {
+            appAddress = userApp.shopAddress;
+            if (userApp.city) appAddress += ', ' + userApp.city;
+            if (userApp.state) appAddress += ', ' + userApp.state;
+            if (userApp.pincode) appAddress += ' - ' + userApp.pincode;
+        }
+
+        var name = stored.name || loggedIn.name || 'Jiya Mugale';
+        var email = stored.email || loggedIn.email || 'jiya.mugale@gmail.com';
+        var phone = stored.phone || loggedIn.phone || '+91 8483916284';
+        var address = stored.address || appAddress || 'Flat 402, Sunshine Plaza, MG Road,\nBangalore, Karnataka, 560001';
+        
+        var aadhaar = userApp && userApp.aadhaar ? 'XXXX-XXXX-' + String(userApp.aadhaar).slice(-4) : 'XXXX-XXXX-4582';
+        var gender = userApp && userApp.gender ? userApp.gender : 'Female';
+
+        document.getElementById('dispName').textContent = name;
+        document.getElementById('dispEmail').textContent = email;
+        document.getElementById('dispPhone').textContent = phone;
+        document.getElementById('dispAddress').textContent = address;
+        
+        var dA = document.getElementById('dispAadhaar');
+        if(dA) dA.textContent = aadhaar;
+        var dG = document.getElementById('dispGender');
+        if(dG) dG.textContent = gender;
+    });
+  </script>
 </body>
 </html>

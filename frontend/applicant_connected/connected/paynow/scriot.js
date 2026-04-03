@@ -6,6 +6,23 @@ document.addEventListener('DOMContentLoaded', function() {
   var form = {};
   try { form = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch(e){}
 
+  // Calculate dynamic fee
+  var area = parseInt(form.shopArea) || 100;
+  var processingFee = area > 500 ? 5000 : 2000;
+  var tax = processingFee * 0.05;
+  var total = processingFee + tax;
+  
+  sessionStorage.setItem('calculatedFeeString', '₹' + total.toFixed(2));
+
+  var baseEl = document.getElementById('baseFee');
+  if(baseEl) baseEl.innerHTML = '&#8377;' + processingFee.toFixed(2);
+  var taxEl = document.getElementById('taxFee');
+  if(taxEl) taxEl.innerHTML = '&#8377;' + tax.toFixed(2);
+  var totalEl = document.getElementById('totalFee');
+  if(totalEl) totalEl.innerHTML = '&#8377;' + total.toFixed(2);
+  var btnEl = document.getElementById('btnFee');
+  if(btnEl) btnEl.innerHTML = '&#8377;' + total.toFixed(2);
+
   // Fill Trade Name
   var tradeNameEl = document.querySelector('.info-grid .val');
   if (tradeNameEl && form.businessName) tradeNameEl.textContent = form.businessName;
@@ -82,7 +99,7 @@ function doPayment() {
         submittedDate: new Date().toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'}),
         status:        'Submitted',
         paymentStatus: 'Paid',
-        paymentAmount: '₹5,000',
+        paymentAmount: sessionStorage.getItem('calculatedFeeString') || '₹2100.00',
         paymentRef:    'PAY-' + String(Date.now()).slice(-8),
         assignedFO:    'FO-2001',
         foName:        'Myra Singh',
@@ -106,6 +123,23 @@ function doPayment() {
       saved = saved.filter(function(a){ return a.appRef !== appRef; });
       saved.push(newApp);
       localStorage.setItem('tz_submitted_apps', JSON.stringify(saved));
+
+      // Persist to verification queue for Field Officer
+      var queue = [];
+      try { queue = JSON.parse(localStorage.getItem('tz_verification_queue') || '[]'); } catch(e){ queue = []; }
+      if (!Array.isArray(queue)) queue = [];
+      var verifyItem = {
+        appId: newApp.id,
+        businessName: newApp.businessName,
+        applicant: newApp.applicantName,
+        category: newApp.tradeCategory || newApp.businessType,
+        address: (newApp.shopAddress ? newApp.shopAddress + (newApp.city ? ', ' + newApp.city : '') : ''),
+        submitted: newApp.submittedDate,
+        status: 'Pending Review'
+      };
+      queue = queue.filter(function(item){ return item.appId !== newApp.id; });
+      queue.push(verifyItem);
+      localStorage.setItem('tz_verification_queue', JSON.stringify(queue));
 
       // Store reference and mark applied
       sessionStorage.setItem('applicationRef', appRef);

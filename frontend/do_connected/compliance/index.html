@@ -9,51 +9,36 @@
 <script src="../session_guard.js"></script>
 </head>
 <body>
- 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-left">
+
+<!-- ===== TOP HEADER ===== -->
+<div class="top-header">
+  <div class="header">
     <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo">
     <div class="header-text">
       Government of India
       <span>TradeZo</span>
     </div>
   </div>
-  <button class="logout-btn">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-    Logout
-  </button>
+  <button class="logout-btn">Logout</button>
 </div>
- 
-<div class="body">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="nav active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Dashboard
-    </div>
-    <div class="nav">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Worklist
-    </div>
-    <div class="nav">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      Final Authorization
-    </div>
-    <div class="nav">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Compliance Reports
-    </div>
-  </aside>
- 
-  <!-- MAIN -->
-  <main class="main">
-    <!-- Page Header -->
-    <div class="page-hdr">
-      <div>
-        <h1>Compliance Monitoring</h1>
-        <p>Government E-Services Portal • Real-time Monitoring</p>
-      </div>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="container">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Worklist</div>
+    <div class="nav-item">Final Authorization</div>
+    <div class="nav-item active">Reports</div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main">
+
+    <!-- Title -->
+    <div class="topbar">
+      <h2>Compliance Reports</h2>
       <button class="export-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Export Report
@@ -185,28 +170,12 @@
  
     <!-- Go Back -->
     <div><button class="go-back">Go Back</button></div>
-  </main>
+
+  </div>
 </div>
- 
+
 <script src="../../../mockdata.js"></script>
 <script src="script.js"></script>
 <script src="../do_nav.js"></script>
-
-<script>
-function doLogout() {
-  if (confirm("Are you sure you want to logout?")) {
-    sessionStorage.clear();
-    window.location.href = "../../../applicant_connected/connected/login/index.html";
-  }
-}
-function doNav(p) {
-  var pages = {
-    dashboard:"../dashboard/index.html", worklist:"../worklist/index.html",
-    review:"../review/index.html", authorization:"../authorization/index.html",
-    compliance:"../compliance/index.html"
-  };
-  if (pages[p]) window.location.href = pages[p];
-}
-</script>
 </body>
 </html>

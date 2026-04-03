@@ -58,7 +58,7 @@
       <div class="card">
         <h3>My Application Status</h3>
 
-        <table>
+          <table id="appStatusTable">
           <tr>
             <th>ID</th>
             <th>Business</th>
@@ -72,6 +72,8 @@
             <td>21 Mar 2026</td>
           </tr>
         </table>
+
+        <div id="appActions" style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"></div>
       </div>
 
       <div class="card">
@@ -85,39 +87,12 @@
 
     </div>
 
-    <!-- TASKS -->
-    <div class="card">
-      <h3>Pending Tasks</h3>
-
-      <div class="task">
-        <span>Upload Aadhaar Card</span>
-        <button onclick="window.location.href='../upload_document/upload_document.html'">Upload</button>
-      </div>
-
-      <div class="task">
-        <span>Pay License Fee ₹2000</span>
-        <button onclick="window.location.href='../paynow/index.html'">Pay Now</button>
-      </div>
-
-    </div>
+    <!-- TASKS REMOVED -->
 
   </div>
 </div>
 
 <script src="script.js"></script>
-
-<script>
-// Load user name
-let user = JSON.parse(localStorage.getItem("user"));
-if (user) {
-  document.getElementById("welcomeText").innerText =
-    "Welcome, " + user.name;
-}
-
-function goPayment() {
-  window.location.href = "../paynow/index.html";
-}
-</script>
 
 </body>
 </html>

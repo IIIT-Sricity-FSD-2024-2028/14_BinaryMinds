@@ -35,9 +35,6 @@
 
 <div class="container">
 
-<!-- 🔷 Main Layout -->
-<div class="container">
-
     <!-- Sidebar -->
     <aside class="sidebar">
         <ul>
@@ -84,12 +81,24 @@
       <h2>&#9632; Business Information</h2>
       <div class="grid">
         <div class="field"><label>Application ID</label><p id="appId">TL-2026-001</p></div>
-        <div class="field"><label>Contact Number</label><p id="contact">+91 98765 43210</p></div>
-        <div class="field"><label>Applicant Name</label><p id="appName">Rajesh Kumar</p></div>
-        <div class="field"><label>Email Address</label><p id="email">rajesh.kumar@greenvalley.com</p></div>
         <div class="field"><label>Business Name</label><p id="bizName">Green Valley Restaurant</p></div>
-        <div class="field"><label>Full Address</label><p id="address">123 Main Street, Sector 45, Gurugram, Haryana 122003</p></div>
+        <div class="field"><label>Applicant Name</label><p id="appName">Rajesh Kumar</p></div>
+        <div class="field"><label>Contact Number</label><p id="contact">+91 98765 43210</p></div>
+        <div class="field"><label>Email Address</label><p id="email">rajesh.kumar@greenvalley.com</p></div>
+        
+        <div class="field"><label>Aadhaar Number</label><p id="aadhaar">XXXX-XXXX-4582</p></div>
+        <div class="field"><label>Gender</label><p id="gender">Male</p></div>
+        <div class="field"><label>Father's Name</label><p id="fatherName">Ramesh Kumar</p></div>
+        <div class="field"><label>Mother's Name</label><p id="motherName">Sunita Devi</p></div>
+
         <div class="field"><label>Trade Category</label><p id="category">Food & Beverage</p></div>
+        <div class="field"><label>Shop Area (sq.ft)</label><p id="shopArea">1200</p></div>
+        <div class="field" style="grid-column: span 2;"><label>Full Shop Address</label><p id="address">123 Main Street, Sector 45</p></div>
+
+        <div class="field"><label>City</label><p id="city">Gurugram</p></div>
+        <div class="field"><label>District</label><p id="district">Gurugram</p></div>
+        <div class="field"><label>State</label><p id="state">Haryana</p></div>
+        <div class="field"><label>Pincode</label><p id="pincode">122003</p></div>
       </div>
     </div>
 
@@ -99,10 +108,10 @@
         <h2>&#9632; Uploaded Documents</h2>
         <button class="view-btn">&#128065; View All Documents</button>
       </div>
-      <div class="docs-grid">
-        <div class="doc-box blue"><p class="doc-title">Aadhar Card</p><p class="doc-file">aadhar_rajesh_kumar.pdf</p><p class="doc-meta">245 KB • Uploaded Feb 20, 2026</p></div>
-        <div class="doc-box green"><p class="doc-title">Business Affidavit</p><p class="doc-file">business_affidavit.pdf</p><p class="doc-meta">512 KB • Uploaded Feb 21, 2026</p></div>
-        <div class="doc-box purple"><p class="doc-title">Passport Photo</p><p class="doc-file">passport_photo.jpg</p><p class="doc-meta">128 KB • Uploaded Feb 20, 2026</p></div>
+      <div class="docs-grid" id="docsGridContainer">
+        <div class="doc-box blue"><p class="doc-title" id="doc1Title">Aadhaar Card</p><p class="doc-file" id="doc1File">Not Uploaded</p><p class="doc-meta" id="doc1Meta">-</p></div>
+        <div class="doc-box green"><p class="doc-title" id="doc2Title">Business Address Proof</p><p class="doc-file" id="doc2File">Not Uploaded</p><p class="doc-meta" id="doc2Meta">-</p></div>
+        <div class="doc-box purple"><p class="doc-title" id="doc3Title">Shop Front View</p><p class="doc-file" id="doc3File">Not Uploaded</p><p class="doc-meta" id="doc3Meta">-</p></div>
       </div>
     </div>
 
@@ -116,8 +125,6 @@
     <div class="back" onclick="window.location.href='../verification/index.html'">&#8617;</div>
 
   </div>
-</div>
-
 <script src="../../mockdata.js"></script>
 <script src="script.js"></script>
 <script src="../fo_nav.js"></script>

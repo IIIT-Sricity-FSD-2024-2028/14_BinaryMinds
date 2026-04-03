@@ -1,5 +1,26 @@
 // fo_connected/inspectionhistory/in.js
-var historyData = TRADEZO ? TRADEZO.inspections.filter(function(i){ return i.status === 'Completed'; }) : [];
+function loadHistoryData() {
+  var base = TRADEZO ? TRADEZO.inspections.filter(function(i){ return i.status === 'Completed'; }) : [];
+  var saved = [];
+  try { saved = JSON.parse(localStorage.getItem('tz_inspection_reports') || '[]'); } catch(e){ saved = []; }
+  if (!Array.isArray(saved)) saved = [];
+
+  saved.forEach(function(report) {
+    var exists = base.some(function(item){ return item.appId === report.appId; });
+    if (!exists) {
+      base.push({
+        appId: report.appId,
+        businessName: report.businessName,
+        type: report.type,
+        date: report.date,
+        result: report.result,
+        status: 'Completed'
+      });
+    }
+  });
+
+  return base;
+}
 
 function renderTable(data) {
   var table     = document.getElementById('historyTable');
@@ -26,12 +47,13 @@ function renderTable(data) {
   document.querySelectorAll('.view-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       sessionStorage.setItem('selectedApp', this.getAttribute('data-id'));
-      window.location.href = '../detail/index.html';
+      window.location.href = '../inspection_report/index.html';
     });
   });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  var historyData = loadHistoryData().reverse();
   renderTable(historyData);
   var searchEl = document.getElementById('searchInput');
   if (searchEl) {

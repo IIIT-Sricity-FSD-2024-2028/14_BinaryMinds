@@ -23,7 +23,7 @@
     <a href="../apply_license/apply_license.html">Apply License</a>
     <a href="../Track Application Status/index.html">Track Application</a>
     <a href="../download/index.html">Download License</a>
-    <a href="#" onclick="handleLogout ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a>
+    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a>
     
     <a href="../payments/index.html" class="active">Payments</a>
     <a href="../Profile/index.html">Profile</a>
@@ -51,19 +51,19 @@
         <div class="info-grid">
           <div class="info-item">
             <label>APPLICATION ID</label>
-            <span>TL-2023-8842</span>
+            <span id="appRef">TL-2023-8842</span>
           </div>
           <div class="info-item">
             <label>TRANSACTION ID</label>
-            <span>TXN-45678231</span>
+            <span id="txnRef">TXN-45678231</span>
           </div>
           <div class="info-item">
             <label>AMOUNT PAID</label>
-            <span>₹2,100.00</span>
+            <span class="payment-amount">₹2,100.00</span>
           </div>
           <div class="info-item">
             <label>SUBMISSION DATE</label>
-            <span>08 March 2026</span>
+            <span id="subDate">08 March 2026</span>
           </div>
         </div>
 

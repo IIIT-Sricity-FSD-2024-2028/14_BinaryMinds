@@ -61,6 +61,49 @@ document.addEventListener('DOMContentLoaded', function () {
     sessionStorage.setItem('inspectionDate',      inspDate);
     sessionStorage.setItem('inspectionNotes',     inspNotes.trim());
 
+    /* Persist report to localStorage for Inspection History */
+    var reports = [];
+    try { reports = JSON.parse(localStorage.getItem('tz_inspection_reports') || '[]'); } catch(e){ reports = []; }
+    var report = {
+      appId: appId,
+      businessName: bizName,
+      type: category,
+      address: address,
+      ownerName: owner,
+      date: inspDate,
+      result: inspResult,
+      notes: inspNotes.trim(),
+      submittedDate: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
+    };
+    reports = reports.filter(function(r){ return r.appId !== appId; });
+    reports.push(report);
+    localStorage.setItem('tz_inspection_reports', JSON.stringify(reports));
+
+    /* Update mock inspection status in memory */
+    if (window.TRADEZO && Array.isArray(TRADEZO.inspections)) {
+      TRADEZO.inspections.forEach(function(item) {
+        if (item.appId === appId) {
+          item.status = 'Completed';
+          item.result = inspResult;
+          item.date = inspDate;
+          item.notes = inspNotes.trim();
+        }
+      });
+    }
+
+    /* Update the main applications LocalStorage */
+    let applications = [];
+    try { applications = JSON.parse(localStorage.getItem('applications') || '[]'); } catch(e){}
+    applications.forEach(function(a) {
+        if (a.id === appId) {
+            a.status = (inspResult === 'Rejected') ? 'Rejected' : 'Inspection Recorded';
+            if (inspResult === 'Rejected') {
+                a.rejectionReason = 'Rejected during Field Inspection. Remarks: ' + inspNotes.trim();
+            }
+        }
+    });
+    localStorage.setItem('applications', JSON.stringify(applications));
+
     /* Show the success popup */
     showSubmitPopup(appId, bizName, inspResult);
   });

@@ -19,6 +19,18 @@ document.addEventListener('DOMContentLoaded', function() {
     amtEls.forEach(function(el){ el.textContent = app.paymentAmount || '₹5,000'; });
   }
 
+  // Show date
+  var subDateEl = document.getElementById('subDate');
+  if (subDateEl) {
+    subDateEl.textContent = (app && app.submittedDate) ? app.submittedDate : new Date().toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+  }
+
+  // Show fake txn id
+  var txnRefEl = document.getElementById('txnRef');
+  if (txnRefEl) {
+    txnRefEl.textContent = 'TXN-' + Math.floor(10000000 + Math.random() * 90000000);
+  }
+
   // Wire buttons
   var trackBtn = document.getElementById('trackBtn');
   if (trackBtn) trackBtn.addEventListener('click', function(){
@@ -37,3 +49,37 @@ document.addEventListener('DOMContentLoaded', function() {
   window.goTrack = function() { window.location.href = '../Track Application Status/index.html'; };
   window.goDashboard = function() { window.location.href = '../Applicant dashboard/index.html'; };
 });
+// Generate new application object
+function saveApplication() {
+    let applications = JSON.parse(localStorage.getItem("applications")) || [];
+    
+    let form = {};
+    try {
+        form = JSON.parse(sessionStorage.getItem('applicationForm') || '{}');
+    } catch(e) {}
+    
+    let ref = sessionStorage.getItem('applicationRef') || ("APP-" + Date.now());
+
+    let newApp = {
+        id: ref,
+        applicantName: form.fullName || "Test Applicant",
+        email: form.email || "",
+        phone: form.phone || "",
+        businessName: form.businessName || "Test Business",
+        licenseType: form.businessType || "Business License",
+        status: "Pending",
+        submittedDate: new Date().toLocaleDateString(),
+        shopAddress: form.shopAddress || "Test Location",
+        paymentStatus: 'Paid',
+        paymentAmount: sessionStorage.getItem('calculatedFeeString') || '₹2100.00'
+    };
+
+    // Ensure we don't save duplicates if page is refreshed
+    if (!applications.find(a => a.id === ref)) {
+        applications.push(newApp);
+        localStorage.setItem("applications", JSON.stringify(applications));
+    }
+}
+
+// Call this when payment is successful
+saveApplication();

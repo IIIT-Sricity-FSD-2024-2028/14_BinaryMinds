@@ -12,7 +12,7 @@ var MOCK_USERS = [
 var DASHBOARDS = {
   "applicant":          "../Applicant dashboard/index.html",
   "field officer":      "../../../fo_connected/fodashboard/index.html",
-  "department officer": "../../../dept_officer_connected/do_connected/dashboard/index.html",
+  "department officer": "../../../do_connected/dashboard/index.html",
   "superuser":          "../../../superuser/index.html"
 };
 

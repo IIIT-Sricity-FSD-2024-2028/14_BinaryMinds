@@ -25,3 +25,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+function loadApplications() {
+    let applications = JSON.parse(localStorage.getItem("applications")) || [];
+
+    let tableBody = document.getElementById("applicationTableBody");
+    tableBody.innerHTML = "";
+
+    applications.filter(app => app.applicantName && app.applicantName.trim() !== "").reverse().forEach(app => {
+        let row = `
+            <tr>
+                <td>${app.id || ""}</td>
+                <td>${app.applicantName || ""}</td>
+                <td>${app.businessName || ""}</td>
+                <td>${app.status || ""}</td>
+                <td>${app.submittedDate || ""}</td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+}
+
+loadApplications();

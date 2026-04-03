@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Renew Trade License - TradeZo</title>
   <link rel="stylesheet" href="review_license.css">
+  <script src="../session_guard.js"></script>
 </head>
 <body>
 
@@ -34,18 +35,18 @@
   <div class="card">
     <div class="card-top">
       <h2>Existing License Details</h2>
-      <span class="badge green">● ACTIVE</span>
+      <span class="badge green" id="licenseBadge">● ACTIVE</span>
     </div>
     <div class="row3">
-      <div class="field"><label>LICENSE NUMBER</label><p>TL-2026-001</p></div>
-      <div class="field"><label>BUSINESS NAME</label><p>Mugale Grocery Store</p></div>
-      <div class="field"><label>LICENSE STATUS</label><p class="green">Active</p></div>
+      <div class="field"><label>LICENSE NUMBER</label><p id="licenseNumber">—</p></div>
+      <div class="field"><label>BUSINESS NAME</label><p id="businessName">—</p></div>
+      <div class="field"><label>LICENSE STATUS</label><p class="green" id="licenseStatus">—</p></div>
     </div>
     <hr>
     <div class="row3">
-      <div class="field"><label>ISSUE DATE</label><p>10 April 2026</p></div>
-      <div class="field"><label>EXPIRY DATE</label><p>10 April 2027</p></div>
-      <div class="field"><label>PROPOSED NEW EXPIRY</label><p class="blue">10 April 2028</p></div>
+      <div class="field"><label>ISSUE DATE</label><p id="issueDate">—</p></div>
+      <div class="field"><label>EXPIRY DATE</label><p id="expiryDate">—</p></div>
+      <div class="field"><label>PROPOSED NEW EXPIRY</label><p class="blue" id="proposedExpiry">—</p></div>
     </div>
   </div>
 
@@ -126,11 +127,11 @@
   <div class="card">
     <h2>Payment Information</h2>
     <div class="row5">
-      <div class="field"><label>RENEWAL ID</label><p>RN-2027-44012</p></div>
-      <div class="field"><label>LICENSE ID</label><p>TL-2026-001</p></div>
-      <div class="field"><label>RENEWAL FEE</label><p class="blue big">₹1,500</p></div>
-      <div class="field"><label>PAYMENT METHOD</label><p>Online (UPI/Netbanking)</p></div>
-      <div class="field"><label>RENEWAL STATUS</label><span class="badge orange">Submitted</span></div>
+        <div class="field"><label>RENEWAL ID</label><p id="renewalId">—</p></div>
+        <div class="field"><label>LICENSE ID</label><p id="licenseId">—</p></div>
+        <div class="field"><label>RENEWAL FEE</label><p class="blue big" id="renewalFee">—</p></div>
+        <div class="field"><label>PAYMENT METHOD</label><p id="paymentMethod">Online (UPI/Netbanking)</p></div>
+        <div class="field"><label>RENEWAL STATUS</label><span class="badge orange" id="renewalStatus">Pending</span></div>
     </div>
 
     <!-- Progress Steps -->
@@ -158,6 +159,7 @@
 
 </div>
 
-<script src="renew_license.js"></script>
+<script src="../../../mockdata.js"></script>
+<script src="review_license.js"></script>
 </body>
 </html>
