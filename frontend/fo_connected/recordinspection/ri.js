@@ -42,6 +42,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
   });
 
+  // Put new applications first
+  data.reverse();
   renderCards(data);
 
   var searchEl = document.getElementById('searchInspection');

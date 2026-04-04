@@ -65,6 +65,8 @@ function saveApplication() {
         applicantName: form.fullName || "Test Applicant",
         email: form.email || "",
         phone: form.phone || "",
+        aadhaar: form.aadhaar || "",
+        gender: form.gender || "",
         businessName: form.businessName || "Test Business",
         licenseType: form.businessType || "Business License",
         status: "Pending",

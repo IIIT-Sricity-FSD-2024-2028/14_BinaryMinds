@@ -34,21 +34,42 @@
   function getAllApplications() {
     var apps = [];
     if (window.TRADEZO && Array.isArray(TRADEZO.applications)) {
-      apps = apps.concat(TRADEZO.applications);
+      apps = JSON.parse(JSON.stringify(TRADEZO.applications));
     }
 
     var saved = safeJsonParse(localStorage.getItem('tz_submitted_apps') || '[]', []);
     var globalSaved = safeJsonParse(localStorage.getItem('applications') || '[]', []);
+    var generatedLics = safeJsonParse(localStorage.getItem('tz_generated_licenses') || '[]', []);
     
-    // Merge the arrays
+    // Merge the arrays, OVERRIDING existing entries with newer local storage states
     var combined = saved.concat(globalSaved);
 
     if (Array.isArray(combined)) {
       combined.forEach(function(app) {
-        var exists = apps.some(function(existing) {
-          return existing.appRef === app.id || existing.id === app.id;
+        var existing = apps.find(function(ex) {
+          return ex.appRef === app.id || ex.id === app.id || ex.id === app.appRef;
         });
-        if (!exists) apps.push(app);
+        if (existing) {
+          Object.assign(existing, app);
+        } else {
+          apps.push(app);
+        }
+      });
+    }
+
+    // Explicitly apply generated licenses to override status globally
+    if (Array.isArray(generatedLics)) {
+      generatedLics.forEach(function(lic) {
+          var existing = apps.find(function(ex) {
+             return ex.appRef === lic.appId || ex.id === lic.appId;
+          });
+          if (existing) {
+             existing.status = 'License Issued';
+             existing.licenseNo = lic.licenseNo;
+             existing.licenseId = lic.licenseNo;
+             if (lic.licenseIssueDate) existing.licenseIssueDate = lic.licenseIssueDate;
+             if (lic.licenseExpiryDate) existing.licenseExpiryDate = lic.licenseExpiryDate;
+          }
       });
     }
 
@@ -102,18 +123,25 @@
 
   function statusLabel(app) {
     if (!app) return 'Not Started';
-    return app.status || 'Submitted';
+    var text = app.status || 'Submitted';
+    var lower = text.toLowerCase();
+    if (lower === 'approved' || lower === 'license issued' || lower === 'licensed') {
+      return 'License Generated';
+    }
+    return text;
   }
 
   function statusColor(app) {
+    var lbl = statusLabel(app);
+    if (lbl === 'License Generated') return '#10b981';
     if (window.TRADEZO && typeof TRADEZO.statusColor === 'function') {
-      return TRADEZO.statusColor(statusLabel(app));
+      return TRADEZO.statusColor(app.status || lbl);
     }
     return '#6b7280';
   }
 
   function isApproved(app) {
-    return !!(app && (normalizeText(app.status) === 'approved' || app.licenseId));
+    return !!(app && (normalizeText(app.status) === 'approved' || normalizeText(app.status) === 'license issued' || normalizeText(app.status) === 'licensed' || app.licenseId || app.licenseNo));
   }
 
   function isSubmitted(app) {
@@ -136,36 +164,38 @@
 
     var statusCard = table.closest('.card');
     if (statusCard) {
-      statusCard.style.display = app ? '' : 'none';
+      statusCard.style.display = '';
     }
+    
+    var actions = document.getElementById('appActions');
+
+    if (!app) {
+      table.style.display = 'none';
+      if (actions) {
+        actions.innerHTML = '<p style="color:#64748b; font-size:14px;">You have no active applications. Click "Apply License" to get started.</p>';
+      }
+      return;
+    }
+
+    table.style.display = '';
 
     var row = table.querySelectorAll('tr')[1];
     if (!row) return;
 
     var cells = row.querySelectorAll('td');
-    var businessName = 'No application submitted yet';
-    var statusText = 'Not Started';
-    var dateText = '—';
+    var businessName = app.businessName || 'Application in progress';
+    var statusText = statusLabel(app).toUpperCase();
+    var dateText = app.submittedDate || app.updatedDate || '—';
 
-    if (app) {
-      businessName = app.businessName || app.businessName || 'Application in progress';
-      statusText = statusLabel(app).toUpperCase();
-      dateText = app.submittedDate || app.updatedDate || '—';
-    }
-
-    if (cells[0]) cells[0].textContent = app ? (app.id || app.appRef || '—') : '—';
+    if (cells[0]) cells[0].textContent = app.id || app.appRef || '—';
     if (cells[1]) cells[1].textContent = businessName;
     if (cells[2]) {
       cells[2].innerHTML = '<span class="badge" style="background:' + statusColor(app) + ';color:#fff;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;">' + statusText + '</span>';
     }
     if (cells[3]) cells[3].textContent = dateText;
 
-    var actions = document.getElementById('appActions');
     if (actions) {
-      actions.innerHTML = app
-        ? '<button type="button" onclick="window.location.href=\'../Track Application Status/index.html\'">Track Application</button>' +
-          '<button type="button" onclick="window.location.href=\'../payments/index.html\'">Payment Details</button>'
-        : '';
+      actions.innerHTML = '<button type="button" onclick="window.location.href=\'../payments/index.html\'">Payment Details</button>';
     }
   }
 
@@ -181,21 +211,43 @@
     var paragraphs = card.querySelectorAll('p');
     var button = card.querySelector('button');
 
+    grid.style.display = '';
+
+    if (!app) {
+      if (title) title.textContent = 'Apply for New License';
+      if (paragraphs[0]) paragraphs[0].innerHTML = 'Begin your registration to obtain a valid trade license.';
+      if (paragraphs[1]) paragraphs[1].innerHTML = '';
+      if (paragraphs[2]) paragraphs[2].innerHTML = '';
+      
+      var p3 = card.querySelectorAll('p')[3];
+      if (p3) p3.innerHTML = '';
+      
+      if (button) {
+        button.textContent = 'Apply License';
+        button.onclick = function() { window.location.href = '../apply_license/apply_license.html'; };
+      }
+      return;
+    }
+
     if (title) {
       title.textContent = isApproved(app) ? 'My Current License' : 'My Application & Fees';
     }
 
-    if (!app) {
-      grid.style.display = 'none';
-      return;
-    }
-
-    grid.style.display = '';
-
     if (isApproved(app)) {
-      if (paragraphs[0]) paragraphs[0].innerHTML = '<b>License No:</b> ' + (app.licenseId || 'Pending issue');
+      if (paragraphs[0]) paragraphs[0].innerHTML = '<b>License No:</b> ' + (app.licenseId || app.licenseNo || 'Pending issue');
       if (paragraphs[1]) paragraphs[1].innerHTML = '<b>Business:</b> ' + (app.businessName || '—');
-      if (paragraphs[2]) paragraphs[2].innerHTML = '<b>Valid:</b> ' + ((app.licenseIssueDate || '—') + ' - ' + (app.licenseExpiryDate || '—'));
+      
+      var validStr = '';
+      if (app.licenseIssueDate && app.licenseExpiryDate) {
+         validStr = app.licenseIssueDate + ' - ' + app.licenseExpiryDate;
+      } else {
+         var d = new Date();
+         var e = new Date();
+         e.setFullYear(d.getFullYear() + 1);
+         validStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' - ' + e.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
+      if (paragraphs[2]) paragraphs[2].innerHTML = '<b>Valid:</b> ' + validStr;
+      
       if (button) {
         button.textContent = 'Download License';
         button.onclick = function() { window.location.href = '../download/index.html'; };
@@ -214,9 +266,9 @@
     }
     p3.innerHTML = '<b>Status:</b> ' + statusLabel(app);
     if (button) {
-      button.textContent = isSubmitted(app) ? 'Track Application' : 'Continue Application';
+      button.textContent = 'Track Application';
       button.onclick = function() {
-        window.location.href = isSubmitted(app) ? '../Track Application Status/index.html' : '../apply_license/apply_license.html';
+        window.location.href = '../Track Application Status/index.html';
       };
     }
   }
@@ -263,6 +315,12 @@
       } else {
         subtitle.textContent = 'Track your application and complete pending steps.';
       }
+      // Force inline style to ensure absolute visibility overrides
+      subtitle.style.color = '#ffffff';
+      subtitle.style.fontWeight = '700';
+      subtitle.style.fontSize = '15px';
+      subtitle.style.opacity = '1';
+      subtitle.style.textShadow = '0px 1px 3px rgba(0,0,0,0.4)';
     }
 
     setStatusRow(app);

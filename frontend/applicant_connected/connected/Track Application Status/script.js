@@ -12,25 +12,32 @@ document.addEventListener('DOMContentLoaded', function() {
   var appRef = sessionStorage.getItem('applicationRef') || '';
   var app    = null;
 
-  // Try to find by appRef first
+  // Try to find by appRef or email across all pools and MERGE state
+  var appsPool = [];
+  if (window.TRADEZO && Array.isArray(TRADEZO.applications)) appsPool = appsPool.concat(TRADEZO.applications);
+  try { appsPool = appsPool.concat(JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]')); } catch(e){}
+  try { appsPool = appsPool.concat(JSON.parse(localStorage.getItem('applications') || '[]')); } catch(e){}
+  
+  // Aggregate to get the absolute latest status
+  var aggregateMap = {};
+  appsPool.forEach(function(a) {
+      if (!a) return;
+      var key = a.id || a.appRef;
+      if (!key) return;
+      if (!aggregateMap[key]) aggregateMap[key] = a;
+      else aggregateMap[key] = Object.assign({}, aggregateMap[key], a); // later elements (like `applications`) override earlier ones
+  });
+
+  var combinedApps = Object.values(aggregateMap);
+
   if (appRef) {
-    app = TRADEZO.applications.find(function(a) {
-      return a.appRef === appRef || a.id === appRef;
-    }) || null;
+    app = combinedApps.find(function(a) { return a.appRef === appRef || a.id === appRef; }) || null;
   }
-
-  // If not found, find by user email
   if (!app) {
-    app = TRADEZO.applications.find(function(a) {
-      return a.email && a.email.toLowerCase() === user.email.toLowerCase();
-    }) || null;
+    app = combinedApps.find(function(a) { return a.email && a.email.toLowerCase() === user.email.toLowerCase(); }) || null;
   }
-
-  // If still not found, match by applicant name
   if (!app) {
-    app = TRADEZO.applications.find(function(a) {
-      return a.applicantName && a.applicantName.toLowerCase() === user.name.toLowerCase();
-    }) || null;
+    app = combinedApps.find(function(a) { return a.applicantName && a.applicantName.toLowerCase() === user.name.toLowerCase(); }) || null;
   }
 
   // No application found — show message
@@ -86,13 +93,19 @@ document.addEventListener('DOMContentLoaded', function() {
   var currentStepIdx = 0;
   var statusMap = {
     'Submitted':           0,
+    'Pending':             0,
     'Under Verification':  1,
     'Documents Verified':  1,
+    'Pending Inspection':  2,
+    'Scheduled':           2,
     'Inspection Scheduled':2,
+    'Inspection Recorded': 3,
     'Inspection Completed':3,
     'Under Review':        3,
     'Review Done':         3,
     'Approved':            4,
+    'Licensed':            4,
+    'License Issued':      4,
     'Rejected':            4
   };
   currentStepIdx = statusMap[app.status] !== undefined ? statusMap[app.status] : 0;
@@ -172,6 +185,8 @@ document.addEventListener('DOMContentLoaded', function() {
     'Under Review':        'Application is under department review.',
     'Review Done':         'Final approval decision pending.',
     'Approved':            'License issued successfully! Download from the Download section.',
+    'Licensed':            'License issued successfully! Download from the Download section.',
+    'License Issued':      'License issued successfully! Download from the Download section.',
     'Rejected':            'Application rejected. Reason: ' + (app.rejectionReason || 'Please contact support.')
   };
   if (expectedEl) expectedEl.textContent = remarkMap[app.status] || 'Status update pending.';
@@ -186,6 +201,8 @@ document.addEventListener('DOMContentLoaded', function() {
     'Inspection Completed':'Field inspection has been completed. Report submitted for department review.',
     'Under Review':        'Application is being reviewed by the department officer.',
     'Approved':            'Application approved. License is now available for download.',
+    'Licensed':            'Application approved. License is now available for download.',
+    'License Issued':      'Application approved. License is now available for download.',
     'Rejected':            app.rejectionReason || 'Application could not be approved at this time.'
   };
   if (remarkEl) remarkEl.textContent = officerRemarks[app.status] || '';
@@ -193,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // ---- VIEW LICENSE BUTTON ----
   var viewBtn = document.querySelector('.btn-view');
   if (viewBtn) {
-    if (app.status === 'Approved' || app.licenseId) {
+    if (app.status === 'Approved' || app.status === 'License Issued' || app.status === 'Licensed' || app.licenseId || app.licenseNo) {
       viewBtn.style.display = 'inline-block';
     } else {
       viewBtn.style.display = 'none';
@@ -238,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
       { title: 'Application Submitted',  msg: 'Your application ' + app.id + ' has been received.',           time: app.submittedDate || '' },
       { title: 'Action Required', msg: 'Please resolve the identified issues and re-apply.', time: '' }
     ];
-  } else if (app.status === 'Approved') {
+  } else if (app.status === 'Approved' || app.status === 'Licensed' || app.status === 'License Issued') {
     notifData = [
       { title: 'License Approved! 🎉',   msg: 'Your trade license has been issued. You can download it now.', time: 'Today' },
       { title: 'Inspection Completed',   msg: 'Site inspection for ' + app.id + ' completed successfully.',  time: app.inspectionDate || '' },

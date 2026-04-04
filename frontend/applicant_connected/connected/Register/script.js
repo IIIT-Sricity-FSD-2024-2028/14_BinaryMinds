@@ -54,10 +54,13 @@ document.querySelector('.btn-register').addEventListener('click', function() {
   }
 
   // Phone
-  if (!phone.value.trim()) {
+  var phoneVal = phone.value.trim();
+  if (!phoneVal) {
     showError(phone, 'Phone number is required.'); valid = false;
-  } else if (!/^\d{10}$/.test(phone.value.trim())) {
+  } else if (!/^\d{10}$/.test(phoneVal)) {
     showError(phone, 'Enter a valid 10-digit phone number.'); valid = false;
+  } else if (/^0{10}$/.test(phoneVal)) {
+    showError(phone, 'Phone number cannot be all zeros.'); valid = false;
   }
 
   // Password

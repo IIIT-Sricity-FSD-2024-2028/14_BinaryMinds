@@ -251,7 +251,7 @@ TRADEZO.stats = {
 
 // Get an application by ID
 TRADEZO.getApplication = function(id) {
-  return TRADEZO.applications.find(function(a) { return a.id === id; }) || null;
+  return TRADEZO.applications.find(function(a) { return a.id === id || a.appRef === id; }) || null;
 };
 
 // Get a license by ID

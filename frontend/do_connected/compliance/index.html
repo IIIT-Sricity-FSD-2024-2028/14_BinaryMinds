@@ -36,13 +36,18 @@
   <!-- ===== MAIN CONTENT ===== -->
   <div class="main">
 
-    <!-- Title -->
     <div class="topbar">
       <h2>Compliance Reports</h2>
-      <button class="export-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export Report
-      </button>
+      <div style="display:flex;gap:12px;">
+        <button class="export-btn" style="background:#fff;color:#102a72;border:1px solid #102a72;" onclick="window.location.href='../generated_licenses/index.html'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          View Generated Licenses
+        </button>
+        <button class="export-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Report
+        </button>
+      </div>
     </div>
  
     <!-- Stat Cards -->
@@ -55,62 +60,22 @@
         <div class="scard-label">Compliance Rate</div>
         <div class="scard-row"><div class="scard-val">98.2%</div><span class="up">+0.5%↗</span></div>
       </div>
-      <div class="scard">
-        <div class="scard-label">Pending Audits</div>
-        <div class="scard-row"><div class="scard-val">12</div><span class="down">-15%↘</span></div>
-      </div>
-      <div class="scard">
-        <div class="scard-label">Due for Renewal</div>
-        <div class="scard-row"><div class="scard-val">45</div><span class="neutral">Next 30 days</span></div>
-      </div>
+
     </div>
  
     <!-- Middle Section -->
     <div class="mid-grid">
-      <!-- Recently Issued Licenses -->
-      <div class="card">
+      <!-- Flagged / Violated Licenses -->
+      <div class="card" id="violationSection">
         <div class="card-hdr">
-          <div class="card-title">Recently Issued Licenses</div>
-          <span class="view-all">View All</span>
+          <div class="card-title" style="color: #dc2626;">Licenses with Active Violations</div>
         </div>
-        <table class="lic-table">
+        <table class="lic-table" id="violationTable">
           <thead>
-            <tr><th>Entity Name</th><th>License ID</th><th>Issue Date</th><th>Status</th></tr>
+            <tr><th>Entity Name</th><th>License ID</th><th>Violation Reason</th><th>Action</th></tr>
           </thead>
           <tbody>
-            <tr class="highlighted">
-              <td>
-                <div class="entity-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-                </div>
-                <div><div class="ename">Global Logistics Corp</div><div class="esub">Transportation &amp; Supply</div></div>
-              </td>
-              <td>#LIC-2024-0501</td>
-              <td>May 12, 2024</td>
-              <td><span class="badge-active">● Active</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="entity-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-                </div>
-                <div><div class="ename">North Star Energy</div><div class="esub">Renewables</div></div>
-              </td>
-              <td>#LIC-2024-0495</td>
-              <td>May 10, 2024</td>
-              <td><span class="badge-active">● Active</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="entity-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-                </div>
-                <div><div class="ename">Blue Water Mfg</div><div class="esub">Industrial</div></div>
-              </td>
-              <td>#LIC-2024-0482</td>
-              <td>May 08, 2024</td>
-              <td><span class="badge-active">● Active</span></td>
-            </tr>
+            <!-- Dynamically populated by script.js -->
           </tbody>
         </table>
       </div>
@@ -131,42 +96,9 @@
       </div>
     </div>
  
-    <!-- Recent Audit Logs -->
-    <div class="card">
-      <div class="card-hdr">
-        <div class="card-title">Recent Audit Logs</div>
-        <span class="view-all">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          View History
-        </span>
-      </div>
-      <div class="audit-list">
-        <div class="audit-item">
-          <div class="audit-icon ag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div class="audit-body">
-            <div class="audit-title">License Issued Successfully</div>
-            <div class="audit-desc">Global Logistics Corp (#LIC-2024-0501) approved and issued by Officer R. Thompson</div>
-          </div>
-          <div class="audit-time">2 Hours Ago</div>
-        </div>
-        <div class="audit-item">
-          <div class="audit-icon aa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></div>
-          <div class="audit-body">
-            <div class="audit-title">Compliance Review Initiated</div>
-            <div class="audit-desc">Annual audit started for Zenith Tech Solutions (#LIC-2023-0882).</div>
-          </div>
-          <div class="audit-time">5 Hours Ago</div>
-        </div>
-        <div class="audit-item">
-          <div class="audit-icon ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-          <div class="audit-body">
-            <div class="audit-title">Renewal Reminder Sent</div>
-            <div class="audit-desc">Automatic notification sent to Swift Logistics Ltd regarding upcoming renewal.</div>
-          </div>
-          <div class="audit-time">Yesterday</div>
-        </div>
-      </div>
-    </div>
+
+
+
  
     <!-- Go Back -->
     <div><button class="go-back">Go Back</button></div>
@@ -174,7 +106,7 @@
   </div>
 </div>
 
-<script src="../../../mockdata.js"></script>
+<script src="../../mockdata.js"></script>
 <script src="script.js"></script>
 <script src="../do_nav.js"></script>
 </body>

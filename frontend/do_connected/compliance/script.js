@@ -26,12 +26,14 @@ document.head.appendChild(script);
 document.addEventListener('DOMContentLoaded', function () {
 
   /* Export button → CSV download */
-  var exportBtn = document.querySelector('.export-btn');
-  if (exportBtn) {
-    exportBtn.addEventListener('click', function () {
-      downloadCSV();
-    });
-  }
+  var btns = document.querySelectorAll('.export-btn');
+  btns.forEach(function(btn) {
+    if (btn.textContent.includes('Export Report')) {
+      btn.addEventListener('click', function () {
+        downloadCSV();
+      });
+    }
+  });
 
   /* Go Back → dashboard */
   var goBackBtn = document.querySelector('.go-back');
@@ -84,3 +86,73 @@ function downloadCSV() {
   link.click();
   document.body.removeChild(link);
 }
+
+/* Render Violated Licenses */
+function renderViolations() {
+  var tbody = document.querySelector('#violationTable tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  
+  var suspended = [];
+  try { suspended = JSON.parse(localStorage.getItem('tz_suspended_licenses') || '[]'); } catch(e){}
+
+  // Mock an array of violations based strictly on TRADEZO active licenses
+  var violations = [];
+  if (window.TRADEZO && window.TRADEZO.licenses) {
+    // Filter only those approved and in working condition (status: 'Active')
+    var activeLicenses = window.TRADEZO.licenses.filter(function(lic) {
+      return lic.status === 'Active';
+    });
+    
+    var mockReasons = [
+      'Failed Safety Audit (Pending Resolve)',
+      'Multiple public complaints reported',
+      'Operating without proper fire clearances'
+    ];
+    
+    activeLicenses.forEach(function(lic, idx) {
+      violations.push({
+        id: lic.id,
+        name: lic.businessName,
+        sub: lic.category,
+        reason: mockReasons[idx % mockReasons.length],
+        date: lic.issueDate
+      });
+    });
+  }
+  
+  // Check if these are already suspended
+  var activeViolations = violations.filter(v => !suspended.includes(v.id));
+
+  if (activeViolations.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#64748b;">No active violations found.</td></tr>';
+    return;
+  }
+
+  activeViolations.forEach(function(v) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = 
+      '<td>' +
+        '<div class="entity-icon" style="background:#fef2f2;color:#ef4444;font-size:18px;">&#9888;</div>' +
+        '<div><div class="ename">' + v.name + '</div><div class="esub">' + v.sub + '</div></div>' +
+      '</td>' +
+      '<td>#' + v.id + '</td>' +
+      '<td style="color:#ef4444;font-weight:500;">' + v.reason + '</td>' +
+      '<td><button class="suspend-btn" onclick="suspendLicense(\'' + v.id + '\')">Suspend</button></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+window.suspendLicense = function(id) {
+  if (confirm('Are you sure you want to suspend license ' + id + '? This action is immediate.')) {
+    var suspended = [];
+    try { suspended = JSON.parse(localStorage.getItem('tz_suspended_licenses') || '[]'); } catch(e){}
+    suspended.push(id);
+    localStorage.setItem('tz_suspended_licenses', JSON.stringify(suspended));
+    renderViolations();
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderViolations();
+});

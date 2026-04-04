@@ -9,10 +9,31 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
 
-  // Find application and inspection data
-  var app = TRADEZO.getApplication(appId);
-  var inspection = TRADEZO.inspections.find(function(ins) { return ins.appId === appId; });
-  var verification = TRADEZO.verifications.find(function(v) { return v.appId === appId; });
+  // Find application and inspection data from local storage first
+  var applications = [];
+  try { applications = JSON.parse(localStorage.getItem('tradezo_applications') || '[]'); } catch(e){}
+  var savedApps = [];
+  try { savedApps = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e){}
+  
+  // Combine all possible sources for applications
+  var allApps = [].concat(applications, savedApps, window.TRADEZO ? TRADEZO.applications : []);
+  var app = allApps.find(function(a) { return a.id === appId || a.appRef === appId; });
+  
+  // Find inspection
+  var inspections = [];
+  try { inspections = JSON.parse(localStorage.getItem('tz_inspection_reports') || '[]'); } catch(e){}
+  var inspection = inspections.find(function(ins) { return ins.appId === appId; });
+  if (!inspection && window.TRADEZO) {
+    inspection = TRADEZO.inspections.find(function(ins) { return ins.appId === appId; });
+  }
+
+  // Find verification
+  var verifications = [];
+  try { verifications = JSON.parse(localStorage.getItem('tz_verification_history') || '[]'); } catch(e){}
+  var verification = verifications.find(function(v) { return v.appId === appId; });
+  if (!verification && window.TRADEZO) {
+    verification = TRADEZO.verifications.find(function(v) { return v.appId === appId; });
+  }
 
   if (!app) {
     alert('Application not found. Redirecting to worklist...');
@@ -24,11 +45,16 @@ document.addEventListener('DOMContentLoaded', function() {
   var fo = TRADEZO.users.find(function(u) { return u.id === app.assignedFO; });
 
   // Populate Application Information
-  document.getElementById('appId').textContent = app.id;
+  document.getElementById('appId').textContent = app.id || app.appRef;
   document.getElementById('businessName').textContent = app.businessName;
-  document.getElementById('ownerName').textContent = app.applicantName;
-  document.getElementById('category').textContent = app.tradeCategory;
-  document.getElementById('address').textContent = app.shopAddress + ', ' + app.city + ', ' + app.district + ', ' + app.state + ' - ' + app.pincode;
+  document.getElementById('ownerName').textContent = app.applicantName || app.ownerName || '-';
+  document.getElementById('category').textContent = app.tradeCategory || app.category || '-';
+  var fullAddress = app.shopAddress || app.address || '';
+  if (app.city) fullAddress += ', ' + app.city;
+  if (app.district) fullAddress += ', ' + app.district;
+  if (app.state) fullAddress += ', ' + app.state;
+  if (app.pincode) fullAddress += ' - ' + app.pincode;
+  document.getElementById('address').textContent = fullAddress;
   document.getElementById('submissionDate').textContent = app.submittedDate;
 
   // Populate Field Officer Information
@@ -37,9 +63,41 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('inspectionDate').textContent = app.inspectionDate || (inspection ? inspection.date : 'Not Scheduled');
   document.getElementById('inspectionTime').textContent = app.inspectionTime || (inspection ? inspection.time : '-');
 
+  // Populate Verification Status
+  var verifStatusBadge = document.getElementById('verificationStatus');
+  var verifDetails = document.getElementById('verificationDetails');
+  var verifSection = document.getElementById('verificationResultSection');
+  
+  if (verification) {
+    var vStatus = verification.decision || verification.status || 'Verified';
+    verifStatusBadge.textContent = vStatus;
+    if (vStatus === 'Approved' || vStatus === 'Verified') {
+      verifStatusBadge.className = 'status-badge completed';
+      if (verification.reason || verification.notes || verification.remarks) {
+        verifSection.style.display = 'block';
+        verifDetails.textContent = verification.reason || verification.notes || verification.remarks;
+      }
+    } else if (vStatus.includes('Reject')) {
+      verifStatusBadge.className = 'status-badge not-assigned';
+      verifSection.style.display = 'block';
+      verifDetails.textContent = verification.reason || verification.notes || verification.remarks || app.rejectionReason || 'Rejected during verification.';
+      verifDetails.style.color = '#dc2626';
+    } else {
+      verifStatusBadge.className = 'status-badge scheduled';
+    }
+  } else {
+    verifStatusBadge.textContent = app.status || 'Pending Review';
+    if (app.status === 'Approved') verifStatusBadge.className = 'status-badge completed';
+    else if (app.status === 'Rejected') verifStatusBadge.className = 'status-badge not-assigned';
+    else verifStatusBadge.className = 'status-badge scheduled';
+  }
+
   // Populate Inspection Status
   var statusBadge = document.getElementById('inspectionStatus');
-  var inspectionStatus = inspection ? inspection.status : 'Not Assigned';
+  var inspectionStatus = 'Not Assigned';
+  if (inspection) {
+    inspectionStatus = inspection.status || (inspection.result ? 'Completed' : 'Scheduled');
+  }
   statusBadge.textContent = inspectionStatus;
   statusBadge.className = 'status-badge';
   
@@ -53,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Populate Result Section if inspection is completed
   var resultSection = document.getElementById('resultSection');
-  if (inspection && inspection.status === 'Completed') {
+  if (inspectionStatus === 'Completed') {
     resultSection.style.display = 'block';
     var resultBadge = document.getElementById('resultBadge');
     resultBadge.textContent = inspection.result || app.inspectionResult || 'Pending';
@@ -98,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Update proceed button visibility
   var proceedBtn = document.getElementById('proceedBtn');
-  if (!inspection || inspection.status !== 'Completed') {
+  if (inspectionStatus !== 'Completed') {
     proceedBtn.textContent = 'Inspection Not Completed';
     proceedBtn.style.background = '#94a3b8';
     proceedBtn.style.cursor = 'not-allowed';

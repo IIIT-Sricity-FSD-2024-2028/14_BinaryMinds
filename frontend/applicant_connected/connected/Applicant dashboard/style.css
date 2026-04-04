@@ -137,8 +137,9 @@ body {
 }
 
 .welcome p {
-  font-size: 13px;
-  color: rgba(255,255,255,0.8);
+  font-size: 14px;
+  color: #ffffff;
+  opacity: 0.95;
 }
 
 .welcome img {

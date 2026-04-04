@@ -91,9 +91,10 @@ document.addEventListener('DOMContentLoaded', function() {
       notifCount++;
       itemsHTML += '<div class="notif-item"><strong>Application Rejected ❌</strong>Your application has been rejected. Check remarks.</div>'; 
     } 
-    else if (app.status === 'Approved') {
+    else if (app.status === 'Approved' || app.status === 'License Issued' || app.status === 'Licensed') {
       notifCount++;
-      itemsHTML += '<div class="notif-item"><strong>License Approved! 🎉</strong>Your trade license has been issued successfully.</div>'; 
+      var licStr = (app.licenseId || app.licenseNo) ? ('Your Trade License <b>' + (app.licenseId || app.licenseNo) + '</b> has been issued successfully!') : 'Your trade license has been issued successfully!';
+      itemsHTML += '<div class="notif-item"><strong>License Generated 🎉</strong>' + licStr + '<br>You can now download it from your dashboard.</div>'; 
     }
     
     // Default base notification

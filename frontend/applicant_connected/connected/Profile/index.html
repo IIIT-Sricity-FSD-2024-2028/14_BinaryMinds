@@ -40,9 +40,9 @@
             <div class="cam-icon"><i class="fa-solid fa-camera"></i></div>
           </div>
           <div class="profile-info">
-            <h2 id="dispName">Jiya Mugale</h2>
-            <p><i class="fa-solid fa-at"></i> <span id="dispEmail">jiya.mugale@gmail.com</span></p>
-            <p><i class="fa-solid fa-phone"></i> <span id="dispPhone">+91 8483916284</span></p>
+            <h2 id="dispName"></h2>
+            <p><i class="fa-solid fa-at"></i> <span id="dispEmail"></span></p>
+            <p><i class="fa-solid fa-phone"></i> <span id="dispPhone"></span></p>
             <button onclick="window.location.href='../Profile_edit/index.html'" style="margin-top:14px; background:#1e3a8a; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;"><i class="fa-solid fa-pen" style="margin-right:6px;"></i>Edit Profile</button>
           </div>
         </div>
@@ -52,11 +52,11 @@
           <div class="detail-grid">
             <div>
               <small>AADHAAR NUMBER</small>
-              <p id="dispAadhaar">XXXX-XXXX-4582</p>
+              <p id="dispAadhaar"></p>
             </div>
             <div>
               <small>GENDER</small>
-              <p id="dispGender">Female</p>
+              <p id="dispGender"></p>
             </div>
 
             <div>
@@ -66,8 +66,7 @@
           </div>
           <div class="address-block">
             <small>ADDRESS</small>
-            <p id="dispAddress" style="white-space: pre-wrap;">Flat 402, Sunshine Plaza, MG Road,
-Bangalore, Karnataka, 560001</p>
+            <p id="dispAddress" style="white-space: pre-wrap;"></p>
           </div>
         </div>
 
@@ -119,26 +118,7 @@ Bangalore, Karnataka, 560001</p>
           <div class="update-date">Last profile update: 12 Jan 2024</div>
         </div>
 
-        <!-- QUICK ACTIONS -->
-        <div class="quick-card">
-          <h3>Quick Actions</h3>
-          <div class="qa-item" onclick="alert('Update contact details...')">
-            <span><i class="fa-solid fa-address-card"></i> Update Contact Details</span>
-            <i class="fa-solid fa-chevron-right"></i>
-          </div>
-          <div class="qa-item" onclick="alert('Change password...')">
-            <span><i class="fa-solid fa-lock"></i> Change Password</span>
-            <i class="fa-solid fa-chevron-right"></i>
-          </div>
-          <div class="qa-item"  onclick="window.location.href='../Track Application Status/index.html'">
-            <span><i class="fa-solid fa-file-lines"></i> View Submitted Applications</span>
-            <i class="fa-solid fa-chevron-right"></i>
-          </div>
-          <div class="qa-item"  onclick="window.location.href='../helpdesk/index.html'">
-            <span><i class="fa-regular fa-circle-question"></i> Raise a Support Query</span>
-            <i class="fa-solid fa-chevron-right"></i>
-          </div>
-        </div>
+
 
         <!-- NEED HELP -->
         <div class="help-card">
@@ -163,29 +143,42 @@ Bangalore, Karnataka, 560001</p>
 
         var stored = {};
         try { stored = JSON.parse(localStorage.getItem('applicant_profile_data')) || {}; } catch(e) {}
-        
-        var appAddress = '';
-        var apps = [];
-        try { apps = JSON.parse(localStorage.getItem('applications') || '[]'); } catch(e){}
-        var userApp = apps.find(function(a) { 
-            return (a.email && a.email.toLowerCase() === (loggedIn.email || '').toLowerCase()) || 
-                   (a.applicantName && a.applicantName.toLowerCase() === (loggedIn.name || '').toLowerCase());
-        });
-        
-        if (userApp) {
-            appAddress = userApp.shopAddress;
-            if (userApp.city) appAddress += ', ' + userApp.city;
-            if (userApp.state) appAddress += ', ' + userApp.state;
-            if (userApp.pincode) appAddress += ' - ' + userApp.pincode;
+        if (stored.email && loggedIn.email && stored.email.toLowerCase() !== loggedIn.email.toLowerCase()) {
+            stored = {}; // Ignore local storage profile if it belongs to someone else
         }
 
-        var name = stored.name || loggedIn.name || 'Jiya Mugale';
-        var email = stored.email || loggedIn.email || 'jiya.mugale@gmail.com';
-        var phone = stored.phone || loggedIn.phone || '+91 8483916284';
-        var address = stored.address || appAddress || 'Flat 402, Sunshine Plaza, MG Road,\nBangalore, Karnataka, 560001';
+        var sessionApp = {};
+        try { sessionApp = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch(e) {}
+
+        var apps = [];
+        try { apps = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e){}
+        try { var legacy = JSON.parse(localStorage.getItem('applications') || '[]'); apps = apps.concat(legacy); } catch(e){}
+        if (typeof TRADEZO !== 'undefined' && TRADEZO.applications) {
+            apps = apps.concat(TRADEZO.applications);
+        }
+        var userApp = apps.find(function(a) { 
+            var emailMatch = a.email && loggedIn.email && a.email.toLowerCase() === loggedIn.email.toLowerCase();
+            var idMatch = a.applicantId && loggedIn.email && a.applicantId.toLowerCase() === loggedIn.email.toLowerCase();
+            return emailMatch || idMatch;
+        });
         
-        var aadhaar = userApp && userApp.aadhaar ? 'XXXX-XXXX-' + String(userApp.aadhaar).slice(-4) : 'XXXX-XXXX-4582';
-        var gender = userApp && userApp.gender ? userApp.gender : 'Female';
+        var appData = userApp || sessionApp || {};
+
+        var appAddress = appData.shopAddress || appData.address || '';
+        if (appAddress) {
+            if (appData.city) appAddress += ', ' + appData.city;
+            if (appData.state) appAddress += ', ' + appData.state;
+            if (appData.pincode) appAddress += ' - ' + appData.pincode;
+        }
+
+        var name = stored.name || loggedIn.name || appData.fullName || appData.applicantName || 'Not provided';
+        var email = stored.email || loggedIn.email || appData.email || 'Not provided';
+        var phone = stored.phone || loggedIn.phone || appData.phone || 'Not provided';
+        var address = stored.address || appAddress || 'Not provided';
+        
+        var aadhaarRaw = (userApp && userApp.aadhaar) || (sessionApp && sessionApp.aadhaar) || appData.aadhaar;
+        var aadhaar = aadhaarRaw ? 'XXXX-XXXX-' + String(aadhaarRaw).slice(-4) : 'Not provided';
+        var gender = (userApp && userApp.gender) || (sessionApp && sessionApp.gender) || appData.gender || 'Not provided';
 
         document.getElementById('dispName').textContent = name;
         document.getElementById('dispEmail').textContent = email;

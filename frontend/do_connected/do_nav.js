@@ -9,7 +9,7 @@ var DO_PAGES = {
   authorization: '../authorization/index.html',
   compliance:    '../compliance/index.html',
   inspection:    '../inspection-report/index.html',
-  login: '../../../applicant_connected/connected/login/index.html'
+  login: '../../applicant_connected/connected/login/index.html'
 };
 
 function doNav(page) {

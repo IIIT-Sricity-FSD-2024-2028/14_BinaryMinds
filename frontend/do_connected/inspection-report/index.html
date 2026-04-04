@@ -98,6 +98,18 @@
         </div>
       </div>
 
+      <!-- Verification Status Card -->
+      <div class="card status-card">
+        <h3>Verification Status</h3>
+        <div class="status-display">
+          <div class="status-badge" id="verificationStatus">Loading...</div>
+        </div>
+        <div class="result-section" id="verificationResultSection" style="display:none; margin-top: 15px;">
+          <h4>Verification Details</h4>
+          <p id="verificationDetails" style="font-size: 14px; color: #475569;">-</p>
+        </div>
+      </div>
+
       <!-- Inspection Status Card -->
       <div class="card status-card">
         <h3>Inspection Status</h3>
@@ -137,7 +149,7 @@
   </div>
 </div>
 
-<script src="../../../mockdata.js"></script>
+<script src="../../mockdata.js"></script>
 <script src="script.js"></script>
 <script src="../do_nav.js"></script>
 
@@ -145,7 +157,7 @@
 function proceedToReview() {
   var appId = sessionStorage.getItem('selectedAppDO');
   if (appId) {
-    window.location.href = '../review/index.html';
+    window.location.href = '../authorization/index.html';
   }
 }
 </script>

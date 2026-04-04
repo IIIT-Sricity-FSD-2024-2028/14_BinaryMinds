@@ -110,12 +110,75 @@
     });
   }
 
+  function renderTransactions(apps) {
+    var tbody = document.querySelector('.left-panel tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (!apps || apps.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No payment transactions found.</td></tr>';
+      return;
+    }
+
+    apps.forEach(function(app) {
+      var txnId = app.paymentRef || ('TXN-' + Math.floor(Math.random() * 100000000));
+      var pDate = normalize(app.status) === 'pending payment' ? 'Pending' : (app.paymentDate || app.submittedDate || new Date().toLocaleDateString('en-IN'));
+      var amount = app.paymentAmount || '₹2100';
+      var method = app.paymentMethod || 'UPI';
+      
+      var isSuccess = normalize(app.paymentStatus) === 'paid' || normalize(app.paymentStatus) === 'success';
+      var statusBadge = isSuccess ? '<span class="badge success">Success</span>' : '<span class="badge failed">Failed or Pending</span>';
+      
+      var actionHtml = isSuccess 
+          ? '<a href="#" class="print-receipt"><i class="fa-solid fa-download"></i> Download Receipt</a>' 
+          : '<a href="../paynow/index.html"><i class="fa-solid fa-rotate-right"></i> Retry Payment</a>';
+      
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + txnId + '</td><td>' + pDate + '</td><td>' + amount + '</td><td>' + method + '</td><td>' + statusBadge + '</td><td>' + actionHtml + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderReceipts(apps) {
+    var tbody = document.querySelector('.receipts-section tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    var paidApps = apps.filter(function(app) {
+      return normalize(app.paymentStatus) === 'paid' || normalize(app.paymentStatus) === 'success';
+    });
+
+    if (paidApps.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No receipts available.</td></tr>';
+      return;
+    }
+
+    paidApps.forEach(function(app) {
+      var receiptId = 'RC-' + (app.paymentRef ? String(app.paymentRef).slice(-4) : Math.floor(Math.random() * 10000));
+      var pDate = app.paymentDate || app.submittedDate || new Date().toLocaleDateString('en-IN');
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + receiptId + '</td><td>' + pDate + '</td><td><span class="dot green"></span> Generated</td><td><i class="fa-regular fa-eye receipt-view" style="cursor:pointer;"></i></td>';
+      tbody.appendChild(tr);
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
     var user = getUser();
+    var apps = getAllApps().filter(function(app) {
+      return belongsToUser(app, user);
+    });
+
     var el = document.getElementById('lastPaymentDate');
-    if (el) {
-      el.textContent = findLatestPaymentDate(user);
-    }
+    if (el) el.textContent = findLatestPaymentDate(user);
+
+    renderTransactions(apps);
+    renderReceipts(apps);
+
     wireActions();
+    
+    // Wire dynamic links that were just added
+    document.querySelectorAll('.print-receipt, .receipt-view').forEach(function(btn) {
+       btn.addEventListener('click', function(e) { e.preventDefault(); window.print(); });
+    });
   });
 })();

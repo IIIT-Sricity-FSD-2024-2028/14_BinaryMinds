@@ -4,28 +4,42 @@ document.addEventListener('DOMContentLoaded', function() {
     
     var stored = {};
     try { stored = JSON.parse(localStorage.getItem('applicant_profile_data')) || {}; } catch(e) {}
-
-    var appAddress = '';
-    var apps = [];
-    try { apps = JSON.parse(localStorage.getItem('applications') || '[]'); } catch(e){}
-    var userApp = apps.find(function(a) { 
-        return (a.email && a.email.toLowerCase() === (loggedIn.email || '').toLowerCase()) || 
-               (a.applicantName && a.applicantName.toLowerCase() === (loggedIn.name || '').toLowerCase());
-    });
-    
-    if (userApp) {
-        appAddress = userApp.shopAddress;
-        if (userApp.city) appAddress += ', ' + userApp.city;
-        if (userApp.state) appAddress += ', ' + userApp.state;
-        if (userApp.pincode) appAddress += ' - ' + userApp.pincode;
+    if (stored.email && loggedIn.email && stored.email.toLowerCase() !== loggedIn.email.toLowerCase()) {
+        stored = {}; 
     }
 
-    var name = stored.name || loggedIn.name || 'Jiya Mugale';
-    var email = stored.email || loggedIn.email || 'jiya.mugale@gmail.com';
-    var phone = stored.phone || loggedIn.phone || '+91 8483916284';
-    var address = stored.address || appAddress || 'Flat 402, Sunshine Plaza, MG Road,\nBangalore, Karnataka, 560001';
-    var aadhaar = userApp && userApp.aadhaar ? 'XXXX-XXXX-' + String(userApp.aadhaar).slice(-4) : 'XXXX-XXXX-4582';
-    var gender = userApp && userApp.gender ? userApp.gender : 'Female';
+    var sessionApp = {};
+    try { sessionApp = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch(e) {}
+
+    var apps = [];
+    try { apps = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e){}
+    try { var legacy = JSON.parse(localStorage.getItem('applications') || '[]'); apps = apps.concat(legacy); } catch(e){}
+    if (typeof window !== 'undefined' && window.TRADEZO && TRADEZO.applications) {
+        apps = apps.concat(TRADEZO.applications);
+    }
+    var userApp = apps.find(function(a) { 
+        var emailMatch = a.email && loggedIn.email && a.email.toLowerCase() === loggedIn.email.toLowerCase();
+        var idMatch = a.applicantId && loggedIn.email && a.applicantId.toLowerCase() === loggedIn.email.toLowerCase();
+        return emailMatch || idMatch;
+    });
+    
+    var appData = userApp || sessionApp || {};
+
+    var appAddress = appData.shopAddress || appData.address || '';
+    if (appAddress) {
+        if (appData.city) appAddress += ', ' + appData.city;
+        if (appData.state) appAddress += ', ' + appData.state;
+        if (appData.pincode) appAddress += ' - ' + appData.pincode;
+    }
+
+    var name = stored.name || loggedIn.name || appData.fullName || appData.applicantName || '';
+    var email = stored.email || loggedIn.email || appData.email || '';
+    var phone = stored.phone || loggedIn.phone || appData.phone || '';
+    var address = stored.address || appAddress || '';
+    
+    var aadhaarRaw = (userApp && userApp.aadhaar) || (sessionApp && sessionApp.aadhaar) || appData.aadhaar;
+    var aadhaar = aadhaarRaw ? 'XXXX-XXXX-' + String(aadhaarRaw).slice(-4) : '';
+    var gender = (userApp && userApp.gender) || (sessionApp && sessionApp.gender) || appData.gender || '';
   
     document.getElementById('profName').value = name;
     document.getElementById('profEmail').value = email;

@@ -19,16 +19,40 @@ document.addEventListener('DOMContentLoaded', function() {
   function getAllApps() {
     var apps = [];
     if (window.TRADEZO && Array.isArray(TRADEZO.applications)) {
-      apps = apps.concat(TRADEZO.applications);
+      apps = JSON.parse(JSON.stringify(TRADEZO.applications));
     }
 
     var saved = safeParse(localStorage.getItem('tz_submitted_apps') || '[]', []);
-    if (Array.isArray(saved)) {
-      saved.forEach(function(app) {
-        var exists = apps.some(function(existing) {
-          return existing.appRef === app.appRef || existing.id === app.id;
+    var globalSaved = safeParse(localStorage.getItem('applications') || '[]', []);
+    var combined = saved.concat(globalSaved);
+
+    if (Array.isArray(combined)) {
+      combined.forEach(function(app) {
+        var existing = apps.find(function(ex) {
+          return ex.appRef === app.id || ex.id === app.id || ex.id === app.appRef;
         });
-        if (!exists) apps.push(app);
+        if (existing) {
+          Object.assign(existing, app);
+        } else {
+          apps.push(app);
+        }
+      });
+    }
+
+    var generatedLics = safeParse(localStorage.getItem('tz_generated_licenses') || '[]', []);
+    if (Array.isArray(generatedLics)) {
+      generatedLics.forEach(function(lic) {
+          var existing = apps.find(function(ex) {
+             return ex.appRef === lic.appId || ex.id === lic.appId;
+          });
+          if (existing) {
+             existing.status = 'License Issued';
+             existing.licenseNo = lic.licenseNo;
+             existing.licenseId = lic.licenseNo;
+             if (lic.licenseIssueDate) existing.licenseIssueDate = lic.licenseIssueDate;
+             if (lic.licenseExpiryDate) existing.licenseExpiryDate = lic.licenseExpiryDate;
+             if (lic.issuedBy) existing.issuedBy = lic.issuedBy;
+          }
       });
     }
     return apps;
@@ -72,7 +96,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     var approved = matches.filter(function(app) {
-      return normalize(app.status) === 'approved' || app.licenseId;
+      var s = normalize(app.status);
+      return s === 'approved' || s === 'license issued' || s === 'licensed' || app.licenseId || app.licenseNo;
     });
 
     return approved.length ? approved[approved.length - 1] : null;
@@ -108,11 +133,28 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
 
-  fill('.license-number', app.licenseId || app.id || app.appRef);
+  fill('.license-number', app.licenseId || app.licenseNo || app.id || app.appRef);
   fill('.applicant-name', app.applicantName || user.name);
   fill('.trade-category', app.tradeCategory || app.category || '—');
-  fill('.issue-date', app.licenseIssueDate || '—');
-  fill('.expiry-date', app.licenseExpiryDate || '—');
+  
+  var issueStr = app.licenseIssueDate;
+  var expiryStr = app.licenseExpiryDate;
+  
+  if (!issueStr || !expiryStr) {
+     var d = new Date();
+     var e = new Date();
+     e.setFullYear(d.getFullYear() + 1);
+     issueStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+     expiryStr = e.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  fill('.issue-date', issueStr);
+  fill('.expiry-date', expiryStr);
+  
+  var doNameElem = document.querySelector('.do-name');
+  if (doNameElem) {
+      doNameElem.textContent = app.issuedBy || 'Anjali Mehta';
+  }
 
   var badge = document.getElementById('licenseBadge');
   if (badge) badge.textContent = '✅ ACTIVE';
