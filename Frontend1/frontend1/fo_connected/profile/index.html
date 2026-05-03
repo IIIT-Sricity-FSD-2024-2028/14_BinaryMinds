@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Field Officer Profile</title>
+    <link rel="stylesheet" href="style.css">
+<script src="../session_guard.js"></script>
+</head>
+<body>
+
+<!-- 🔷 Header -->
+<header class="top-header">
+    <div class="logo-section">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+
+        <div>
+            <h4>Government of India</h4>
+            <h2>TradeZo</h2>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="user-info">
+            <span>Welcome</span>
+            <b>Myra</b>
+        </div>
+
+        <div class="header-icons">
+<img src="../assets/icons/logout.png" class="header-icon" onclick="foLogout()" style="cursor:pointer" title="Logout">
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+<!-- 🔷 Main Layout -->
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul>
+            <li>
+                <img src="../assets/icons/db.png" class="icon">
+                Dashboard
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification.png" class="icon">
+                Verification
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection.png" class="icon">
+                Record Inspection
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification-history.png" class="icon">
+                Verification History
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection-history.png" class="icon">
+                Inspection History
+            </li>
+
+            <li class="active">
+                <img src="../assets/icons/profile.png" class="icon">
+                Profile
+            </li>
+        </ul>
+    </aside>
+
+
+<!-- 🔷 Content -->
+<main class="content">
+
+    <h1>Field Officer Profile</h1>
+    <p class="subtitle">Manage your profile and view performance statistics.</p>
+
+    <div class="profile-container">
+
+        <!-- LEFT CARD -->
+        <div class="profile-card">
+            <div class="avatar">M</div>
+            <h2 id="dispName">Myra</h2>
+            <p>FO-2026-042</p>
+            <span class="role" id="dispRole">Senior Field Officer</span>
+
+            <hr>
+
+            <p><b>Department:</b> <span id="dispDept">Trade License Department</span></p>
+            <p><b>Email:</b> <span id="dispEmail">myra@gov.in</span></p>
+            <p><b>Phone:</b> <span id="dispPhone">+91 98765 43210</span></p>
+            <p><b>Location:</b> <span id="dispLocation">Municipal Corporation, Delhi</span></p>
+            <p><b>Join Date:</b> Jan 15, 2024</p>
+
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="right-section">
+
+            <!-- Stats -->
+            <div class="stats">
+
+                <div class="stat-card blue">
+                    <p>Total Inspections</p>
+                    <h2>248</h2>
+                    <img src="../assets/icons/applications.png" class="stat-img">
+                </div>
+
+                <div class="stat-card green">
+                    <p>Completed Inspections</p>
+                    <h2>232</h2>
+                    <img src="../assets/icons/completed.png" class="stat-img">
+                </div>
+
+                <div class="stat-card orange">
+                    <p>Pending Inspections</p>
+                    <h2>16</h2>
+                    <img src="../assets/icons/pending.png" class="stat-img">
+                </div>
+
+                <div class="stat-card purple">
+                    <p>Warnings Received</p>
+                    <h2>0</h2>
+                    <img src="../assets/icons/alerts.png" class="stat-img">
+                </div>
+
+            </div>
+
+            <!-- Activity -->
+            <div class="activity">
+                <h3>Recent Activity</h3>
+            </div>
+
+            <!-- Performance -->
+            <div class="performance">
+                ⭐ Outstanding Performance  
+                <span style="float:right;">4.8/5</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+</div>
+
+<script src="../../mockdata.js"></script>
+<script>
+function go(path){
+    window.location.href = path;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var stored = {};
+    try {
+        stored = JSON.parse(localStorage.getItem('fo_profile_data')) || {};
+    } catch(e) {}
+    
+    // Profile details...
+    if (stored.name) document.getElementById('dispName').textContent = stored.name;
+    if (stored.role) document.getElementById('dispRole').textContent = stored.role;
+    if (stored.dept) document.getElementById('dispDept').textContent = stored.dept;
+    if (stored.email) document.getElementById('dispEmail').textContent = stored.email;
+    if (stored.phone) document.getElementById('dispPhone').textContent = stored.phone;
+    if (stored.location) document.getElementById('dispLocation').textContent = stored.location;
+    
+    // Dynamic Activity Log
+    var loggedIn = {};
+    try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}'); } catch(e) {}
+    var currentName = stored.name || loggedIn.name || 'Myra Singh'; // Defaulting to Myra for mock fallback
+    
+    var activityContainer = document.querySelector('.activity');
+    if (activityContainer) {
+        // Clear static items
+        var items = activityContainer.querySelectorAll('.activity-item');
+        items.forEach(function(item) { item.remove(); });
+        
+        var userLogs = [];
+        
+        // 1. Fetch Verification History
+        var veriHistory = [];
+        try { veriHistory = JSON.parse(localStorage.getItem('tz_verification_history') || '[]'); } catch(e){}
+        veriHistory.forEach(function(item) {
+            var t = new Date(item.decidedOn).getTime() || Date.now();
+            userLogs.push({
+                action: item.decision === 'Approved' ? 'Approve' : 'Reject',
+                desc: (item.decision === 'Approved' ? 'Approved application ' : 'Rejected application ') + item.appId + ' (' + item.businessName + ')',
+                time: item.decidedOn,
+                ts: t
+            });
+        });
+
+        // 2. Fetch Inspection Reports
+        var inspReports = [];
+        try { inspReports = JSON.parse(localStorage.getItem('tz_inspection_reports') || '[]'); } catch(e){}
+        inspReports.forEach(function(item) {
+            var t = new Date(item.submittedDate).getTime() || Date.now();
+            userLogs.push({
+                action: item.result === 'Approved' ? 'Complete' : 'Reject',
+                desc: (item.result === 'Approved' ? 'Completed inspection for ' : 'Rejected inspection for ') + item.appId + ' (' + item.businessName + ')',
+                time: item.submittedDate,
+                ts: t
+            });
+        });
+
+        if (typeof window !== 'undefined' && window.TRADEZO && window.TRADEZO.auditLog) {
+            var mockLogs = TRADEZO.auditLog.filter(function(log) {
+                return log.user && log.user.toLowerCase().includes(currentName.toLowerCase().split(' ')[0]);
+            });
+            mockLogs.forEach(function(log) {
+                var t = new Date(log.time).getTime() || 0;
+                userLogs.push({ action: log.action, desc: log.desc, time: log.time, ts: t });
+            });
+        }
+        
+        userLogs.sort(function(a, b) { return b.ts - a.ts; });
+        
+        if (userLogs.length === 0) {
+            var emptyItem = document.createElement('div');
+            emptyItem.className = 'activity-item';
+            emptyItem.textContent = 'No recent activity found.';
+            activityContainer.appendChild(emptyItem);
+        } else {
+            // Take up to latest 5
+            userLogs.slice(0, 5).forEach(function(log) {
+                var div = document.createElement('div');
+                div.className = 'activity-item';
+                var icon = '📝';
+                if (log.action === 'Approve' || log.action === 'Complete') icon = '✅';
+                if (log.action === 'Reject' || log.action === 'Warning') icon = '⚠';
+                if (log.action === 'Create' || log.action === 'Start') icon = '🕒';
+                
+                div.innerHTML = icon + ' ' + log.desc + ' <small style="float:right;color:#64748b;font-size:10px;">' + log.time + '</small>';
+                activityContainer.appendChild(div);
+            });
+        }
+    }
+});
+</script>
+
+<script src="../fo_nav.js"></script>
+</body>
+</html>

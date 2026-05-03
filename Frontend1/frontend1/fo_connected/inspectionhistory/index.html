@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Field Officer Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+<script src="../session_guard.js"></script>
+</head>
+<script src="../../mockdata.js"></script>
+<script src="in.js" defer></script>
+<body>
+
+<!-- 🔷 Top Header -->
+<header class="top-header">
+    <div class="logo-section">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+
+        <div>
+            <h4>Government of India</h4>
+            <h2>TradeZo</h2>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="user-info">
+            <span>Welcome</span>
+            <b>Myra</b>
+        </div>
+
+        <div class="header-icons">
+<img src="../assets/icons/logout.png" class="header-icon" onclick="foLogout()" style="cursor:pointer" title="Logout">
+        </div>
+    </div>
+</header>
+
+<!-- 🔷 Main Layout -->
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul>
+            <li>
+                <img src="../assets/icons/db.png" class="icon">
+                Dashboard
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification.png" class="icon">
+                Verification
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection.png" class="icon">
+                Record Inspection
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification-history.png" class="icon">
+                Verification History
+            </li>
+
+            <li class="active">
+                <img src="../assets/icons/inspection-history.png" class="icon">
+                Inspection History
+            </li>
+
+            <li>
+                <img src="../assets/icons/profile.png" class="icon">
+                Profile
+            </li>
+        </ul>
+    </aside>
+
+    <main class="content">
+
+    <h1>Inspection History</h1>
+    <p class="subtitle">View and manage your completed inspection reports.</p>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+
+        <div class="search-box">
+            <img src="../assets/icons/search.png" class="search-icon">
+            <input type="text" id="searchInput" placeholder="Search business name...">
+        </div>
+
+        <input type="date" id="dateFilter">
+        <input type="text" placeholder="Filter" id="dummyFilter">
+
+    </div>
+
+    <p id="countText">Showing 0 inspection(s)</p>
+
+    <!-- Table -->
+    <div class="table-section">
+        <table>
+            <thead>
+                <tr>
+                    <th>Application ID</th>
+                    <th>Business Name</th>
+                    <th>Trade Category</th>
+                    <th>Inspection Date</th>
+                    <th>Result</th>
+                    <th>Submitted Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="historyTable"></tbody>
+        </table>
+    </div>
+
+</main>
+<script src="../fo_nav.js"></script>
+</body>
+</html>

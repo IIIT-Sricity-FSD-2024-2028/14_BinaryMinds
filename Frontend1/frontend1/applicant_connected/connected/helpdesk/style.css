@@ -1,0 +1,111 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { font-family: Arial, sans-serif; background: #f4f6f9; color: #333; }
+
+/* TOP HEADER  */
+.top-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 24px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+}
+
+/* CONTROL IMAGE SIZE */
+.top-header img {
+  height: 50px;   /* 🔥 THIS FIXES YOUR ISSUE */
+  width: auto;
+}
+
+/* TEXT STYLING */
+.header-text {
+  font-size: 14px;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-text span {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1E3A8A;
+}
+/* NAVBAR */
+.navbar { background: #1E3A8A; padding: 10px 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+.navbar a { color: #cdd5e0; text-decoration: none; font-size: 14px; padding: 4px 6px; border-radius: 4px; }
+.navbar a:hover { color: white; background: rgba(255,255,255,0.15); }
+
+/* PAGE TITLE */
+.page-title { padding: 24px 24px 10px; }
+.page-title h2 { font-size: 24px; color: #111; }
+.page-title p { font-size: 14px; color: #666; margin-top: 4px; }
+
+/* LAYOUT */
+.main-layout { display: flex; gap: 20px; padding: 10px 24px 30px; flex-wrap: wrap; }
+.left-section { flex: 1; min-width: 300px; }
+.right-section { width: 260px; min-width: 240px; }
+
+/* CARDS (shared style) */
+.form-card, .tickets-section, .contact-card, .faq-card, .chat-card {
+  background: white; border-radius: 10px; border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.form-card { padding: 24px; }
+.form-card h3 { font-size: 16px; color: #222; margin-bottom: 18px; }
+.tickets-section { padding: 20px; margin-top: 20px; }
+.contact-card, .faq-card { padding: 16px; margin-bottom: 16px; }
+.contact-card h4, .faq-card h4 { font-size: 14px; color: #333; margin-bottom: 12px; }
+.contact-card p { font-size: 13px; color: #555; margin-bottom: 4px; }
+.contact-card .highlight { font-size: 15px; font-weight: bold; color: #1E3A8A; margin-bottom: 10px; }
+
+/* FORM */
+.form-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.form-row .form-group { flex: 1; min-width: 140px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { font-size: 13px; color: #555; display: block; margin-bottom: 6px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 9px 12px; border: 1px solid #ccc;
+  border-radius: 6px; font-size: 14px; color: #333; background: white;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #1E3A8A; }
+.form-group textarea { height: 110px; resize: vertical; }
+
+/* BUTTONS */
+.submit-btn { background: #1E3A8A; color: white; border: none; padding: 10px 24px; border-radius: 6px; font-size: 14px; cursor: pointer; margin-top: 4px; }
+.submit-btn:hover { background: #163070; }
+.cancel-btn { margin-top: 16px; background: white; border: 1px solid #ccc; padding: 8px 20px; border-radius: 6px; font-size: 14px; cursor: pointer; color: #333; }
+.cancel-btn:hover { background: #f0f0f0; }
+
+/* TICKETS TABLE */
+.tickets-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.tickets-header h3 { font-size: 15px; color: #222; }
+.tickets-header a { font-size: 13px; color: #1E3A8A; text-decoration: none; }
+.tickets-header a:hover { text-decoration: underline; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+table thead tr { background: #f0f4ff; }
+table th { text-align: left; padding: 10px 12px; color: #555; font-size: 12px; text-transform: uppercase; }
+table td { padding: 12px; border-top: 1px solid #eee; color: #333; }
+.status { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+.in-progress { background: #fef9c3; color: #854d0e; }
+.resolved { background: #d1fae5; color: #065f46; }
+.closed { background: #f0f0f0; color: #555; }
+
+/* FAQ */
+.faq-item { display: flex; justify-content: space-between; font-size: 13px; color: #444; padding: 8px 0; border-bottom: 1px solid #eee; cursor: pointer; }
+.faq-item:hover { color: #1E3A8A; }
+
+/* CHAT CARD */
+.chat-card { overflow: hidden; margin-bottom: 12px; }
+.chat-header { background: #1E3A8A; color: white; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.chat-header button { background: none; border: none; color: white; cursor: pointer; font-size: 14px; }
+.chat-body { padding: 14px; min-height: 60px; }
+.chat-bubble { background: #f0f4ff; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: #333; }
+.chat-input-row { display: flex; border-top: 1px solid #eee; }
+.chat-input-row input { flex: 1; border: none; padding: 10px 12px; font-size: 13px; outline: none; }
+.chat-input-row button { background: none; border: none; padding: 10px 12px; cursor: pointer; color: #1E3A8A; font-size: 16px; }
+
+/* CHAT SUPPORT */
+.chat-support-row { display: flex; justify-content: flex-end; align-items: center; gap: 10px; font-size: 13px; color: #555; }
+.chat-icon-btn { background: #1E3A8A; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; }
+.chat-icon-btn:hover { background: #163070; }

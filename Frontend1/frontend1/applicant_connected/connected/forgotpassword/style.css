@@ -1,0 +1,219 @@
+/* Remove default spacing from all elements */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+ 
+/* Basic body style */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+ 
+ 
+/* ---- TOP HEADER ---- */
+ 
+.top-header {
+  background-color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #ddd;
+}
+ 
+.top-header img {
+  width: 40px;
+  height: 40px;
+}
+ 
+.top-header .header-text {
+  font-size: 13px;
+  color: #333;
+}
+ 
+/* TradeZo bold blue text */
+.top-header .header-text span {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1E3A8A;
+}
+
+ 
+/* ---- NAVIGATION BAR ---- */
+ 
+.navbar {
+  background-color: #1E3A8A;
+  padding: 10px 20px;
+  display: flex;
+  gap: 20px;
+}
+ 
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+}
+ 
+.navbar a:hover {
+  text-decoration: underline;
+}
+ 
+ 
+/* ---- MAIN CONTENT (left + right side together) ---- */
+ 
+.main-content {
+  display: flex;
+  height: calc(100vh - 100px);
+}
+ 
+ 
+/* ---- LEFT SIDE (blue background + building photo) ---- */
+ 
+ 
+.left-side {
+  width: 55%;
+  background:
+    linear-gradient(rgba(30, 58, 138, 0.7), rgba(30, 58, 138, 0.7)),
+    url('https://tse2.mm.bing.net/th/id/OIP.oD9y867peCkxFDNOgywR3wHaE8?pid=Api&P=0&h=180');
+
+  background-size: cover;
+  background-position: center;
+
+  position: relative;
+  padding: 60px 40px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+}
+ 
+.left-side h1 {
+  position: relative;
+  color: white;
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+ 
+.left-side p {
+  position: relative;
+  color: white;
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 300px;
+}
+ 
+ 
+/* ---- RIGHT SIDE (grey background) ---- */
+ 
+.right-side {
+  width: 45%;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+ 
+/* ---- WHITE CARD (the form box) ---- */
+ 
+.card {
+  background-color: white;
+  padding: 40px 35px;
+  border-radius: 8px;
+  width: 350px;
+  
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+ 
+.card h2 {
+  font-size: 20px;
+  color: #1E3A8A;
+  margin-bottom: 6px;
+}
+ 
+.card .subtitle {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 20px;
+}
+ 
+.card label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 6px;
+}
+ 
+.card input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  background-color: #f5f5f5;
+}
+ 
+/* Input gets a blue border when you click on it */
+.card input:focus {
+  outline: none;
+  border-color: #1E3A8A;
+  background-color: white;
+}
+ 
+.card button {
+  width: 100%;
+  padding: 11px;
+  background-color: #1E3A8A;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+ 
+/* Button gets darker when you hover over it */
+.card button:hover {
+  background-color: #163070;
+}
+ 
+.card .otp-note {
+  text-align: center;
+  font-size: 11px;
+  color: #999;
+  margin-top: 8px;
+}
+ 
+.card .back-link {
+  display: block;
+  text-align: center;
+  margin-top: 14px;
+  font-size: 12px;
+  color: #1E3A8A;
+  text-decoration: none;
+  font-weight: bold;
+}
+ 
+.card .back-link:hover {
+  text-decoration: underline;
+}
+ 
+ 
+/* ---- SUCCESS MESSAGE (hidden by default) ---- */
+ 
+.success-msg {
+  display: none;
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+ 

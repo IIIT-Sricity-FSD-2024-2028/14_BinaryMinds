@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Final Authorization – TradeZo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<script src="../session_guard.js"></script>
+</head>
+<body>
+
+<!-- ===== TOP HEADER ===== -->
+<div class="top-header">
+  <div class="header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo">
+    <div class="header-text">
+      Government of India
+      <span>TradeZo</span>
+    </div>
+  </div>
+  <button class="logout-btn">Logout</button>
+</div>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="container">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Worklist</div>
+    <div class="nav-item active">Final Authorization</div>
+    <div class="nav-item">Reports</div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <span class="bc-link" onclick="window.location.href='index.html'" style="cursor:pointer;">Applications</span>
+      <span class="bc-sep">›</span>
+      <span class="bc-active" id="appIdDisplay">-</span>
+    </div>
+
+    <!-- Page title row -->
+    <div class="title-row">
+      <div>
+        <h1>Final Authorization &amp; Signing</h1>
+        <p>Review the generated document and provide security clearance to finalize issuance.</p>
+      </div>
+      <span class="awaiting-badge" id="statusBadge">⏳ Awaiting Signature</span>
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="two-col">
+
+      <!-- LEFT: License Document Preview -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-title">License Document Preview</span>
+          <div class="panel-icons">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+        </div>
+
+        <div class="doc-preview">
+          <!-- watermark -->
+          <div class="watermark">DRAFT PREVIEW</div>
+
+          <div class="doc-top">
+            <div class="doc-logo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><rect x="5" y="2" width="14" height="20" rx="1"/><path d="M9 10h6"/><path d="M9 6h6"/><path d="M9 14h6"/></svg>
+            </div>
+            <div class="qr-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/></svg>
+            </div>
+          </div>
+
+          <div class="doc-title">OFFICIAL TRADE LICENSE</div>
+          <div class="doc-serial" id="docSerial">Serial No: -</div>
+          <hr class="doc-hr"/>
+
+          <div class="doc-grid">
+            <div><div class="doc-label">LICENSEE NAME</div><div class="doc-val" id="docLicensee">-</div></div>
+            <div><div class="doc-label">REGISTRATION ID</div><div class="doc-val" id="docRegId">-</div></div>
+          </div>
+
+          <div class="doc-section">
+            <div class="doc-label">AUTHORIZED ACTIVITIES</div>
+            <div class="doc-body" id="docActivities">-</div>
+          </div>
+
+          <div class="doc-grid">
+            <div><div class="doc-label">ISSUE DATE</div><div class="doc-val" id="docIssueDate">-</div></div>
+            <div><div class="doc-label">EXPIRY DATE</div><div class="doc-val" id="docExpiryDate">-</div></div>
+          </div>
+
+          <!-- Signature area -->
+          <div class="sig-area">
+            <div>
+              <div class="sig-line">Pending Final Signature</div>
+              <div class="doc-label">AUTHORIZING OFFICER</div>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" class="sig-seal"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Security Authorization + Verification Steps -->
+      <div class="right-col">
+        <button class="go-back-btn" onclick="window.location.href='index.html'">← Back to Applications</button>
+
+        <div class="card">
+          <div class="sec-hdr">
+            <div class="sec-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="card-title">Security Authorization</div>
+          </div>
+          <p class="sec-desc">Select your preferred method of authorization to sign and finalize this application.</p>
+
+          <div class="auth-option selected" id="opt1">
+            <div class="auth-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            </div>
+            <div>
+              <div class="auth-title">Digital Signature Card</div>
+              <div class="auth-sub">ID: HW-TOKEN-9920 · Active</div>
+            </div>
+            <div class="auth-check">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+
+          <div class="auth-option" id="opt2">
+            <div class="auth-icon muted">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </div>
+            <div>
+              <div class="auth-title">Biometric Confirmation</div>
+              <div class="auth-sub">Touch ID or Face Recognition</div>
+            </div>
+          </div>
+
+          <div class="pin-section">
+            <div class="pin-label">Security PIN Verification</div>
+            <div class="pin-row">
+              <div class="pin-box"><span class="pin-dot">•</span></div>
+              <div class="pin-box"><span class="pin-dot">•</span></div>
+              <div class="pin-box"><span class="pin-dot">•</span></div>
+              <div class="pin-box"><span class="pin-dot">•</span></div>
+            </div>
+          </div>
+
+          <button class="sign-btn" id="signBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Sign &amp; Issue License
+          </button>
+          <div class="enc-note">ENCRYPTION: AES-256 BIT RSA SECURED</div>
+        </div>
+
+        <!-- Verification Steps -->
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px">Verification Steps</div>
+          <div class="vstep done">
+            <div class="vstep-icon done-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div><div class="vstep-title">Field Officer Inspection</div><div class="vstep-sub" id="foStatus">Completed</div></div>
+          </div>
+          <div class="vstep done">
+            <div class="vstep-icon done-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div><div class="vstep-title">Compliance Validation</div><div class="vstep-sub">Verified by System AI</div></div>
+          </div>
+          <div class="vstep pending">
+            <div class="vstep-icon pend-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div><div class="vstep-title muted-title">Final Digital Signature</div><div class="vstep-sub">Pending your action</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="../../mockdata.js"></script>
+<script src="signing.js"></script>
+<script src="../do_nav.js"></script>
+</body>
+</html>

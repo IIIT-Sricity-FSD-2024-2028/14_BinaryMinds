@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TradeZo - Trade License Portal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <div class="top-header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem" class="emblem" />
+    <div>
+      <p class="gov-text">Government of India</p>
+      <p class="brand-name">TradeZo</p>
+    </div>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <nav class="navbar">
+    <a href="../landing page/index.html">Home</a>
+    <a href="index.html">Login</a>
+    <a href="../Register/index.html">Register</a>
+    <a href="../helpdesk/index.html">Help</a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- LEFT SIDE - IMAGE CARD -->
+    <div class="left-card">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNbxoyA4lapNA7_U6NGA_ICVtg7CtumGeJcwVpYKDD&s" />
+      <h2>Trade License Portal</h2>
+      <p>Manage your trade licenses efficiently online</p>
+    </div>
+
+    <!-- RIGHT SIDE - LOGIN FORM -->
+    <div class="login-card">
+      <h3>Login to Trade License Portal</h3>
+
+      <input type="text" placeholder="Enter Email or Phone Number" />
+
+      <input type="password" placeholder="Enter Password" />
+
+      <select required id="roleSelect">
+        <option value="" disabled selected hidden>Login As</option>
+        <option value="applicant">Applicant</option>
+        <option value="field officer">field Officer</option>
+        <option value="department officer">department Officer</option>
+         <option value="superuser">superuser</option>
+      </select>
+
+      <button onclick="handleLogin()">Login</button>
+
+      <div class="row-links">
+        <label>
+          <input type="checkbox" checked /> Remember Me
+        </label>
+        <a href="../forgotpassword/index.html">Forgot Password?</a>
+      </div>
+
+            <!-- Demo Credentials for testing -->
+      <div class="demo-box">
+        <strong>Demo Login Credentials:</strong>
+        Applicant: rajesh@applicant.com / applicant123<br>
+        Field Officer: myra@fieldofficer.com / field123<br>
+        Dept Officer: admin@deptofficer.com / dept123<br>
+        Super User: admin@tradezo.gov.in / super123
+      </div>
+
+      <p class="register-text">
+        New Applicant? <a href="../Register/index.html">Register Here</a>
+      </p>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Compliance Monitoring – TradeZo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<script src="../session_guard.js"></script>
+</head>
+<body>
+
+<!-- ===== TOP HEADER ===== -->
+<div class="top-header">
+  <div class="header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo">
+    <div class="header-text">
+      Government of India
+      <span>TradeZo</span>
+    </div>
+  </div>
+  <button class="logout-btn">Logout</button>
+</div>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="container">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Worklist</div>
+    <div class="nav-item">Final Authorization</div>
+    <div class="nav-item active">Reports</div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main">
+
+    <div class="topbar">
+      <h2>Compliance Reports</h2>
+      <div style="display:flex;gap:12px;">
+        <button class="export-btn" style="background:#fff;color:#102a72;border:1px solid #102a72;" onclick="window.location.href='../generated_licenses/index.html'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          View Generated Licenses
+        </button>
+        <button class="export-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Report
+        </button>
+      </div>
+    </div>
+ 
+    <!-- Stat Cards -->
+    <div class="stats">
+      <div class="scard">
+        <div class="scard-label">Total Active Licenses</div>
+        <div class="scard-row"><div class="scard-val">1,284</div><span class="up">+2.4%↗</span></div>
+      </div>
+      <div class="scard">
+        <div class="scard-label">Compliance Rate</div>
+        <div class="scard-row"><div class="scard-val">98.2%</div><span class="up">+0.5%↗</span></div>
+      </div>
+
+    </div>
+ 
+    <!-- Middle Section -->
+    <div class="mid-grid">
+      <!-- Flagged / Violated Licenses -->
+      <div class="card" id="violationSection">
+        <div class="card-hdr">
+          <div class="card-title" style="color: #dc2626;">Licenses with Active Violations</div>
+        </div>
+        <table class="lic-table" id="violationTable">
+          <thead>
+            <tr><th>Entity Name</th><th>License ID</th><th>Violation Reason</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <!-- Dynamically populated by script.js -->
+          </tbody>
+        </table>
+      </div>
+ 
+      <!-- Compliance Distribution -->
+      <div class="card dist-card">
+        <div class="card-title" style="margin-bottom:16px">Compliance Distribution</div>
+        <div class="donut-wrap">
+          <canvas id="donut"></canvas>
+          <div class="donut-center"><div class="donut-val">1,284</div><div class="donut-sub">TOTAL</div></div>
+        </div>
+        <div class="legend-grid">
+          <div class="leg"><span class="dot" style="background:#0d1b4b"></span>Fully Compliant</div>
+          <div class="leg"><span class="dot" style="background:#f59e0b"></span>Pending Review</div>
+          <div class="leg"><span class="dot" style="background:#cbd5e1"></span>Action Required</div>
+          <div class="leg"><span class="dot" style="background:#ef4444"></span>Non-Compliant</div>
+        </div>
+      </div>
+    </div>
+ 
+
+
+
+ 
+    <!-- Go Back -->
+    <div><button class="go-back">Go Back</button></div>
+
+  </div>
+</div>
+
+<script src="../../mockdata.js"></script>
+<script src="script.js"></script>
+<script src="../do_nav.js"></script>
+</body>
+</html>

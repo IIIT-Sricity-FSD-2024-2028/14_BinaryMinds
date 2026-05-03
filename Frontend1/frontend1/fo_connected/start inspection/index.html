@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Start Inspection</title>
+  <link rel="stylesheet" href="style.css">
+<script src="../session_guard.js"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="top-header">
+  <div class="logo-section">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+    <div>
+      <h4>Government of India</h4>
+      <h2>TradeZo</h2>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <span>Welcome <b>Myra</b></span>
+<img src="../assets/icons/logout.png" class="icon" height="35">
+  </div>
+</header>
+
+<div class="container">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <ul>
+    <li>Dashboard</li>
+    <li>Verification</li>
+    <li>Record Inspection</li>
+    <li>Verification History</li>
+    <li>Inspection History</li>
+    <li>Profile</li>
+  </ul>
+</aside>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <h1>Start Inspection</h1>
+  <p class="subtitle">Conduct and submit field inspection report.</p>
+
+  <div class="grid">
+
+    <!-- LEFT CARD -->
+    <div class="card info-card">
+      <h3>📄 Business Info</h3>
+
+      <p><b>Application ID</b><br><span id="appId">TL-2026-001</span></p>
+      <p><b>Business Name</b><br><span id="bizName">Green Valley Restaurant</span></p>
+      <p><b>Owner Name</b><br><span id="ownerName">Rajesh Kumar</span></p>
+      <p><b>Trade Category</b><br><span id="tradeCategory">Food & Beverage</span></p>
+      <p><b>Address</b><br><span id="address">123 Main Street, Gurugram</span></p>
+    </div>
+
+    <!-- RIGHT FORM -->
+    <div class="card form-card">
+
+      <h3>Inspection Form</h3>
+
+      <label>Inspection Date</label>
+      <input type="date" id="inspDate">
+
+      <label>Inspection Result</label>
+      <select id="inspResult">
+        <option value="">Select Result</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+
+      <label>Inspection Notes</label>
+      <textarea id="inspNotes" placeholder="Enter detailed inspection observations..."></textarea>
+
+      <label>Inspection Evidence Photos</label>
+
+      <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+        <p>⬆ Upload Images</p>
+        <span>JPG, PNG (Max 5MB)</span>
+        <input type="file" id="fileInput" multiple hidden>
+      </div>
+
+      <button class="submit-btn">✔ Submit Inspection Report</button>
+
+    </div>
+
+  </div>
+
+</main>
+</div>
+
+<script src="../../mockdata.js"></script>
+<script src="script.js"></script>
+<script src="../fo_nav.js"></script>
+</body>
+</html>

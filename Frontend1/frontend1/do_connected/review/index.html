@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TradeZo - Review</title>
+  <link rel="stylesheet" href="style.css"/>
+<script src="../session_guard.js"></script>
+</head>
+<body>
+
+<!-- ===== TOP HEADER ===== -->
+<div class="top-header">
+  <div class="header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo">
+    <div class="header-text">
+      Government of India
+      <span>TradeZo</span>
+    </div>
+  </div>
+  <button class="logout-btn">Logout</button>
+</div>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="container">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Worklist</div>
+    <div class="nav-item">Final Authorization</div>
+    <div class="nav-item active">Reports</div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main">
+
+    <!-- Title -->
+    <div class="topbar">
+      <h2>Application Review</h2>
+    </div>
+
+    <!-- Company Header Card -->
+    <div class="card company-card">
+      <div class="badge-pending">PENDING FINAL DECISION</div>
+      <div class="company-row">
+        <div>
+          <h2>Global Logistics Corp</h2>
+          <p class="company-sub">International Trading License (Class A)</p>
+        </div>
+        <div class="company-actions">
+          <button class="btn-outline">⬇ Export PDF</button>
+          <button class="btn-outline">🖨 Print</button>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Applicant + Documents Row -->
+    <div class="two-col">
+      <!-- Applicant Details -->
+      <div class="card">
+        <div class="section-title">📋 Applicant Details</div>
+        <div class="detail-grid">
+          <div>
+            <div class="detail-label">COMPANY NAME</div>
+            <div class="detail-val">Global Logistics Corp</div>
+          </div>
+          <div>
+            <div class="detail-label">REGISTRATION NO.</div>
+            <div class="detail-val">GLC-998234-X</div>
+          </div>
+          <div class="full-col">
+            <div class="detail-label">PRINCIPAL ADDRESS</div>
+            <div class="detail-val">122 Industrial Gateway Blvd, Logistics Park, Sector 4</div>
+          </div>
+          <div>
+            <div class="detail-label">PRIMARY CONTACT</div>
+            <div class="detail-val">Sarah Jenkins</div>
+          </div>
+          <div>
+            <div class="detail-label">CONTACT EMAIL</div>
+            <div class="detail-val">s.jenkins@globallogistics.com</div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Document Verification -->
+      <div class="card">
+        <div class="section-title">🔀 Document Verification</div>
+        <div class="doc-list">
+          <div class="doc-item"><span class="check">✔</span> Incorporation Certificate <span class="verified">VERIFIED</span></div>
+          <div class="doc-item"><span class="check">✔</span> Tax Compliance Certificate <span class="verified">VERIFIED</span></div>
+          <div class="doc-item"><span class="check">✔</span> Hazardous Materials Permit <span class="verified">VERIFIED</span></div>
+          <div class="doc-item"><span class="check">✔</span> Financial Audit Report 2023 <span class="verified">VERIFIED</span></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Field Officer's Report -->
+    <div class="card">
+      <div class="report-header">
+        <div class="section-title">✅ Field Officer's Report</div>
+        <span class="submitted">Submitted on: May 12, 2024</span>
+      </div>
+      <div class="officer-block">
+        <div class="officer-avatar">👤</div>
+        <div>
+          <div class="officer-name">Inspector Robert Vance</div>
+          <div class="officer-role">Regional Compliance Division</div>
+        </div>
+      </div>
+      <div class="officer-quote">
+        "Site inspection conducted at Global Logistics Corp main warehouse. Facility meets all Grade-A criteria for international trading storage. Safety protocols are above baseline requirements. No non-conformities found during physical audit. Infrastructure is optimized for high-capacity throughput."
+      </div>
+      <div class="recommendation">
+        <span class="thumb">👍</span>
+        <div>
+          <div class="rec-title">RECOMMENDATION: APPROVE</div>
+          <div class="rec-sub">Officer confirms all regulatory criteria are satisfied for licensing.</div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Final Review & Decision -->
+    <div class="card dark-card">
+      <h3>Final Review &amp; Decision</h3>
+      <p class="dark-sub">Provide the final administrative justification to conclude this application process.</p>
+      <div class="justify-label">Reviewer Justification</div>
+      <textarea placeholder="Enter formal justification for the final decision..."></textarea>
+      <div class="decision-actions">
+        <button class="btn-approve">Approve Application 🔏</button>
+        <button class="btn-defer">Defer Decision</button>
+        <button class="btn-reject">Reject</button>
+      </div>
+    </div>
+ 
+    <!-- Go Back -->
+    <div class="go-back-row">
+      <button class="btn-goback">Go Back</button>
+    </div>
+ 
+  </div>
+ 
+  <script src="../../mockdata.js"></script>
+<script src="script.js"></script>
+<script src="../do_nav.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,316 @@
+/* Remove default spacing */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Basic body */
+body {
+  font-family: Arial, sans-serif;
+  background-color: white;
+  color: #333;
+}
+
+
+/* ---- TOP BAR (very top small links) ---- */
+
+.topbar {
+  background-color: #1E3A8A;
+  text-align: right;
+  padding: 5px 20px;
+  font-size: 11px;
+}
+
+.topbar a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.topbar span {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.topbar a:hover {
+  color: white;
+}
+
+
+/* ---- HEADER (logo + TradeZo name) ---- */
+
+.header {
+  background-color: white;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.header img {
+  width: 38px;
+  height: 38px;
+}
+
+.header-text {
+  font-size: 12px;
+  color: #555;
+}
+
+/* TradeZo big bold text */
+.header-text span {
+  display: block;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1E3A8A;
+}
+
+
+/* ---- NAVIGATION BAR ---- */
+
+.navbar {
+  background-color: #1E3A8A;
+  padding: 10px 20px;
+  display: flex;
+  gap: 5px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 4px;
+}
+
+/* Active link has white background */
+.navbar a.active {
+  background-color: white;
+  color: #1E3A8A;
+  font-weight: bold;
+}
+
+.navbar a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+
+/* ---- HERO SECTION (big banner) ---- */
+
+
+
+.hero {
+  background-image: 
+    url('https://img.freepik.com/premium-photo/president-s-estate-rashtrapati-bhawan-delhi-india_576074-1041.jpg');
+
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  padding: 90px 40px;
+  min-height: 450px;
+}
+
+/* Text sits on top of the overlay */
+.hero-text {
+  position: relative;
+  max-width: 420px;
+}
+
+.hero-text h1 {
+  color: white;
+  font-size: 28px;
+  margin-bottom: 14px;
+  line-height: 1.3;
+}
+
+.hero-text p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+/* Hero buttons side by side */
+.hero-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-orange {
+  background-color: #E87722;
+  color: white;
+  border: none;
+  padding: 11px 22px;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-orange:hover {
+  background-color: #c9611a;
+}
+
+.btn-blue {
+  background-color: #1E3A8A;
+  color: white;
+  border: 2px solid white;
+  padding: 11px 22px;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-blue:hover {
+  background-color: #163070;
+}
+
+
+/* ---- SECTIONS (Quick Services + How It Works + Notices) ---- */
+
+.section {
+  padding: 50px 40px;
+}
+
+/* White background section */
+.section.white {
+  background-color: white;
+}
+
+/* Light grey background section */
+.section.grey {
+  background-color: #f5f5f5;
+}
+
+.section h2 {
+  font-size: 22px;
+  color: #1E3A8A;
+  margin-bottom: 6px;
+}
+
+.section-sub {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 30px;
+}
+
+
+/* ---- CARDS ROW (4 cards side by side) ---- */
+
+.cards-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.card {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px 20px;
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Grey section cards don't need extra white bg */
+.section.grey .card {
+  background-color: white;
+}
+
+.card-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.card h3 {
+  font-size: 14px;
+  font-weight: bold;
+  color: #1E3A8A;
+  margin-bottom: 8px;
+}
+
+.card p {
+  font-size: 12px;
+  color: #777;
+  line-height: 1.5;
+}
+
+
+/* ---- NOTICES BOX ---- */
+
+.notices-box {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 0;
+}
+
+.notice-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+  color: #333;
+}
+
+/* Remove bottom border from last notice */
+.notice-item:last-child {
+  border-bottom: none;
+}
+
+.notice-icon {
+  font-size: 16px;
+}
+
+
+/* ---- FOOTER ---- */
+
+.footer {
+  background-color: #1E3A8A;
+  padding: 40px;
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.footer-col {
+  flex: 1;
+  min-width: 140px;
+}
+
+.footer-col h4 {
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 14px;
+}
+
+.footer-col a,
+.footer-col p {
+  display: block;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+.footer-col a:hover {
+  color: white;
+}
+
+
+/* ---- FOOTER BOTTOM ---- */
+
+.footer-bottom {
+  background-color: #162f72;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  padding: 14px;
+}
