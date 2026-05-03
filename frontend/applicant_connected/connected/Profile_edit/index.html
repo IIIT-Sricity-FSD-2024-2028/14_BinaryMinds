@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Profile - TradeZo</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="top-bar">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo"/>
+    <div class="brand">
+      <span>Government of India</span>
+      <strong>TradeZo</strong>
+    </div>
+  </div>
+
+  <nav>
+    <a href="../Applicant dashboard/index.html">Dashboard</a><a href="../landing page/index.html">Home</a><a href="../apply_license/apply_license.html">Apply License</a>
+    <a href="../Track Application Status/index.html">Track Application</a><a href="../download/index.html">Download License</a>
+    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a><a href="../payments/index.html">Payments</a>
+    <a href="../Profile/index.html" class="active">Profile</a>
+  </nav>
+
+  <main>
+    <h1>Edit Applicant Profile</h1>
+    <p class="sub">Update your personal contact details.</p>
+
+    <div class="layout">
+      <div class="left-col" style="flex:1;">
+        
+        <div class="edit-card">
+          <form id="editProfileForm">
+            <h3>Contact Information</h3>
+            <div class="grid-form">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="profName" value="" required>
+              </div>
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="profEmail" value="" required>
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" id="profPhone" value="" required>
+              </div>
+              <div class="form-group">
+                <label>Aadhaar Number</label>
+                <input type="text" id="profAadhaar" value="" readonly style="background-color: #f1f5f9; color: #64748b; cursor: not-allowed;">
+              </div>
+              <div class="form-group">
+                <label>Gender</label>
+                <input type="text" id="profGender" value="" readonly style="background-color: #f1f5f9; color: #64748b; cursor: not-allowed;">
+              </div>
+            </div>
+
+            <h3 style="margin-top:20px;">Residential Address</h3>
+            <div class="form-group">
+              <label>Address Line</label>
+              <textarea id="profAddress" required style="width:100%; height:60px; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font-family:Arial;"></textarea>
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn-cancel" onclick="window.history.back()">Cancel</button>
+              <button type="submit" class="btn-save">Save Changes</button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="../../../mockdata.js"></script>
+  <script src="../session_guard.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

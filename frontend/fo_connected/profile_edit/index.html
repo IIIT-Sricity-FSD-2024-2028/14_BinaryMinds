@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="../session_guard.js"></script>
+</head>
+<body>
+
+<!-- 🔷 Header -->
+<header class="top-header">
+    <div class="logo-section">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+        <div>
+            <h4>Government of India</h4>
+            <h2>TradeZo</h2>
+        </div>
+    </div>
+    <div class="header-right">
+        <div class="user-info">
+            <span>Welcome</span>
+            <b>Myra</b>
+        </div>
+        <div class="header-icons">
+<img src="../assets/icons/logout.png" class="header-icon" onclick="foLogout()" style="cursor:pointer" title="Logout">
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+      <ul>
+          <li><img src="../assets/icons/db.png" class="icon">Dashboard</li>
+          <li><img src="../assets/icons/verification.png" class="icon">Verification</li>
+          <li><img src="../assets/icons/inspection.png" class="icon">Record Inspection</li>
+          <li><img src="../assets/icons/verification-history.png" class="icon">Verification History</li>
+          <li><img src="../assets/icons/inspection-history.png" class="icon">Inspection History</li>
+          <li class="active"><img src="../assets/icons/profile.png" class="icon">Profile</li>
+      </ul>
+  </aside>
+
+  <!-- Content -->
+  <main class="content">
+
+      <h1>Edit Profile</h1>
+      <p class="subtitle">Update your personal and professional information.</p>
+
+      <div class="edit-card">
+          <form id="editProfileForm">
+              <h3>Personal Details</h3>
+              <div class="grid-form">
+                  <div class="form-group">
+                      <label>Full Name</label>
+                      <input type="text" id="profName" value="Myra" required>
+                  </div>
+                  <div class="form-group">
+                      <label>Email Address</label>
+                      <input type="email" id="profEmail" value="myra@gov.in" required>
+                  </div>
+                  <div class="form-group">
+                      <label>Phone Number</label>
+                      <input type="text" id="profPhone" value="+91 98765 43210" required>
+                  </div>
+              </div>
+
+              <h3 style="margin-top:30px;">Professional Details</h3>
+              <div class="grid-form">
+                  <div class="form-group">
+                      <label>Officer ID</label>
+                      <input type="text" value="FO-2026-042" disabled class="disabled">
+                  </div>
+                  <div class="form-group">
+                      <label>Department</label>
+                      <input type="text" id="profDept" value="Trade License Department" required>
+                  </div>
+                  <div class="form-group">
+                      <label>Location</label>
+                      <input type="text" id="profLocation" value="Municipal Corporation, Delhi" required>
+                  </div>
+                  <div class="form-group">
+                      <label>Role</label>
+                      <input type="text" id="profRole" value="Senior Field Officer" required>
+                  </div>
+              </div>
+
+              <div class="actions">
+                  <button type="button" class="cancel-btn" onclick="window.history.back()">Cancel</button>
+                  <button type="submit" class="save-btn">Save Changes</button>
+              </div>
+          </form>
+      </div>
+
+  </main>
+</div>
+
+<script src="../../mockdata.js"></script>
+<script src="script.js"></script>
+<script src="../fo_nav.js"></script>
+</body>
+</html>

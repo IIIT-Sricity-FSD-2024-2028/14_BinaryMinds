@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment History - TradeZo</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<script src="../session_guard.js"></script>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo" />
+    <div class="brand">
+      <span>Government of India</span>
+      <strong>TradeZo</strong>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="../Applicant dashboard/index.html">Dashboard</a><a href="../landing page/index.html">Home</a><a href="../apply_license/apply_license.html">Apply License</a>
+    <a href="../Track Application Status/index.html">Track Application</a><a href="../download/index.html">Download License</a>
+    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a><a href="index.html" class="active">Payments</a><a href="../Profile/index.html">Profile</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    <h1>Payment History</h1>
+    <p class="sub">View your completed and failed payment records.</p>
+
+    <!-- SUMMARY CARDS -->
+    <div class="cards">
+      <div class="card">
+        <i class="fa-solid fa-money-bill-wave"></i>
+        <div>
+          <small>LAST SUCCESSFUL PAYMENT</small>
+          <h2 id="lastSuccessfulPayment">₹2100</h2>
+        </div>
+      </div>
+      <div class="card">
+        <i class="fa-regular fa-calendar"></i>
+        <div>
+          <small>LAST PAYMENT DATE</small>
+          <h2 id="lastPaymentDate">20 March 2026</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM SECTION -->
+    <div class="bottom">
+
+      <!-- LEFT: Transactions -->
+      <div class="left-panel">
+        <h3>Payment Transactions</h3>
+        <table>
+          <thead>
+            <tr><th>TRANSACTION ID</th><th>DATE</th><th>AMOUNT</th><th>METHOD</th><th>STATUS</th><th>ACTION</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TXN-45678231</td><td>20 Mar 2026</td><td>₹2100</td><td>UPI</td>
+              <td><span class="badge success">Success</span></td>
+              <td><a href="#"><i class="fa-solid fa-download"></i> Download Receipt</a></td>
+            </tr>
+            <tr>
+              <td>TXN-45678255</td><td>18 Mar 2026</td><td>₹2100</td><td>Debit Card</td>
+              <td><span class="badge failed">Failed</span></td>
+              <td><a href="../paynow/index.html"><i class="fa-solid fa-rotate-right"></i> Retry Payment</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+
+      </div>
+
+      <!-- RIGHT: Summary -->
+      <div class="right-panel">
+        <div class="summary-card">
+        <h3>Payment Summary</h3>
+        <ul class="summary-list">
+          <li><i class="fa-solid fa-circle-check green"></i> Last payment was successful.</li>
+          <li><i class="fa-solid fa-mobile-screen blue"></i> Method used: UPI (GPay).</li>
+          <li><i class="fa-solid fa-file-lines gray"></i> Receipt is now available for download.</li>
+        </ul>
+        <button class="btn-print"><i class="fa-solid fa-print"></i> Print Full Statement</button>
+
+        <div class="assist-box">
+          <p><i class="fa-solid fa-circle-info"></i> <strong>Need Assistance?</strong></p>
+          <p>If you face any issues with your payments or receipt generation, please contact our helpdesk.</p>
+          <p>Contact Support</p>
+          <h3>1800-123-4567</h3>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT RECEIPTS -->
+    <div class="receipts-section">
+      <h3>Recent Receipts</h3>
+      <table>
+        <thead>
+          <tr><th>RECEIPT ID</th><th>DATE</th><th>STATUS</th><th>VIEW</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>RC-2026-9901</td><td>20 Mar 2026</td>
+            <td><span class="dot green"></span> Generated</td>
+            <td><i class="fa-regular fa-eye"></i></td>
+          </tr>
+          <tr>
+            <td>RC-2026-8842</td><td>15 Feb 2026</td>
+            <td><span class="dot green"></span> Generated</td>
+            <td><i class="fa-regular fa-eye"></i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button class="btn-cancel" onclick="window.location.href='../Applicant dashboard/index.html'">← Back to Dashboard</button>
+  </main>
+
+  <script src="../../../mockdata.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

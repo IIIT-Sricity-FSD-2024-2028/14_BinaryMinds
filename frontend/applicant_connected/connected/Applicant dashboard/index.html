@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../mockdata.js"></script>
+<script src="../session_guard.js"></script>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+  <div class="brand">
+    <span>Government of India</span>
+    <strong>TradeZo</strong>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <a href="index.html" class="active">Dashboard</a>
+  <a href="../landing page/index.html">Home</a>
+  <a href="../apply_license/apply_license.html">Apply License</a>
+  <a href="../Track Application Status/index.html">Track Application</a>
+  <a href="../download/index.html">Download License</a>
+  
+  <a href="../payments/index.html">Payments</a>
+  <a href="../Profile/index.html">Profile</a>
+</div>
+
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <p class="active">Dashboard</p>
+    <p onclick="window.location.href='../apply_license/apply_license.html'" style="cursor:pointer">Apply License</p>
+    <p onclick="window.location.href='../details/application_review/application_review.html'" style="cursor:pointer">Application Review</p>
+    <p onclick="window.location.href='../review_license/review_license.html'" style="cursor:pointer">Renew Licenses</p>
+    <p onclick="handleLogout()" style="cursor:pointer">Logout</p>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- WELCOME CARD -->
+    <div class="card welcome">
+      <div>
+        <h2 id="welcomeText">Welcome</h2>
+        <p>Applicant ID: APP-1024</p>
+      </div>
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+    </div>
+
+    <!-- STATUS + LICENSE -->
+    <div class="grid">
+
+      <div class="card">
+        <h3>My Application Status</h3>
+
+          <table id="appStatusTable">
+          <tr>
+            <th>ID</th>
+            <th>Business</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+          <tr>
+            <td>TL-001</td>
+            <td>Grocery Shop</td>
+            <td><span class="badge">UNDER VERIFICATION</span></td>
+            <td>21 Mar 2026</td>
+          </tr>
+        </table>
+
+        <div id="appActions" style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"></div>
+      </div>
+
+      <div class="card">
+        <h3>My Current License</h3>
+        <p><b>License No:</b> TL-2026-001</p>
+        <p><b>Business:</b> Grocery Shop</p>
+        <p><b>Valid:</b> 2026 - 2027</p>
+
+        <button onclick="window.location.href='../download/index.html'">Download License</button>
+      </div>
+
+    </div>
+
+    <!-- TASKS REMOVED -->
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

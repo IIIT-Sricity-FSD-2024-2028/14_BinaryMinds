@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TradeZo - Trade License</title>
+  <link rel="stylesheet" href="style.css" />
+<script src="../session_guard.js"></script>
+</head>
+<body>
+ 
+ <!-- TOP BAR -->
+<div class="topbar">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" 
+       alt="India Emblem" class="emblem-img">
+  <div class="topbar-text">
+    <span class="gov-text">Government of India</span>
+    <span class="brand-name">TradeZo</span>
+  </div>
+</div>
+ 
+  <!-- NAVIGATION LINKS -->
+  <div class="navbar">
+    <a href="../Applicant dashboard/index.html">Dashboard</a>
+    <a href="../landing page/index.html">Home</a>
+    <a href="../apply_license/apply_license.html">Apply License</a>
+    <a href="../Track Application Status/index.html">Track Application</a>
+    <a href="index.html">Download License</a>
+    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a>
+    
+    <a href="../payments/index.html">Payments</a>
+    <a href="../Profile/index.html">Profile</a>
+  </div>
+ 
+  <!-- PAGE TITLE -->
+  <div class="page-title">
+    <h2>Trade License</h2>
+    <p>View and download your approved trade license.</p>
+  </div>
+ 
+  <!-- MAIN CONTENT: Left + Right -->
+  <div class="main-layout">
+ 
+    <!-- LEFT SIDE: License Details -->
+    <div class="left-section">
+      <div class="license-card">
+ 
+        <div class="card-header">
+          <h3><span>🛡</span> License Details</h3>
+          <span class="badge-active" id="licenseBadge">✅ ACTIVE</span>
+        </div>
+ 
+        <div class="details-grid">
+          <div class="detail-item">
+            <label>License Number</label>
+            <p class="license-number">—</p>
+          </div>
+          <div class="detail-item">
+            <label>Applicant Name</label>
+            <p class="applicant-name">—</p>
+          </div>
+          <div class="detail-item">
+            <label>Trade Category</label>
+            <p class="trade-category">—</p>
+          </div>
+          <div class="detail-item">
+            <label>Issue Date</label>
+            <p class="issue-date">—</p>
+          </div>
+          <div class="detail-item">
+            <label>Expiry Date</label>
+            <p class="expiry-date">—</p>
+          </div>
+          <div class="detail-item">
+            <label>Status</label>
+            <p class="active-text" id="licenseStatus">—</p>
+          </div>
+        </div>
+ 
+        <div class="card-footer">
+          <p>Licensing Authority<br><strong class="do-name" style="color: #1E3A8A;"></strong></p>
+          <div class="qr-box">QR</div>
+        </div>
+ 
+        <p class="verified-text">
+          Verification Status: <strong>Digitally Verified</strong> by Licensing Authority, Ministry of Commerce and Industry
+        </p>
+ 
+      </div>
+ 
+      <!-- Cancel Button -->
+      <button class="cancel-btn" onclick="window.location.href='../Applicant dashboard/index.html'">+ Cancel</button>
+    </div>
+ 
+    <!-- RIGHT SIDE: Preview + Help -->
+    <div class="right-section">
+ 
+      <div class="preview-card">
+        <h4>License Preview</h4>
+ 
+        <!-- Fake document lines to look like a license -->
+        <div class="license-preview-box">
+          <h5>Trade License</h5>
+          <div class="fake-line"></div>
+          <div class="fake-line short"></div>
+          <div class="fake-line"></div>
+          <div class="fake-line short"></div>
+          <div class="fake-line"></div>
+          <div class="fake-line short"></div>
+        </div>
+ 
+        <button class="btn-download" onclick="handleDownload()">⬇ Download License PDF</button>
+        <button class="btn-print" onclick="handlePrint()">🖨 Print License</button>
+      </div>
+ 
+      <!-- Help Section -->
+      <div class="help-box">
+        <h4>❓ Need Help?</h4>
+        <p>Having issues with your license download or details/discrepancy?</p>
+        <p>📧 <a href="mailto:support@tradezco.gov.in">support@tradezco.gov.in</a></p>
+        <p>📞 <a href="tel:18001112344">1800-111-2344 (Toll Free)</a></p>
+      </div>
+ 
+    </div>
+  </div>
+ 
+  <!-- Link to JavaScript file -->
+  <script src="../../../mockdata.js"></script>
+<script src="script.js"></script>
+ 
+</body>
+</html>

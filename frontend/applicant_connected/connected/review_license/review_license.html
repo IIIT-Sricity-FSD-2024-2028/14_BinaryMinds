@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Renew Trade License - TradeZo</title>
+  <link rel="stylesheet" href="review_license.css">
+  <script src="../session_guard.js"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="top-bar">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem" height="45">
+  <div><span class="brand-gov">Government of India</span><span class="brand-name">TradeZo</span></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="../Applicant dashboard/index.html">Dashboard</a>
+  <a href="../landing page/index.html">Home</a>
+  <a href="../apply_license/apply_license.html">Apply License</a>
+  <a href="../Track Application Status/index.html">Track Application</a>
+  <a href="../download/index.html">Download License</a>
+  <a href="../payments/index.html">Payments</a>
+  <a href="../Profile/index.html">Profile</a>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <h1>Renew Trade License</h1>
+  <p class="subtitle">Review your current license details and submit renewal documentation.</p>
+
+  <!-- CARD 1: License Details -->
+  <div class="card">
+    <div class="card-top">
+      <h2>Existing License Details</h2>
+      <span class="badge green" id="licenseBadge">● ACTIVE</span>
+    </div>
+    <div class="row3">
+      <div class="field"><label>LICENSE NUMBER</label><p id="licenseNumber">—</p></div>
+      <div class="field"><label>BUSINESS NAME</label><p id="businessName">—</p></div>
+      <div class="field"><label>LICENSE STATUS</label><p class="green" id="licenseStatus">—</p></div>
+    </div>
+    <hr>
+    <div class="row3">
+      <div class="field"><label>ISSUE DATE</label><p id="issueDate">—</p></div>
+      <div class="field"><label>EXPIRY DATE</label><p id="expiryDate">—</p></div>
+      <div class="field"><label>PROPOSED NEW EXPIRY</label><p class="blue" id="proposedExpiry">—</p></div>
+    </div>
+  </div>
+
+  <!-- CARD 2: Renewal Form + Upload Documents -->
+  <div class="two-col">
+
+    <!-- LEFT: Form -->
+    <div class="card">
+      <h2>Renewal Details</h2>
+
+      <div class="form-group">
+        <label>Renewal Period</label>
+        <select id="renewalPeriod">
+          <option value="1year">1 Year</option>
+          <option value="2year">2 Years</option>
+          <option value="3year">3 Years</option>
+        </select>
+        <span class="error" id="err1">Please select a renewal period.</span>
+      </div>
+
+      <div class="form-group">
+        <label>License Category</label>
+        <select id="licenseCategory">
+          <option value="grocery">Retail Trade - Grocery</option>
+          <option value="food">Food & Beverage</option>
+          <option value="electronics">Electronics</option>
+        </select>
+        <span class="error" id="err2">Please select a category.</span>
+      </div>
+
+      <div class="form-group">
+        <label>Shop Area (sq. ft.)</label>
+        <input type="number" id="shopArea" value="450" min="1" placeholder="Enter area">
+        <span class="error" id="err3">Please enter a valid shop area.</span>
+      </div>
+
+      <div class="form-group">
+        <label>Submitted At</label>
+        <input type="text" id="submittedAt" readonly>
+      </div>
+    </div>
+
+    <!-- RIGHT: Upload Docs -->
+    <div class="card">
+      <h2>Upload Updated Documents</h2>
+
+      <div class="doc-row">
+        <span>✅ Aadhar Card</span>
+        <div>
+          <span class="filename" id="name1">No file chosen</span>
+          <input type="file" id="file1" style="display:none" onchange="showFile('file1','name1')">
+          <button onclick="document.getElementById('file1').click()">UPLOAD FILE</button>
+        </div>
+      </div>
+
+      <div class="doc-row">
+        <span>✅ Business Affidavit</span>
+        <div>
+          <span class="filename" id="name2">No file chosen</span>
+          <input type="file" id="file2" style="display:none" onchange="showFile('file2','name2')">
+          <button onclick="document.getElementById('file2').click()">UPLOAD FILE</button>
+        </div>
+      </div>
+
+      <div class="doc-row">
+        <span>✅ Passport Photo</span>
+        <div>
+          <span class="filename" id="name3">No file chosen</span>
+          <input type="file" id="file3" style="display:none" onchange="showFile('file3','name3')">
+          <button onclick="document.getElementById('file3').click()">UPLOAD FILE</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CARD 3: Payment Info -->
+  <div class="card">
+    <h2>Payment Information</h2>
+    <div class="row5">
+        <div class="field"><label>RENEWAL ID</label><p id="renewalId">—</p></div>
+        <div class="field"><label>LICENSE ID</label><p id="licenseId">—</p></div>
+        <div class="field"><label>RENEWAL FEE</label><p class="blue big" id="renewalFee">—</p></div>
+        <div class="field"><label>PAYMENT METHOD</label><p id="paymentMethod">Online (UPI/Netbanking)</p></div>
+        <div class="field"><label>RENEWAL STATUS</label><span class="badge orange" id="renewalStatus">Pending</span></div>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="steps">
+      <div class="step active"><div class="circle done">✔</div><p>Submitted</p></div>
+      <div class="line"></div>
+      <div class="step"><div class="circle">2</div><p>Inspection Scheduled</p></div>
+      <div class="line"></div>
+      <div class="step"><div class="circle">3</div><p>Inspection Completed</p></div>
+      <div class="line"></div>
+      <div class="step"><div class="circle">4</div><p>Department Review</p></div>
+      <div class="line"></div>
+      <div class="step"><div class="circle">5</div><p>Approved/Rejected</p></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BUTTONS -->
+  <div class="buttons">
+    <button class="cancel-btn" onclick="window.location.href='../Applicant dashboard/index.html'">← Cancel</button>
+    <button class="renew-btn" onclick="submitForm()">Renew License</button>
+  </div>
+
+  <!-- SUCCESS MESSAGE (hidden by default) -->
+  <div class="success" id="successMsg">✅ License renewal submitted successfully!</div>
+
+</div>
+
+<script src="../../../mockdata.js"></script>
+<script src="review_license.js"></script>
+</body>
+</html>

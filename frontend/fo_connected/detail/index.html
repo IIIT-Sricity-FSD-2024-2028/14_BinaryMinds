@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Field Officer Profile</title>
+    <link rel="stylesheet" href="style.css">
+<script src="../session_guard.js"></script>
+</head>
+<body>
+
+<!-- 🔷 Header -->
+<header class="top-header">
+    <div class="logo-section">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
+
+        <div>
+            <h4>Government of India</h4>
+            <h2>TradeZo</h2>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="user-info">
+            <span>Welcome</span>
+            <b>Myra</b>
+        </div>
+
+        <div class="header-icons">
+<img src="../assets/icons/logout.png" class="header-icon" onclick="foLogout()" style="cursor:pointer" title="Logout">
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul>
+            <li>
+                <img src="../assets/icons/db.png" class="icon">
+                Dashboard
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification.png" class="icon">
+                Verification
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection.png" class="icon">
+                Record Inspection
+            </li>
+
+            <li>
+                <img src="../assets/icons/verification-history.png" class="icon">
+                Verification History
+            </li>
+
+            <li>
+                <img src="../assets/icons/inspection-history.png" class="icon">
+                Inspection History
+            </li>
+
+            <li>
+                <img src="../assets/icons/profile.png" class="icon">
+                Profile
+            </li>
+        </ul>
+    </aside>
+
+
+  <!-- MAIN -->
+  <div class="main">
+    <h1>Details</h1>
+    <p class="sub">Complete information about the inspection assignment.</p>
+
+    <!-- BUSINESS INFO CARD -->
+    <div class="card">
+      <h2>&#9632; Business Information</h2>
+      <div class="grid">
+        <div class="field"><label>Application ID</label><p id="appId">TL-2026-001</p></div>
+        <div class="field"><label>Business Name</label><p id="bizName">Green Valley Restaurant</p></div>
+        <div class="field"><label>Applicant Name</label><p id="appName">Rajesh Kumar</p></div>
+        <div class="field"><label>Contact Number</label><p id="contact">+91 98765 43210</p></div>
+        <div class="field"><label>Email Address</label><p id="email">rajesh.kumar@greenvalley.com</p></div>
+        
+        <div class="field"><label>Aadhaar Number</label><p id="aadhaar">XXXX-XXXX-4582</p></div>
+        <div class="field"><label>Gender</label><p id="gender">Male</p></div>
+        <div class="field"><label>Father's Name</label><p id="fatherName">Ramesh Kumar</p></div>
+        <div class="field"><label>Mother's Name</label><p id="motherName">Sunita Devi</p></div>
+
+        <div class="field"><label>Trade Category</label><p id="category">Food & Beverage</p></div>
+        <div class="field"><label>Shop Area (sq.ft)</label><p id="shopArea">1200</p></div>
+        <div class="field" style="grid-column: span 2;"><label>Full Shop Address</label><p id="address">123 Main Street, Sector 45</p></div>
+
+        <div class="field"><label>City</label><p id="city">Gurugram</p></div>
+        <div class="field"><label>District</label><p id="district">Gurugram</p></div>
+        <div class="field"><label>State</label><p id="state">Haryana</p></div>
+        <div class="field"><label>Pincode</label><p id="pincode">122003</p></div>
+      </div>
+    </div>
+
+    <!-- UPLOADED DOCUMENTS CARD -->
+    <div class="card">
+      <div class="card-top">
+        <h2>&#9632; Uploaded Documents</h2>
+        <button class="view-btn">&#128065; View All Documents</button>
+      </div>
+      <div class="docs-grid" id="docsGridContainer">
+        <div class="doc-box blue"><p class="doc-title" id="doc1Title">Aadhaar Card</p><p class="doc-file" id="doc1File">Not Uploaded</p><p class="doc-meta" id="doc1Meta">-</p></div>
+        <div class="doc-box green"><p class="doc-title" id="doc2Title">Business Address Proof</p><p class="doc-file" id="doc2File">Not Uploaded</p><p class="doc-meta" id="doc2Meta">-</p></div>
+        <div class="doc-box purple"><p class="doc-title" id="doc3Title">Shop Front View</p><p class="doc-file" id="doc3File">Not Uploaded</p><p class="doc-meta" id="doc3Meta">-</p></div>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="action-btns">
+      <button class="approve-btn" onclick="approve()">Approve Application ✓</button>
+      <button class="reject-btn" onclick="reject()">Reject Application ✕</button>
+    </div>
+
+    <!-- BACK -->
+    <div class="back" onclick="window.location.href='../verification/index.html'">&#8617;</div>
+
+  </div>
+<script src="../../mockdata.js"></script>
+<script src="script.js"></script>
+<script src="../fo_nav.js"></script>
+</body>
+</html>
