@@ -281,31 +281,11 @@
       button.textContent = 'Track Application';
       button.onclick = function() {
         window.location.href = '../Track Application Status/index.html';
-      };
-    }
-  }
-
-
-  function updateNavigation(app) {
-    var downloadLink = document.querySelector('.navbar a[href*="download/index.html"]');
-    if (downloadLink) {
-      downloadLink.href = isApproved(app) ? '../download/index.html' : '../Track Application Status/index.html';
-    }
-
-    var reviewLink = document.querySelector('.sidebar p[onclick*="application_review"], .sidebar p:nth-of-type(3)');
-    if (reviewLink) {
-      reviewLink.onclick = function() {
-        window.location.href = app ? '../Track Application Status/index.html' : '../apply_license/apply_license.html';
-      };
-      reviewLink.style.cursor = 'pointer';
-      reviewLink.textContent = app ? 'Application Review' : 'Apply License';
-    }
-  }
-
+}
   function handleLogout() {
     sessionStorage.removeItem('loggedInUser');
     sessionStorage.removeItem('applicationRef');
-    window.location.href = '../landing page/index.html';
+    window.location.href = '../login/index.html';
   }
 
   function init() {
@@ -337,7 +317,7 @@
 
     setStatusRow(app);
     setLicenseCard(app);
-    updateNavigation(app);
+
 
     window.handleLogout = handleLogout;
     window.goPayment = function() {

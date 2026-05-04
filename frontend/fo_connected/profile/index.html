@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Field Officer Profile</title>
     <link rel="stylesheet" href="style.css">
 <script src="../session_guard.js"></script>
@@ -30,8 +31,6 @@
         </div>
     </div>
 </header>
-
-<div class="container">
 
 <!-- 🔷 Main Layout -->
 <div class="container">
@@ -84,7 +83,7 @@
         <div class="profile-card">
             <div class="avatar">M</div>
             <h2 id="dispName">Myra</h2>
-            <p>FO-2026-042</p>
+            <p id="dispEmpId">FO-2026-042</p>
             <span class="role" id="dispRole">Senior Field Officer</span>
 
             <hr>
@@ -106,19 +105,19 @@
 
                 <div class="stat-card blue">
                     <p>Total Inspections</p>
-                    <h2>248</h2>
+                    <h2 id="statTotalInspections">0</h2>
                     <img src="../assets/icons/applications.png" class="stat-img">
                 </div>
 
                 <div class="stat-card green">
                     <p>Completed Inspections</p>
-                    <h2>232</h2>
+                    <h2 id="statCompletedInspections">0</h2>
                     <img src="../assets/icons/completed.png" class="stat-img">
                 </div>
 
                 <div class="stat-card orange">
                     <p>Pending Inspections</p>
-                    <h2>16</h2>
+                    <h2 id="statPendingInspections">0</h2>
                     <img src="../assets/icons/pending.png" class="stat-img">
                 </div>
 
@@ -159,19 +158,53 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
         stored = JSON.parse(localStorage.getItem('fo_profile_data')) || {};
     } catch(e) {}
-    
-    // Profile details...
-    if (stored.name) document.getElementById('dispName').textContent = stored.name;
-    if (stored.role) document.getElementById('dispRole').textContent = stored.role;
-    if (stored.dept) document.getElementById('dispDept').textContent = stored.dept;
-    if (stored.email) document.getElementById('dispEmail').textContent = stored.email;
-    if (stored.phone) document.getElementById('dispPhone').textContent = stored.phone;
-    if (stored.location) document.getElementById('dispLocation').textContent = stored.location;
-    
-    // Dynamic Activity Log
     var loggedIn = {};
     try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}'); } catch(e) {}
-    var currentName = stored.name || loggedIn.name || 'Myra Singh'; // Defaulting to Myra for mock fallback
+    var allOfficers = [];
+    try { allOfficers = JSON.parse(localStorage.getItem('users') || '[]'); } catch(e) {}
+    var officerRecord = allOfficers.find(function(user) {
+        return (user.email || '').toLowerCase() === (loggedIn.email || '').toLowerCase();
+    }) || {};
+    var currentOfficer = Object.assign({}, stored, officerRecord, loggedIn);
+    currentOfficer.name = currentOfficer.name || currentOfficer.full_name || 'Field Officer';
+    currentOfficer.id = currentOfficer.id || currentOfficer.empId || currentOfficer.user_id || '';
+    currentOfficer.role = currentOfficer.role || 'Field Officer';
+    currentOfficer.department = currentOfficer.department || currentOfficer.dept || 'Trade License Department';
+    currentOfficer.location = currentOfficer.location || 'Municipal Corporation';
+    
+    // Profile details...
+    document.querySelector('.user-info b').textContent = currentOfficer.name;
+    document.querySelector('.avatar').textContent = currentOfficer.name.charAt(0).toUpperCase();
+    document.getElementById('dispName').textContent = currentOfficer.name;
+    document.getElementById('dispEmpId').textContent = currentOfficer.id || 'Field Officer';
+    document.getElementById('dispRole').textContent = currentOfficer.role.replace(/\b\w/g, function(letter) { return letter.toUpperCase(); });
+    document.getElementById('dispDept').textContent = currentOfficer.department;
+    document.getElementById('dispEmail').textContent = currentOfficer.email || 'N/A';
+    document.getElementById('dispPhone').textContent = currentOfficer.phone || 'N/A';
+    document.getElementById('dispLocation').textContent = currentOfficer.location;
+
+    function isAssigned(item) {
+        var values = [item.assignedFO, item.foName, item.fieldOfficerEmail, item.fieldOfficerId, item.assignedTo]
+            .filter(Boolean).map(function(value) { return String(value).toLowerCase().trim(); });
+        var keys = [currentOfficer.id, currentOfficer.empId, currentOfficer.name, currentOfficer.email]
+            .filter(Boolean).map(function(value) { return String(value).toLowerCase().trim(); });
+        return values.some(function(value) { return keys.indexOf(value) !== -1; });
+    }
+
+    var assignedApps = (window.TRADEZO && TRADEZO.applications ? TRADEZO.applications : []).filter(isAssigned);
+    var assignedInspections = (window.TRADEZO && TRADEZO.inspections ? TRADEZO.inspections : []).filter(isAssigned);
+    var reports = [];
+    try { reports = JSON.parse(localStorage.getItem('tz_inspection_reports') || '[]'); } catch(e) {}
+    var ownReports = reports.filter(isAssigned);
+    var total = assignedApps.length || assignedInspections.length || ownReports.length;
+    var completed = assignedInspections.filter(function(item) { return item.status === 'Completed'; }).length + ownReports.length;
+    var pending = Math.max(0, total - completed);
+    document.getElementById('statTotalInspections').textContent = total;
+    document.getElementById('statCompletedInspections').textContent = completed;
+    document.getElementById('statPendingInspections').textContent = pending;
+    
+    // Dynamic Activity Log
+    var currentName = currentOfficer.name;
     
     var activityContainer = document.querySelector('.activity');
     if (activityContainer) {
@@ -185,6 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var veriHistory = [];
         try { veriHistory = JSON.parse(localStorage.getItem('tz_verification_history') || '[]'); } catch(e){}
         veriHistory.forEach(function(item) {
+            if (!isAssigned(item)) return;
             var t = new Date(item.decidedOn).getTime() || Date.now();
             userLogs.push({
                 action: item.decision === 'Approved' ? 'Approve' : 'Reject',
@@ -195,9 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // 2. Fetch Inspection Reports
-        var inspReports = [];
-        try { inspReports = JSON.parse(localStorage.getItem('tz_inspection_reports') || '[]'); } catch(e){}
-        inspReports.forEach(function(item) {
+        ownReports.forEach(function(item) {
             var t = new Date(item.submittedDate).getTime() || Date.now();
             userLogs.push({
                 action: item.result === 'Approved' ? 'Complete' : 'Reject',
@@ -242,6 +274,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script src="../fo_nav.js"></script>
+<script src="../fo_nav.js?v=officer-specific-dashboard-20260504"></script>
 </body>
 </html>

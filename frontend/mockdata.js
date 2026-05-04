@@ -15,8 +15,8 @@ TRADEZO.users = [
   { id: 'APP-1002', name: 'Priya Sharma',    email: 'priya@applicant.com',     phone: '9876543211', role: 'applicant',          password: 'applicant123', status: 'Active' },
   { id: 'APP-1003', name: 'Amit Patel',      email: 'amit@applicant.com',      phone: '9876543212', role: 'applicant',          password: 'applicant123', status: 'Active' },
   // Field Officers
-  { id: 'FO-2001',  name: 'Myra Singh',      email: 'myra@fieldofficer.com',   phone: '9876543220', role: 'field officer',      password: 'field123',     status: 'Active' },
-  { id: 'FO-2002',  name: 'Vikram Desai',    email: 'vikram@fieldofficer.com', phone: '9876543221', role: 'field officer',      password: 'field123',     status: 'Active' },
+  { id: 'FO-2001',  name: 'Myra Singh',      email: 'myra@fieldofficer.com',   phone: '9876543220', role: 'field officer',      password: 'field@123',    status: 'Active' },
+  { id: 'FO-2002',  name: 'Vikram Desai',    email: 'vikram@fieldofficer.com', phone: '9876543221', role: 'field officer',      password: 'field@123',    status: 'Active' },
   // Department Officers
   { id: 'DO-3001',  name: 'Anjali Mehta',    email: 'admin@deptofficer.com',   phone: '9876543230', role: 'department officer', password: 'dept123',      status: 'Active' },
   { id: 'DO-3002',  name: 'Rahul Gupta',     email: 'rahul@deptofficer.com',   phone: '9876543231', role: 'department officer', password: 'dept123',      status: 'Active' },

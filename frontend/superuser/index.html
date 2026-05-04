@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="../mockdata.js"></script>
-<script src="session_guard.js"></script>
+<script src="../mockdata.js?v=dept-officer-management-20260504"></script>
+<script src="session_guard.js?v=dept-officer-management-20260504"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TradeZo - Super User Panel</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=dept-officer-management-20260504" />
 </head>
 <body>
  
@@ -27,6 +27,9 @@
       </a>
       <a href="#" class="nav-link" onclick="showPage('user-management', this)">
         <span class="nav-icon">&#9786;</span> User Management
+      </a>
+      <a href="#" class="nav-link" onclick="showPage('department-officers', this)">
+        <span class="nav-icon">&#9812;</span> Department Officer Management
       </a>
       <a href="#" class="nav-link" onclick="showPage('applications', this)">
         <span class="nav-icon">&#9998;</span> Applications Overview
@@ -125,19 +128,19 @@
         <div class="page-top-bar">
           <div>
             <div class="page-heading">User Management</div>
-            <div class="page-sub">Manage system users, officers, and applicants</div>
+            <div class="page-sub">Manage field officer accounts and access</div>
           </div>
-          <button class="btn-primary" onclick="openAddModal()">+ Add New Officer</button>
+          <button class="btn-primary" onclick="openAddModal()">+ Add Field Officer</button>
         </div>
  
         <div class="card">
           <div class="um-filter-bar">
             <div class="um-stats">
-              <span>Total Users: <strong id="total-users">0</strong></span>
+              <span>Total Field Officers: <strong id="total-users">0</strong></span>
               <span class="green">Active: <strong id="active-users">0</strong></span>
-              <span class="blue">Officers: <strong id="officer-count">0</strong></span>
+              <span class="blue">Field Officers: <strong id="officer-count">0</strong></span>
             </div>
-            <input type="text" class="search-input" placeholder="Search by name, email, ID, or role..." oninput="searchUsers(this.value)" />
+            <input type="text" class="search-input" placeholder="Search by name, email, or ID..." oninput="searchUsers(this.value)" />
           </div>
  
           <table class="data-table">
@@ -158,6 +161,38 @@
       </div>
     </div>
  
+    <!-- ==================== PAGE: DEPARTMENT OFFICER MANAGEMENT ==================== -->
+    <div id="page-department-officers" class="page">
+      <div class="content">
+        <div class="page-top-bar">
+          <div>
+            <div class="page-heading">Department Officer Management</div>
+            <div class="page-sub">Manage department officer terms and replacements</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Current Department Officers</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="department-officers-tbody"></tbody>
+          </table>
+          <div class="alert-banner blue-banner" id="department-officer-message"></div>
+          <div class="form-actions">
+            <button class="btn-primary" id="btn-add-department-officer" onclick="openDepartmentOfficerModal()">Add New Department Officer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== PAGE: APPLICATIONS OVERVIEW ==================== -->
     <div id="page-applications" class="page">
       <div class="content">
@@ -403,7 +438,6 @@
             <select class="filter-select" id="audit-role-filter" onchange="filterAudit()">
               <option value="">All Roles</option>
               <option value="Super User">Super User</option>
-              <option value="Department Officer">Department Officer</option>
               <option value="Field Officer">Field Officer</option>
               <option value="Applicant">Applicant</option>
             </select>
@@ -434,8 +468,8 @@
     <div class="modal">
       <div class="modal-header">
         <div>
-          <div class="modal-title">Add New Officer</div>
-          <div class="modal-sub">Fill in the details to add a new user to the system</div>
+          <div class="modal-title">Add Field Officer</div>
+          <div class="modal-sub">Fill in the details to add a new field officer to the system</div>
         </div>
         <button class="modal-close" onclick="closeModal('modal-add')">&times;</button>
       </div>
@@ -461,9 +495,7 @@
           <div class="form-group">
             <label>Role *</label>
             <select id="add-role" class="form-input">
-              <option value="">Select Role</option>
               <option value="Field Officer">Field Officer</option>
-              <option value="Department Officer">Department Officer</option>
             </select>
             <div class="error-msg" id="err-add-role"></div>
           </div>
@@ -478,33 +510,80 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Employee ID *</label>
-          <input type="text" id="add-empid" class="form-input" placeholder="EMP-XXXXX" />
-          <div class="error-msg" id="err-add-empid"></div>
-        </div>
-        <div class="form-group">
           <label>Joining Date *</label>
           <input type="date" id="add-date" class="form-input" />
           <div class="error-msg" id="err-add-date"></div>
         </div>
         <div class="info-note">
-          <strong>Note:</strong> All officers will receive an email with login credentials and system access instructions. Please ensure the email address is correct.
+          <strong>Note:</strong> Field officers will receive an email with login credentials and system access instructions. Please ensure the email address is correct.
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn-outline" onclick="closeModal('modal-add')">Cancel</button>
-        <button class="btn-primary" onclick="addOfficer()">Add Officer</button>
+        <button class="btn-primary" onclick="addOfficer()">Add Field Officer</button>
       </div>
     </div>
   </div>
  
+  <!-- ==================== MODAL: ADD DEPARTMENT OFFICER ==================== -->
+  <div class="modal-overlay" id="modal-department-officer">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Add New Department Officer</div>
+          <div class="modal-sub">A new officer can be added only for a department whose current officer term has expired.</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-department-officer')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="dept-name" class="form-input" placeholder="Enter full name" />
+            <div class="error-msg" id="err-dept-name"></div>
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="dept-email" class="form-input" placeholder="example@tradezo.gov.in" />
+            <div class="error-msg" id="err-dept-email"></div>
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="text" id="dept-phone" class="form-input" placeholder="+91 XXXXX XXXXX" />
+            <div class="error-msg" id="err-dept-phone"></div>
+          </div>
+          <div class="form-group">
+            <label>Department *</label>
+            <select id="dept-department" class="form-input"></select>
+            <div class="error-msg" id="err-dept-department"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Start Date *</label>
+          <input type="date" id="dept-start" class="form-input" />
+          <div class="form-hint">End date is automatically calculated as 5 years after the start date.</div>
+          <div class="error-msg" id="err-dept-start"></div>
+        </div>
+        <div class="info-note">
+          <strong>Rule:</strong> Only one active department officer is allowed per department.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeModal('modal-department-officer')">Cancel</button>
+        <button class="btn-primary" onclick="addDepartmentOfficer()">Create Department Officer</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== MODAL: EDIT OFFICER ==================== -->
   <div class="modal-overlay" id="modal-edit">
     <div class="modal">
       <div class="modal-header">
         <div>
-          <div class="modal-title">Edit Officer Details</div>
-          <div class="modal-sub">Update the information for this system user</div>
+          <div class="modal-title">Edit Field Officer Details</div>
+          <div class="modal-sub">Update the information for this field officer</div>
         </div>
         <button class="modal-close" onclick="closeModal('modal-edit')">&times;</button>
       </div>
@@ -532,7 +611,6 @@
             <label>Role *</label>
             <select id="edit-role" class="form-input">
               <option value="Field Officer">Field Officer</option>
-              <option value="Department Officer">Department Officer</option>
             </select>
             <div class="error-msg" id="err-edit-role"></div>
           </div>
@@ -784,6 +862,6 @@
   <!-- ==================== TOAST NOTIFICATION ==================== -->
   <div class="toast" id="toast"></div>
  
-  <script src="script.js"></script>
+  <script src="script.js?v=dept-officer-management-20260504"></script>
 </body>
 </html>

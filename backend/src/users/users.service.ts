@@ -48,6 +48,17 @@ export class UsersService {
       );
     }
 
+    if (userData.employee_id) {
+      const existingEmployeeId = this.usersRepository
+        .find()
+        .find((user) => user.employee_id === userData.employee_id);
+      if (existingEmployeeId) {
+        throw new ConflictException(
+          `User with employee ID ${userData.employee_id} already exists`,
+        );
+      }
+    }
+
     return this.usersRepository.create(userData);
   }
 
@@ -71,6 +82,17 @@ export class UsersService {
       if (existingPhone && existingPhone.user_id !== id) {
         throw new ConflictException(
           `Phone number ${updateData.phone} is already in use`,
+        );
+      }
+    }
+
+    if (updateData.employee_id) {
+      const existingEmployeeId = this.usersRepository
+        .find()
+        .find((user) => user.employee_id === updateData.employee_id);
+      if (existingEmployeeId && existingEmployeeId.user_id !== id) {
+        throw new ConflictException(
+          `Employee ID ${updateData.employee_id} is already in use`,
         );
       }
     }

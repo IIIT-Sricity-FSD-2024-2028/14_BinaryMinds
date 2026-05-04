@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Field Officer Verification</title>
     <link rel="stylesheet" href="style.css">
     <script src="../session_guard.js"></script>
@@ -87,15 +88,28 @@
     </div>
 </div>
 
+<script src="../fo_nav.js?v=officer-specific-dashboard-20260504"></script>
+
 <!-- 🔥 SCRIPT FOR DYNAMIC DATA -->
 <script>
 function loadVerificationApps() {
     let applications = JSON.parse(localStorage.getItem("applications")) || [];
+    let centralApplications = (window.TRADEZO && TRADEZO.applications) ? TRADEZO.applications : [];
+    applications = centralApplications.concat(applications);
 
     let container = document.getElementById("verificationList");
     container.innerHTML = "";
 
-    let pendingApps = applications.filter(app => app.applicantName && app.applicantName.trim() !== "" && app.status === "Pending");
+    let seen = {};
+    let pendingApps = applications.filter(app => {
+        let id = app.id || app.appRef || "";
+        if (!id || seen[id]) return false;
+        seen[id] = true;
+        return app.applicantName &&
+            app.applicantName.trim() !== "" &&
+            (app.status === "Pending" || app.status === "Under Verification" || app.status === "Pending Review") &&
+            (!window.foIsAssignedToCurrentOfficer || window.foIsAssignedToCurrentOfficer(app));
+    });
     
     if (pendingApps.length === 0) {
         container.innerHTML = "<p>No pending applications for verification.</p>";
@@ -153,10 +167,8 @@ function searchCards() {
     });
 }
 
-loadVerificationApps();
+document.addEventListener('DOMContentLoaded', loadVerificationApps);
 </script>
-
-<script src="../fo_nav.js"></script>
 
 </body>
 </html>

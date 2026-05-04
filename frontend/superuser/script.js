@@ -11,12 +11,9 @@
 // List of officers in the system
 var users = [
   { id: "USR001", name: "Rajesh Kumar",    email: "rajesh.kumar@tradezo.gov.in",    phone: "9876543210", role: "Field Officer",      status: "Active",   empId: "EMP-00101", joinDate: "2023-01-15" },
-  { id: "USR002", name: "Priya Sharma",    email: "priya.sharma@tradezo.gov.in",    phone: "9876543211", role: "Department Officer", status: "Active",   empId: "EMP-00102", joinDate: "2022-06-10" },
   { id: "USR005", name: "Vikram Singh",    email: "vikram.singh@tradezo.gov.in",    phone: "9876543212", role: "Field Officer",      status: "Active",   empId: "EMP-00105", joinDate: "2023-03-20" },
-  { id: "USR007", name: "Arjun Verma",     email: "arjun.verma@tradezo.gov.in",     phone: "9876543213", role: "Department Officer", status: "Active",   empId: "EMP-00107", joinDate: "2021-11-05" },
   { id: "USR009", name: "Rohit Desai",     email: "rohit.desai@tradezo.gov.in",     phone: "9876543214", role: "Field Officer",      status: "Inactive", empId: "EMP-00109", joinDate: "2022-09-14" },
   { id: "USR011", name: "Sanjay Malhotra", email: "sanjay.malhotra@tradezo.gov.in", phone: "9876543215", role: "Field Officer",      status: "Active",   empId: "EMP-00111", joinDate: "2023-07-01" },
-  { id: "USR013", name: "Deepak Chopra",   email: "deepak.chopra@tradezo.gov.in",   phone: "9876543216", role: "Department Officer", status: "Active",   empId: "EMP-00113", joinDate: "2020-12-22" },
   { id: "USR015", name: "Manish Tiwari",   email: "manish.tiwari@tradezo.gov.in",   phone: "9876543217", role: "Field Officer",      status: "Active",   empId: "EMP-00115", joinDate: "2024-01-08" }
 ];
  
@@ -61,11 +58,9 @@ var categories = [
 // Audit log — records every action done in the system
 var auditLogs = [
   { time: "Mar 28, 2026 10:23 AM", user: "Admin User",   role: "Super User",         action: "Approve", module: "Applications", desc: "Approved application #TL2026-001230",       ip: "192.168.1.1" },
-  { time: "Mar 28, 2026 09:45 AM", user: "Priya Sharma", role: "Department Officer", action: "Update",  module: "Applications", desc: "Updated status for #TL2026-001240",         ip: "192.168.1.45" },
   { time: "Mar 28, 2026 09:12 AM", user: "Admin User",   role: "Super User",         action: "Create",  module: "Users",        desc: "Added new officer Manish Tiwari",           ip: "192.168.1.1" },
   { time: "Mar 28, 2026 08:55 AM", user: "Rajesh Kumar", role: "Field Officer",      action: "Login",   module: "System",       desc: "Login successful from Chrome",              ip: "192.168.1.23" },
   { time: "Mar 27, 2026 05:30 PM", user: "Admin User",   role: "Super User",         action: "Update",  module: "Settings",     desc: "Updated fee configuration",                ip: "192.168.1.1" },
-  { time: "Mar 27, 2026 04:15 PM", user: "Arjun Verma",  role: "Department Officer", action: "Reject",  module: "Applications", desc: "Rejected application #TL2026-001235",      ip: "192.168.1.67" },
   { time: "Mar 27, 2026 03:00 PM", user: "Admin User",   role: "Super User",         action: "Delete",  module: "Users",        desc: "Removed inactive officer account USR004",  ip: "192.168.1.1" },
   { time: "Mar 27, 2026 02:10 PM", user: "Sneha Reddy",  role: "Applicant",          action: "Create",  module: "Applications", desc: "Submitted new application #TL2026-001245", ip: "192.168.2.10" },
   { time: "Mar 27, 2026 01:30 PM", user: "Vikram Singh", role: "Field Officer",      action: "Update",  module: "Licenses",     desc: "Recorded inspection for LIC2025-000678",   ip: "192.168.1.23" },
@@ -86,9 +81,12 @@ var activityLog = [
  
 // Default fee values (used when resetting)
 var defaultFees = { new: 2100, renewal: 1000 };
+var FIELD_OFFICER_DEFAULT_PASSWORD = 'field@123';
+var API_BASE_URL = 'http://localhost:3000/api';
  
 // Track which user or category is being edited
 var editUserId = null;
+var editUserEmail = null;
 var editCatId  = null;
  
 // How many rows to show per page
@@ -99,6 +97,360 @@ var userPage  = 1;
 var appPage   = 1;
 var licPage   = 1;
 var auditPage = 1;
+
+function isFieldOfficerUser(user) {
+  var name = (user.name || '').toLowerCase().trim();
+  var email = (user.email || '').toLowerCase().trim();
+  var isDepartmentOfficerAccount =
+    name === 'anjali mehta' ||
+    name === 'rahul gupta' ||
+    email === 'admin@deptofficer.com' ||
+    email === 'rahul@deptofficer.com';
+
+  return !isDepartmentOfficerAccount && (user.role || '').toLowerCase().trim() === 'field officer';
+}
+
+function getLocalJson(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch(e) { return fallback; }
+}
+
+function normalizeFieldOfficerForLogin(user) {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    role: 'field officer',
+    password: FIELD_OFFICER_DEFAULT_PASSWORD,
+    status: user.status || 'Active',
+    empId: user.empId,
+    joinDate: user.joinDate
+  };
+}
+
+function upsertByEmail(list, item) {
+  var found = false;
+  var next = list.map(function(existing) {
+    if ((existing.email || '').toLowerCase() === (item.email || '').toLowerCase()) {
+      found = true;
+      return Object.assign({}, existing, item);
+    }
+    return existing;
+  });
+  if (!found) next.push(item);
+  return next;
+}
+
+function uniqueFieldOfficers(list) {
+  var byEmail = {};
+  list.filter(isFieldOfficerUser).forEach(function(user) {
+    var email = (user.email || '').toLowerCase();
+    if (!email) return;
+    byEmail[email] = Object.assign({}, byEmail[email] || {}, user, {
+      role: 'Field Officer',
+      empId: user.empId || user.id || (byEmail[email] && byEmail[email].empId) || ''
+    });
+  });
+  return Object.keys(byEmail).map(function(email) { return byEmail[email]; });
+}
+
+function generateEmployeeId() {
+  var allKnownUsers = users
+    .concat(getLocalJson('users', []))
+    .concat(getLocalJson('registeredUsers', []));
+  var maxId = 0;
+
+  allKnownUsers.forEach(function(user) {
+    var rawId = String(user.empId || user.employee_id || user.id || '');
+    var match = rawId.match(/(?:EMP|FO)-?(\d+)/i);
+    if (match) {
+      var value = parseInt(match[1], 10);
+      if (!isNaN(value) && value > maxId) maxId = value;
+    }
+  });
+
+  return 'EMP-' + String(maxId + 1).padStart(5, '0');
+}
+
+function persistFieldOfficerCredentials(user) {
+  var loginUser = normalizeFieldOfficerForLogin(user);
+
+  var registered = getLocalJson('registeredUsers', []);
+  registered = upsertByEmail(registered, loginUser);
+  localStorage.setItem('registeredUsers', JSON.stringify(registered));
+
+  var localUsers = getLocalJson('users', []).filter(isFieldOfficerUser);
+  localUsers = upsertByEmail(localUsers, user);
+  localStorage.setItem('users', JSON.stringify(localUsers));
+
+  if (window.TRADEZO && window.TRADEZO.users) {
+    window.TRADEZO.users = upsertByEmail(window.TRADEZO.users, loginUser);
+  }
+}
+
+function removeFieldOfficerCredentials(user) {
+  var email = (user.email || '').toLowerCase();
+  var registered = getLocalJson('registeredUsers', []).filter(function(u) {
+    return (u.email || '').toLowerCase() !== email;
+  });
+  localStorage.setItem('registeredUsers', JSON.stringify(registered));
+}
+
+function syncFieldOfficerToBackend(user) {
+  if (!window.fetch) return Promise.resolve(false);
+
+  return fetch(API_BASE_URL + '/users', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      full_name: user.name,
+      email: user.email,
+      phone: user.phone,
+      employee_id: user.empId || user.employee_id || user.id,
+      password_hash: FIELD_OFFICER_DEFAULT_PASSWORD,
+      role: 'field_officer'
+    })
+  })
+  .then(function(response) {
+    if (!response.ok) throw new Error('Backend user sync failed');
+    return response.json();
+  })
+  .then(function(created) {
+    user.backendUserId = created.user_id;
+    persistFieldOfficerCredentials(user);
+    return true;
+  })
+  .catch(function() {
+    return false;
+  });
+}
+
+var managedDepartments = [
+  'Commerce Department',
+  'Industry Department',
+  'Trade License Department'
+];
+
+var departmentOfficers = getLocalJson('departmentOfficers', [
+  {
+    id: 'DO-001',
+    name: 'Anjali Mehta',
+    email: 'admin@deptofficer.com',
+    phone: '9876543230',
+    department: 'Commerce Department',
+    startDate: '2023-04-01'
+  },
+  {
+    id: 'DO-002',
+    name: 'Rahul Gupta',
+    email: 'rahul@deptofficer.com',
+    phone: '9876543231',
+    department: 'Industry Department',
+    startDate: '2018-03-31'
+  }
+]);
+
+function parseDate(value) {
+  var date = new Date(value);
+  return isNaN(date.getTime()) ? null : date;
+}
+
+function toDateInputValue(date) {
+  return date.toISOString().split('T')[0];
+}
+
+function addYears(date, years) {
+  var copy = new Date(date.getTime());
+  copy.setFullYear(copy.getFullYear() + years);
+  return copy;
+}
+
+function formatDisplayDate(value) {
+  var date = parseDate(value);
+  if (!date) return 'N/A';
+  return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function getDepartmentOfficerEndDate(officer) {
+  var start = parseDate(officer.startDate);
+  if (!start) return null;
+  return addYears(start, 5);
+}
+
+function getDepartmentOfficerStatus(officer) {
+  var end = getDepartmentOfficerEndDate(officer);
+  if (!end) return 'Invalid';
+  return new Date() <= end ? 'Active' : 'Expired';
+}
+
+function getCurrentDepartmentOfficer(department) {
+  var officers = departmentOfficers
+    .filter(function(officer) { return officer.department === department; })
+    .sort(function(a, b) {
+      return (parseDate(b.startDate) || 0) - (parseDate(a.startDate) || 0);
+    });
+  return officers[0] || null;
+}
+
+function getEligibleDepartmentsForNewOfficer() {
+  return managedDepartments.filter(function(department) {
+    var current = getCurrentDepartmentOfficer(department);
+    return !current || getDepartmentOfficerStatus(current) === 'Expired';
+  });
+}
+
+function persistDepartmentOfficers() {
+  localStorage.setItem('departmentOfficers', JSON.stringify(departmentOfficers));
+}
+
+function syncDepartmentOfficerToBackend(officer) {
+  if (!window.fetch) return Promise.resolve(false);
+
+  return fetch(API_BASE_URL + '/users', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      full_name: officer.name,
+      email: officer.email,
+      phone: officer.phone,
+      employee_id: officer.id,
+      password_hash: 'dept@123',
+      role: 'department_officer'
+    })
+  })
+  .then(function(response) {
+    if (!response.ok) throw new Error('Backend department officer sync failed');
+    return response.json();
+  })
+  .then(function(created) {
+    officer.backendUserId = created.user_id;
+    persistDepartmentOfficers();
+    return true;
+  })
+  .catch(function() {
+    return false;
+  });
+}
+
+function renderDepartmentOfficers() {
+  var tbody = document.getElementById('department-officers-tbody');
+  var message = document.getElementById('department-officer-message');
+  var button = document.getElementById('btn-add-department-officer');
+  if (!tbody || !message || !button) return;
+
+  tbody.innerHTML = '';
+  managedDepartments.forEach(function(department) {
+    var officer = getCurrentDepartmentOfficer(department);
+    if (!officer) {
+      tbody.innerHTML +=
+        '<tr>' +
+          '<td>No officer assigned</td>' +
+          '<td>' + department + '</td>' +
+          '<td>N/A</td>' +
+          '<td>N/A</td>' +
+          '<td><span class="badge badge-orange">Vacant</span></td>' +
+        '</tr>';
+      return;
+    }
+
+    var status = getDepartmentOfficerStatus(officer);
+    var badge = status === 'Active' ? 'badge-green' : 'badge-red';
+    var endDate = getDepartmentOfficerEndDate(officer);
+    tbody.innerHTML +=
+      '<tr>' +
+        '<td>' + officer.name + '</td>' +
+        '<td>' + officer.department + '</td>' +
+        '<td>' + formatDisplayDate(officer.startDate) + '</td>' +
+        '<td>' + (endDate ? formatDisplayDate(toDateInputValue(endDate)) : 'N/A') + '</td>' +
+        '<td><span class="badge ' + badge + '">' + status + '</span></td>' +
+      '</tr>';
+  });
+
+  var eligible = getEligibleDepartmentsForNewOfficer();
+  button.disabled = eligible.length === 0;
+  if (eligible.length === 0) {
+    message.innerHTML = '<strong>Add disabled:</strong> Every department already has an active Department Officer. A new officer can be added only after the current 5-year term expires.';
+  } else {
+    message.innerHTML = '<strong>Eligible department(s):</strong> ' + eligible.join(', ') + '. You can add a new Department Officer for these department(s).';
+  }
+}
+
+function openDepartmentOfficerModal() {
+  var eligible = getEligibleDepartmentsForNewOfficer();
+  if (eligible.length === 0) {
+    showToast('No department is eligible for a new officer yet.');
+    return;
+  }
+
+  clearFields(['dept-name', 'dept-email', 'dept-phone', 'dept-start']);
+  clearErrors(['err-dept-name', 'err-dept-email', 'err-dept-phone', 'err-dept-department', 'err-dept-start']);
+  var select = document.getElementById('dept-department');
+  select.innerHTML = eligible.map(function(department) {
+    return '<option value="' + department + '">' + department + '</option>';
+  }).join('');
+  document.getElementById('dept-start').value = toDateInputValue(new Date());
+  openModal('modal-department-officer');
+}
+
+function generateDepartmentOfficerId() {
+  var maxId = 0;
+  departmentOfficers.forEach(function(officer) {
+    var match = String(officer.id || '').match(/DO-(\d+)/i);
+    if (match) {
+      var value = parseInt(match[1], 10);
+      if (!isNaN(value) && value > maxId) maxId = value;
+    }
+  });
+  return 'DO-' + String(maxId + 1).padStart(3, '0');
+}
+
+function addDepartmentOfficer() {
+  var name = getVal('dept-name');
+  var email = getVal('dept-email');
+  var phone = getVal('dept-phone');
+  var department = getVal('dept-department');
+  var startDate = getVal('dept-start');
+  var valid = true;
+
+  clearErrors(['err-dept-name', 'err-dept-email', 'err-dept-phone', 'err-dept-department', 'err-dept-start']);
+
+  if (!name || name.length < 3) { showErr('err-dept-name', 'Full name must be at least 3 characters.'); valid = false; }
+  if (!email) { showErr('err-dept-email', 'Email is required.'); valid = false; }
+  else if (!validEmail(email)) { showErr('err-dept-email', 'Enter a valid email address.'); valid = false; }
+  else if (departmentOfficers.some(function(officer) { return officer.email.toLowerCase() === email.toLowerCase(); })) {
+    showErr('err-dept-email', 'This email already exists for a Department Officer.'); valid = false;
+  }
+  if (!phone || !validPhone(phone)) { showErr('err-dept-phone', 'Enter a valid 10-digit phone number.'); valid = false; }
+  if (!department) { showErr('err-dept-department', 'Select a department.'); valid = false; }
+  if (!startDate || !parseDate(startDate)) { showErr('err-dept-start', 'Start date is required.'); valid = false; }
+
+  var current = getCurrentDepartmentOfficer(department);
+  if (current && getDepartmentOfficerStatus(current) === 'Active') {
+    showErr('err-dept-department', 'This department already has an active officer.'); valid = false;
+  }
+
+  if (!valid) return;
+
+  var officer = {
+    id: generateDepartmentOfficerId(),
+    name: name,
+    email: email,
+    phone: phone,
+    department: department,
+    startDate: startDate
+  };
+
+  departmentOfficers.push(officer);
+  persistDepartmentOfficers();
+  addAuditLog('Create', 'Users', 'Added department officer ' + name + ' for ' + department);
+  closeModal('modal-department-officer');
+  renderDepartmentOfficers();
+  showToast('Department Officer ' + name + ' created for ' + department + '.');
+
+  syncDepartmentOfficerToBackend(officer).then(function(synced) {
+    if (synced) showToast('Department Officer synced to backend.');
+  });
+}
  
 // Override with dynamic live data from shared system
 (function mapDynamicData() {
@@ -107,14 +459,15 @@ var auditPage = 1;
   // 1. DYNAMIC USERS
   var sysUsers = window.TRADEZO && window.TRADEZO.users ? window.TRADEZO.users : [];
   var localUsers = safeParse(localStorage.getItem('users'), []);
+  localUsers = localUsers.filter(isFieldOfficerUser);
+  localStorage.setItem('users', JSON.stringify(localUsers));
   var allUsers = sysUsers.slice();
   localUsers.forEach(function(lu) { 
      if(!allUsers.find(function(u) { return u.email === lu.email; })) allUsers.push(lu); 
   });
   
   var officerUsers = allUsers.filter(function(u) {
-     var r = (u.role || '').toLowerCase();
-     return r === 'field officer' || r === 'department officer';
+     return isFieldOfficerUser(u);
   });
 
   if (officerUsers.length > 0) {
@@ -124,7 +477,7 @@ var auditPage = 1;
         name: u.name || 'Unknown',
         email: u.email || 'N/A',
         phone: u.phone || 'N/A',
-        role: (u.role || 'User').replace(/\b\w/g, function(l){ return l.toUpperCase(); }),
+        role: 'Field Officer',
         status: u.status || 'Active',
         empId: u.id || ('EMP-' + i),
         joinDate: new Date().toISOString().split('T')[0]
@@ -195,6 +548,7 @@ var auditPage = 1;
 })();
 
 // Filtered arrays — updated on search/filter
+users = uniqueFieldOfficers(users);
 var filteredUsers = users.slice();
 var filteredApps  = applications.slice();
 var filteredLics  = licenses.slice();
@@ -230,6 +584,7 @@ function showPage(pageName, clickedLink) {
   // Load data for the selected page
   if (pageName === 'dashboard')       renderDashboard();
   if (pageName === 'user-management') renderUsers();
+  if (pageName === 'department-officers') renderDepartmentOfficers();
   if (pageName === 'applications')    { renderApplicationStats(); renderApplications(); }
   if (pageName === 'licenses')        { renderLicenseStats(); renderLicenses(); }
   if (pageName === 'settings')        renderCategories();
@@ -266,6 +621,10 @@ function renderDashboard() {
 function renderUsers() {
   var tbody = document.getElementById('users-tbody');
   tbody.innerHTML = '';
+
+  users = uniqueFieldOfficers(users);
+  filteredUsers = uniqueFieldOfficers(filteredUsers);
+  if ((userPage - 1) * rowsPerPage >= filteredUsers.length) userPage = 1;
  
   // Get rows for the current page
   var start    = (userPage - 1) * rowsPerPage;
@@ -279,9 +638,7 @@ function renderUsers() {
       var u       = pageData[i];
       var initial = u.name.charAt(0);
  
-      var roleBadge = 'badge-purple';
-      if (u.role === 'Field Officer')      roleBadge = 'badge-blue';
-      if (u.role === 'Department Officer') roleBadge = 'badge-green';
+      var roleBadge = 'badge-blue';
  
       var statBadge = u.status === 'Active' ? 'badge-green' : 'badge-grey';
  
@@ -294,7 +651,7 @@ function renderUsers() {
           '<td><span class="badge ' + statBadge + '">' + u.status + '</span></td>' +
           '<td>' +
             '<div class="action-btns">' +
-              '<button class="btn-sm btn-edit"   onclick="openEditModal(\'' + u.id + '\')">&#9998; Edit</button>' +
+              '<button class="btn-sm btn-edit"   onclick="openEditModalByEmail(\'' + encodeURIComponent(u.email) + '\')">&#9998; Edit</button>' +
               '<button class="btn-sm btn-delete" onclick="deleteUser(\'' + u.id + '\')">&#128465; Delete</button>' +
             '</div>' +
           '</td>' +
@@ -315,6 +672,7 @@ function renderUsers() {
  
 function searchUsers(searchValue) {
   var q = searchValue.toLowerCase();
+  users = uniqueFieldOfficers(users);
   filteredUsers = users.filter(function(u) {
     return u.name.toLowerCase().includes(q)  ||
            u.email.toLowerCase().includes(q) ||
@@ -326,8 +684,9 @@ function searchUsers(searchValue) {
 }
  
 function openAddModal() {
-  clearFields(['add-name', 'add-email', 'add-phone', 'add-role', 'add-status', 'add-empid', 'add-date']);
-  clearErrors(['err-add-name', 'err-add-email', 'err-add-phone', 'err-add-role', 'err-add-status', 'err-add-empid', 'err-add-date']);
+  clearFields(['add-name', 'add-email', 'add-phone', 'add-role', 'add-status', 'add-date']);
+  document.getElementById('add-role').value = 'Field Officer';
+  clearErrors(['err-add-name', 'err-add-email', 'err-add-phone', 'err-add-role', 'err-add-status', 'err-add-date']);
   openModal('modal-add');
 }
  
@@ -335,13 +694,13 @@ function addOfficer() {
   var name   = getVal('add-name');
   var email  = getVal('add-email');
   var phone  = getVal('add-phone');
-  var role   = getVal('add-role');
+  var role   = 'Field Officer';
   var status = getVal('add-status');
-  var empId  = getVal('add-empid');
+  var empId  = generateEmployeeId();
   var date   = getVal('add-date');
   var valid  = true;
  
-  clearErrors(['err-add-name', 'err-add-email', 'err-add-phone', 'err-add-role', 'err-add-status', 'err-add-empid', 'err-add-date']);
+  clearErrors(['err-add-name', 'err-add-email', 'err-add-phone', 'err-add-role', 'err-add-status', 'err-add-date']);
  
   // Name validation
   if (!name || /^0+$/.test(name)) {
@@ -366,50 +725,54 @@ function addOfficer() {
     showErr('err-add-phone', 'Enter a valid 10-digit phone number.'); valid = false;
   }
  
-  if (!role)   { showErr('err-add-role',   'Please select a role.');   valid = false; }
   if (!status) { showErr('err-add-status', 'Please select a status.'); valid = false; }
- 
-  // Employee ID validation
-  if (!empId) {
-    showErr('err-add-empid', 'Employee ID is required.'); valid = false;
-  } else if (!/^EMP-\d+$/.test(empId)) {
-    showErr('err-add-empid', 'Format must be EMP-XXXXX (e.g. EMP-00123).'); valid = false;
-  } else if (users.find(function(u) { return u.empId === empId; })) {
-    showErr('err-add-empid', 'This Employee ID already exists.'); valid = false;
-  }
  
   if (!date) { showErr('err-add-date', 'Joining date is required.'); valid = false; }
  
   if (!valid) return;
  
   // Add the new officer
-  var newId = 'USR' + String(users.length + 1).padStart(3, '0');
+  var newId = empId;
   var newUserObj = { id: newId, name: name, email: email, phone: phone, role: role, status: status, empId: empId, joinDate: date };
   users.push(newUserObj);
   filteredUsers = users.slice();
-  
-  // Persist dynamically
-  var localUsers = [];
-  try { localUsers = JSON.parse(localStorage.getItem('users')) || []; } catch(e){}
-  localUsers.push(newUserObj);
-  localStorage.setItem('users', JSON.stringify(localUsers));
+  persistFieldOfficerCredentials(newUserObj);
  
   addAuditLog('Create', 'Users', 'Added new officer ' + name);
   closeModal('modal-add');
   renderUsers();
-  showToast('Officer ' + name + ' added successfully!');
+  showToast('Field officer ' + name + ' created with ID ' + empId + '. Login: ' + email + ' / ' + FIELD_OFFICER_DEFAULT_PASSWORD);
+
+  syncFieldOfficerToBackend(newUserObj).then(function(synced) {
+    if (synced) {
+      showToast('Field officer synced to backend and login credentials are active.');
+    } else {
+      showToast('Login credentials are active locally. Start backend to sync API users.');
+    }
+  });
 }
  
 function openEditModal(userId) {
   var user = users.find(function(u) { return u.id === userId; });
   if (!user) return;
+  openEditModalForUser(user);
+}
+
+function openEditModalByEmail(encodedEmail) {
+  var email = decodeURIComponent(encodedEmail || '').toLowerCase();
+  var user = users.find(function(u) { return (u.email || '').toLowerCase() === email; });
+  if (!user) return;
+  openEditModalForUser(user);
+}
  
-  editUserId = userId;
+function openEditModalForUser(user) {
+  editUserId = user.id;
+  editUserEmail = user.email;
   document.getElementById('edit-id').value     = user.id;
   document.getElementById('edit-name').value   = user.name;
   document.getElementById('edit-email').value  = user.email;
   document.getElementById('edit-phone').value  = user.phone;
-  document.getElementById('edit-role').value   = user.role;
+  document.getElementById('edit-role').value   = 'Field Officer';
   document.getElementById('edit-status').value = user.status;
   document.getElementById('edit-empid').value  = user.empId;
   document.getElementById('edit-date').value   = user.joinDate;
@@ -419,10 +782,13 @@ function openEditModal(userId) {
 }
  
 function saveEdit() {
+  var previousUser = users.find(function(u) {
+    return u.id === editUserId || (editUserEmail && (u.email || '').toLowerCase() === editUserEmail.toLowerCase());
+  });
   var name   = getVal('edit-name');
   var email  = getVal('edit-email');
   var phone  = getVal('edit-phone');
-  var role   = getVal('edit-role');
+  var role   = 'Field Officer';
   var status = getVal('edit-status');
   var date   = getVal('edit-date');
   var valid  = true;
@@ -440,7 +806,9 @@ function saveEdit() {
   } else if (!validEmail(email)) {
     showErr('err-edit-email', 'Enter a valid email address.'); valid = false;
   } else {
-    var duplicate = users.find(function(u) { return u.email === email && u.id !== editUserId; });
+    var duplicate = users.find(function(u) {
+      return u.email === email && u.id !== editUserId && (!editUserEmail || u.email.toLowerCase() !== editUserEmail.toLowerCase());
+    });
     if (duplicate) { showErr('err-edit-email', 'This email is already used by another officer.'); valid = false; }
   }
  
@@ -450,44 +818,49 @@ function saveEdit() {
     showErr('err-edit-phone', 'Enter a valid 10-digit phone number.'); valid = false;
   }
  
-  if (!role) { showErr('err-edit-role', 'Please select a role.'); valid = false; }
   if (!date) { showErr('err-edit-date', 'Joining date is required.'); valid = false; }
  
   if (!valid) return;
+
+  if (previousUser && previousUser.email.toLowerCase() !== email.toLowerCase()) {
+    removeFieldOfficerCredentials(previousUser);
+  }
  
   // Update user in array
   for (var i = 0; i < users.length; i++) {
-    if (users[i].id === editUserId) {
+    if (users[i].id === editUserId || (editUserEmail && (users[i].email || '').toLowerCase() === editUserEmail.toLowerCase())) {
       users[i].name     = name;
       users[i].email    = email;
       users[i].phone    = phone;
       users[i].role     = role;
       users[i].status   = status;
       users[i].joinDate = date;
+      persistFieldOfficerCredentials(users[i]);
       break;
     }
   }
 
   // Persist dynamically
-  var localUsers = [];
-  try { localUsers = JSON.parse(localStorage.getItem('users')) || []; } catch(e){}
+  var localUsers = getLocalJson('users', []);
   var foundLocal = false;
   for (var j = 0; j < localUsers.length; j++) {
-    if (localUsers[j].id === editUserId) {
+    if (localUsers[j].id === editUserId || (editUserEmail && (localUsers[j].email || '').toLowerCase() === editUserEmail.toLowerCase())) {
       localUsers[j].name = name; localUsers[j].email = email;
       localUsers[j].phone = phone; localUsers[j].role = role;
       localUsers[j].status = status; localUsers[j].joinDate = date;
+      localUsers[j].empId = localUsers[j].empId || getVal('edit-empid');
       foundLocal = true; break;
     }
   }
-  if (!foundLocal) localUsers.push({ id: editUserId, name: name, email: email, phone: phone, role: role, status: status, joinDate: date });
+  if (!foundLocal) localUsers.push({ id: editUserId, name: name, email: email, phone: phone, role: role, status: status, empId: getVal('edit-empid'), joinDate: date });
   localStorage.setItem('users', JSON.stringify(localUsers));
  
   filteredUsers = users.slice();
+  editUserEmail = email;
   addAuditLog('Update', 'Users', 'Updated officer details for ' + name);
   closeModal('modal-edit');
   renderUsers();
-  showToast('Officer details updated successfully!');
+  showToast('Field officer details updated successfully!');
 }
  
 function deleteUser(userId) {
@@ -498,16 +871,16 @@ function deleteUser(userId) {
  
   users = users.filter(function(u) { return u.id !== userId; });
   filteredUsers = users.slice();
+  removeFieldOfficerCredentials(user);
   
   // Persist dynamically
-  var localUsers = [];
-  try { localUsers = JSON.parse(localStorage.getItem('users')) || []; } catch(e){}
+  var localUsers = getLocalJson('users', []);
   localUsers = localUsers.filter(function(lu) { return lu.id !== userId; });
   localStorage.setItem('users', JSON.stringify(localUsers));
 
   addAuditLog('Delete', 'Users', 'Deleted officer ' + user.name);
   renderUsers();
-  showToast('Officer deleted successfully.');
+  showToast('Field officer deleted successfully.');
 }
  
  

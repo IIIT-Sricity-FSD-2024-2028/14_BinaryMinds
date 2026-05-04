@@ -6,7 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
   var countText = document.getElementById('countText');
   if (!container) return;
 
-  var data = TRADEZO.inspections.filter(function(i) { return i.status === 'Scheduled' || i.status === 'Pending Inspection'; });
+  var data = TRADEZO.inspections.filter(function(i) {
+    return (i.status === 'Scheduled' || i.status === 'Pending Inspection') &&
+      (!window.foIsAssignedToCurrentOfficer || window.foIsAssignedToCurrentOfficer(i));
+  });
   
   // Filter out completed inspections from local storage so static mock data disappears once submitted
   var completed = [];
@@ -22,7 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
   } catch(e){}
   
   localApps.forEach(function(app) {
-      if(app.status === 'Scheduled' || app.status === 'Pending Inspection') {
+      if((app.status === 'Scheduled' || app.status === 'Pending Inspection') &&
+        (!window.foIsAssignedToCurrentOfficer || window.foIsAssignedToCurrentOfficer(app))) {
           var tzApp = window.TRADEZO ? TRADEZO.getApplication(app.id) : null;
           var submittedApps = [];
           try { submittedApps = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e){}

@@ -2,20 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Apply for Trade License - TradeZo</title>
-  <link rel="stylesheet" href="apply_license.css">
-<script src="../session_guard.js"></script>
+  <link rel="stylesheet" href="apply_license.css?v=applicant-pages-20260504">
+  <script src="../session_guard.js"></script>
 </head>
 <body>
 
 <div class="top-bar">
- <img src="ashoka_emblem.png" height="45">
-  <div><span class="brand-gov">Government of India</span><span class="brand-name">TradeZo</span></div>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo" height="45">
+  <div>
+    <span class="brand-gov">Government of India</span>
+    <span class="brand-name">TradeZo</span>
+  </div>
 </div>
 
 <nav>
-  <a href="../Applicant dashboard/index.html">Dashboard</a><a href="apply_license.html" class="active">Apply License</a><a href="../Track Application Status/index.html">Track Application</a>
-  <a href="../download/index.html">Download License</a><a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a><a href="../payments/index.html">Payments</a><a href="../Profile/index.html">Profile</a>
+  <a href="../Applicant dashboard/index.html">Dashboard</a>
+  <a href="apply_license.html" class="active">Apply License</a>
+  <a href="../Track Application Status/index.html">Track Application</a>
+  <a href="../download/index.html">Download License</a>
+  <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a>
+  <a href="../payments/index.html">Payments</a>
+  <a href="../Profile/index.html">Profile</a>
 </nav>
 
 <div class="page">
@@ -33,7 +42,7 @@
   </div>
 
   <div class="card">
-    <h2>👤 Applicant Details</h2>
+    <h2>Applicant Details</h2>
     <div class="grid">
       <div class="fg"><label>Full Name *</label><input type="text" id="f1" placeholder="Enter full name"><span class="err" id="e1">Required</span></div>
       <div class="fg"><label>Email Address *</label><input type="email" id="f2" placeholder="Enter email address"><span class="err" id="e2">Required</span></div>
@@ -46,7 +55,7 @@
   </div>
 
   <div class="card">
-    <h2>🏢 Business Details</h2>
+    <h2>Business Details</h2>
     <div class="grid">
       <div class="fg"><label>Business Name *</label><input type="text" id="f8" placeholder="Enter registered business name"><span class="err" id="e8">Required</span></div>
       <div class="fg"><label>Business Type *</label><select id="f9"><option>Retail Shop</option><option>Wholesale</option><option>Manufacturer</option><option>Service</option></select></div>
@@ -62,44 +71,17 @@
 
   <div class="buttons">
     <button class="cancel-btn" onclick="window.history.back()">Cancel</button>
-    <button class="next-btn" onclick="go()">Next →</button>
+    <button class="next-btn" onclick="go()">Next &rarr;</button>
   </div>
 
   <div class="info-row">
-    <div class="info-box"><strong>ℹ️ E-KYC Ready</strong><p>Ensure your Aadhaar is linked with your mobile number for OTP.</p></div>
-    <div class="info-box"><strong>🛡️ Data Privacy</strong><p>All information is processed per the National Data Security Policy.</p></div>
-    <div class="info-box"><strong>🎧 Need Help?</strong><p>Call 1800-GOV-HELP for any assistance with the application form.</p></div>
+    <div class="info-box"><strong>E-KYC Ready</strong><p>Ensure your Aadhaar is linked with your mobile number for OTP.</p></div>
+    <div class="info-box"><strong>Data Privacy</strong><p>All information is processed per the National Data Security Policy.</p></div>
+    <div class="info-box"><strong>Need Help?</strong><p>Call 1800-GOV-HELP for any assistance with the application form.</p></div>
   </div>
 </div>
 
 <script src="../../../mockdata.js"></script>
-<script src="apply_license.js"></script>
-
-
-<script>
-// Pre-fill form if user came from Edit button on review page
-window.onload = function() {
-  var saved = sessionStorage.getItem('applicationForm');
-  if (!saved) return;
-
-  var form = {};
-  try { form = JSON.parse(saved); } catch(e) { return; }
-
-  // Fill each field with saved value
-  var map = {
-    f1: form.fullName,     f2: form.email,        f3: form.phone,
-    f4: form.aadhaar,      f5: form.motherName,    f6: form.gender,
-    f7: form.fatherName,   f8: form.businessName,  f9: form.businessType,
-    f10: form.shopAddress, f11: form.city,         f12: form.district,
-    f13: form.state,       f14: form.pincode,
-    f15: form.tradeCategory, f16: form.shopArea
-  };
-
-  for (var id in map) {
-    var el = document.getElementById(id);
-    if (el && map[id]) el.value = map[id];
-  }
-};
-</script>
+<script src="apply_license.js?v=applicant-pages-20260504"></script>
 </body>
 </html>
