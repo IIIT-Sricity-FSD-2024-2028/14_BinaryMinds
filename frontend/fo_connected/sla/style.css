@@ -1,1 +1,66 @@
 @import url("../fo_common.css");
+
+/* SLA Specific Styles */
+.sla-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e6eaf2;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.sla-card p {
+    color: #667085;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.sla-card h2 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #172033;
+}
+.sla-card.red { border-top: 4px solid #dc2626; }
+.sla-card.orange { border-top: 4px solid #d97706; }
+.sla-card.yellow { border-top: 4px solid #eab308; }
+.sla-card.green { border-top: 4px solid #15803d; }
+
+.sla-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e6eaf2;
+}
+.sla-item.red { border-left: 4px solid #dc2626; }
+.sla-item.orange { border-left: 4px solid #d97706; }
+.sla-item.yellow { border-left: 4px solid #eab308; }
+
+.sla-item b {
+    color: #102a72;
+    font-size: 15px;
+}
+
+.tag {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.tag.overdue { background: #fef2f2; color: #dc2626; }
+.tag.critical { background: #fff7ed; color: #d97706; }
+.tag.approaching { background: #fefce8; color: #ca8a04; }
+
+.sla-item button {
+    background: #102a72;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.sla-item button:hover { background: #0c1e54; }

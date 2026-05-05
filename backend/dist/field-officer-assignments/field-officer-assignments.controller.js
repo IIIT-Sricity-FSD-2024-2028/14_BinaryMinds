@@ -22,6 +22,7 @@ const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const roles_guard_1 = require("../common/guards/roles.guard");
 const role_enum_1 = require("../common/enums/role.enum");
 const swagger_1 = require("@nestjs/swagger");
+const api_route_decorator_1 = require("../common/swagger/api-route.decorator");
 let FieldOfficerAssignmentsController = class FieldOfficerAssignmentsController {
     service;
     constructor(service) {
@@ -56,6 +57,13 @@ exports.FieldOfficerAssignmentsController = FieldOfficerAssignmentsController;
 __decorate([
     (0, common_1.Post)(),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Create field officer assignment',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER],
+        bodyType: create_assignment_dto_1.CreateAssignmentDto,
+        status: 201,
+        responseExample: { assignment_id: 1, application_id: 1, field_officer_id: 2 },
+    }),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -65,6 +73,11 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List field officer assignments',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER],
+        responseExample: [{ assignment_id: 1, application_id: 1 }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -73,6 +86,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)('application/:applicationId'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List assignments by application',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'applicationId', description: 'Application ID' }],
+        responseExample: [{ assignment_id: 1, application_id: 1 }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __param(0, (0, common_1.Param)('applicationId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -82,6 +101,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)('field-officer/:fieldOfficerId'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List assignments by field officer',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'fieldOfficerId', description: 'Field officer user ID' }],
+        responseExample: [{ assignment_id: 1, field_officer_id: 2 }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __param(0, (0, common_1.Param)('fieldOfficerId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -91,6 +116,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Get assignment by ID',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'id', description: 'Assignment ID' }],
+        responseExample: { assignment_id: 1, application_id: 1 },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -100,6 +131,13 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Update assignment by ID',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'id', description: 'Assignment ID' }],
+        bodyType: update_assignment_dto_1.UpdateAssignmentDto,
+        responseExample: { assignment_id: 1, assignment_status: 'completed' },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
@@ -110,6 +148,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)(':id/sla'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Check assignment SLA',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'id', description: 'Assignment ID' }],
+        responseExample: { assignment_id: 1, slaBreached: false },
+    }),
     openapi.ApiResponse({ status: 200 }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -119,6 +163,12 @@ __decorate([
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Delete assignment by ID',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER],
+        params: [{ name: 'id', description: 'Assignment ID' }],
+        responseExample: true,
+    }),
     openapi.ApiResponse({ status: 200 }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),

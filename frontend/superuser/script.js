@@ -10,11 +10,7 @@
  
 // List of officers in the system
 var users = [
-  { id: "USR001", name: "Rajesh Kumar",    email: "rajesh.kumar@tradezo.gov.in",    phone: "9876543210", role: "Field Officer",      status: "Active",   empId: "EMP-00101", joinDate: "2023-01-15" },
-  { id: "USR005", name: "Vikram Singh",    email: "vikram.singh@tradezo.gov.in",    phone: "9876543212", role: "Field Officer",      status: "Active",   empId: "EMP-00105", joinDate: "2023-03-20" },
-  { id: "USR009", name: "Rohit Desai",     email: "rohit.desai@tradezo.gov.in",     phone: "9876543214", role: "Field Officer",      status: "Inactive", empId: "EMP-00109", joinDate: "2022-09-14" },
-  { id: "USR011", name: "Sanjay Malhotra", email: "sanjay.malhotra@tradezo.gov.in", phone: "9876543215", role: "Field Officer",      status: "Active",   empId: "EMP-00111", joinDate: "2023-07-01" },
-  { id: "USR015", name: "Manish Tiwari",   email: "manish.tiwari@tradezo.gov.in",   phone: "9876543217", role: "Field Officer",      status: "Active",   empId: "EMP-00115", joinDate: "2024-01-08" }
+  { id: 'FO-2026-042', name: 'Myra Singh', email: 'myra@fieldofficer.com', phone: '9876543210', role: 'Field Officer', status: 'Active', joinDate: '2025-10-15', empId: 'FO-2026-042' }
 ];
  
 // List of trade license applications
@@ -95,7 +91,6 @@ var rowsPerPage = 6;
 // Current page numbers
 var userPage  = 1;
 var appPage   = 1;
-var licPage   = 1;
 var auditPage = 1;
 
 function isFieldOfficerUser(user) {
@@ -112,6 +107,70 @@ function isFieldOfficerUser(user) {
 
 function getLocalJson(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch(e) { return fallback; }
+}
+
+function mergeAuditLogEntry(entry) {
+  if (!entry) return;
+  var normalized = {
+    time: entry.time || entry.timestamp || '',
+    user: entry.user || entry.user_name || 'System',
+    role: entry.role || 'Unknown',
+    action: entry.action || 'Update',
+    module: entry.module || 'System',
+    desc: entry.desc || entry.description || 'Activity recorded',
+    ip: entry.ip || entry.ip_address || '127.0.0.1'
+  };
+  var exists = auditLogs.some(function(existing) {
+    return existing.time === normalized.time &&
+      existing.user === normalized.user &&
+      existing.action === normalized.action &&
+      existing.desc === normalized.desc;
+  });
+  if (!exists) auditLogs.unshift(normalized);
+}
+
+function loadPersistedAuditLogs() {
+  getLocalJson('tradezo_audit_logs', []).slice().reverse().forEach(function(log) {
+    mergeAuditLogEntry(log);
+  });
+  filteredAudit = auditLogs.slice();
+}
+
+function fetchBackendAuditLogs() {
+  if (!window.fetch) return Promise.resolve();
+  return fetch(API_BASE_URL + '/audit-logs')
+    .then(function(response) {
+      if (!response.ok) throw new Error('Failed to load backend audit logs');
+      return response.json();
+    })
+    .then(function(payload) {
+      var data = Array.isArray(payload) ? payload : (payload && payload.data) || [];
+      data.forEach(function(log) {
+        mergeAuditLogEntry({
+          time: log.timestamp ? new Date(log.timestamp).toLocaleString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          }) : '',
+          user: log.user_name,
+          role: log.role,
+          action: log.action,
+          module: log.module,
+          desc: log.description,
+          ip: log.ip_address
+        });
+      });
+      localStorage.setItem('tradezo_audit_logs', JSON.stringify(auditLogs.slice(0, 200)));
+      filteredAudit = auditLogs.slice();
+      if (document.getElementById('page-audit') && document.getElementById('page-audit').classList.contains('active')) {
+        renderAudit();
+      }
+    })
+    .catch(function() {
+      return null;
+    });
 }
 
 function normalizeFieldOfficerForLogin(user) {
@@ -269,6 +328,539 @@ function formatDisplayDate(value) {
   var date = parseDate(value);
   if (!date) return 'N/A';
   return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function parseActivityDate(value) {
+  if (!value) return null;
+  if (value instanceof Date && !isNaN(value.getTime())) return value;
+  var parsed = new Date(value);
+  if (!isNaN(parsed.getTime())) return parsed;
+
+  var parts = String(value).replace(/,/g, '').split(/\s+/);
+  if (parts.length >= 3) {
+    var alt = new Date(parts[1] + ' ' + parts[0] + ' ' + parts[2] + (parts[3] ? ' ' + parts.slice(3).join(' ') : ''));
+    if (!isNaN(alt.getTime())) return alt;
+  }
+  return null;
+}
+
+function formatActivityDate(value) {
+  var date = parseActivityDate(value);
+  if (!date) return value || 'Recently';
+  var raw = String(value || '');
+  var hasTime = raw.indexOf('T') !== -1 || /\d{1,2}:\d{2}/.test(raw) || date.getHours() || date.getMinutes();
+  if (hasTime) {
+    return date.toLocaleString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function activityTimestamp(value, fallbackRank) {
+  var date = parseActivityDate(value);
+  return date ? date.getTime() : (fallbackRank || 0);
+}
+
+function latestActivityValue(item, fields) {
+  var latestValue = null;
+  var latestTime = 0;
+  fields.forEach(function(field) {
+    var value = item && item[field];
+    var date = parseActivityDate(value);
+    if (date && date.getTime() > latestTime) {
+      latestTime = date.getTime();
+      latestValue = value;
+    }
+  });
+  return latestValue;
+}
+
+function firstActivityValue(item, fields) {
+  for (var i = 0; i < fields.length; i++) {
+    var value = item && item[fields[i]];
+    if (value !== undefined && value !== null && String(value).trim() !== '') return value;
+  }
+  return '';
+}
+
+function normalizeActivityStatus(value) {
+  return String(value || '').toLowerCase().replace(/[_-]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function activityId(item) {
+  return String(firstActivityValue(item, ['appId', 'id', 'appRef', 'applicationId', 'application_id', 'backendId']) || '').trim();
+}
+
+function normalizedActivityId(value) {
+  return String(value || '').toLowerCase().replace(/\s+/g, '').trim();
+}
+
+function applicationIdentityValues(item) {
+  var ids = [
+    firstActivityValue(item, ['appId']),
+    firstActivityValue(item, ['id']),
+    firstActivityValue(item, ['appRef']),
+    firstActivityValue(item, ['applicationId']),
+    firstActivityValue(item, ['application_id']),
+    firstActivityValue(item, ['backendId'])
+  ];
+  var seen = {};
+  return ids.map(normalizedActivityId).filter(function(id) {
+    if (!id || seen[id]) return false;
+    seen[id] = true;
+    return true;
+  });
+}
+
+function normalizedApplicationText(value) {
+  return String(value || '').toLowerCase().replace(/[_-]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function uniqueNormalizedValues(item, fields) {
+  var seen = {};
+  var values = [];
+  fields.forEach(function(field) {
+    var value = normalizedApplicationText(item && item[field]);
+    if (!value || seen[value]) return;
+    seen[value] = true;
+    values.push(value);
+  });
+  return values;
+}
+
+function applicationFingerprints(item) {
+  var owners = uniqueNormalizedValues(item, [
+    'email', 'applicantEmail', 'ownerEmail', 'applicant_email', 'userEmail',
+    'phone', 'applicant_phone', 'mobile',
+    'aadhaar', 'aadhaar_number',
+    'applicantName', 'applicant', 'fullName', 'full_name', 'ownerName', 'name'
+  ]);
+  var business = normalizedApplicationText(firstActivityValue(item, [
+    'businessName', 'business', 'business_name', 'companyName', 'tradeName'
+  ]));
+  var address = normalizedApplicationText(firstActivityValue(item, [
+    'shopAddress', 'shop_address', 'address'
+  ]));
+  var category = normalizedApplicationText(firstActivityValue(item, [
+    'tradeCategory', 'category', 'businessType', 'business_type'
+  ]));
+
+  if (!owners.length || !business) return [];
+  var seen = {};
+  var fingerprints = [];
+
+  owners.forEach(function(owner) {
+    [
+      ['exact', owner, business, address, category],
+      ['address', owner, business, address],
+      ['category', owner, business, category],
+      ['basic', owner, business]
+    ].forEach(function(parts) {
+      var fingerprint = parts.join('|');
+      if (seen[fingerprint]) return;
+      seen[fingerprint] = true;
+      fingerprints.push(fingerprint);
+    });
+  });
+
+  return fingerprints;
+}
+
+function applicationFingerprint(item) {
+  return applicationFingerprints(item)[0] || '';
+}
+
+function sharesApplicationIdentity(a, b) {
+  var aIds = applicationIdentityValues(a);
+  var bIds = applicationIdentityValues(b);
+  if (aIds.some(function(id) { return bIds.indexOf(id) !== -1; })) return true;
+
+  var aFingerprints = applicationFingerprints(a);
+  var bFingerprints = applicationFingerprints(b);
+  return aFingerprints.some(function(fingerprint) {
+    return bFingerprints.indexOf(fingerprint) !== -1;
+  });
+}
+
+function isBlankActivityValue(value) {
+  return value === undefined || value === null || String(value).trim() === '';
+}
+
+function shouldReplaceApplicationId(currentValue, incomingValue) {
+  if (isBlankActivityValue(incomingValue)) return false;
+  if (isBlankActivityValue(currentValue)) return true;
+  var current = String(currentValue).trim();
+  var incoming = String(incomingValue).trim();
+  var currentLooksTemporary = /^\d+$/.test(current) || /^APP-/i.test(current);
+  var incomingLooksStable = !/^\d+$/.test(incoming) && !/^APP-/i.test(incoming);
+  return currentLooksTemporary && incomingLooksStable;
+}
+
+function statusRank(status) {
+  var map = {
+    '': 0,
+    pending: 1,
+    submitted: 2,
+    'pending review': 3,
+    assigned: 4,
+    verified: 5,
+    'documents verified': 6,
+    'inspection scheduled': 7,
+    'inspection completed': 8,
+    'department review': 9,
+    approved: 10,
+    rejected: 10,
+    'license issued': 11
+  };
+  return map[normalizeActivityStatus(status)] || 1;
+}
+
+function mergeApplicationRecord(existing, incoming) {
+  var merged = Object.assign({}, existing || {});
+  Object.keys(incoming || {}).forEach(function(key) {
+    var value = incoming[key];
+    if (key === 'id' || key === 'appId' || key === 'appRef') {
+      if (shouldReplaceApplicationId(merged[key], value)) merged[key] = value;
+      return;
+    }
+    if (key === 'status') {
+      if (statusRank(value) >= statusRank(merged.status)) merged.status = value;
+      return;
+    }
+    if (!isBlankActivityValue(value)) merged[key] = value;
+    else if (merged[key] === undefined) merged[key] = value;
+  });
+  return merged;
+}
+
+function isLiveApplicationRecord(item) {
+  if (!item) return false;
+  if (window.TRADEZO && typeof window.TRADEZO.isDemoRecord === 'function' && window.TRADEZO.isDemoRecord(item)) {
+    return false;
+  }
+  return !!activityId(item);
+}
+
+function isAllowedApplicationApplicant(item) {
+  return !!item;
+}
+
+function isUnassignedApplication(app) {
+  return !firstActivityValue(app, [
+    'fieldOfficerEmail',
+    'assignedEmail',
+    'emailAssignedTo',
+    'fieldOfficerName',
+    'foName',
+    'assignedTo',
+    'fieldOfficerId',
+    'field_officer_id',
+    'assignedFO',
+    'assignedOfficerId'
+  ]);
+}
+
+function escapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function addRecentActivity(list, user, action, time, rank) {
+  var eventKey = [user || '', action || '', time || '', rank || ''].join('|').toLowerCase();
+  if (list.some(function(item) { return item.eventKey === eventKey; })) return;
+  list.push({
+    eventKey: eventKey,
+    user: user || 'System',
+    action: action || 'Updated system activity',
+    time: formatActivityDate(time),
+    rawTime: time,
+    rank: rank || 0
+  });
+}
+
+function addApplicationActivity(activities, app, index) {
+  var appId = activityId(app) || 'N/A';
+  var applicant = firstActivityValue(app, ['applicant', 'applicantName', 'ownerName', 'full_name', 'name']) || 'Applicant';
+  var business = firstActivityValue(app, ['business', 'businessName', 'business_name', 'companyName']);
+  var submittedTime = firstActivityValue(app, ['createdAt', 'created_at', 'updatedAt', 'updated_at', 'submittedDate', 'submitted_at', 'dateSubmitted', 'submissionDate', 'date']);
+  var updatedTime = latestActivityValue(app, [
+    'updatedDate', 'updatedAt', 'updated_at', 'lastUpdated', 'reviewDate',
+    'approvedDate', 'docsVerifiedDate', 'licenseIssueDate'
+  ]);
+  var appLabel = ' ' + appId + (business ? ' for ' + business : '');
+
+  addRecentActivity(
+    activities,
+    applicant,
+    'Submitted application' + appLabel,
+    submittedTime || updatedTime,
+    1000 - index
+  );
+
+  if (normalizeActivityStatus(app.paymentStatus) === 'paid' || app.paymentRef) {
+    addRecentActivity(
+      activities,
+      applicant,
+      'Payment completed for application ' + appId,
+      firstActivityValue(app, ['paymentDate', 'paidAt', 'updatedAt', 'updated_at']) || submittedTime,
+      1100 - index
+    );
+  }
+
+  if (Array.isArray(app.docs) && app.docs.length) {
+    addRecentActivity(
+      activities,
+      applicant,
+      'Documents uploaded for application ' + appId,
+      firstActivityValue(app, ['docsUploadedAt', 'updatedAt', 'updated_at']) || submittedTime,
+      1150 - index
+    );
+  }
+
+  var status = app.status || '';
+  var normalizedStatus = normalizeActivityStatus(status);
+  if (status && normalizedStatus !== 'pending' && normalizedStatus !== 'submitted') {
+    addRecentActivity(
+      activities,
+      applicant,
+      'Application ' + appId + ' status changed to ' + status,
+      updatedTime || submittedTime,
+      1200 - index
+    );
+  }
+
+  if (app.inspectionDate) {
+    addRecentActivity(
+      activities,
+      firstActivityValue(app, ['foName', 'fieldOfficerName', 'assignedFO', 'assignedTo']) || 'Field Officer',
+      'Inspection scheduled for application ' + appId,
+      firstActivityValue(app, ['inspectionScheduledAt', 'updatedAt', 'updated_at']) || app.inspectionDate,
+      1250 - index
+    );
+  }
+
+  if (app.doReview && normalizeActivityStatus(app.doReview) !== 'pending') {
+    addRecentActivity(
+      activities,
+      firstActivityValue(app, ['issuedBy', 'reviewedBy']) || 'Department Officer',
+      'Department review ' + String(app.doReview).toLowerCase() + ' for application ' + appId,
+      updatedTime || firstActivityValue(app, ['reviewDate', 'updatedAt', 'updated_at']) || submittedTime,
+      1300 - index
+    );
+  }
+}
+
+function liveApplicationLookup() {
+  var byId = {};
+  function remember(app) {
+    var id = activityId(app);
+    if (!id) return;
+    byId[id] = Object.assign({}, byId[id] || {}, app);
+  }
+
+  applications.forEach(remember);
+  getLocalJson('tz_submitted_apps', []).forEach(remember);
+  getLocalJson('applications', []).forEach(remember);
+  getLocalJson('tradezo_applications', []).forEach(remember);
+  if (window.TRADEZO && Array.isArray(window.TRADEZO.applications)) {
+    window.TRADEZO.applications.forEach(remember);
+  }
+  return byId;
+}
+
+function findFieldOfficerByEmail(email) {
+  var wanted = String(email || '').toLowerCase().trim();
+  if (!wanted) return null;
+  return uniqueFieldOfficers(users).find(function(user) {
+    return String(user.email || '').toLowerCase().trim() === wanted;
+  }) || null;
+}
+
+function getAssignableFieldOfficers() {
+  return uniqueFieldOfficers(users).slice().sort(function(a, b) {
+    return String(a.name || '').localeCompare(String(b.name || ''));
+  });
+}
+
+function assignmentSelectHtml(app) {
+  var currentEmail = String(firstActivityValue(app, ['fieldOfficerEmail', 'assignedEmail', 'emailAssignedTo']) || '').toLowerCase().trim();
+  var options = ['<option value="">Unassigned</option>'];
+  getAssignableFieldOfficers().forEach(function(officer) {
+    var email = String(officer.email || '').toLowerCase().trim();
+    var selected = email && email === currentEmail ? ' selected' : '';
+    options.push('<option value="' + escapeHtml(officer.email || '') + '"' + selected + '>' + escapeHtml(officer.name || officer.email || 'Field Officer') + '</option>');
+  });
+  return '<select class="assign-select" onchange="assignApplication(\'' + escapeHtml(app.id) + '\', this.value)">' + options.join('') + '</select>';
+}
+
+function getStoredActivitiesFromLiveSources() {
+  var activities = [];
+  var appById = liveApplicationLookup();
+
+  getLocalJson('tz_verification_queue', []).forEach(function(item, index) {
+    var appId = activityId(item);
+    addRecentActivity(
+      activities,
+      item.applicant || 'Field Officer',
+      'Application ' + appId + ' queued for document verification',
+      item.createdAt || item.updatedAt || item.submitted || item.submittedDate || item.date,
+      800 - index
+    );
+  });
+
+  getLocalJson('tz_verification_history', []).forEach(function(item, index) {
+    var appId = activityId(item);
+    addRecentActivity(
+      activities,
+      'Field Officer',
+      'Document verification ' + String(item.decision || 'updated').toLowerCase() + ' for application ' + appId,
+      item.decidedOn || item.updatedAt || item.date,
+      1350 - index
+    );
+  });
+
+  var inspectionSources = []
+    .concat(window.TRADEZO && Array.isArray(window.TRADEZO.inspections) ? window.TRADEZO.inspections : [])
+    .concat(getLocalJson('tz_inspection_reports', []));
+  inspectionSources.forEach(function(report, index) {
+    var appId = activityId(report);
+    if (!appId) return;
+    addRecentActivity(
+      activities,
+      report.foName || report.fieldOfficerName || report.assignedFO || 'Field Officer',
+      'Inspection recorded for application ' + appId + (report.result ? ' - ' + report.result : ''),
+      report.submittedDate || report.updatedAt || report.updated_at || report.date || report.inspectionDate,
+      1400 - index
+    );
+  });
+
+  getLocalJson('tz_generated_licenses', []).forEach(function(lic, index) {
+    var appId = activityId(lic);
+    addRecentActivity(
+      activities,
+      lic.issuedBy || 'Department Officer',
+      'License ' + (lic.licenseNo || lic.licenseId || lic.id || 'issued') + ' generated for application ' + appId,
+      lic.date || lic.updatedAt || lic.licenseIssueDate || lic.issueDate,
+      1500 - index
+    );
+  });
+
+  Object.keys(localStorage).forEach(function(key, index) {
+    if (key.indexOf('doAppStatus_') !== 0) return;
+    var appId = key.replace('doAppStatus_', '');
+    var status = {};
+    try { status = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) {}
+    var app = appById[appId] || {};
+    var label = status.licenseNo
+      ? 'License ' + status.licenseNo + ' issued for application ' + appId
+      : 'Department status changed to ' + (status.status || 'updated') + ' for application ' + appId;
+    addRecentActivity(
+      activities,
+      app.issuedBy || app.reviewedBy || 'Department Officer',
+      label,
+      status.updatedAt || app.updatedAt || app.updated_at || app.licenseIssueDate || app.reviewDate,
+      1450 - index
+    );
+  });
+
+  getLocalJson('helpdesk_tickets', []).forEach(function(ticket, index) {
+    addRecentActivity(
+      activities,
+      ticket.name || ticket.email || 'Applicant',
+      'Helpdesk ticket raised' + (ticket.subject ? ': ' + ticket.subject : ''),
+      ticket.createdAt || ticket.date,
+      700 - index
+    );
+  });
+
+  var applicantProfile = getLocalJson('applicant_profile_data', {});
+  if (applicantProfile && applicantProfile.updatedAt) {
+    addRecentActivity(
+      activities,
+      applicantProfile.fullName || applicantProfile.name || 'Applicant',
+      'Applicant profile updated',
+      applicantProfile.updatedAt,
+      650
+    );
+  }
+
+  var foProfile = getLocalJson('fo_profile_data', {});
+  if (foProfile && foProfile.updatedAt) {
+    addRecentActivity(
+      activities,
+      foProfile.name || 'Field Officer',
+      'Field officer profile updated',
+      foProfile.updatedAt,
+      640
+    );
+  }
+
+  return activities;
+}
+
+function buildDashboardActivity() {
+  var activities = [];
+
+  applications.forEach(function(app, index) {
+    addApplicationActivity(activities, app, index);
+  });
+
+  getStoredActivitiesFromLiveSources().forEach(function(item, index) {
+    addRecentActivity(
+      activities,
+      item.user,
+      item.action,
+      item.time,
+      item.rank || (900 - index)
+    );
+  });
+
+  licenses.forEach(function(lic, index) {
+    var licId = lic.id || lic.licenseNo || lic.licenseId || 'N/A';
+    addRecentActivity(
+      activities,
+      lic.owner || lic.ownerName || 'Department Officer',
+      'License issued ' + licId + (lic.business ? ' for ' + lic.business : ''),
+      latestActivityValue(lic, ['updatedDate', 'updatedAt', 'issueDate', 'licenseIssueDate', 'createdAt']) || lic.issueDate || lic.licenseIssueDate,
+      140 - index
+    );
+  });
+
+  users.forEach(function(user, index) {
+    addRecentActivity(
+      activities,
+      user.name || 'Field Officer',
+      'Field officer account ' + (user.status || 'Active').toLowerCase(),
+      latestActivityValue(user, ['updatedDate', 'updatedAt', 'createdAt', 'joinDate']) || user.joinDate || user.createdAt,
+      60 - index
+    );
+  });
+
+  auditLogs.forEach(function(log, index) {
+    addRecentActivity(
+      activities,
+      log.user,
+      log.action + ' in ' + log.module + ': ' + log.desc,
+      log.time,
+      1800 - index
+    );
+  });
+
+  activities.sort(function(a, b) {
+    var byTime = activityTimestamp(b.rawTime, b.rank) - activityTimestamp(a.rawTime, a.rank);
+    return byTime || ((b.rank || 0) - (a.rank || 0));
+  });
+
+  return activities.slice(0, 8);
 }
 
 function getDepartmentOfficerEndDate(officer) {
@@ -453,17 +1045,21 @@ function addDepartmentOfficer() {
 }
  
 // Override with dynamic live data from shared system
-(function mapDynamicData() {
+function refreshDynamicData() {
   function safeParse(val, fb) { try { return JSON.parse(val) || fb; } catch(e) { return fb; } }
   
   // 1. DYNAMIC USERS
   var sysUsers = window.TRADEZO && window.TRADEZO.users ? window.TRADEZO.users : [];
   var localUsers = safeParse(localStorage.getItem('users'), []);
+  var registeredUsers = safeParse(localStorage.getItem('registeredUsers'), []);
   localUsers = localUsers.filter(isFieldOfficerUser);
   localStorage.setItem('users', JSON.stringify(localUsers));
   var allUsers = sysUsers.slice();
+  registeredUsers.forEach(function(ru) {
+     if(!allUsers.find(function(u) { return (u.email || '').toLowerCase() === (ru.email || '').toLowerCase(); })) allUsers.push(ru);
+  });
   localUsers.forEach(function(lu) { 
-     if(!allUsers.find(function(u) { return u.email === lu.email; })) allUsers.push(lu); 
+     if(!allUsers.find(function(u) { return (u.email || '').toLowerCase() === (lu.email || '').toLowerCase(); })) allUsers.push(lu);
   });
   
   var officerUsers = allUsers.filter(function(u) {
@@ -480,34 +1076,100 @@ function addDepartmentOfficer() {
         role: 'Field Officer',
         status: u.status || 'Active',
         empId: u.id || ('EMP-' + i),
-        joinDate: new Date().toISOString().split('T')[0]
+        joinDate: u.joinDate || u.createdAt || u.created_at || '',
+        createdAt: u.createdAt || u.created_at || '',
+        updatedAt: u.updatedAt || u.updated_at || u.lastUpdated || ''
       };
+    });
+    users.sort(function(a, b) {
+      return activityTimestamp(latestActivityValue(b, ['updatedAt', 'createdAt', 'joinDate']), 0) -
+             activityTimestamp(latestActivityValue(a, ['updatedAt', 'createdAt', 'joinDate']), 0);
     });
   }
 
   // 2. DYNAMIC APPLICATIONS
   var sysApps = window.TRADEZO && window.TRADEZO.applications ? window.TRADEZO.applications : [];
   var localApps = safeParse(localStorage.getItem('tz_submitted_apps'), []);
-  var allApps = sysApps.slice();
-  localApps.forEach(function(la) {
-     if(!allApps.find(function(a) { return a.id === la.id || a.appRef === la.appRef; })) allApps.push(la);
+  var legacyApps = safeParse(localStorage.getItem('applications'), []);
+  var tradezoApps = safeParse(localStorage.getItem('tradezo_applications'), []);
+  var allApps = [];
+  var appIdIndex = {};
+  var appFingerprintIndex = {};
+
+  function indexApplication(app, index) {
+    applicationIdentityValues(app).forEach(function(id) {
+      appIdIndex[id] = index;
+    });
+    applicationFingerprints(app).forEach(function(fingerprint) {
+      appFingerprintIndex[fingerprint] = index;
+    });
+  }
+
+  function findExistingApplicationIndex(app) {
+    var ids = applicationIdentityValues(app);
+    for (var i = 0; i < ids.length; i++) {
+      if (appIdIndex[ids[i]] !== undefined) return appIdIndex[ids[i]];
+    }
+    var fingerprints = applicationFingerprints(app);
+    for (var j = 0; j < fingerprints.length; j++) {
+      if (appFingerprintIndex[fingerprints[j]] !== undefined) {
+        return appFingerprintIndex[fingerprints[j]];
+      }
+    }
+    return -1;
+  }
+
+  sysApps.concat(localApps).concat(legacyApps).concat(tradezoApps).forEach(function(la) {
+     if (!isLiveApplicationRecord(la)) return;
+     if (!isAllowedApplicationApplicant(la)) return;
+     var existingIndex = findExistingApplicationIndex(la);
+     if (existingIndex === -1) {
+       allApps.push(la);
+       indexApplication(la, allApps.length - 1);
+     } else {
+       allApps[existingIndex] = mergeApplicationRecord(allApps[existingIndex], la);
+       indexApplication(allApps[existingIndex], existingIndex);
+     }
   });
+  applications = [];
   if (allApps.length > 0) {
     applications = allApps.map(function(a) {
+      var submittedDate = a.submittedDate || a.submitted_at || a.date || a.createdAt || a.created_at || '';
       return {
-        id: a.id || a.appRef || 'N/A',
-        applicant: a.applicantName || a.name || 'Unknown',
-        business: a.businessName || 'N/A',
-        category: a.tradeCategory || a.category || 'N/A',
-        date: a.submittedDate || new Date().toLocaleDateString(),
+        id: a.id || a.appId || a.appRef || 'N/A',
+        applicant: a.applicantName || a.applicant || a.fullName || a.full_name || a.ownerName || a.name || 'Unknown',
+        business: a.businessName || a.business || a.business_name || 'N/A',
+        category: a.tradeCategory || a.category || a.businessType || a.business_type || 'N/A',
+        date: submittedDate,
+        submittedDate: submittedDate,
+        updatedDate: a.updatedDate || a.updatedAt || a.updated_at || a.lastUpdated || a.reviewDate || a.approvedDate || '',
+        createdAt: a.createdAt || a.created_at || '',
         status: a.status || 'Pending',
-        address: a.shopAddress || a.address || 'N/A',
-        phone: a.phone || 'N/A',
-        email: a.email || 'N/A'
+        paymentStatus: a.paymentStatus || '',
+        paymentRef: a.paymentRef || '',
+        paymentDate: a.paymentDate || '',
+        docs: a.docs || [],
+        inspectionDate: a.inspectionDate || '',
+        inspectionTime: a.inspectionTime || '',
+        inspectionScheduledAt: a.inspectionScheduledAt || '',
+        assignedFO: a.assignedFO || a.assignedOfficerId || '',
+        fieldOfficerId: a.fieldOfficerId || a.field_officer_id || a.assignedOfficerId || '',
+        fieldOfficerEmail: a.fieldOfficerEmail || a.assignedEmail || '',
+        fieldOfficerName: a.fieldOfficerName || a.foName || a.assignedTo || '',
+        doReview: a.doReview || '',
+        reviewDate: a.reviewDate || '',
+        approvedDate: a.approvedDate || '',
+        licenseIssueDate: a.licenseIssueDate || '',
+        issuedBy: a.issuedBy || '',
+        address: a.shopAddress || a.shop_address || a.address || 'N/A',
+        phone: a.phone || a.applicant_phone || 'N/A',
+        email: a.email || a.applicantEmail || 'N/A'
       };
+    }).filter(isUnassignedApplication);
+    applications.sort(function(a, b) {
+      return activityTimestamp(latestActivityValue(b, ['updatedDate', 'createdAt', 'submittedDate', 'date']), 0) -
+             activityTimestamp(latestActivityValue(a, ['updatedDate', 'createdAt', 'submittedDate', 'date']), 0);
     });
-    // Reverse so the newest applications from local storage show up exactly at the top of the table
-    applications.reverse();
   }
 
   // 3. DYNAMIC LICENSES
@@ -519,39 +1181,38 @@ function addDepartmentOfficer() {
   });
   if (allLics.length > 0) {
     licenses = allLics.map(function(l) {
+      var issueDate = l.issueDate || l.licenseIssueDate || l.issued_date || l.createdAt || l.created_at || '';
       return {
         id: l.licenseNo || l.licenseId || l.id || 'N/A',
         business: l.businessName || l.business || 'N/A',
         owner: l.ownerName || l.applicantName || l.owner || 'N/A',
         category: typeof l.tradeCategory === 'string' ? l.tradeCategory : (typeof l.category === 'string' ? l.category : 'N/A'),
-        issueDate: l.issueDate || new Date().toLocaleDateString(),
+        issueDate: issueDate,
+        licenseIssueDate: issueDate,
+        updatedDate: l.updatedDate || l.updatedAt || l.updated_at || l.lastUpdated || '',
+        createdAt: l.createdAt || l.created_at || '',
         expiryDate: l.expiryDate || new Date().toLocaleDateString(),
         status: l.status || 'Active'
       };
     });
-    // Reverse so the fastest/latest generated licenses from local storage show up exactly at the top of the table
-    licenses.reverse();
+    licenses.sort(function(a, b) {
+      return activityTimestamp(latestActivityValue(b, ['updatedDate', 'createdAt', 'issueDate', 'licenseIssueDate']), 0) -
+             activityTimestamp(latestActivityValue(a, ['updatedDate', 'createdAt', 'issueDate', 'licenseIssueDate']), 0);
+    });
   }
 
-  // 4. DYNAMIC ACTIVITY LOG
-  var recentLog = [];
-  allApps.slice(-4).forEach(function(a) {
-    var idStr = a.id || a.appRef || 'N/A';
-    recentLog.push({ user: a.applicantName || a.name || 'Applicant', action: 'Submitted application ' + idStr, time: a.submittedDate || 'Recently' });
-  });
-  allLics.slice(-4).forEach(function(l) {
-    var licIdStr = l.licenseNo || l.licenseId || l.id || 'N/A';
-    recentLog.push({ user: 'DO System', action: 'Approved License ' + licIdStr, time: l.issueDate || 'Recently' });
-  });
-  if (recentLog.length > 0) activityLog = recentLog.reverse();
+  loadPersistedAuditLogs();
+  filteredUsers = uniqueFieldOfficers(users);
+  filteredApps = applications.slice();
+  filteredAudit = auditLogs.slice();
+}
 
-})();
+refreshDynamicData();
 
 // Filtered arrays — updated on search/filter
 users = uniqueFieldOfficers(users);
 var filteredUsers = users.slice();
 var filteredApps  = applications.slice();
-var filteredLics  = licenses.slice();
 var filteredAudit = auditLogs.slice();
  
  
@@ -560,6 +1221,7 @@ var filteredAudit = auditLogs.slice();
 // ============================================================
  
 function showPage(pageName, clickedLink) {
+  refreshDynamicData();
  
   // Hide all pages
   var allPages = document.querySelectorAll('.page');
@@ -586,9 +1248,9 @@ function showPage(pageName, clickedLink) {
   if (pageName === 'user-management') renderUsers();
   if (pageName === 'department-officers') renderDepartmentOfficers();
   if (pageName === 'applications')    { renderApplicationStats(); renderApplications(); }
-  if (pageName === 'licenses')        { renderLicenseStats(); renderLicenses(); }
+  
   if (pageName === 'settings')        renderCategories();
-  if (pageName === 'audit')           renderAudit();
+  if (pageName === 'audit')           { renderAudit(); fetchBackendAuditLogs(); }
 }
  
  
@@ -597,12 +1259,33 @@ function showPage(pageName, clickedLink) {
 // ============================================================
  
 function renderDashboard() {
+  refreshDynamicData();
   var tbody = document.getElementById('activity-tbody');
+  if (!tbody) return;
   tbody.innerHTML = '';
- 
+
+  var totalUsersEl = document.getElementById('dashboard-total-users');
+  var pendingAppsEl = document.getElementById('dashboard-pending-apps');
+  var issuedLicensesEl = document.getElementById('dashboard-issued-licenses');
+  if (totalUsersEl) totalUsersEl.textContent = users.length + departmentOfficers.length;
+  if (pendingAppsEl) {
+    pendingAppsEl.textContent = applications.filter(function(app) {
+      var status = (app.status || '').toLowerCase();
+      return status === 'pending' || status === 'submitted' || status === 'under review' || status === 'pending review';
+    }).length;
+  }
+  if (issuedLicensesEl) issuedLicensesEl.textContent = licenses.length;
+
+  activityLog = buildDashboardActivity();
+
+  if (!activityLog.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="3">No recent activity found.</td></tr>';
+    return;
+  }
+
   for (var i = 0; i < activityLog.length; i++) {
     var item    = activityLog[i];
-    var initial = item.user.charAt(0);
+    var initial = (item.user || 'S').charAt(0);
  
     tbody.innerHTML +=
       '<tr>' +
@@ -615,7 +1298,7 @@ function renderDashboard() {
  
  
 // ============================================================
-// USER MANAGEMENT
+// FIELD OFFICER MANAGEMENT
 // ============================================================
  
 function renderUsers() {
@@ -889,10 +1572,115 @@ function deleteUser(userId) {
 // ============================================================
  
 function renderApplicationStats() {
+  refreshDynamicData();
   document.getElementById('app-total').textContent    = applications.length;
-  document.getElementById('app-pending').textContent  = applications.filter(function(a) { return a.status === 'Pending' || a.status === 'Under Review'; }).length;
-  document.getElementById('app-approved').textContent = applications.filter(function(a) { return a.status === 'Approved'; }).length;
+  document.getElementById('app-pending').textContent  = applications.filter(function(a) { return a.status === 'Pending' || a.status === 'Under Review' || a.status === 'Pending Review' || a.status === 'Submitted'; }).length;
+  document.getElementById('app-approved').textContent = applications.filter(function(a) { return a.status === 'Approved' || a.status === 'Verified'; }).length;
   document.getElementById('app-rejected').textContent = applications.filter(function(a) { return a.status === 'Rejected'; }).length;
+}
+
+function updateApplicationAssignmentInList(list, appId, officer, nowIso) {
+  if (!Array.isArray(list)) return list;
+  var targetApp = applications.find(function(app) { return activityId(app) === appId; }) ||
+    filteredApps.find(function(app) { return activityId(app) === appId; }) ||
+    { id: appId, appId: appId, appRef: appId };
+  return list.map(function(app) {
+    if (activityId(app) !== appId && !sharesApplicationIdentity(app, targetApp)) return app;
+    return Object.assign({}, app, {
+      assignedFO: officer ? (officer.empId || officer.id || '') : '',
+      assignedOfficerId: officer ? (officer.empId || officer.id || '') : '',
+      fieldOfficerId: officer ? (officer.empId || officer.id || '') : '',
+      field_officer_id: officer ? (officer.backendUserId || officer.id || '') : '',
+      fieldOfficerEmail: officer ? (officer.email || '') : '',
+      assignedEmail: officer ? (officer.email || '') : '',
+      fieldOfficerName: officer ? (officer.name || '') : '',
+      foName: officer ? (officer.name || '') : '',
+      assignedTo: officer ? (officer.name || '') : '',
+      assignedAt: officer ? nowIso : '',
+      updatedAt: nowIso
+    });
+  });
+}
+
+function assignmentChangesForOfficer(officer, nowIso) {
+  return {
+    assignedFO: officer ? (officer.empId || officer.id || '') : '',
+    assignedOfficerId: officer ? (officer.empId || officer.id || '') : '',
+    fieldOfficerId: officer ? (officer.empId || officer.id || '') : '',
+    field_officer_id: officer ? (officer.backendUserId || officer.id || '') : '',
+    fieldOfficerEmail: officer ? (officer.email || '') : '',
+    assignedEmail: officer ? (officer.email || '') : '',
+    fieldOfficerName: officer ? (officer.name || '') : '',
+    foName: officer ? (officer.name || '') : '',
+    assignedTo: officer ? (officer.name || '') : '',
+    assignedAt: officer ? nowIso : '',
+    updatedAt: nowIso
+  };
+}
+
+function persistAssignedApplicationRecord(key, appId, officer, nowIso, fallbackApp) {
+  var list = getLocalJson(key, []);
+  var found = false;
+  var changes = assignmentChangesForOfficer(officer, nowIso);
+  var targetApp = fallbackApp || applications.find(function(app) { return activityId(app) === appId; }) || { id: appId, appId: appId, appRef: appId };
+  list = list.map(function(app) {
+    if (activityId(app) !== appId && !sharesApplicationIdentity(app, targetApp)) return app;
+    found = true;
+    return Object.assign({}, app, changes);
+  });
+  if (!found && fallbackApp) {
+    list.unshift(Object.assign({}, fallbackApp, changes));
+  }
+  localStorage.setItem(key, JSON.stringify(list));
+}
+
+function assignApplication(appId, officerEmail) {
+  var officer = officerEmail ? findFieldOfficerByEmail(officerEmail) : null;
+  var nowIso = new Date().toISOString();
+  var currentApp = applications.find(function(app) { return activityId(app) === appId; }) || null;
+
+  applications = updateApplicationAssignmentInList(applications, appId, officer, nowIso);
+  filteredApps = updateApplicationAssignmentInList(filteredApps, appId, officer, nowIso);
+
+  ['applications', 'tz_submitted_apps', 'tradezo_applications'].forEach(function(key) {
+    persistAssignedApplicationRecord(key, appId, officer, nowIso, currentApp);
+  });
+
+  var queueFound = false;
+  var queue = getLocalJson('tz_verification_queue', []).map(function(item) {
+    if (activityId(item) !== appId && !sharesApplicationIdentity(item, currentApp || { id: appId, appId: appId, appRef: appId })) return item;
+    queueFound = true;
+    return Object.assign({}, item, assignmentChangesForOfficer(officer, nowIso));
+  });
+  if (!queueFound && currentApp) {
+    queue.unshift(Object.assign({
+      appId: currentApp.id,
+      businessName: currentApp.business,
+      applicant: currentApp.applicant,
+      category: currentApp.category,
+      address: currentApp.address,
+      submitted: currentApp.submittedDate || currentApp.date || '',
+      status: currentApp.status || 'Pending Review'
+    }, assignmentChangesForOfficer(officer, nowIso)));
+  }
+  localStorage.setItem('tz_verification_queue', JSON.stringify(queue));
+
+  if (window.TRADEZO && Array.isArray(window.TRADEZO.applications)) {
+    window.TRADEZO.applications = updateApplicationAssignmentInList(window.TRADEZO.applications, appId, officer, nowIso);
+  }
+
+  addAuditLog(
+    'Update',
+    'Applications',
+    (officer ? ('Assigned application ' + appId + ' to ' + officer.name) : ('Cleared field officer assignment for application ' + appId))
+  );
+
+  filteredApps = officer
+    ? filteredApps.filter(function(app) { return activityId(app) !== appId; })
+    : applications.filter(isUnassignedApplication);
+  renderApplicationStats();
+  renderApplications();
+  showToast(officer ? ('Assigned to ' + officer.name + '.') : 'Field officer assignment cleared.');
 }
  
 function renderApplications() {
@@ -907,7 +1695,6 @@ function renderApplications() {
   } else {
     for (var i = 0; i < pageData.length; i++) {
       var a     = pageData[i];
-      var badge = getAppBadge(a.status);
       tbody.innerHTML +=
         '<tr>' +
           '<td>' + a.id + '</td>' +
@@ -915,7 +1702,7 @@ function renderApplications() {
           '<td>' + a.business + '</td>' +
           '<td>' + a.category + '</td>' +
           '<td>' + a.date + '</td>' +
-          '<td><span class="badge ' + badge + '">' + a.status + '</span></td>' +
+          '<td>' + assignmentSelectHtml(a) + '</td>' +
           '<td><button class="btn-sm btn-view" onclick="viewApplication(\'' + a.id + '\')">&#128065; View</button></td>' +
         '</tr>';
     }
@@ -933,6 +1720,7 @@ function filterApplications() {
   var category = document.getElementById('app-category-filter').value;
  
   filteredApps = applications.filter(function(a) {
+    if (!isUnassignedApplication(a)) return false;
     var matchSearch   = !search   || a.id.toLowerCase().includes(search) || a.applicant.toLowerCase().includes(search) || a.business.toLowerCase().includes(search);
     var matchStatus   = !status   || a.status === status;
     var matchCategory = !category || a.category === category;
@@ -969,98 +1757,6 @@ function getAppBadge(status) {
   if (status === 'Rejected')     return 'badge-red';
   if (status === 'Under Review') return 'badge-blue';
   return 'badge-orange';
-}
- 
- 
-// ============================================================
-// LICENSE MANAGEMENT
-// ============================================================
- 
-function renderLicenseStats() {
-  document.getElementById('lic-total').textContent    = licenses.length;
-  document.getElementById('lic-active').textContent   = licenses.filter(function(l) { return l.status === 'Active'; }).length;
-  document.getElementById('lic-expiring').textContent = licenses.filter(function(l) { return l.status === 'Expiring Soon'; }).length;
-  document.getElementById('lic-revoked').textContent  = licenses.filter(function(l) { return l.status === 'Revoked'; }).length;
-}
- 
-function renderLicenses() {
-  var tbody    = document.getElementById('licenses-tbody');
-  tbody.innerHTML = '';
- 
-  var start    = (licPage - 1) * rowsPerPage;
-  var pageData = filteredLics.slice(start, start + rowsPerPage);
- 
-  if (pageData.length === 0) {
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="8">No licenses found.</td></tr>';
-  } else {
-    for (var i = 0; i < pageData.length; i++) {
-      var l         = pageData[i];
-      var badge     = getLicBadge(l.status);
-      var revokeBtn = '';
-      if (l.status !== 'Revoked') {
-        revokeBtn = '<button class="btn-sm btn-revoke" onclick="revokeLicense(\'' + l.id + '\')">&#10007; Revoke</button>';
-      }
-      tbody.innerHTML +=
-        '<tr>' +
-          '<td>' + l.id + '</td>' +
-          '<td>' + l.business + '</td>' +
-          '<td>' + l.owner + '</td>' +
-          '<td>' + l.category + '</td>' +
-          '<td>' + l.issueDate + '</td>' +
-          '<td>' + l.expiryDate + '</td>' +
-          '<td><span class="badge ' + badge + '">' + l.status + '</span></td>' +
-          '<td>' + revokeBtn + '</td>' +
-        '</tr>';
-    }
-  }
- 
-  renderPagination('licenses-pagination', filteredLics.length, licPage, function(p) {
-    licPage = p;
-    renderLicenses();
-  });
-}
- 
-function filterLicenses() {
-  var search   = document.getElementById('lic-search').value.toLowerCase();
-  var status   = document.getElementById('lic-status-filter').value;
-  var category = document.getElementById('lic-category-filter').value;
- 
-  filteredLics = licenses.filter(function(l) {
-    var matchSearch   = !search   || l.id.toLowerCase().includes(search) || l.business.toLowerCase().includes(search) || l.owner.toLowerCase().includes(search);
-    var matchStatus   = !status   || l.status === status;
-    var matchCategory = !category || l.category === category;
-    return matchSearch && matchStatus && matchCategory;
-  });
- 
-  licPage = 1;
-  renderLicenses();
-}
- 
-function revokeLicense(licId) {
-  var lic = licenses.find(function(l) { return l.id === licId; });
-  if (!lic) return;
- 
-  if (!confirm('Revoke license "' + licId + '" for ' + lic.business + '?')) return;
- 
-  for (var i = 0; i < licenses.length; i++) {
-    if (licenses[i].id === licId) {
-      licenses[i].status = 'Revoked';
-      break;
-    }
-  }
- 
-  filteredLics = licenses.slice();
-  addAuditLog('Update', 'Licenses', 'Revoked license ' + licId);
-  renderLicenseStats();
-  renderLicenses();
-  showToast('License ' + licId + ' has been revoked.');
-}
- 
-function getLicBadge(status) {
-  if (status === 'Active')        return 'badge-green';
-  if (status === 'Expired')       return 'badge-red';
-  if (status === 'Expiring Soon') return 'badge-orange';
-  return 'badge-grey';
 }
  
  
@@ -1251,6 +1947,7 @@ function triggerManualBackup() {
 // ============================================================
  
 function renderAudit() {
+  loadPersistedAuditLogs();
   var tbody    = document.getElementById('audit-tbody');
   tbody.innerHTML = '';
  
@@ -1327,6 +2024,10 @@ function addAuditLog(action, module, description) {
   });
  
   filteredAudit = auditLogs.slice();
+  localStorage.setItem('tradezo_audit_logs', JSON.stringify(auditLogs.slice(0, 100)));
+  if (document.getElementById('page-dashboard') && document.getElementById('page-dashboard').classList.contains('active')) {
+    renderDashboard();
+  }
 }
  
  
@@ -1465,4 +2166,5 @@ function validPhone(phone) {
  
 window.onload = function() {
   renderDashboard();
+  fetchBackendAuditLogs();
 };

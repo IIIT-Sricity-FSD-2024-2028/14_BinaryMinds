@@ -29,20 +29,34 @@ document.addEventListener('DOMContentLoaded', function() {
   if(btnEl) btnEl.innerHTML = '&#8377;' + total.toFixed(2);
 
   // Fill Trade Name
-  var tradeNameEl = document.querySelector('.info-grid .val');
+  var tradeNameEl = document.getElementById('tradeName');
   if (tradeNameEl && form.businessName) tradeNameEl.textContent = form.businessName;
 
   // Fill License Category
-  var licCatEls = document.querySelectorAll('.info-grid .val');
-  if (licCatEls[1] && form.tradeCategory) licCatEls[1].textContent = form.tradeCategory;
+  var licCatEl = document.getElementById('licCat');
+  if (licCatEl && form.tradeCategory) licCatEl.textContent = form.tradeCategory;
 
   // Fill Establishment Type
-  if (licCatEls[3] && form.businessType) licCatEls[3].textContent = form.businessType;
+  var estTypeEl = document.getElementById('estType');
+  if (estTypeEl && form.businessType) estTypeEl.textContent = form.businessType;
 
   // Fill REF number from applicationRef
-  var refEl = document.querySelector('.ref-no');
+  var refEl = document.getElementById('refNo');
   var appRef = sessionStorage.getItem('applicationRef');
-  if (refEl && appRef) refEl.textContent = 'REF: ' + appRef;
+  if (!appRef || /^\d+$/.test(String(appRef).trim()) || /^APP-/i.test(String(appRef).trim())) {
+    appRef = (window.TRADEZO && typeof TRADEZO.generateApplicationId === 'function')
+      ? TRADEZO.generateApplicationId()
+      : ('TL-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6));
+    sessionStorage.setItem('applicationRef', appRef);
+  }
+  if (refEl) refEl.textContent = 'REF: ' + appRef;
+
+  // Make Validity Period dynamic
+  var validityEl = document.querySelector('.val:nth-of-type(3)') || Array.from(document.querySelectorAll('.lbl')).find(el => el.textContent.includes('Validity Period'))?.nextElementSibling;
+  if (validityEl) {
+      var currentYear = new Date().getFullYear();
+      validityEl.textContent = '1 Year (' + currentYear + '-' + (currentYear + 1) + ')';
+  }
 
   // Wire radio highlights
   var labels = document.querySelectorAll('.pay-opt');
@@ -78,9 +92,16 @@ function doPayment() {
       var user = null;
       try { user = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
 
-      var appRef = sessionStorage.getItem('applicationRef') || ('TL2026-' + Math.floor(100000 + Math.random() * 900000));
+      var appRef = sessionStorage.getItem('applicationRef');
+      if (!appRef || /^\d+$/.test(String(appRef).trim()) || /^APP-/i.test(String(appRef).trim())) {
+        appRef = (window.TRADEZO && typeof TRADEZO.generateApplicationId === 'function')
+          ? TRADEZO.generateApplicationId()
+          : ('TL-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6));
+        sessionStorage.setItem('applicationRef', appRef);
+      }
 
       // Build new application object
+      var nowIso = new Date().toISOString();
       var newApp = {
         id:            appRef,
         appRef:        appRef,
@@ -102,12 +123,15 @@ function doPayment() {
         gender:        form.gender       || '',
         aadhaar:       form.aadhaar      || '',
         submittedDate: new Date().toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'}),
+        createdAt: nowIso,
+        updatedAt: nowIso,
         status:        'Submitted',
         paymentStatus: 'Paid',
+        paymentDate: nowIso,
         paymentAmount: sessionStorage.getItem('calculatedFeeString') || '₹2100.00',
         paymentRef:    'PAY-' + String(Date.now()).slice(-8),
-        assignedFO:    'FO-2001',
-        foName:        'Myra Singh',
+        assignedFO:    '',
+        foName:        '',
         inspectionDate:'', inspectionTime:'', inspectionResult:'',
         doReview:      'Pending',
         licenseId:     null,
@@ -120,13 +144,16 @@ function doPayment() {
       if (window.TRADEZO && TRADEZO.applications) {
         // Remove old entry with same ref if exists
         TRADEZO.applications = TRADEZO.applications.filter(function(a){ return a.appRef !== appRef; });
-        TRADEZO.applications.push(newApp);
+        TRADEZO.applications.unshift(newApp);
+        if (typeof TRADEZO.syncApplicationToBackend === 'function') {
+          TRADEZO.syncApplicationToBackend(newApp, 'applicant');
+        }
       }
 
       // Persist to localStorage so track page can find it even after refresh
       var saved = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]');
       saved = saved.filter(function(a){ return a.appRef !== appRef; });
-      saved.push(newApp);
+      saved.unshift(newApp);
       localStorage.setItem('tz_submitted_apps', JSON.stringify(saved));
 
       // Persist to verification queue for Field Officer
@@ -140,10 +167,11 @@ function doPayment() {
         category: newApp.tradeCategory || newApp.businessType,
         address: (newApp.shopAddress ? newApp.shopAddress + (newApp.city ? ', ' + newApp.city : '') : ''),
         submitted: newApp.submittedDate,
+        createdAt: nowIso,
         status: 'Pending Review'
       };
       queue = queue.filter(function(item){ return item.appId !== newApp.id; });
-      queue.push(verifyItem);
+      queue.unshift(verifyItem);
       localStorage.setItem('tz_verification_queue', JSON.stringify(queue));
 
       // Store reference and mark applied

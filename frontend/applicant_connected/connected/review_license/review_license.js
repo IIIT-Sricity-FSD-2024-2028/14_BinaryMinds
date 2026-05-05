@@ -31,6 +31,10 @@
         if (!exists) apps.push(app);
       });
     }
+    if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
+      TRADEZO.sortFreshFirst(apps);
+    }
+
     return apps;
   }
 
@@ -47,7 +51,7 @@
       return belongsToUser(app, user) && (normalize(app.status) === 'approved' || app.licenseId);
     });
 
-    if (apps.length) return apps[apps.length - 1];
+    if (apps.length) return apps[0];
 
     if (window.TRADEZO && Array.isArray(TRADEZO.licenses)) {
       var license = TRADEZO.licenses.find(function(item) {

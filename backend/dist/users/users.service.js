@@ -45,6 +45,14 @@ let UsersService = class UsersService {
         if (existingPhone) {
             throw new common_1.ConflictException(`User with phone number ${userData.phone} already exists`);
         }
+        if (userData.employee_id) {
+            const existingEmployeeId = this.usersRepository
+                .find()
+                .find((user) => user.employee_id === userData.employee_id);
+            if (existingEmployeeId) {
+                throw new common_1.ConflictException(`User with employee ID ${userData.employee_id} already exists`);
+            }
+        }
         return this.usersRepository.create(userData);
     }
     update(id, updateData) {
@@ -61,6 +69,14 @@ let UsersService = class UsersService {
                 .find((user) => user.phone === updateData.phone);
             if (existingPhone && existingPhone.user_id !== id) {
                 throw new common_1.ConflictException(`Phone number ${updateData.phone} is already in use`);
+            }
+        }
+        if (updateData.employee_id) {
+            const existingEmployeeId = this.usersRepository
+                .find()
+                .find((user) => user.employee_id === updateData.employee_id);
+            if (existingEmployeeId && existingEmployeeId.user_id !== id) {
+                throw new common_1.ConflictException(`Employee ID ${updateData.employee_id} is already in use`);
             }
         }
         const updatedUser = this.usersRepository.update(id, updateData);

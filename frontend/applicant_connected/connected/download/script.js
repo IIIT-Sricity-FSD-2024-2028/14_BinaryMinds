@@ -55,12 +55,17 @@ document.addEventListener('DOMContentLoaded', function() {
           }
       });
     }
+    if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
+      TRADEZO.sortFreshFirst(apps);
+    }
+
     return apps;
   }
 
   function belongsToUser(app, user) {
     if (!app) return false;
     if (user.email && normalize(app.email) === normalize(user.email)) return true;
+    if (user.email && normalize(app.applicantId) === normalize(user.email)) return true;
     if (user.name && normalize(app.applicantName) === normalize(user.name)) return true;
     if (user.id && (normalize(app.userId) === normalize(user.id) || normalize(app.applicantId) === normalize(user.id))) return true;
     return false;
@@ -79,7 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!matches.length && user.email) {
       matches = apps.filter(function(app) {
-        return normalize(app.email) === normalize(user.email);
+        return normalize(app.email) === normalize(user.email) ||
+               normalize(app.applicantId) === normalize(user.email);
       });
     }
 
@@ -100,13 +106,23 @@ document.addEventListener('DOMContentLoaded', function() {
       return s === 'approved' || s === 'license issued' || s === 'licensed' || app.licenseId || app.licenseNo;
     });
 
-    return approved.length ? approved[approved.length - 1] : null;
+    return approved.length ? approved[0] : null;
   }
 
   function fill(selector, value) {
     document.querySelectorAll(selector).forEach(function(el) {
       el.textContent = value || '—';
     });
+  }
+
+  function findGeneratedLicense(app) {
+    var generated = safeParse(localStorage.getItem('tz_generated_licenses') || '[]', []);
+    if (!Array.isArray(generated)) return null;
+    var appId = app && (app.appRef || app.id || app.appId || '');
+    return generated.find(function(lic) {
+      return String(lic.appId || '') === String(appId) ||
+        String(lic.licenseNo || '') === String(app.licenseNo || app.licenseId || '');
+    }) || null;
   }
 
   var user = getUser();
@@ -126,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         '<div style="font-size:52px;margin-bottom:16px;">📜</div>' +
         '<h3 style="color:#1E3A8A;margin-bottom:10px;">No License Available</h3>' +
         '<p style="color:#64748b;margin-bottom:24px;">Your trade license will appear here once your application is approved.</p>' +
-        '<a href="../Track Application Status/index.html" style="background:#1E3A8A;color:#fff;padding:11px 28px;border-radius:8px;font-weight:600;text-decoration:none;">Track Application →</a>';
+        '<a href="../Applicant dashboard/index.html" style="background:#1E3A8A;color:#fff;padding:11px 28px;border-radius:8px;font-weight:600;text-decoration:none;">Back to Dashboard</a>';
       layout.innerHTML = '';
       layout.appendChild(msg);
     }
@@ -135,7 +151,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
   fill('.license-number', app.licenseId || app.licenseNo || app.id || app.appRef);
   fill('.applicant-name', app.applicantName || user.name);
-  fill('.trade-category', app.tradeCategory || app.category || '—');
+  var generatedLicense = findGeneratedLicense(app);
+  fill(
+    '.trade-category',
+    app.tradeCategory ||
+    app.category ||
+    app.licenseType ||
+    app.businessType ||
+    app.trade_category ||
+    (generatedLicense && (generatedLicense.category || generatedLicense.tradeCategory)) ||
+    'Trade License'
+  );
   
   var issueStr = app.licenseIssueDate;
   var expiryStr = app.licenseExpiryDate;

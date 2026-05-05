@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Application } from './application.interface';
+import { ApplicationStatus } from '../common/enums/application-status.enum';
 
 @Injectable()
 export class ApplicationsRepository {
-  // In-memory data storage for applications
   private applications: Application[] = [];
   private idCounter = 1;
 
@@ -43,6 +43,18 @@ export class ApplicationsRepository {
 
     this.applications[index] = { ...this.applications[index], ...updateData };
     return this.applications[index];
+  }
+
+  findByStatus(status: ApplicationStatus): Application[] {
+    return this.applications.filter(
+      (app) => app.application_status === status,
+    );
+  }
+
+  findByOfficer(officerId: number): Application[] {
+    return this.applications.filter(
+      (app) => app.assignedOfficerId === officerId,
+    );
   }
 
   delete(id: number): boolean {

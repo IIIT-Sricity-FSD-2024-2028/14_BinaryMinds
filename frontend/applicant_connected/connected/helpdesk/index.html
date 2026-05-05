@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TradeZo - Help Desk</title>
-  <link rel="stylesheet" href="style.css" />
-<script src="../session_guard.js"></script>
+  <link rel="stylesheet" href="style.css?v=20260504_1" />
+  <script src="../session_guard.js"></script>
 </head>
 <body>
 
@@ -20,13 +20,12 @@
  
   <!-- NAVIGATION BAR -->
   <div class="navbar">
-    <a href="../Applicant dashboard/index.html">Dashboard</a>
-    <a href="../landing page/index.html">Home</a>
+    <a href="../Applicant%20dashboard/index.html">Dashboard</a>
+    <a href="../landing%20page/index.html">Home</a>
     <a href="../apply_license/apply_license.html">Apply License</a>
-    <a href="../Track Application Status/index.html">Track Application</a>
+    <a href="../Track%20Application%20Status/index.html">Track Application</a>
     <a href="../download/index.html">Download License</a>
-    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a>
-    
+    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a>
     <a href="../payments/index.html">Payments</a>
     <a href="../Profile/index.html">Profile</a>
   </div>
@@ -50,17 +49,17 @@
         <div class="form-row">
           <div class="form-group">
             <label>Full Name</label>
-            <input type="text" placeholder="Enter your full name" />
+            <input type="text" id="hdName" placeholder="Enter your full name" />
           </div>
           <div class="form-group">
             <label>Application ID</label>
-            <input type="text" placeholder="TL-2023-XXXX" />
+            <input type="text" id="hdAppId" placeholder="TL-2023-XXXX" />
           </div>
         </div>
 
         <div class="form-group">
           <label>Issue Type</label>
-          <select>
+          <select id="hdIssue">
             <option value="">Select an issue type</option>
             <option>Payment Issue</option>
             <option>License Issue</option>
@@ -71,7 +70,7 @@
 
         <div class="form-group">
           <label>Message</label>
-          <textarea placeholder="Describe your issue in detail..."></textarea>
+          <textarea id="hdMessage" placeholder="Describe your issue in detail..."></textarea>
         </div>
 
         <button class="submit-btn" onclick="handleSubmit()">Submit Request ➤</button>
@@ -117,7 +116,7 @@
       </div>
 
       <!-- Cancel Button -->
-      <button class="cancel-btn" onclick="window.location.href='../Applicant dashboard/index.html'">← Cancel</button>
+      <button class="cancel-btn" onclick="window.location.href='../Applicant%20dashboard/index.html'">← Cancel</button>
 
     </div>
 
@@ -151,7 +150,7 @@
       </div>
 
       <!-- Virtual Assistant Chat -->
-      <div class="chat-card">
+      <div class="chat-card" id="chatCard">
         <div class="chat-header">
           <span>💬 Virtual Assistant</span>
           <button onclick="closeChat()">✕</button>
@@ -160,7 +159,7 @@
           <div class="chat-bubble">Hi, how can we help you today?</div>
         </div>
         <div class="chat-input-row">
-          <input type="text" id="chatInput" placeholder="Type your question..." />
+          <input type="text" id="chatInput" placeholder="Type your question..." onkeydown="if(event.key==='Enter') sendChat()" />
           <button onclick="sendChat()">➤</button>
         </div>
       </div>
@@ -176,7 +175,7 @@
 
   <!-- Link to JavaScript -->
   <script src="../../../mockdata.js"></script>
-<script src="helpdesk.js"></script>
+  <script src="helpdesk.js?v=20260504_1"></script>
 
 </body>
 </html>

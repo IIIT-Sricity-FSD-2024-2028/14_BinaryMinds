@@ -23,26 +23,42 @@
   }
 
   function getUser() {
+    // Always prefer sessionStorage as the authoritative source
+    var sessionUser = safeParse(sessionStorage.getItem('loggedInUser') || 'null', null);
+    if (sessionUser && sessionUser.email) return sessionUser;
+    // Fall back to TRADEZO helper
     if (window.TRADEZO && typeof TRADEZO.getLoggedInUser === 'function') {
-      return TRADEZO.getLoggedInUser() || {};
+      var tzUser = TRADEZO.getLoggedInUser();
+      if (tzUser && tzUser.email) return tzUser;
     }
-    return safeParse(sessionStorage.getItem('loggedInUser') || 'null', {}) || {};
+    return sessionUser || {};
   }
 
   function getAllApps() {
     var apps = [];
-    if (window.TRADEZO && Array.isArray(TRADEZO.applications)) {
-      apps = apps.concat(TRADEZO.applications);
-    }
+    // 1. tz_submitted_apps — primary (payment-confirmed apps)
+    var submitted = safeParse(localStorage.getItem('tz_submitted_apps') || '[]', []);
+    if (Array.isArray(submitted)) apps = apps.concat(submitted);
 
-    var saved = safeParse(localStorage.getItem('tz_submitted_apps') || '[]', []);
-    if (Array.isArray(saved)) {
-      saved.forEach(function(app) {
-        var exists = apps.some(function(existing) {
-          return existing.appRef === app.appRef || existing.id === app.id;
-        });
+    // 2. Legacy 'applications' key
+    var legacy = safeParse(localStorage.getItem('applications') || '[]', []);
+    if (Array.isArray(legacy)) {
+      legacy.forEach(function(app) {
+        var exists = apps.some(function(ex) { return ex.id === app.id || ex.appRef === app.appRef; });
         if (!exists) apps.push(app);
       });
+    }
+
+    // 3. TRADEZO in-memory apps
+    if (window.TRADEZO && Array.isArray(TRADEZO.applications)) {
+      TRADEZO.applications.forEach(function(app) {
+        var exists = apps.some(function(ex) { return ex.id === app.id || ex.appRef === app.appRef; });
+        if (!exists) apps.push(app);
+      });
+    }
+
+    if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
+      TRADEZO.sortFreshFirst(apps);
     }
 
     return apps;
@@ -50,8 +66,16 @@
 
   function belongsToUser(app, user) {
     if (!app) return false;
+    // Match by applicationRef in session (most reliable)
+    var appRef = sessionStorage.getItem('applicationRef') || '';
+    if (appRef && (app.id === appRef || app.appRef === appRef)) return true;
+    // Match by email
     if (user.email && normalize(app.email) === normalize(user.email)) return true;
+    // Match by applicantId (stored as email in some records)
+    if (user.email && normalize(app.applicantId) === normalize(user.email)) return true;
+    // Match by name (case-insensitive)
     if (user.name && normalize(app.applicantName) === normalize(user.name)) return true;
+    // Match by user id
     if (user.id && (normalize(app.userId) === normalize(user.id) || normalize(app.applicantId) === normalize(user.id))) return true;
     return false;
   }
@@ -82,6 +106,9 @@
     var apps = getAllApps().filter(function(app) {
       return belongsToUser(app, user);
     });
+    if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
+      TRADEZO.sortFreshFirst(apps);
+    }
 
     if (!apps.length) return '—';
 
@@ -145,7 +172,7 @@
   }
 
   function renderTransactions(apps) {
-    var tbody = document.querySelector('.left-panel tbody');
+    var tbody = document.getElementById('transactionsTbody');
     if (!tbody) return;
     tbody.innerHTML = '';
 
@@ -174,7 +201,7 @@
   }
 
   function renderReceipts(apps) {
-    var tbody = document.querySelector('.receipts-section tbody');
+    var tbody = document.getElementById('receiptsTbody');
     if (!tbody) return;
     tbody.innerHTML = '';
 

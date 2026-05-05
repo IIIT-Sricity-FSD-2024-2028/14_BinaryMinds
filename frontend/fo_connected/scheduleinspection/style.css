@@ -1,1 +1,162 @@
 @import url("../fo_common.css");
+
+/* ─── Schedule Inspection Specific Styles ─── */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.card h3 {
+  color: var(--navy);
+  font-size: 18px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+}
+
+/* Application Details Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.details-grid p {
+  margin-bottom: 16px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.details-grid b {
+  color: var(--muted);
+  font-size: 13px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.details-grid span {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Note Box */
+.note-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 24px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Schedule Form Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.form-grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-grid label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.form-grid input {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--text);
+  background: #f8fafc;
+  outline: none;
+  transition: 0.2s border-color;
+}
+
+.form-grid input:focus {
+  border-color: var(--blue);
+  background: var(--surface);
+}
+
+.form-grid small {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Success Box */
+.success-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  padding: 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.success-box p {
+  margin-top: 8px;
+  font-weight: normal;
+  font-size: 14px;
+  color: #15803d;
+}
+
+/* Subtitle */
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 24px;
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.cancel, .submit {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  transition: 0.2s;
+}
+
+.cancel {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.cancel:hover {
+  background: #e2e8f0;
+}
+
+.submit {
+  background: var(--blue);
+  color: white;
+}
+
+.submit:hover {
+  background: #254edd;
+}

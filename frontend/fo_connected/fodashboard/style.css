@@ -1,1 +1,35 @@
 @import url("../fo_common.css");
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 122px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+  padding: 6px 10px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.status-assigned {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.status-verified {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.status-recorded {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.status-rejected {
+  background: #fef2f2;
+  color: #b91c1c;
+}

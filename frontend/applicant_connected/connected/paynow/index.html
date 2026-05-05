@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TradeZo - Complete Your Payment</title>
-  <link rel="stylesheet" href="style.css">
-<script src="../session_guard.js"></script>
+  <link rel="stylesheet" href="style.css?v=20260504_1">
+  <script src="../session_guard.js"></script>
 </head>
 <body>
 
@@ -19,15 +20,13 @@
 
   <!-- BLUE NAVIGATION BAR -->
   <div class="navbar">
-    <a href="../Applicant dashboard/index.html">Dashboard</a>
-    <a href="../landing page/index.html">Home</a>
+    <a href="../Applicant%20dashboard/index.html">Dashboard</a>
     <a href="../apply_license/apply_license.html">Apply License</a>
-    <a href="../Track Application Status/index.html">Track Application</a>
+    <a href="../Track%20Application%20Status/index.html">Track Application</a>
     <a href="../download/index.html">Download License</a>
-    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a>
-    
     <a href="../payments/index.html">Payments</a>
     <a href="../Profile/index.html">Profile</a>
+    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a>
   </div>
 
   <!-- PAGE BODY -->
@@ -88,17 +87,17 @@
         <div class="card">
           <div class="card-head">
             <span class="card-title">&#128196; Application Summary</span>
-            <span class="ref-no">REF: TRD-2023-8042</span>
+            <span class="ref-no" id="refNo">REF: TRD-2023-8042</span>
           </div>
 
           <div class="info-grid">
             <div>
               <p class="lbl">Trade Name</p>
-              <p class="val">Jiya Enterprises Private Limited</p>
+              <p class="val" id="tradeName">—</p>
             </div>
             <div>
               <p class="lbl">License Category</p>
-              <p class="val">General Trade &amp; Commerce</p>
+              <p class="val" id="licCat">General Trade &amp; Commerce</p>
             </div>
             <div>
               <p class="lbl">Validity Period</p>
@@ -106,7 +105,7 @@
             </div>
             <div>
               <p class="lbl">Establishment Type</p>
-              <p class="val">Commercial / Retail</p>
+              <p class="val" id="estType">Commercial / Retail</p>
             </div>
           </div>
 
@@ -133,7 +132,7 @@
             <input type="radio" name="method" value="net"> &#127981; Net Banking
           </label>
 
-          <button class="pay-btn" onclick="doPayment()">&#128274; Pay Now <span id="btnFee">&#8377;0.00</span></button>
+          <button class="pay-btn" id="payBtn" onclick="doPayment()">&#128274; Pay Now &nbsp;<span id="btnFee">&#8377;0.00</span></button>
           <p class="small-note">By clicking "Pay Now" you agree to our Terms of Service and Privacy Policy.</p>
         </div>
 
@@ -143,7 +142,7 @@
       <div class="col-right">
 
         <!-- Payment Assistance Card -->
-        <div class="card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-evenly;">
+        <div class="card">
           <p class="card-title">&#128737; Payment Assistance</p>
 
           <div class="assist-item">
@@ -175,7 +174,7 @@
     </div>
   </div>
 
-  <script src="../../../mockdata.js"></script>
-  <script src="scriot.js"></script>
+  <script src="../../../mockdata.js?v=application-dedupe-20260505"></script>
+  <script src="scriot.js?v=application-dedupe-20260505"></script>
 </body>
 </html>

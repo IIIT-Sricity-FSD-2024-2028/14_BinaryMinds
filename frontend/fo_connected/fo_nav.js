@@ -51,6 +51,9 @@
   window.foCurrentOfficer = function() {
     var loggedIn = {};
     try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}'); } catch(e) {}
+
+    if (!loggedIn.email && !loggedIn.name) return normalizeOfficer({});
+    
     var email = (loggedIn.email || '').toLowerCase();
     var candidates = safeArray('users').concat(safeArray('registeredUsers'));
     var stored = candidates.find(function(user) {
@@ -72,13 +75,15 @@
       item.assignedTo,
       item.assignedEmail,
       item.fieldOfficerEmail
-    ].filter(Boolean).map(function(value) {
+    ].map(function(value) {
       return String(value).toLowerCase().trim();
-    });
+    }).filter(function(v) { return v.length > 0 && v !== 'undefined' && v !== 'null' && v !== 'n/a'; });
 
     var keys = [officer.id, officer.empId, officer.backendUserId, officer.name, officer.email]
-      .filter(Boolean)
-      .map(function(value) { return String(value).toLowerCase().trim(); });
+      .map(function(value) { return String(value || '').toLowerCase().trim(); })
+      .filter(function(v) { return v.length > 0 && v !== 'field officer' && v !== 'undefined' && v !== 'null' && v !== 'n/a'; });
+
+    if (values.length === 0 || keys.length === 0) return false;
 
     return values.some(function(value) { return keys.indexOf(value) !== -1; });
   };

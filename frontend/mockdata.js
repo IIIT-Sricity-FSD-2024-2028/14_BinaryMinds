@@ -1,249 +1,255 @@
 // ============================================================
-// mockdata.js — TradeZo Central Mock Data
+// mockdata.js — TradeZo Central Data Hub
 // Include this file in ANY page: <script src="path/to/mockdata.js"></script>
-// All actors share this same data — changes flow across the system
+// All actors share this same data — dynamic data flows via localStorage
 // ============================================================
 
 var TRADEZO = {};
 
 // ============================================================
-// 1. USERS — All system users (all roles)
+// 1. USERS — Empty; populated dynamically via login/registration
 // ============================================================
-TRADEZO.users = [
-  // Applicants
-  { id: 'APP-1001', name: 'Rajesh Kumar',    email: 'rajesh@applicant.com',    phone: '9876543210', role: 'applicant',          password: 'applicant123', status: 'Active' },
-  { id: 'APP-1002', name: 'Priya Sharma',    email: 'priya@applicant.com',     phone: '9876543211', role: 'applicant',          password: 'applicant123', status: 'Active' },
-  { id: 'APP-1003', name: 'Amit Patel',      email: 'amit@applicant.com',      phone: '9876543212', role: 'applicant',          password: 'applicant123', status: 'Active' },
-  // Field Officers
-  { id: 'FO-2001',  name: 'Myra Singh',      email: 'myra@fieldofficer.com',   phone: '9876543220', role: 'field officer',      password: 'field@123',    status: 'Active' },
-  { id: 'FO-2002',  name: 'Vikram Desai',    email: 'vikram@fieldofficer.com', phone: '9876543221', role: 'field officer',      password: 'field@123',    status: 'Active' },
-  // Department Officers
-  { id: 'DO-3001',  name: 'Anjali Mehta',    email: 'admin@deptofficer.com',   phone: '9876543230', role: 'department officer', password: 'dept123',      status: 'Active' },
-  { id: 'DO-3002',  name: 'Rahul Gupta',     email: 'rahul@deptofficer.com',   phone: '9876543231', role: 'department officer', password: 'dept123',      status: 'Active' },
-  // Super User
-  { id: 'SU-4001',  name: 'Admin User',      email: 'admin@tradezo.gov.in',    phone: '9876543240', role: 'superuser',          password: 'super123',     status: 'Active' }
-];
+TRADEZO.users = [];
 
 // ============================================================
-// 2. APPLICATIONS — Trade License Applications
+// 2. APPLICATIONS — Empty; populated dynamically via Apply License flow
 // ============================================================
-TRADEZO.applications = [
-  {
-    id: 'TL-2026-001', appRef: 'TL2026-445821',
-    applicantName: 'Rajesh Kumar',    applicantId: 'APP-1001',
-    email: 'rajesh@example.com',      phone: '9876543210',
-    businessName: 'Green Valley Restaurant',
-    businessType: 'Retail Shop',      tradeCategory: 'Food & Beverages',
-    shopAddress: '123 Main Street, Sector 45', city: 'Gurugram',
-    district: 'Gurugram',             state: 'Haryana',    pincode: '122001',
-    shopArea: '450',                  fatherName: 'Suresh Kumar',
-    motherName: 'Meena Kumar',        gender: 'Male',
-    aadhaar: '234567891234',
-    submittedDate: 'Feb 20, 2026',    category: 'Food & Beverages',
-    status: 'Under Verification',     paymentStatus: 'Paid',
-    paymentAmount: '₹5,000',          paymentRef: 'PAY-2026-98761',
-    assignedFO: 'FO-2001',            foName: 'Myra Singh',
-    inspectionDate: 'Mar 8, 2026',    inspectionTime: '10:00 AM',
-    inspectionResult: 'Approved',
-    doReview: 'Pending',              licenseId: null,
-    docs: { aadhaar: 'aadhaar_rajesh.pdf', addressProof: 'address_rajesh.pdf', shopPhoto: 'shop_rajesh.jpg' }
-  },
-  {
-    id: 'TL-2026-002', appRef: 'TL2026-332190',
-    applicantName: 'Vikram Singh',    applicantId: 'APP-1002',
-    email: 'vikram@example.com',      phone: '9876543211',
-    businessName: 'Tech Hub Electronics',
-    businessType: 'Retail Shop',      tradeCategory: 'Retail',
-    shopAddress: '456 MG Road',       city: 'Bangalore',
-    district: 'Bangalore Urban',      state: 'Karnataka', pincode: '560001',
-    shopArea: '600',                  fatherName: 'Mohan Singh',
-    motherName: 'Sunita Singh',       gender: 'Male',
-    aadhaar: '345678912345',
-    submittedDate: 'Feb 18, 2026',    category: 'Retail',
-    status: 'Under Review',           paymentStatus: 'Paid',
-    paymentAmount: '₹5,000',          paymentRef: 'PAY-2026-87652',
-    assignedFO: 'FO-2002',            foName: 'Vikram Desai',
-    inspectionDate: 'Mar 9, 2026',    inspectionTime: '02:00 PM',
-    inspectionResult: 'Approved',
-    doReview: 'In Progress',          licenseId: null,
-    docs: { aadhaar: 'aadhaar_vikram.pdf', addressProof: 'address_vikram.pdf', shopPhoto: 'shop_vikram.jpg' }
-  },
-  {
-    id: 'TL-2026-003', appRef: 'TL2026-221045',
-    applicantName: 'Priya Sharma',    applicantId: 'APP-1003',
-    email: 'priya@example.com',       phone: '9876543212',
-    businessName: 'Fresh Mart Grocery',
-    businessType: 'Wholesale',        tradeCategory: 'Retail',
-    shopAddress: 'Connaught Place',   city: 'Delhi',
-    district: 'Central Delhi',        state: 'Delhi',      pincode: '110001',
-    shopArea: '320',                  fatherName: 'Anil Sharma',
-    motherName: 'Kavita Sharma',      gender: 'Female',
-    aadhaar: '456789123456',
-    submittedDate: 'Feb 15, 2026',    category: 'Retail',
-    status: 'Approved',               paymentStatus: 'Paid',
-    paymentAmount: '₹5,000',          paymentRef: 'PAY-2026-76543',
-    assignedFO: 'FO-2001',            foName: 'Myra Singh',
-    inspectionDate: 'Mar 10, 2026',   inspectionTime: '11:00 AM',
-    inspectionResult: 'Approved',
-    doReview: 'Approved',             licenseId: 'LIC-2026-0031',
-    docs: { aadhaar: 'aadhaar_priya.pdf', addressProof: 'address_priya.pdf', shopPhoto: 'shop_priya.jpg' }
-  },
-  {
-    id: 'TL-2026-004', appRef: 'TL2026-118734',
-    applicantName: 'Amit Patel',      applicantId: 'APP-1003',
-    email: 'amit@example.com',        phone: '9876543213',
-    businessName: 'Urban Fitness Center',
-    businessType: 'Service',          tradeCategory: 'Healthcare',
-    shopAddress: 'Bandra West',       city: 'Mumbai',
-    district: 'Mumbai Suburban',      state: 'Maharashtra', pincode: '400050',
-    shopArea: '800',                  fatherName: 'Ramesh Patel',
-    motherName: 'Geeta Patel',        gender: 'Male',
-    aadhaar: '567891234567',
-    submittedDate: 'Feb 10, 2026',    category: 'Healthcare',
-    status: 'Rejected',               paymentStatus: 'Paid',
-    paymentAmount: '₹5,000',          paymentRef: 'PAY-2026-65432',
-    assignedFO: 'FO-2002',            foName: 'Vikram Desai',
-    inspectionDate: 'Mar 5, 2026',    inspectionTime: '03:00 PM',
-    inspectionResult: 'Rejected',
-    rejectionReason: 'Business Affidavit document is incomplete.',
-    doReview: 'Rejected',             licenseId: null,
-    docs: { aadhaar: 'aadhaar_amit.pdf', addressProof: 'address_amit.pdf', shopPhoto: 'shop_amit.jpg' }
-  },
-  {
-    id: 'TL-2026-005', appRef: 'TL2026-009871',
-    applicantName: 'Sneha Reddy',     applicantId: 'APP-1002',
-    email: 'sneha@example.com',       phone: '9876543214',
-    businessName: 'Sunrise Exports',
-    businessType: 'Wholesale',        tradeCategory: 'Wholesale',
-    shopAddress: '78 Export Zone',    city: 'Hyderabad',
-    district: 'Hyderabad',            state: 'Telangana',  pincode: '500001',
-    shopArea: '1200',                 fatherName: 'Krishna Reddy',
-    motherName: 'Lakshmi Reddy',      gender: 'Female',
-    aadhaar: '678912345678',
-    submittedDate: 'Jan 28, 2026',    category: 'Wholesale',
-    status: 'Approved',               paymentStatus: 'Paid',
-    paymentAmount: '₹5,000',          paymentRef: 'PAY-2026-54321',
-    assignedFO: 'FO-2001',            foName: 'Myra Singh',
-    inspectionDate: 'Feb 15, 2026',   inspectionTime: '11:30 AM',
-    inspectionResult: 'Approved',
-    doReview: 'Approved',             licenseId: 'LIC-2026-0025',
-    docs: { aadhaar: 'aadhaar_sneha.pdf', addressProof: 'address_sneha.pdf', shopPhoto: 'shop_sneha.jpg' }
-  }
-];
+TRADEZO.applications = [];
 
 // ============================================================
-// 3. LICENSES — Issued Trade Licenses
+// 3. LICENSES — Empty; populated dynamically via DO portal
 // ============================================================
-TRADEZO.licenses = [
-  { id: 'LIC-2026-0031', appId: 'TL-2026-003', businessName: 'Fresh Mart Grocery',
-    ownerName: 'Priya Sharma',   category: 'Retail',    issueDate: 'Mar 15, 2026',
-    expiryDate: 'Mar 15, 2027',  status: 'Active',      renewalStatus: null },
-  { id: 'LIC-2026-0025', appId: 'TL-2026-005', businessName: 'Sunrise Exports',
-    ownerName: 'Sneha Reddy',    category: 'Wholesale', issueDate: 'Feb 25, 2026',
-    expiryDate: 'Feb 25, 2027',  status: 'Active',      renewalStatus: null },
-  { id: 'LIC-2025-0892', appId: 'TL-2025-012', businessName: 'Mugale Grocery Store',
-    ownerName: 'Jiya Mugale',    category: 'Retail',    issueDate: 'Apr 10, 2025',
-    expiryDate: 'Apr 10, 2026',  status: 'Expiring Soon', renewalStatus: 'Submitted' },
-  { id: 'LIC-2024-0234', appId: 'TL-2024-008', businessName: 'Kumar Electronics',
-    ownerName: 'Suresh Kumar',   category: 'Retail',    issueDate: 'Jun 1, 2024',
-    expiryDate: 'Jun 1, 2026',   status: 'Active',      renewalStatus: null },
-  { id: 'LIC-2023-0045', appId: 'TL-2023-003', businessName: 'Patel Wholesale Hub',
-    ownerName: 'Ramesh Patel',   category: 'Wholesale', issueDate: 'Apr 3, 2023',
-    expiryDate: 'Apr 3, 2025',   status: 'Expired',     renewalStatus: null }
-];
+TRADEZO.licenses = [];
 
 // ============================================================
-// 4. INSPECTIONS — Scheduled & Completed Inspections
+// 4. INSPECTIONS — Empty; populated dynamically via FO portal
 // ============================================================
-TRADEZO.inspections = [
-  { id: 'INS-001', appId: 'TL-2026-001', businessName: 'Green Valley Restaurant',
-    type: 'Food & Beverages', address: '123 Main Street, Sector 45, Gurugram',
-    ownerName: 'Rajesh Kumar',  assignedFO: 'Myra Singh',
-    date: 'Mar 8, 2026',  time: '10:00 AM', status: 'Scheduled' },
-  { id: 'INS-002', appId: 'TL-2026-002', businessName: 'Tech Hub Electronics',
-    type: 'Retail', address: '456 MG Road, Bangalore',
-    ownerName: 'Vikram Singh',  assignedFO: 'Vikram Desai',
-    date: 'Mar 9, 2026',  time: '02:00 PM', status: 'Scheduled' },
-  { id: 'INS-003', appId: 'TL-2026-003', businessName: 'Fresh Mart Grocery',
-    type: 'Retail', address: 'Connaught Place, Delhi',
-    ownerName: 'Priya Sharma',  assignedFO: 'Myra Singh',
-    date: 'Mar 10, 2026', time: '11:00 AM', status: 'Completed', result: 'Approved',
-    notes: 'Shop is clean, well-organised. All documents verified.' },
-  { id: 'INS-004', appId: 'TL-2026-005', businessName: 'Sunrise Exports',
-    type: 'Wholesale', address: '78 Export Zone, Hyderabad',
-    ownerName: 'Sneha Reddy',   assignedFO: 'Myra Singh',
-    date: 'Feb 15, 2026', time: '11:30 AM', status: 'Completed', result: 'Approved',
-    notes: 'Large warehouse, adequate space and safety measures.' },
-  { id: 'INS-005', appId: 'TL-2026-004', businessName: 'Urban Fitness Center',
-    type: 'Healthcare', address: 'Bandra West, Mumbai',
-    ownerName: 'Amit Patel',    assignedFO: 'Vikram Desai',
-    date: 'Mar 5, 2026',  time: '03:00 PM', status: 'Completed', result: 'Rejected',
-    notes: 'Business Affidavit missing. Safety equipment inadequate.' }
-];
+TRADEZO.inspections = [];
 
 // ============================================================
-// 5. VERIFICATIONS — Field Officer Verification Queue
+// 5. VERIFICATIONS — Empty; populated dynamically via FO portal
 // ============================================================
-TRADEZO.verifications = [
-  { appId: 'TL-2026-001', businessName: 'Green Valley Restaurant',
-    applicant: 'Rajesh Kumar',  category: 'Food & Beverages',
-    submitted: 'Feb 20, 2026',  status: 'Pending Review',   priority: 'High',
-    address: 'Sector 45, Gurugram' },
-  { appId: 'TL-2026-002', businessName: 'Tech Hub Electronics',
-    applicant: 'Vikram Singh',  category: 'Retail',
-    submitted: 'Feb 18, 2026',  status: 'Under Review',     priority: 'Normal',
-    address: 'MG Road, Bangalore' },
-  { appId: 'TL-2026-003', businessName: 'Fresh Mart Grocery',
-    applicant: 'Priya Sharma',  category: 'Retail',
-    submitted: 'Feb 15, 2026',  status: 'Approved',         priority: 'Normal',
-    address: 'Connaught Place, Delhi' },
-  { appId: 'TL-2026-004', businessName: 'Urban Fitness Center',
-    applicant: 'Amit Patel',    category: 'Healthcare',
-    submitted: 'Feb 10, 2026',  status: 'Rejected',         priority: 'Normal',
-    address: 'Bandra West, Mumbai' }
-];
+TRADEZO.verifications = [];
 
 // ============================================================
-// 6. AUDIT LOG — System Activity Log
+// 6. AUDIT LOG — Empty; populated dynamically by system actions
 // ============================================================
-TRADEZO.auditLog = [
-  { time: 'Apr 1, 2026 10:23 AM',  user: 'Admin User',   role: 'Super User',         action: 'Approve', module: 'Applications', desc: 'Approved application TL-2026-003' },
-  { time: 'Apr 1, 2026 09:45 AM',  user: 'Anjali Mehta', role: 'Department Officer', action: 'Update',  module: 'Applications', desc: 'Updated status for TL-2026-002' },
-  { time: 'Apr 1, 2026 09:12 AM',  user: 'Admin User',   role: 'Super User',         action: 'Create',  module: 'Users',        desc: 'Added new officer Vikram Desai' },
-  { time: 'Mar 31, 2026 05:30 PM', user: 'Admin User',   role: 'Super User',         action: 'Update',  module: 'Settings',     desc: 'Updated fee configuration' },
-  { time: 'Mar 31, 2026 04:15 PM', user: 'Rahul Gupta',  role: 'Department Officer', action: 'Reject',  module: 'Applications', desc: 'Rejected application TL-2026-004' },
-  { time: 'Mar 30, 2026 02:10 PM', user: 'Sneha Reddy',  role: 'Applicant',          action: 'Create',  module: 'Applications', desc: 'Submitted application TL-2026-005' },
-  { time: 'Mar 30, 2026 01:30 PM', user: 'Myra Singh',   role: 'Field Officer',      action: 'Update',  module: 'Inspections',  desc: 'Completed inspection INS-004' },
-  { time: 'Mar 29, 2026 11:00 AM', user: 'Admin User',   role: 'Super User',         action: 'Update',  module: 'Licenses',     desc: 'License LIC-2023-0045 marked as Expired' }
-];
+TRADEZO.auditLog = [];
 
 // ============================================================
-// 7. DASHBOARD STATS — Used by all dashboards
+// 7. DASHBOARD STATS — Initial zeros, updated dynamically
 // ============================================================
 TRADEZO.stats = {
   applicant: {
-    totalApplications: 2,
-    pendingApplications: 1,
-    approvedApplications: 1,
-    licenseActive: 1
+    totalApplications: 0,
+    pendingApplications: 0,
+    approvedApplications: 0,
+    licenseActive: 0
   },
   fieldOfficer: {
-    applicationsSubmitted: 24,
-    pendingInspections: 3,
-    completedToday: 2,
-    slaAlerts: 1
+    applicationsSubmitted: 0,
+    pendingInspections: 0,
+    completedToday: 0,
+    slaAlerts: 0
   },
   deptOfficer: {
-    pendingApplications: 1284,
-    licensesIssued: 45920,
-    slaCompliance: '132 / 142'
+    pendingApplications: 0,
+    licensesIssued: 0,
+    slaCompliance: '0 / 0'
   },
   superUser: {
-    totalUsers: 8,
-    pendingApplications: 2,
-    issuedLicenses: 5
+    totalUsers: 0,
+    pendingApplications: 0,
+    issuedLicenses: 0
   }
 };
+
+TRADEZO.freshDateFields = [
+  'updatedAt', 'updated_at', 'lastUpdated', 'last_updated',
+  'createdAt', 'created_at', 'submitted_at', 'submittedDate',
+  'dateSubmitted', 'submissionDate', 'paymentDate', 'inspectionDate',
+  'decidedOn', 'date', 'issueDate', 'licenseIssueDate'
+];
+
+TRADEZO.parseFreshDate = function(value) {
+  if (!value) return 0;
+  if (value instanceof Date) return isNaN(value.getTime()) ? 0 : value.getTime();
+  if (typeof value === 'number') return value > 10000000000 ? value : 0;
+
+  var text = String(value).trim();
+  var lower = text.toLowerCase();
+  if (!text || text === 'â€”' || lower === 'n/a' || lower === 'pending') return 0;
+
+  var parsed = new Date(text);
+  if (!isNaN(parsed.getTime())) return parsed.getTime();
+
+  var parts = text.replace(/,/g, '').split(/\s+/);
+  if (parts.length >= 3) {
+    var alt = new Date(parts[1] + ' ' + parts[0] + ' ' + parts[2]);
+    if (!isNaN(alt.getTime())) return alt.getTime();
+  }
+
+  return 0;
+};
+
+TRADEZO.freshness = function(item) {
+  if (!item) return 0;
+  var latest = 0;
+  TRADEZO.freshDateFields.forEach(function(field) {
+    latest = Math.max(latest, TRADEZO.parseFreshDate(item[field]));
+  });
+  return latest;
+};
+
+TRADEZO.sortFreshFirst = function(list) {
+  if (!Array.isArray(list)) return [];
+  return list.sort(function(a, b) {
+    return TRADEZO.freshness(b) - TRADEZO.freshness(a);
+  });
+};
+
+TRADEZO.demoBusinessNames = {
+  'green valley restaurant': true,
+  'singh electronics': true,
+  'sharma healthcare': true,
+  'tech hub electronics': true
+};
+
+TRADEZO.normalizeText = function(value) {
+  return String(value || '').toLowerCase().replace(/[_-]/g, ' ').replace(/\s+/g, ' ').trim();
+};
+
+TRADEZO.itemId = function(item) {
+  return String(item && (item.appId || item.id || item.appRef || item.application_id || item.applicationId) || '').trim();
+};
+
+TRADEZO.isPlainNumericId = function(value) {
+  return /^\d+$/.test(String(value || '').trim());
+};
+
+TRADEZO.formatApplicationId = function(sequence, dateValue) {
+  var yearDate = dateValue ? new Date(dateValue) : new Date();
+  var year = isNaN(yearDate.getTime()) ? new Date().getFullYear() : yearDate.getFullYear();
+  var number = parseInt(sequence, 10);
+  if (isNaN(number) || number < 1) number = 1;
+  return 'TL-' + year + '-' + String(number).padStart(6, '0');
+};
+
+TRADEZO.applicationSequence = function(value) {
+  var text = String(value || '').trim();
+  if (!text) return 0;
+  if (TRADEZO.isPlainNumericId(text)) return parseInt(text, 10) || 0;
+
+  var match = text.match(/(?:TL|APP)[-\s]?\d{4}[-\s]?(\d+)$/i);
+  if (match) return parseInt(match[1], 10) || 0;
+
+  var digits = text.replace(/\D/g, '');
+  return digits ? (parseInt(digits.slice(-6), 10) || 0) : 0;
+};
+
+TRADEZO.normalizeApplicationRef = function(app, fallbackSequence) {
+  app = app || {};
+  var existing = app.appRef || app.appId || app.id;
+  if (existing && !TRADEZO.isPlainNumericId(existing)) return String(existing).trim();
+
+  var sequence = app.application_id || app.backendId || app.applicationId || existing || fallbackSequence;
+  return TRADEZO.formatApplicationId(sequence, app.submitted_at || app.submittedDate || app.date);
+};
+
+TRADEZO.generateApplicationId = function(extraLists) {
+  var lists = [
+    TRADEZO.applications,
+    TRADEZO.licenses,
+    TRADEZO.inspections
+  ];
+  if (Array.isArray(extraLists)) lists = lists.concat(extraLists);
+
+  ['tz_submitted_apps', 'applications', 'tradezo_applications', 'tz_verification_queue'].forEach(function(key) {
+    try {
+      var value = JSON.parse(localStorage.getItem(key) || '[]');
+      if (Array.isArray(value)) lists.push(value);
+    } catch(e) {}
+  });
+
+  var max = 0;
+  lists.forEach(function(list) {
+    if (!Array.isArray(list)) return;
+    list.forEach(function(item) {
+      max = Math.max(
+        max,
+        TRADEZO.applicationSequence(item && item.id),
+        TRADEZO.applicationSequence(item && item.appId),
+        TRADEZO.applicationSequence(item && item.appRef),
+        TRADEZO.applicationSequence(item && item.application_id),
+        TRADEZO.applicationSequence(item && item.applicationId)
+      );
+    });
+  });
+
+  return TRADEZO.formatApplicationId(max + 1);
+};
+
+TRADEZO.isDemoRecord = function(item) {
+  if (!item) return false;
+  var businessName = TRADEZO.normalizeText(item.businessName || item.business_name || item.business || item.companyName);
+  return !!TRADEZO.demoBusinessNames[businessName];
+};
+
+TRADEZO.removeEvaluationDemoData = function() {
+  var storageKeys = [
+    'tz_submitted_apps',
+    'applications',
+    'tradezo_applications',
+    'tz_inspection_reports',
+    'tz_verification_history',
+    'tz_verification_queue',
+    'tz_generated_licenses'
+  ];
+  var demoIds = {};
+
+  function readArray(key) {
+    try {
+      var value = JSON.parse(localStorage.getItem(key) || '[]');
+      return Array.isArray(value) ? value : [];
+    } catch(e) {
+      return [];
+    }
+  }
+
+  storageKeys.forEach(function(key) {
+    readArray(key).forEach(function(item) {
+      if (TRADEZO.isDemoRecord(item)) {
+        var id = TRADEZO.itemId(item);
+        if (id) demoIds[id] = true;
+      }
+    });
+  });
+
+  storageKeys.forEach(function(key) {
+    var current = readArray(key);
+    var filtered = current.filter(function(item) {
+      var id = TRADEZO.itemId(item);
+      return !TRADEZO.isDemoRecord(item) && !(id && demoIds[id]);
+    });
+    if (filtered.length !== current.length) {
+      localStorage.setItem(key, JSON.stringify(filtered));
+    }
+  });
+
+  Object.keys(localStorage).forEach(function(key) {
+    if (key.indexOf('doAppStatus_') !== 0 && key.indexOf('doRejectReason_') !== 0) return;
+    var appId = key.replace('doAppStatus_', '').replace('doRejectReason_', '');
+    if (demoIds[appId]) localStorage.removeItem(key);
+  });
+
+  Object.keys(sessionStorage).forEach(function(key) {
+    if (key.indexOf('doAppStatus_') !== 0 && key.indexOf('doRejectReason_') !== 0) return;
+    var appId = key.replace('doAppStatus_', '').replace('doRejectReason_', '');
+    if (demoIds[appId]) sessionStorage.removeItem(key);
+  });
+};
+
+TRADEZO.removeEvaluationDemoData();
 
 // ============================================================
 // HELPER FUNCTIONS — Use anywhere to get data
@@ -251,7 +257,13 @@ TRADEZO.stats = {
 
 // Get an application by ID
 TRADEZO.getApplication = function(id) {
-  return TRADEZO.applications.find(function(a) { return a.id === id || a.appRef === id; }) || null;
+  return TRADEZO.applications.find(function(a) {
+    return String(a.id) === String(id) ||
+      String(a.appId) === String(id) ||
+      String(a.appRef) === String(id) ||
+      String(a.backendId) === String(id) ||
+      String(a.application_id) === String(id);
+  }) || null;
 };
 
 // Get a license by ID
@@ -271,8 +283,10 @@ TRADEZO.getFOApplications = function(foId) {
 
 // Get inspections for a field officer
 TRADEZO.getFOInspections = function(foId) {
+  var foUser = TRADEZO.users.find(function(u) { return u.id === foId; });
+  var foName = foUser ? foUser.name : '';
   return TRADEZO.inspections.filter(function(i) {
-    return i.assignedFO === TRADEZO.users.find(function(u) { return u.id === foId; }).name;
+    return i.assignedFO === foName || i.assignedFO === foId;
   });
 };
 
@@ -283,7 +297,8 @@ TRADEZO.statusColor = function(status) {
     'Rejected': '#dc2626', 'Expired': '#dc2626',
     'Under Verification': '#f59e0b', 'Pending': '#f59e0b', 'Pending Review': '#f59e0b',
     'Under Review': '#3b82f6', 'In Progress': '#3b82f6', 'Scheduled': '#3b82f6',
-    'Expiring Soon': '#f97316'
+    'Expiring Soon': '#f97316', 'Submitted': '#3b82f6',
+    'License Issued': '#16a34a', 'Licensed': '#16a34a'
   };
   return map[status] || '#6b7280';
 };
@@ -291,28 +306,366 @@ TRADEZO.statusColor = function(status) {
 // Get logged in user from session
 TRADEZO.getLoggedInUser = function() {
   try {
-    return JSON.parse(sessionStorage.getItem('loggedInUser') || '{}');
-  } catch(e) { return {}; }
-};
-
-console.log('✅ TradeZo Mock Data loaded — ' + TRADEZO.applications.length + ' applications, ' + TRADEZO.licenses.length + ' licenses, ' + TRADEZO.users.length + ' users');
-// ============================================================
-// PERSISTENCE — Load user-submitted apps from localStorage
-// So track page finds new apps even after page refresh
-// ============================================================
-(function() {
-  var saved = [];
-  try { saved = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e){}
-  saved.forEach(function(newApp) {
-    var exists = TRADEZO.applications.some(function(a){ return a.appRef === newApp.appRef; });
-    if (!exists) TRADEZO.applications.push(newApp);
-  });
-})();
-
-// Updated getLoggedInUser — reads from sessionStorage key 'loggedInUser'
-TRADEZO.getLoggedInUser = function() {
-  try {
     var u = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null');
     return u || {};
   } catch(e) { return {}; }
 };
+
+console.log('✅ TradeZo Data Hub loaded — ready for dynamic data');
+
+// ============================================================
+// PERSISTENCE — Load user-submitted apps from localStorage
+// BACKEND API ADAPTER - keeps the existing UI shape unchanged
+TRADEZO.API_BASE = 'http://localhost:3000/api';
+TRADEZO.backendLoaded = false;
+
+TRADEZO.roleFor = function(role) {
+  var normalized = String(role || '').toLowerCase().replace(/\s+/g, '_');
+  var map = {
+    superuser: 'superuser',
+    super_user: 'superuser',
+    department_officer: 'department_officer',
+    field_officer: 'officer',
+    officer: 'officer',
+    applicant: 'applicant'
+  };
+  return map[normalized] || 'department_officer';
+};
+
+TRADEZO.backendRequest = function(method, path, body, role, sync) {
+  var url = TRADEZO.API_BASE + path;
+  if (sync) {
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open(method, url, false);
+      xhr.setRequestHeader('role', TRADEZO.roleFor(role));
+      if (body !== undefined && body !== null) xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(body !== undefined && body !== null ? JSON.stringify(body) : null);
+      if (xhr.status >= 200 && xhr.status < 300) return JSON.parse(xhr.responseText || 'null');
+    } catch(e) {
+      console.warn('Backend unavailable for', method, path, e.message);
+    }
+    return null;
+  }
+
+  var options = { method: method, headers: { role: TRADEZO.roleFor(role) } };
+  if (body !== undefined && body !== null) {
+    options.headers['Content-Type'] = 'application/json';
+    options.body = JSON.stringify(body);
+  }
+  return fetch(url, options).then(function(res) {
+    return res.text().then(function(text) {
+      var parsed = text ? JSON.parse(text) : null;
+      if (!res.ok) throw new Error(parsed && parsed.message ? parsed.message : ('Request failed: ' + res.status));
+      return parsed;
+    });
+  });
+};
+
+TRADEZO.unwrap = function(response) {
+  if (!response) return [];
+  return Array.isArray(response) ? response : (response.data || []);
+};
+
+TRADEZO.statusToUi = function(status) {
+  var map = {
+    submitted: 'Pending Review',
+    assigned: 'Assigned',
+    verified: 'Verified',
+    documents_uploaded: 'Documents Verified',
+    inspection_scheduled: 'Inspection Scheduled',
+    inspection_completed: 'Inspection Completed',
+    department_review: 'Department Review',
+    approved: 'Approved',
+    rejected: 'Rejected'
+  };
+  return map[String(status || '').toLowerCase()] || status || 'Pending Review';
+};
+
+TRADEZO.statusToBackend = function(status) {
+  var normalized = String(status || '').toLowerCase().replace(/\s+/g, '_');
+  var map = {
+    pending: 'submitted',
+    pending_review: 'submitted',
+    submitted: 'submitted',
+    assigned: 'assigned',
+    verified: 'verified',
+    documents_verified: 'documents_uploaded',
+    inspection_scheduled: 'inspection_scheduled',
+    inspection_completed: 'inspection_completed',
+    inspection_recorded: 'inspection_completed',
+    department_review: 'department_review',
+    approved: 'approved',
+    license_issued: 'approved',
+    rejected: 'rejected'
+  };
+  return map[normalized] || normalized;
+};
+
+TRADEZO.toUiApplication = function(app) {
+  if (!app) return app;
+  var displayId = TRADEZO.normalizeApplicationRef(app);
+  var backendId = app.application_id || app.backendId || (TRADEZO.isPlainNumericId(app.id) ? Number(app.id) : null);
+  return Object.assign({}, app, {
+    id: displayId,
+    appId: displayId,
+    appRef: displayId,
+    backendId: backendId,
+    applicantId: app.applicant_id,
+    applicantName: app.full_name || app.applicantName || app.applicant || '',
+    applicant: app.full_name || app.applicant || app.applicantName || '',
+    ownerName: app.full_name || app.ownerName || app.applicantName || '',
+    businessName: app.business_name || app.businessName || app.business || '',
+    business: app.business_name || app.business || app.businessName || '',
+    businessType: app.business_type || app.businessType || '',
+    tradeCategory: app.trade_category || app.tradeCategory || app.category || app.business_type || '',
+    category: app.trade_category || app.category || app.business_type || '',
+    shopAddress: app.shop_address || app.shopAddress || app.address || '',
+    address: app.shop_address || app.address || app.shopAddress || '',
+    phone: app.applicant_phone || app.phone || '',
+    aadhaar: app.aadhaar_number || app.aadhaar || '',
+    fatherName: app.father_name || app.fatherName || '',
+    submittedDate: app.submitted_at || app.submittedDate || app.date || '',
+    date: app.submitted_at || app.date || app.submittedDate || '',
+    status: TRADEZO.statusToUi(app.application_status || app.status),
+    assignedFO: app.assignedOfficerId || app.assignedFO || '',
+    fieldOfficerId: app.assignedOfficerId || app.fieldOfficerId || app.field_officer_id || '',
+    paymentStatus: app.paymentDone ? 'Paid' : (app.paymentStatus || 'Pending')
+  });
+};
+
+TRADEZO.toUiLicense = function(lic) {
+  if (!lic) return lic;
+  return Object.assign({}, lic, {
+    id: lic.license_number || lic.licenseNo || lic.id || lic.license_id,
+    licenseNo: lic.license_number || lic.licenseNo || lic.id,
+    licenseId: lic.license_number || lic.licenseId || lic.id,
+    appId: lic.application_id != null ? String(lic.application_id) : (lic.appId || ''),
+    status: lic.status || 'Active',
+    issueDate: lic.issued_date || lic.issueDate || lic.licenseIssueDate || '',
+    licenseIssueDate: lic.issued_date || lic.licenseIssueDate || '',
+    expiryDate: lic.expiry_date || lic.expiryDate || lic.licenseExpiryDate || '',
+    licenseExpiryDate: lic.expiry_date || lic.licenseExpiryDate || ''
+  });
+};
+
+TRADEZO.toUiInspection = function(insp) {
+  if (!insp) return insp;
+  return Object.assign({}, insp, {
+    id: insp.inspection_id || insp.id,
+    appId: insp.application_id ? String(insp.application_id) : (insp.appId || ''),
+    assignedFO: insp.field_officer_id || insp.assignedFO || '',
+    fieldOfficerId: insp.field_officer_id || insp.fieldOfficerId || '',
+    date: insp.completed_date || insp.scheduled_date || insp.date || '',
+    inspectionDate: insp.scheduled_date || insp.inspectionDate || '',
+    submittedDate: insp.completed_date || insp.submittedDate || '',
+    status: insp.status === 'COMPLETED' ? 'Completed' : (insp.status || 'Pending'),
+    result: insp.status === 'FAILED' ? 'Rejected' : (insp.status === 'COMPLETED' ? 'Approved' : (insp.result || 'Pending')),
+    notes: insp.notes || ''
+  });
+};
+
+TRADEZO.toUiUser = function(user) {
+  if (!user) return user;
+  return Object.assign({}, user, {
+    id: user.user_id || user.id,
+    name: user.full_name || user.name,
+    email: user.email,
+    phone: user.phone,
+    empId: user.employee_id || user.empId,
+    role: user.role
+  });
+};
+
+TRADEZO.normalizeStoredApplicationIds = function() {
+  ['tz_submitted_apps', 'applications', 'tradezo_applications'].forEach(function(key) {
+    try {
+      var list = JSON.parse(localStorage.getItem(key) || '[]');
+      if (!Array.isArray(list)) return;
+      var normalized = list.map(TRADEZO.toUiApplication);
+      localStorage.setItem(key, JSON.stringify(normalized));
+    } catch(e) {}
+  });
+};
+
+TRADEZO.hydrateFromBackend = function() {
+  var apps = TRADEZO.backendRequest('GET', '/applications', null, 'department_officer', true);
+  if (!apps) return false;
+  TRADEZO.applications = TRADEZO.unwrap(apps).map(TRADEZO.toUiApplication);
+
+  var licenses = TRADEZO.backendRequest('GET', '/licenses', null, 'department_officer', true);
+  if (licenses) {
+    TRADEZO.licenses = TRADEZO.unwrap(licenses).map(TRADEZO.toUiLicense);
+    TRADEZO.licenses.forEach(function(lic) {
+      var app = TRADEZO.applications.find(function(item) { return String(item.id) === String(lic.appId); });
+      if (app) {
+        lic.businessName = lic.businessName || app.businessName;
+        lic.category = lic.category || app.tradeCategory || app.category;
+        lic.ownerName = lic.ownerName || app.applicantName;
+      }
+    });
+  }
+
+  var inspections = TRADEZO.backendRequest('GET', '/inspections', null, 'department_officer', true);
+  if (inspections) TRADEZO.inspections = TRADEZO.unwrap(inspections).map(TRADEZO.toUiInspection);
+
+  var users = TRADEZO.backendRequest('GET', '/users', null, 'department_officer', true);
+  if (users) TRADEZO.users = TRADEZO.unwrap(users).map(TRADEZO.toUiUser);
+
+  TRADEZO.backendLoaded = true;
+  return true;
+};
+
+TRADEZO.syncApplicationToBackend = function(app, role) {
+  if (!app) return Promise.resolve(null);
+  var backendId = Number(app.backendId || app.application_id || app.id);
+  var status = app.application_status || (app.status ? TRADEZO.statusToBackend(app.status) : null);
+  if (backendId && status) {
+    return TRADEZO.backendRequest('PATCH', '/applications/' + backendId, { application_status: status }, role || 'officer')
+      .catch(function(err) { console.warn('Could not update backend application:', err.message); return null; });
+  }
+  return TRADEZO.backendRequest('POST', '/applications', {
+    applicantName: app.applicantName || app.full_name || app.applicant || app.ownerName || 'Applicant',
+    businessName: app.businessName || app.business_name || app.business || '',
+    tradeCategory: app.tradeCategory || app.trade_category || app.category || app.businessType || '',
+    shopAddress: app.shopAddress || app.shop_address || app.address || '',
+    phone: app.phone || app.applicant_phone || ''
+  }, role || 'applicant').catch(function(err) {
+    console.warn('Could not create backend application:', err.message);
+    return null;
+  });
+};
+
+TRADEZO.createBackendLicense = function(appId, issuedBy) {
+  var numericAppId = Number(appId);
+  if (!numericAppId) return Promise.resolve(null);
+  var expiry = new Date();
+  expiry.setFullYear(expiry.getFullYear() + 1);
+  return TRADEZO.backendRequest('POST', '/licenses', {
+    application_id: numericAppId,
+    issued_by: issuedBy || 1,
+    expiry_date: expiry.toISOString()
+  }, 'department_officer').catch(function(err) {
+    console.warn('Could not create backend license:', err.message);
+    return null;
+  });
+};
+
+TRADEZO.hydrateFromBackend();
+TRADEZO.normalizeStoredApplicationIds();
+
+// So all pages find dynamically-added apps after page refresh
+// ============================================================
+(function() {
+  if (TRADEZO.backendLoaded) {
+    TRADEZO.sortFreshFirst(TRADEZO.applications);
+    TRADEZO.sortFreshFirst(TRADEZO.licenses);
+    TRADEZO.sortFreshFirst(TRADEZO.inspections);
+    TRADEZO.sortFreshFirst(TRADEZO.verifications);
+    TRADEZO.sortFreshFirst(TRADEZO.auditLog);
+    TRADEZO.stats.superUser.totalUsers = TRADEZO.users.length;
+    TRADEZO.stats.superUser.pendingApplications = TRADEZO.applications.filter(function(a){
+      var s = (a.status || '').toLowerCase();
+      return s === 'pending' || s === 'submitted' || s === 'pending review' || s === 'under verification';
+    }).length;
+    TRADEZO.stats.superUser.issuedLicenses = TRADEZO.licenses.length;
+    console.log('Loaded from backend API - ' + TRADEZO.applications.length + ' applications, ' + TRADEZO.licenses.length + ' licenses, ' + TRADEZO.users.length + ' users');
+    return;
+  }
+
+  // Load submitted applications
+  var saved = [];
+  try { saved = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e){}
+  saved = saved.map(TRADEZO.toUiApplication);
+  localStorage.setItem('tz_submitted_apps', JSON.stringify(saved));
+  saved.forEach(function(newApp) {
+    var exists = TRADEZO.applications.some(function(a){ return a.appRef === newApp.appRef || a.id === newApp.id; });
+    if (!exists) TRADEZO.applications.push(newApp);
+  });
+
+  // Load legacy 'applications' key
+  var legacy = [];
+  try { legacy = JSON.parse(localStorage.getItem('applications') || '[]'); } catch(e){}
+  legacy = legacy.map(TRADEZO.toUiApplication);
+  localStorage.setItem('applications', JSON.stringify(legacy));
+  legacy.forEach(function(app) {
+    var exists = TRADEZO.applications.some(function(a){ return a.appRef === app.appRef || a.id === app.id; });
+    if (!exists) TRADEZO.applications.push(app);
+  });
+
+  // Load generated licenses
+  var lics = [];
+  try { lics = JSON.parse(localStorage.getItem('tz_generated_licenses') || '[]'); } catch(e){}
+  lics.forEach(function(lic) {
+    var exists = TRADEZO.licenses.some(function(l){ return l.id === lic.id || l.id === lic.licenseNo; });
+    if (!exists) TRADEZO.licenses.push(lic);
+    // Also update the matching application's status
+    var app = TRADEZO.applications.find(function(a){ return a.id === lic.appId || a.appRef === lic.appId; });
+    if (app) {
+      app.status = 'License Issued';
+      app.licenseNo = lic.licenseNo || lic.id;
+      app.licenseId = lic.licenseNo || lic.id;
+    }
+  });
+
+  // Load registered users
+  var regUsers = [];
+  try { regUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e){}
+  regUsers.forEach(function(u) {
+    var exists = TRADEZO.users.some(function(eu){ return eu.email === u.email; });
+    if (!exists) TRADEZO.users.push(u);
+  });
+
+  // Load super-user-created users
+  var suUsers = [];
+  try { suUsers = JSON.parse(localStorage.getItem('users') || '[]'); } catch(e){}
+  suUsers.forEach(function(u) {
+    var exists = TRADEZO.users.some(function(eu){ return eu.email === u.email; });
+    if (!exists) TRADEZO.users.push(u);
+  });
+
+  // Load inspection reports
+  var reports = [];
+  try { reports = JSON.parse(localStorage.getItem('tz_inspection_reports') || '[]'); } catch(e){}
+  reports.forEach(function(r) {
+    var exists = TRADEZO.inspections.some(function(i){ return i.appId === r.appId; });
+    if (!exists) {
+      TRADEZO.inspections.push({
+        id: r.id || ('INS-' + r.appId),
+        appId: r.appId,
+        businessName: r.businessName || '',
+        type: r.type || r.tradeCategory || r.category || '',
+        tradeCategory: r.tradeCategory || r.type || r.category || '',
+        ownerName: r.ownerName || r.applicantName || '',
+        address: r.address || r.shopAddress || '',
+        assignedFO: r.foName || '',
+        date: r.inspectionDate || r.date || '',
+        inspectionDate: r.inspectionDate || r.date || '',
+        submittedDate: r.submittedDate || r.date || '',
+        time: r.inspectionTime || '',
+        status: 'Completed',
+        result: r.result || 'Completed',
+        notes: r.notes || ''
+      });
+    }
+  });
+
+  // Keep newest records first everywhere the shared data hub is used.
+  TRADEZO.sortFreshFirst(TRADEZO.applications);
+  TRADEZO.sortFreshFirst(TRADEZO.licenses);
+  TRADEZO.sortFreshFirst(TRADEZO.inspections);
+  TRADEZO.sortFreshFirst(TRADEZO.verifications);
+  TRADEZO.sortFreshFirst(TRADEZO.auditLog);
+
+  // Update stats dynamically
+  TRADEZO.stats.superUser.totalUsers = TRADEZO.users.length;
+  TRADEZO.stats.superUser.pendingApplications = TRADEZO.applications.filter(function(a){
+    var s = (a.status || '').toLowerCase();
+    return s === 'pending' || s === 'submitted' || s === 'under verification';
+  }).length;
+  TRADEZO.stats.superUser.issuedLicenses = TRADEZO.licenses.length;
+
+  if (TRADEZO.applications.length || TRADEZO.licenses.length || TRADEZO.users.length) {
+    console.log('📦 Loaded from storage — ' + TRADEZO.applications.length + ' applications, ' + TRADEZO.licenses.length + ' licenses, ' + TRADEZO.users.length + ' users');
+  }
+})();

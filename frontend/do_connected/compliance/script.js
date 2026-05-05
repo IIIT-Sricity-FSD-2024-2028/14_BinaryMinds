@@ -1,158 +1,231 @@
-/* Load Chart.js dynamically */
-var script = document.createElement('script');
-script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-script.onload = function () {
-  var canvas = document.getElementById('donut');
-  if (!canvas) return;
-  new Chart(canvas.getContext('2d'), {
-    type: 'doughnut',
-    data: {
-      datasets: [{
-        data: [900, 220, 110, 54],
-        backgroundColor: ['#0d1b4b', '#f59e0b', '#cbd5e1', '#ef4444'],
-        borderWidth: 0,
-        hoverOffset: 4
-      }]
-    },
-    options: {
-      cutout: '72%',
-      responsive: false,
-      plugins: { legend: { display: false }, tooltip: { enabled: true } }
-    }
-  });
-};
-document.head.appendChild(script);
+// Generated Licenses page
 
-document.addEventListener('DOMContentLoaded', function () {
-
-  /* Export button → CSV download */
-  var btns = document.querySelectorAll('.export-btn');
-  btns.forEach(function(btn) {
-    if (btn.textContent.includes('Export Report')) {
-      btn.addEventListener('click', function () {
-        downloadCSV();
-      });
-    }
-  });
-
-  /* Go Back → dashboard */
-  var goBackBtn = document.querySelector('.go-back');
-  if (goBackBtn) {
-    goBackBtn.addEventListener('click', function () {
-      window.location.href = '../dashboard/index.html';
-    });
+function safeArray(key) {
+  try {
+    var value = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(value) ? value : [];
+  } catch(e) {
+    return [];
   }
-});
-
-function downloadCSV() {
-  // Build CSV from TRADEZO licenses data
-  var headers = ['License ID', 'Business Name', 'Owner Name', 'Category', 'Issue Date', 'Expiry Date', 'Status'];
-  var rows = [];
-
-  TRADEZO.licenses.forEach(function(lic) {
-    rows.push([
-      lic.id,
-      lic.businessName,
-      lic.ownerName,
-      lic.category,
-      lic.issueDate,
-      lic.expiryDate,
-      lic.status
-    ]);
-  });
-
-  // Build CSV string
-  var csv = headers.join(',') + '\n';
-  rows.forEach(function(row) {
-    var escaped = row.map(function(cell) {
-      // Escape quotes and wrap in quotes if contains comma
-      var str = String(cell).replace(/"/g, '""');
-      if (str.indexOf(',') !== -1 || str.indexOf('"') !== -1) {
-        str = '"' + str + '"';
-      }
-      return str;
-    });
-    csv += escaped.join(',') + '\n';
-  });
-
-  // Create and trigger download
-  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  var link = document.createElement('a');
-  var url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', 'compliance_report_' + new Date().toISOString().slice(0, 10) + '.csv');
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 }
 
-/* Render Violated Licenses */
-function renderViolations() {
-  var tbody = document.querySelector('#violationTable tbody');
-  if (!tbody) return;
-  tbody.innerHTML = '';
-  
-  var suspended = [];
-  try { suspended = JSON.parse(localStorage.getItem('tz_suspended_licenses') || '[]'); } catch(e){}
+function getAppId(item) {
+  return item.appId || item.id || item.appRef || item.applicationId || '';
+}
 
-  // Mock an array of violations based strictly on TRADEZO active licenses
-  var violations = [];
-  if (window.TRADEZO && window.TRADEZO.licenses) {
-    // Filter only those approved and in working condition (status: 'Active')
-    var activeLicenses = window.TRADEZO.licenses.filter(function(lic) {
-      return lic.status === 'Active';
-    });
-    
-    var mockReasons = [
-      'Failed Safety Audit (Pending Resolve)',
-      'Multiple public complaints reported',
-      'Operating without proper fire clearances'
-    ];
-    
-    activeLicenses.forEach(function(lic, idx) {
-      violations.push({
-        id: lic.id,
-        name: lic.businessName,
-        sub: lic.category,
-        reason: mockReasons[idx % mockReasons.length],
-        date: lic.issueDate
-      });
+function normalizeText(value) {
+  return String(value || '').toLowerCase().replace(/[_-]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function isDemoRecord(item) {
+  if (window.TRADEZO && typeof TRADEZO.isDemoRecord === 'function') {
+    return TRADEZO.isDemoRecord(item);
+  }
+  var demoNames = {
+    'green valley restaurant': true,
+    'singh electronics': true,
+    'sharma healthcare': true,
+    'tech hub electronics': true
+  };
+  return !!demoNames[normalizeText(item && (item.businessName || item.business || item.business_name))];
+}
+
+function escapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatDate(value) {
+  if (!value) return '-';
+  var date = new Date(value);
+  if (isNaN(date.getTime())) return value;
+  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function findApplication(appId) {
+  var sources = []
+    .concat((window.TRADEZO && TRADEZO.applications) ? TRADEZO.applications : [])
+    .concat(safeArray('tradezo_applications'))
+    .concat(safeArray('applications'))
+    .concat(safeArray('tz_submitted_apps'));
+
+  return sources.find(function(app) {
+    return getAppId(app) === appId || app.appRef === appId;
+  }) || null;
+}
+
+function normalizeLicense(raw) {
+  var appId = raw.appId || raw.applicationId || '';
+  var app = appId ? findApplication(appId) : null;
+  var issueDate = raw.licenseIssueDate || raw.issueDate || raw.date || '';
+
+  return {
+    appId: appId || '-',
+    licenseNo: raw.licenseNo || raw.id || raw.licenseId || '-',
+    businessName: raw.businessName || raw.business || (app ? app.businessName : '') || 'Unknown Business',
+    category: raw.category || raw.tradeCategory || (app ? (app.tradeCategory || app.category) : '') || '-',
+    issueDate: issueDate,
+    expiryDate: raw.licenseExpiryDate || raw.expiryDate || '',
+    status: raw.status || 'Active',
+    sortDate: new Date(issueDate || raw.date || 0)
+  };
+}
+
+function collectDoStatusLicenses(storage) {
+  var licenses = [];
+  for (var i = 0; i < storage.length; i++) {
+    var key = storage.key(i);
+    if (!key || key.indexOf('doAppStatus_') !== 0) continue;
+
+    var state = null;
+    try { state = JSON.parse(storage.getItem(key) || 'null'); } catch(e) {}
+    if (!state || state.status !== 'licensed' || !state.licenseNo) continue;
+
+    var appId = key.replace('doAppStatus_', '');
+    var app = findApplication(appId);
+    licenses.push(normalizeLicense({
+      appId: appId,
+      licenseNo: state.licenseNo,
+      businessName: app ? app.businessName : 'Unknown Business',
+      category: app ? (app.tradeCategory || app.category) : '-',
+      status: 'Active',
+      date: new Date().toISOString()
+    }));
+  }
+  return licenses;
+}
+
+function getGeneratedLicenses() {
+  var licenses = [];
+
+  if (window.TRADEZO && Array.isArray(TRADEZO.licenses)) {
+    TRADEZO.licenses.forEach(function(lic) {
+      licenses.push(normalizeLicense(lic));
     });
   }
-  
-  // Check if these are already suspended
-  var activeViolations = violations.filter(v => !suspended.includes(v.id));
 
-  if (activeViolations.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#64748b;">No active violations found.</td></tr>';
+  safeArray('tz_generated_licenses').forEach(function(lic) {
+    licenses.push(normalizeLicense(lic));
+  });
+
+  licenses = licenses
+    .concat(collectDoStatusLicenses(localStorage))
+    .concat(collectDoStatusLicenses(sessionStorage));
+
+  var seen = {};
+  licenses = licenses.filter(function(lic) {
+    if (isDemoRecord(lic)) return false;
+    if (!lic.licenseNo || lic.licenseNo === '-') return false;
+    if (seen[lic.licenseNo]) return false;
+    seen[lic.licenseNo] = true;
+    return true;
+  });
+
+  licenses.sort(function(a, b) {
+    return b.sortDate - a.sortDate;
+  });
+
+  return licenses;
+}
+
+function renderStats(licenses) {
+  var today = new Date().toDateString();
+  var totalEl = document.getElementById('totalLicenses');
+  var activeEl = document.getElementById('activeLicenses');
+  var todayEl = document.getElementById('todayLicenses');
+
+  var active = licenses.filter(function(lic) {
+    return String(lic.status || '').toLowerCase() === 'active';
+  }).length;
+
+  var generatedToday = licenses.filter(function(lic) {
+    var date = new Date(lic.issueDate || lic.sortDate);
+    return !isNaN(date.getTime()) && date.toDateString() === today;
+  }).length;
+
+  if (totalEl) totalEl.textContent = licenses.length;
+  if (activeEl) activeEl.textContent = active;
+  if (todayEl) todayEl.textContent = generatedToday;
+}
+
+function renderTable(licenses) {
+  var tbody = document.getElementById('licensesBody');
+  var countText = document.getElementById('countText');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+  if (countText) countText.textContent = 'Showing ' + licenses.length + ' license(s)';
+
+  if (!licenses.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-row">No generated licenses found.</td></tr>';
     return;
   }
 
-  activeViolations.forEach(function(v) {
-    var tr = document.createElement('tr');
-    tr.innerHTML = 
-      '<td>' +
-        '<div class="entity-icon" style="background:#fef2f2;color:#ef4444;font-size:18px;">&#9888;</div>' +
-        '<div><div class="ename">' + v.name + '</div><div class="esub">' + v.sub + '</div></div>' +
-      '</td>' +
-      '<td>#' + v.id + '</td>' +
-      '<td style="color:#ef4444;font-weight:500;">' + v.reason + '</td>' +
-      '<td><button class="suspend-btn" onclick="suspendLicense(\'' + v.id + '\')">Suspend</button></td>';
-    tbody.appendChild(tr);
+  licenses.forEach(function(lic) {
+    tbody.innerHTML +=
+      '<tr>' +
+        '<td>' + escapeHtml(lic.appId) + '</td>' +
+        '<td class="license-no">' + escapeHtml(lic.licenseNo) + '</td>' +
+        '<td>' + escapeHtml(lic.businessName) + '</td>' +
+        '<td>' + escapeHtml(lic.category) + '</td>' +
+        '<td>' + escapeHtml(formatDate(lic.issueDate)) + '</td>' +
+        '<td>' + escapeHtml(formatDate(lic.expiryDate)) + '</td>' +
+        '<td><span class="status-badge">' + escapeHtml(lic.status || 'Active') + '</span></td>' +
+      '</tr>';
   });
 }
 
-window.suspendLicense = function(id) {
-  if (confirm('Are you sure you want to suspend license ' + id + '? This action is immediate.')) {
-    var suspended = [];
-    try { suspended = JSON.parse(localStorage.getItem('tz_suspended_licenses') || '[]'); } catch(e){}
-    suspended.push(id);
-    localStorage.setItem('tz_suspended_licenses', JSON.stringify(suspended));
-    renderViolations();
-  }
-};
+function exportLicenses(licenses) {
+  var headers = ['Application ID', 'License Number', 'Business Name', 'Category', 'Issue Date', 'Expiry Date', 'Status'];
+  var rows = licenses.map(function(lic) {
+    return [lic.appId, lic.licenseNo, lic.businessName, lic.category, formatDate(lic.issueDate), formatDate(lic.expiryDate), lic.status];
+  });
+
+  var csv = [headers].concat(rows).map(function(row) {
+    return row.map(function(cell) {
+      return '"' + String(cell == null ? '' : cell).replace(/"/g, '""') + '"';
+    }).join(',');
+  }).join('\n');
+
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement('a');
+  link.href = url;
+  link.download = 'generated_licenses_' + new Date().toISOString().slice(0, 10) + '.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
 document.addEventListener('DOMContentLoaded', function() {
-  renderViolations();
+  var licenses = getGeneratedLicenses();
+  renderStats(licenses);
+  renderTable(licenses);
+
+  var search = document.getElementById('searchInput');
+  if (search) {
+    search.addEventListener('input', function() {
+      var query = this.value.toLowerCase().trim();
+      var filtered = licenses.filter(function(lic) {
+        return [
+          lic.appId,
+          lic.licenseNo,
+          lic.businessName,
+          lic.category,
+          lic.status
+        ].join(' ').toLowerCase().includes(query);
+      });
+      renderTable(filtered);
+    });
+  }
+
+  var exportBtn = document.getElementById('exportLicenses');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', function() {
+      exportLicenses(licenses);
+    });
+  }
 });

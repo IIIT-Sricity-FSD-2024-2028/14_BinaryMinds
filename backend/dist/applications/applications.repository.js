@@ -36,6 +36,12 @@ let ApplicationsRepository = class ApplicationsRepository {
         this.applications[index] = { ...this.applications[index], ...updateData };
         return this.applications[index];
     }
+    findByStatus(status) {
+        return this.applications.filter((app) => app.application_status === status);
+    }
+    findByOfficer(officerId) {
+        return this.applications.filter((app) => app.assignedOfficerId === officerId);
+    }
     delete(id) {
         const initialLength = this.applications.length;
         this.applications = this.applications.filter((app) => app.application_id !== id);

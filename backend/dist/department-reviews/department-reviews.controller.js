@@ -23,6 +23,7 @@ const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const roles_guard_1 = require("../common/guards/roles.guard");
 const role_enum_1 = require("../common/enums/role.enum");
 const swagger_1 = require("@nestjs/swagger");
+const api_route_decorator_1 = require("../common/swagger/api-route.decorator");
 let DepartmentReviewsController = class DepartmentReviewsController {
     service;
     constructor(service) {
@@ -57,6 +58,13 @@ exports.DepartmentReviewsController = DepartmentReviewsController;
 __decorate([
     (0, common_1.Post)(),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Create department review',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER],
+        bodyType: create_department_review_dto_1.CreateDepartmentReviewDto,
+        status: 201,
+        responseExample: { review_id: 1, review_status: 'pending' },
+    }),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -66,6 +74,11 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List department reviews',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER],
+        responseExample: [{ review_id: 1, application_id: 1 }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -74,6 +87,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)('application/:applicationId'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.APPLICANT),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List reviews by application',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.APPLICANT],
+        params: [{ name: 'applicationId', description: 'Application ID' }],
+        responseExample: [{ review_id: 1, application_id: 1 }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __param(0, (0, common_1.Param)('applicationId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -83,6 +102,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)('reviewer/:reviewerId'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List reviews by reviewer',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER],
+        params: [{ name: 'reviewerId', description: 'Reviewer user ID' }],
+        responseExample: [{ review_id: 1, reviewed_by: 4 }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __param(0, (0, common_1.Param)('reviewerId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -92,6 +117,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.APPLICANT),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Get department review by ID',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.APPLICANT],
+        params: [{ name: 'id', description: 'Review ID' }],
+        responseExample: { review_id: 1, review_status: 'pending' },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -101,6 +132,13 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Update department review by ID',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER],
+        params: [{ name: 'id', description: 'Review ID' }],
+        bodyType: update_department_review_dto_1.UpdateDepartmentReviewDto,
+        responseExample: { review_id: 1, review_status: 'approved' },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
@@ -111,6 +149,14 @@ __decorate([
 __decorate([
     (0, common_1.Post)(':id/sign'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Digitally sign a department review',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER],
+        params: [{ name: 'id', description: 'Review ID' }],
+        bodyType: sign_review_dto_1.SignReviewDto,
+        status: 201,
+        responseExample: { review_id: 1, digital_signature: 'signed-token' },
+    }),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
@@ -121,6 +167,12 @@ __decorate([
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.SUPER_USER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Delete department review by ID',
+        roles: [role_enum_1.Role.SUPER_USER],
+        params: [{ name: 'id', description: 'Review ID' }],
+        responseExample: true,
+    }),
     openapi.ApiResponse({ status: 200 }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),

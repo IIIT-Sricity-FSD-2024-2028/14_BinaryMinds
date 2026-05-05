@@ -51,11 +51,11 @@
     <div class="card info-card">
       <h3>📄 Business Info</h3>
 
-      <p><b>Application ID</b><br><span id="appId">TL-2026-001</span></p>
-      <p><b>Business Name</b><br><span id="bizName">Green Valley Restaurant</span></p>
-      <p><b>Owner Name</b><br><span id="ownerName">Rajesh Kumar</span></p>
-      <p><b>Trade Category</b><br><span id="tradeCategory">Food & Beverage</span></p>
-      <p><b>Address</b><br><span id="address">123 Main Street, Gurugram</span></p>
+      <p><b>Application ID</b><br><span id="appId">-</span></p>
+      <p><b>Business Name</b><br><span id="bizName">-</span></p>
+      <p><b>Owner Name</b><br><span id="ownerName">-</span></p>
+      <p><b>Trade Category</b><br><span id="tradeCategory">-</span></p>
+      <p><b>Address</b><br><span id="address">-</span></p>
     </div>
 
     <!-- RIGHT FORM -->
@@ -79,8 +79,10 @@
       <label>Inspection Evidence Photos</label>
 
       <div class="upload-box" onclick="document.getElementById('fileInput').click()">
-        <p>⬆ Upload Images</p>
-        <span>JPG, PNG (Max 5MB)</span>
+        <span class="upload-icon" aria-hidden="true"></span>
+        <p>Upload Evidence Photos</p>
+        <span>Click to choose JPG or PNG files (Max 5MB)</span>
+        <button type="button" class="upload-action">Upload Files</button>
         <input type="file" id="fileInput" multiple hidden>
       </div>
 

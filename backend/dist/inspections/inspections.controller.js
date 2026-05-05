@@ -23,13 +23,27 @@ const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const roles_guard_1 = require("../common/guards/roles.guard");
 const role_enum_1 = require("../common/enums/role.enum");
 const swagger_1 = require("@nestjs/swagger");
+const api_route_decorator_1 = require("../common/swagger/api-route.decorator");
+const audit_logs_service_1 = require("../audit-logs/audit-logs.service");
 let InspectionsController = class InspectionsController {
     service;
-    constructor(service) {
+    auditLogsService;
+    constructor(service, auditLogsService) {
         this.service = service;
+        this.auditLogsService = auditLogsService;
     }
     create(createDto) {
-        return this.service.create(createDto);
+        const inspection = this.service.create(createDto);
+        this.auditLogsService.log({
+            user_name: 'Field Officer',
+            role: 'field_officer',
+            action: 'Create',
+            module: 'Inspections',
+            description: `Created inspection ${inspection.inspection_id}`,
+            ip_address: '127.0.0.1',
+            source: 'backend',
+        });
+        return inspection;
     }
     findAll() {
         return this.service.findAll();
@@ -44,7 +58,17 @@ let InspectionsController = class InspectionsController {
         return this.service.findOne(id);
     }
     update(id, updateDto) {
-        return this.service.update(id, updateDto);
+        const inspection = this.service.update(id, updateDto);
+        this.auditLogsService.log({
+            user_name: 'Field Officer',
+            role: 'field_officer',
+            action: 'Update',
+            module: 'Inspections',
+            description: `Updated inspection ${id}`,
+            ip_address: '127.0.0.1',
+            source: 'backend',
+        });
+        return inspection;
     }
     submitReport(id, reportDto) {
         return this.service.submitReport(id, reportDto);
@@ -57,6 +81,13 @@ exports.InspectionsController = InspectionsController;
 __decorate([
     (0, common_1.Post)(),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Create inspection',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        bodyType: create_inspection_dto_1.CreateInspectionDto,
+        status: 201,
+        responseExample: { inspection_id: 1, assignment_id: 1, status: 'scheduled' },
+    }),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -66,6 +97,11 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List inspections',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        responseExample: [{ inspection_id: 1, assignment_id: 1 }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -74,6 +110,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)('assignment/:assignmentId'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List inspections by assignment',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'assignmentId', description: 'Assignment ID' }],
+        responseExample: [{ inspection_id: 1, assignment_id: 1 }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __param(0, (0, common_1.Param)('assignmentId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -83,6 +125,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)('field-officer/:fieldOfficerId'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List inspections by field officer',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'fieldOfficerId', description: 'Field officer user ID' }],
+        responseExample: [{ inspection_id: 1, field_officer_id: 2 }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __param(0, (0, common_1.Param)('fieldOfficerId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -92,6 +140,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Get inspection by ID',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'id', description: 'Inspection ID' }],
+        responseExample: { inspection_id: 1, status: 'scheduled' },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -101,6 +155,13 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Update inspection by ID',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'id', description: 'Inspection ID' }],
+        bodyType: update_inspection_dto_1.UpdateInspectionDto,
+        responseExample: { inspection_id: 1, status: 'completed' },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
@@ -111,6 +172,14 @@ __decorate([
 __decorate([
     (0, common_1.Post)(':id/report'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.DEPARTMENT_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Submit inspection report',
+        roles: [role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.DEPARTMENT_OFFICER],
+        params: [{ name: 'id', description: 'Inspection ID' }],
+        bodyType: submit_inspection_report_dto_1.SubmitInspectionReportDto,
+        status: 201,
+        responseExample: { inspection_id: 1, status: 'completed', result: 'approved' },
+    }),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
@@ -121,6 +190,12 @@ __decorate([
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Delete inspection by ID',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER],
+        params: [{ name: 'id', description: 'Inspection ID' }],
+        responseExample: true,
+    }),
     openapi.ApiResponse({ status: 200 }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -131,6 +206,7 @@ exports.InspectionsController = InspectionsController = __decorate([
     (0, swagger_1.ApiTags)('Inspections'),
     (0, common_1.Controller)('inspections'),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
-    __metadata("design:paramtypes", [inspections_service_1.InspectionsService])
+    __metadata("design:paramtypes", [inspections_service_1.InspectionsService,
+        audit_logs_service_1.AuditLogsService])
 ], InspectionsController);
 //# sourceMappingURL=inspections.controller.js.map

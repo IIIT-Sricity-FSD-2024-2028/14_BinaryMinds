@@ -2,9 +2,11 @@ import { LicensesService } from './licenses.service';
 import { CreateLicenseDto } from './dto/create-license.dto';
 import { UpdateLicenseDto } from './dto/update-license.dto';
 import { RenewLicenseDto } from './dto/renew-license.dto';
+import { AuditLogsService } from '../audit-logs/audit-logs.service';
 export declare class LicensesController {
     private readonly service;
-    constructor(service: LicensesService);
+    private readonly auditLogsService;
+    constructor(service: LicensesService, auditLogsService: AuditLogsService);
     create(createDto: CreateLicenseDto): import("./license.interface").License;
     findAll(): import("./license.interface").License[];
     findByApplication(applicationId: number): import("./license.interface").License;

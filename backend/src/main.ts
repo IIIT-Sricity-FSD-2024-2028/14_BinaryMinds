@@ -21,11 +21,14 @@ async function bootstrap() {
   // Setup Swagger
   const config = new DocumentBuilder()
     .setTitle('TradeZo API')
-    .setDescription('The TradeZo Central system API documentation')
+    .setDescription(
+      'Backend API documentation for TradeZo. Protected endpoints require a role header matching one of the documented role values.',
+    )
     .setVersion('1.0')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, documentFactory);
+  SwaggerModule.setup('swagger', app, documentFactory);
 
   await app.listen(process.env.PORT ?? 3000);
 }

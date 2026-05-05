@@ -2,18 +2,24 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { ApplicationsRepository } from './applications.repository';
 import { Application } from './application.interface';
 import { ApplicationStatus } from '../common/enums/application-status.enum';
 import { CreateApplicationDto } from './dto/create-application.dto';
+import { CreateSimpleApplicationDto } from './dto/create-simple-application.dto';
 import { UsersService } from '../users/users.service';
+import { OfficersService } from '../officers/officers.service';
 
 @Injectable()
 export class ApplicationsService {
   constructor(
     private readonly applicationsRepository: ApplicationsRepository,
     private readonly usersService: UsersService,
+    @Inject(forwardRef(() => OfficersService))
+    private readonly officersService: OfficersService,
   ) {}
 
   findAll(): Application[] {
@@ -64,8 +70,96 @@ export class ApplicationsService {
     const newAppRecord = {
       ...applicationData,
       application_status: ApplicationStatus.SUBMITTED,
+      paymentDone: true,
+      assignedOfficerId: null,
     };
     return this.applicationsRepository.create(newAppRecord);
+  }
+
+  /**
+   * Simplified create — used by the new workflow.
+   * Only requires applicantName. Sets paymentDone = true, status = submitted.
+   */
+  createSimple(data: CreateSimpleApplicationDto): Application {
+    const newAppRecord = {
+      applicant_id: 0, // No user system dependency for simplified flow
+      full_name: data.applicantName,
+      business_name: data.businessName || 'N/A',
+      business_type: data.tradeCategory || 'General',
+      trade_category: data.tradeCategory || 'General',
+      shop_address: data.shopAddress || '',
+      applicant_phone: data.phone || '',
+      application_status: ApplicationStatus.SUBMITTED,
+      paymentDone: true,
+      assignedOfficerId: null,
+    };
+    return this.applicationsRepository.create(newAppRecord);
+  }
+
+  /**
+   * Return all applications where status = 'submitted' AND paymentDone = true.
+   */
+  findSubmitted(): Application[] {
+    return this.applicationsRepository
+      .findByStatus(ApplicationStatus.SUBMITTED)
+      .filter((app) => app.paymentDone === true);
+  }
+
+  /**
+   * Assign an application to a specific officer, or to the officer with the least assignedCount.
+   * Updates assignedOfficerId and status = 'assigned'.
+   */
+  assignToOfficer(id: number, officerId?: number): Application {
+    const application = this.findOne(id);
+
+    if (application.application_status !== ApplicationStatus.SUBMITTED) {
+      throw new BadRequestException(
+        `Application ${id} is not in 'submitted' status (current: ${application.application_status})`,
+      );
+    }
+
+    const assignedId = officerId !== undefined ? officerId : this.officersService.findLeastLoaded().id;
+
+    const updated = this.applicationsRepository.update(id, {
+      assignedOfficerId: assignedId,
+      application_status: ApplicationStatus.ASSIGNED,
+    });
+
+    if (!updated) {
+      throw new NotFoundException(`Application with ID ${id} not found during assignment`);
+    }
+
+    return updated;
+  }
+
+  /**
+   * Return all applications assigned to a specific officer.
+   */
+  findByOfficer(officerId: number): Application[] {
+    return this.applicationsRepository.findByOfficer(officerId);
+  }
+
+  /**
+   * Mark an application as verified (officer action).
+   */
+  verify(id: number): Application {
+    const application = this.findOne(id);
+
+    if (application.application_status !== ApplicationStatus.ASSIGNED) {
+      throw new BadRequestException(
+        `Application ${id} is not in 'assigned' status (current: ${application.application_status})`,
+      );
+    }
+
+    const updated = this.applicationsRepository.update(id, {
+      application_status: ApplicationStatus.VERIFIED,
+    });
+
+    if (!updated) {
+      throw new NotFoundException(`Application with ID ${id} not found during verification`);
+    }
+
+    return updated;
   }
 
   update(id: number, updateData: Partial<Application>): Application {
@@ -106,7 +200,20 @@ export class ApplicationsService {
   ): void {
     const allowedTransitions: Record<ApplicationStatus, ApplicationStatus[]> = {
       [ApplicationStatus.SUBMITTED]: [
+        ApplicationStatus.ASSIGNED,
+        ApplicationStatus.VERIFIED,
         ApplicationStatus.DOCUMENTS_UPLOADED,
+        ApplicationStatus.APPROVED,
+        ApplicationStatus.REJECTED,
+      ],
+      [ApplicationStatus.ASSIGNED]: [
+        ApplicationStatus.VERIFIED,
+        ApplicationStatus.REJECTED,
+      ],
+      [ApplicationStatus.VERIFIED]: [
+        ApplicationStatus.DOCUMENTS_UPLOADED,
+        ApplicationStatus.INSPECTION_SCHEDULED,
+        ApplicationStatus.APPROVED,
         ApplicationStatus.REJECTED,
       ],
       [ApplicationStatus.DOCUMENTS_UPLOADED]: [

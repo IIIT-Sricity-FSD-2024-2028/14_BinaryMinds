@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Wire buttons
   var trackBtn = document.getElementById('trackBtn');
   if (trackBtn) trackBtn.addEventListener('click', function(){
-    window.location.href = '../Track Application Status/index.html';
+    window.location.href = '../Track%20Application%20Status/index.html';
   });
 
   var downloadBtn = document.getElementById('downloadBtn');
@@ -55,26 +55,51 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var cancelBtn = document.getElementById('cancelBtn');
   if (cancelBtn) cancelBtn.addEventListener('click', function(){
-    window.location.href = '../Applicant dashboard/index.html';
+    window.location.href = '../Applicant%20dashboard/index.html';
   });
 
   // Also handle any inline onclick="goTrack()" patterns
-  window.goTrack = function() { window.location.href = '../Track Application Status/index.html'; };
-  window.goDashboard = function() { window.location.href = '../Applicant dashboard/index.html'; };
+  window.goTrack = function() { window.location.href = '../Track%20Application%20Status/index.html'; };
+  window.goDashboard = function() { window.location.href = '../Applicant%20dashboard/index.html'; };
 });
 // Generate new application object
 function saveApplication() {
     let applications = JSON.parse(localStorage.getItem("applications")) || [];
+    let submittedApps = [];
+    try { submittedApps = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e) {}
     
     let form = {};
     try {
         form = JSON.parse(sessionStorage.getItem('applicationForm') || '{}');
     } catch(e) {}
     
-    let ref = sessionStorage.getItem('applicationRef') || ("APP-" + Date.now());
+    function findExistingApplication(value) {
+        var wanted = String(value || '').trim();
+        if (!wanted) return null;
+        var allApps = applications.concat(submittedApps).concat((window.TRADEZO && Array.isArray(TRADEZO.applications)) ? TRADEZO.applications : []);
+        return allApps.find(function(app) {
+            return String(app && (app.id || app.appRef || app.appId) || '').trim() === wanted;
+        }) || null;
+    }
 
+    let ref = sessionStorage.getItem('applicationRef');
+    if (!ref || /^\d+$/.test(String(ref).trim()) || /^APP-/i.test(String(ref).trim())) {
+        ref = (window.TRADEZO && typeof TRADEZO.generateApplicationId === 'function')
+            ? TRADEZO.generateApplicationId([applications])
+            : ('TL-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6));
+        sessionStorage.setItem('applicationRef', ref);
+    }
+    var existingApplication = findExistingApplication(ref);
+    if (existingApplication) {
+        ref = existingApplication.appRef || existingApplication.id || existingApplication.appId || ref;
+        sessionStorage.setItem('applicationRef', ref);
+    }
+
+    var nowIso = new Date().toISOString();
     let newApp = {
         id: ref,
+        appId: ref,
+        appRef: ref,
         applicantName: form.fullName || "Test Applicant",
         email: form.email || "",
         phone: form.phone || "",
@@ -84,16 +109,24 @@ function saveApplication() {
         licenseType: form.businessType || "Business License",
         status: "Pending",
         submittedDate: new Date().toLocaleDateString(),
+        createdAt: nowIso,
+        updatedAt: nowIso,
         shopAddress: form.shopAddress || "Test Location",
         paymentStatus: 'Paid',
-        paymentAmount: sessionStorage.getItem('calculatedFeeString') || getDynamicFeeFallback()
+        paymentAmount: sessionStorage.getItem('calculatedFeeString') || getDynamicFeeFallback(),
+        paymentDate: nowIso
     };
 
-    // Ensure we don't save duplicates if page is refreshed
-    if (!applications.find(a => a.id === ref)) {
-        applications.push(newApp);
-        localStorage.setItem("applications", JSON.stringify(applications));
+    // Mirror the paid application into the legacy key without minting a second ID.
+    var existingIndex = applications.findIndex(function(a) {
+        return String(a && (a.id || a.appRef || a.appId) || '').trim() === String(ref).trim();
+    });
+    if (existingIndex === -1) {
+        applications.unshift(newApp);
+    } else {
+        applications[existingIndex] = Object.assign({}, applications[existingIndex], newApp);
     }
+    localStorage.setItem("applications", JSON.stringify(applications));
 }
 
 // Call this when payment is successful

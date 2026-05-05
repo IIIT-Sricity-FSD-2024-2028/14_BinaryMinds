@@ -28,7 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
 
-  history.slice().reverse().forEach(function(item) {
+  var freshHistory = window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function'
+    ? TRADEZO.sortFreshFirst(history.slice())
+    : history.slice();
+
+  freshHistory.forEach(function(item) {
     var isRejected = item.decision === 'Rejected';
     var boxColor = isRejected ? 'box-red' : 'box-green';
     list.innerHTML +=

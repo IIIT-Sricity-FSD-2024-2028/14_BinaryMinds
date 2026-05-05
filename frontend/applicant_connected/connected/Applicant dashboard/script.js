@@ -31,6 +31,7 @@
         sessionUser = {
           name: localUser.name || 'Applicant',
           email: localUser.email,
+          phone: localUser.phone || '',
           role: 'applicant'
         };
         sessionStorage.setItem('loggedInUser', JSON.stringify(sessionUser));
@@ -85,6 +86,10 @@
       });
     }
 
+    if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
+      TRADEZO.sortFreshFirst(apps);
+    }
+
     return apps;
   }
 
@@ -100,6 +105,7 @@
     function belongsToUser(app) {
       if (!app) return false;
       if (user.email && normalizeText(app.email) === normalizeText(user.email)) return true;
+      if (user.email && normalizeText(app.applicantId) === normalizeText(user.email)) return true;
       if (user.name && normalizeText(app.applicantName) === normalizeText(user.name)) return true;
       if (user.id && (normalizeText(app.userId) === normalizeText(user.id) || normalizeText(app.applicantId) === normalizeText(user.id))) return true;
       return false;
@@ -107,14 +113,15 @@
 
     if (appRef) {
       matches = apps.filter(function(app) {
-        return (app.appRef === appRef || app.id === appRef);
+        return (app.appRef === appRef || app.id === appRef) && belongsToUser(app);
       });
-      if (matches.length) return matches[matches.length - 1];
+      if (matches.length) return matches[0];
     }
 
     if (!matches.length && user.email) {
       matches = apps.filter(function(app) {
-        return normalizeText(app.email) === normalizeText(user.email);
+        return normalizeText(app.email) === normalizeText(user.email) ||
+               normalizeText(app.applicantId) === normalizeText(user.email);
       });
     }
 
@@ -130,7 +137,7 @@
       });
     }
 
-    return matches.length ? matches[matches.length - 1] : null;
+    return matches.length ? matches[0] : null;
   }
 
   function statusLabel(app) {
@@ -164,6 +171,11 @@
 
   function buildActionButton(label, href) {
     return '<button type="button" onclick="window.location.href=\'' + href + '\'">' + label + '</button>';
+  }
+
+  function goApplyLicense(event) {
+    if (event && typeof event.preventDefault === 'function') event.preventDefault();
+    window.location.href = '../apply_license/apply_license.html';
   }
 
   function setText(el, value) {
@@ -236,7 +248,7 @@
       
       if (button) {
         button.textContent = 'Apply License';
-        button.onclick = function() { window.location.href = '../apply_license/apply_license.html'; };
+        button.onclick = goApplyLicense;
       }
       return;
     }
@@ -278,13 +290,19 @@
     }
     p3.innerHTML = '<b>Status:</b> ' + statusLabel(app);
     if (button) {
-      button.textContent = 'Track Application';
+      button.textContent = 'Download License';
       button.onclick = function() {
-        window.location.href = '../Track Application Status/index.html';
-}
+        window.location.href = '../download/index.html';
+      };
+    }
+  }
   function handleLogout() {
     sessionStorage.removeItem('loggedInUser');
     sessionStorage.removeItem('applicationRef');
+    Object.keys(sessionStorage).forEach(function(key) {
+      if (key.indexOf('notifsRead_') === 0) sessionStorage.removeItem(key);
+    });
+    localStorage.removeItem('user');
     window.location.href = '../login/index.html';
   }
 
@@ -294,18 +312,23 @@
 
     var welcomeEl = document.getElementById('welcomeText');
     if (welcomeEl) {
-      var displayName = (app && app.applicantName) ? app.applicantName : (user.name || 'Applicant');
+      // Only use profile data if it belongs to the current user
+      var profileData = {};
+      try { profileData = JSON.parse(localStorage.getItem('applicant_profile_data') || '{}'); } catch(e) {}
+      var pdOwner = (profileData.ownerEmail || profileData.email || '').toLowerCase();
+      var myEmail = (user.email || '').toLowerCase();
+      if (!pdOwner || !myEmail || pdOwner !== myEmail) profileData = {};
+      // Priority: edited profile name → application form name → session name → fallback
+      var displayName = profileData.name || (app && app.applicantName) || user.name || 'Applicant';
       welcomeEl.textContent = 'Welcome, ' + displayName;
     }
 
     var subtitle = document.querySelector('.welcome p');
     if (subtitle) {
-      if (app && app.id) {
-        subtitle.textContent = 'Applicant ID: ' + app.id;
-      } else if (user.email) {
-        subtitle.textContent = 'Applicant ID: ' + (user.id || user.email);
+      if (user && user.email) {
+        subtitle.textContent = user.email;
       } else {
-        subtitle.textContent = 'Track your application and complete pending steps.';
+        subtitle.textContent = '';
       }
       // Force inline style to ensure absolute visibility overrides
       subtitle.style.color = '#ffffff';
@@ -320,6 +343,7 @@
 
 
     window.handleLogout = handleLogout;
+    window.goApplyLicense = goApplyLicense;
     window.goPayment = function() {
       window.location.href = '../paynow/index.html';
     };

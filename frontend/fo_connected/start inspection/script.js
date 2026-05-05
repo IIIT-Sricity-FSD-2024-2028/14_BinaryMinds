@@ -1,11 +1,67 @@
 document.addEventListener('DOMContentLoaded', function () {
 
   /* ── 1. Populate business info from sessionStorage ── */
-  var appId    = sessionStorage.getItem('selectedApp')   || 'TL-2026-001';
-  var bizName  = sessionStorage.getItem('businessName')  || 'Green Valley Restaurant';
-  var owner    = sessionStorage.getItem('ownerName')     || 'Rajesh Kumar';
-  var category = sessionStorage.getItem('tradeCategory') || 'Food & Beverage';
-  var address  = sessionStorage.getItem('address')       || '123 Main Street, Gurugram';
+  var appId    = sessionStorage.getItem('selectedApp')   || '';
+  var bizName  = sessionStorage.getItem('businessName')  || '';
+  var owner    = sessionStorage.getItem('ownerName')     || '';
+  var category = sessionStorage.getItem('tradeCategory') || '';
+  var address  = sessionStorage.getItem('address')       || '';
+
+  function safeArray(key) {
+    try {
+      var value = JSON.parse(localStorage.getItem(key) || '[]');
+      return Array.isArray(value) ? value : [];
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function clean(val) {
+    if (val == null) return '';
+    var text = String(val).trim();
+    var lower = text.toLowerCase();
+    if (!text || lower === 'undefined' || lower === 'null' || lower === 'n/a' || text === '-' || text === '—') return '';
+    return text;
+  }
+
+  function firstValue() {
+    for (var i = 0; i < arguments.length; i++) {
+      var value = clean(arguments[i]);
+      if (value) return value;
+    }
+    return '';
+  }
+
+  function appIdOf(item) {
+    if (!item) return '';
+    return firstValue(item.appId, item.id, item.appRef, item.applicationId, item.application_id);
+  }
+
+  function findStoredApplication(id) {
+    var sources = []
+      .concat(window.TRADEZO && Array.isArray(TRADEZO.applications) ? TRADEZO.applications : [])
+      .concat(safeArray('tz_submitted_apps'))
+      .concat(safeArray('applications'))
+      .concat(safeArray('tradezo_applications'));
+
+    return sources.find(function(item) {
+      return String(appIdOf(item)) === String(id);
+    }) || {};
+  }
+
+  var storedApp = findStoredApplication(appId);
+  bizName = firstValue(bizName, storedApp.businessName, storedApp.business_name, storedApp.business) || bizName;
+  owner = firstValue(owner, storedApp.ownerName, storedApp.applicantName, storedApp.full_name, storedApp.applicant) || owner;
+  category = firstValue(
+    category,
+    storedApp.tradeCategory,
+    storedApp.trade_category,
+    storedApp.category,
+    storedApp.licenseType,
+    storedApp.businessType,
+    storedApp.business_type
+  ) || category;
+  address = firstValue(address, storedApp.shopAddress, storedApp.shop_address, storedApp.address) || address;
 
   function setText(id, val) {
     var el = document.getElementById(id);
@@ -55,6 +111,13 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
+    if (!appId) {
+      showInlineError('No application selected for inspection.');
+      return;
+    }
+
+    var nowIso = new Date().toISOString();
+
     /* Persist to sessionStorage */
     sessionStorage.setItem('inspectionSubmitted', appId);
     sessionStorage.setItem('inspectionResult',    inspResult);
@@ -68,15 +131,19 @@ document.addEventListener('DOMContentLoaded', function () {
       appId: appId,
       businessName: bizName,
       type: category,
+      tradeCategory: category,
       address: address,
       ownerName: owner,
       date: inspDate,
+      inspectionDate: inspDate,
       result: inspResult,
       notes: inspNotes.trim(),
-      submittedDate: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
+      submittedDate: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }),
+      updatedAt: nowIso,
+      createdAt: nowIso
     };
     reports = reports.filter(function(r){ return r.appId !== appId; });
-    reports.push(report);
+    reports.unshift(report);
     localStorage.setItem('tz_inspection_reports', JSON.stringify(reports));
 
     /* Update mock inspection status in memory */
@@ -97,12 +164,27 @@ document.addEventListener('DOMContentLoaded', function () {
     applications.forEach(function(a) {
         if (a.id === appId) {
             a.status = (inspResult === 'Rejected') ? 'Rejected' : 'Inspection Recorded';
+            a.updatedAt = nowIso;
             if (inspResult === 'Rejected') {
                 a.rejectionReason = 'Rejected during Field Inspection. Remarks: ' + inspNotes.trim();
             }
         }
     });
     localStorage.setItem('applications', JSON.stringify(applications));
+
+    /* Update tz_submitted_apps for global sync */
+    let tzApps = [];
+    try { tzApps = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e){}
+    tzApps.forEach(function(a) {
+        if (a.id === appId || a.appRef === appId) {
+            a.status = (inspResult === 'Rejected') ? 'Rejected' : 'Inspection Recorded';
+            a.updatedAt = nowIso;
+            if (inspResult === 'Rejected') {
+                a.rejectionReason = 'Rejected during Field Inspection. Remarks: ' + inspNotes.trim();
+            }
+        }
+    });
+    localStorage.setItem('tz_submitted_apps', JSON.stringify(tzApps));
 
     /* Show the success popup */
     showSubmitPopup(appId, bizName, inspResult);

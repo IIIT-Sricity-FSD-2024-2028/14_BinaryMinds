@@ -12,11 +12,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RolesGuard = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
+const role_enum_1 = require("../enums/role.enum");
 const roles_decorator_1 = require("../decorators/roles.decorator");
 let RolesGuard = class RolesGuard {
     reflector;
     constructor(reflector) {
         this.reflector = reflector;
+    }
+    normalizeRole(raw) {
+        const map = {
+            superuser: role_enum_1.Role.SUPER_USER,
+            super_user: role_enum_1.Role.SUPER_USER,
+            officer: role_enum_1.Role.FIELD_OFFICER,
+            field_officer: role_enum_1.Role.FIELD_OFFICER,
+            applicant: role_enum_1.Role.APPLICANT,
+            department_officer: role_enum_1.Role.DEPARTMENT_OFFICER,
+        };
+        return map[raw.toLowerCase()] || raw;
     }
     canActivate(context) {
         const requiredRoles = this.reflector.getAllAndOverride(roles_decorator_1.ROLES_KEY, [
@@ -27,10 +39,11 @@ let RolesGuard = class RolesGuard {
             return true;
         }
         const request = context.switchToHttp().getRequest();
-        const userRole = request.headers['role'];
-        if (!userRole) {
+        const rawRole = request.headers['role'];
+        if (!rawRole) {
             throw new common_1.ForbiddenException('Role header is missing');
         }
+        const userRole = this.normalizeRole(rawRole);
         if (!requiredRoles.includes(userRole)) {
             throw new common_1.ForbiddenException('You do not have access to this resource');
         }

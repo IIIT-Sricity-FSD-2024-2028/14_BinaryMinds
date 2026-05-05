@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="../mockdata.js?v=dept-officer-management-20260504"></script>
+<script src="../mockdata.js?v=application-dedupe-20260505"></script>
 <script src="session_guard.js?v=dept-officer-management-20260504"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -26,16 +26,13 @@
         <span class="nav-icon">&#9783;</span> Dashboard
       </a>
       <a href="#" class="nav-link" onclick="showPage('user-management', this)">
-        <span class="nav-icon">&#9786;</span> User Management
+        <span class="nav-icon">&#9786;</span> Field Officer Management
       </a>
       <a href="#" class="nav-link" onclick="showPage('department-officers', this)">
         <span class="nav-icon">&#9812;</span> Department Officer Management
       </a>
       <a href="#" class="nav-link" onclick="showPage('applications', this)">
         <span class="nav-icon">&#9998;</span> Applications Overview
-      </a>
-      <a href="#" class="nav-link" onclick="showPage('licenses', this)">
-        <span class="nav-icon">&#9733;</span> License Management
       </a>
       <a href="#" class="nav-link" onclick="showPage('settings', this)">
         <span class="nav-icon">&#9881;</span> System Settings
@@ -82,7 +79,7 @@
           <div class="stat-card">
             <div class="stat-left">
               <div class="stat-label">Total Users</div>
-              <div class="stat-value">12,458</div>
+              <div class="stat-value" id="dashboard-total-users">0</div>
               <div class="stat-change green">&#8593; +12% from last month</div>
             </div>
             <div class="stat-icon">&#128100;</div>
@@ -90,7 +87,7 @@
           <div class="stat-card">
             <div class="stat-left">
               <div class="stat-label">Pending Applications</div>
-              <div class="stat-value">234</div>
+              <div class="stat-value" id="dashboard-pending-apps">0</div>
               <div class="stat-change red">&#8595; -8% from last week</div>
             </div>
             <div class="stat-icon">&#128203;</div>
@@ -98,14 +95,14 @@
           <div class="stat-card">
             <div class="stat-left">
               <div class="stat-label">Issued Licenses</div>
-              <div class="stat-value">8,967</div>
+              <div class="stat-value" id="dashboard-issued-licenses">0</div>
               <div class="stat-change green">&#8593; +5% from last month</div>
             </div>
             <div class="stat-icon">&#127981;</div>
           </div>
  
         </div>
- 
+
         <div class="card">
           <div class="card-title">Recent Activity</div>
           <table class="data-table">
@@ -122,12 +119,12 @@
       </div>
     </div>
  
-    <!-- ==================== PAGE: USER MANAGEMENT ==================== -->
+    <!-- ==================== PAGE: FIELD OFFICER MANAGEMENT ==================== -->
     <div id="page-user-management" class="page">
       <div class="content">
         <div class="page-top-bar">
           <div>
-            <div class="page-heading">User Management</div>
+            <div class="page-heading">Field Officer Management</div>
             <div class="page-sub">Manage field officer accounts and access</div>
           </div>
           <button class="btn-primary" onclick="openAddModal()">+ Add Field Officer</button>
@@ -238,11 +235,6 @@
             </select>
             <select class="filter-select" id="app-category-filter" onchange="filterApplications()">
               <option value="">All Categories</option>
-              <option value="Retail">Retail</option>
-              <option value="Wholesale">Wholesale</option>
-              <option value="Manufacturing">Manufacturing</option>
-              <option value="Food & Beverages">Food &amp; Beverages</option>
-              <option value="Healthcare">Healthcare</option>
             </select>
           </div>
           <table class="data-table">
@@ -253,73 +245,13 @@
                 <th>Business Name</th>
                 <th>Trade Category</th>
                 <th>Submitted Date</th>
-                <th>Status</th>
+                <th>Assign Field Officer</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody id="apps-tbody"></tbody>
           </table>
           <div class="pagination" id="apps-pagination"></div>
-        </div>
-      </div>
-    </div>
- 
-    <!-- ==================== PAGE: LICENSE MANAGEMENT ==================== -->
-    <div id="page-licenses" class="page">
-      <div class="content">
-        <div class="page-heading">License Management</div>
-        <div class="page-sub">View, manage and revoke issued trade licenses</div>
- 
-        <div class="stat-row">
-          <div class="stat-card">
-            <div class="stat-left"><div class="stat-label">Total Issued</div><div class="stat-value" id="lic-total">0</div></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-left"><div class="stat-label">Active</div><div class="stat-value green" id="lic-active">0</div></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-left"><div class="stat-label">Expiring Soon</div><div class="stat-value orange" id="lic-expiring">0</div></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-left"><div class="stat-label">Revoked</div><div class="stat-value red" id="lic-revoked">0</div></div>
-          </div>
-        </div>
- 
-        <div class="card">
-          <div class="filter-bar">
-            <input type="text" class="search-input" placeholder="Search by business name, owner, license ID..." oninput="filterLicenses()" id="lic-search" />
-            <select class="filter-select" id="lic-status-filter" onchange="filterLicenses()">
-              <option value="">All Status</option>
-              <option value="Active">Active</option>
-
-              <option value="Expiring Soon">Expiring Soon</option>
-              <option value="Revoked">Revoked</option>
-            </select>
-            <select class="filter-select" id="lic-category-filter" onchange="filterLicenses()">
-              <option value="">All Categories</option>
-              <option value="Retail">Retail</option>
-              <option value="Wholesale">Wholesale</option>
-              <option value="Manufacturing">Manufacturing</option>
-              <option value="Food & Beverages">Food &amp; Beverages</option>
-              <option value="Healthcare">Healthcare</option>
-            </select>
-          </div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>License ID</th>
-                <th>Business Name</th>
-                <th>Owner Name</th>
-                <th>Trade Category</th>
-                <th>Issue Date</th>
-                <th>Expiry Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="licenses-tbody"></tbody>
-          </table>
-          <div class="pagination" id="licenses-pagination"></div>
         </div>
       </div>
     </div>
@@ -744,7 +676,7 @@
         </div>
         <div class="form-group">
           <label>System Notification Email Address</label>
-          <input type="email" class="form-input" value="notifications@tradezo.gov.in" />
+          <input type="email" class="form-input" value="" placeholder="notifications@example.gov.in" />
           <div class="form-hint">All system alerts will be sent from this address</div>
         </div>
       </div>
@@ -843,8 +775,8 @@
         </div>
         <div class="form-group">
           <label>Last Backup Status</label>
-          <div style="padding:10px 14px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; font-size:13px; color:#15803d; font-weight:600;">
-            &#10003; Last backup completed on March 28, 2026 at 02:00 AM — 142 MB
+          <div id="backup-status-text" style="padding:10px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; color:#64748b; font-weight:600;">
+            No backup history available yet.
           </div>
         </div>
         <div class="info-note">
@@ -862,6 +794,6 @@
   <!-- ==================== TOAST NOTIFICATION ==================== -->
   <div class="toast" id="toast"></div>
  
-  <script src="script.js?v=dept-officer-management-20260504"></script>
+  <script src="script.js?v=application-dedupe-20260505"></script>
 </body>
 </html>

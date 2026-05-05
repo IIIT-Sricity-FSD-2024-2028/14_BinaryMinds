@@ -1,6 +1,7 @@
 function schedule() {
   var date = document.getElementById('date').value;
   var time = document.getElementById('time').value;
+  var nowIso = new Date().toISOString();
  
   // Validate date
   if (!date) {
@@ -28,17 +29,77 @@ function schedule() {
   sessionStorage.setItem('inspectionTime', time);
 
   // Update application in localStorage for applicant to see
-  var appId = sessionStorage.getItem('selectedApp') || 'TL-2026-001';
+  var appId = String(sessionStorage.getItem('selectedApp') || '').trim();
+  if (!appId) {
+    alert('No application selected for scheduling.');
+    return;
+  }
+
+  function createApplicantNotification(app) {
+    var notifications = [];
+    try { notifications = JSON.parse(localStorage.getItem('tz_applicant_notifications') || '[]'); } catch(e) { notifications = []; }
+    if (!Array.isArray(notifications)) notifications = [];
+
+    notifications = notifications.filter(function(item) {
+      return !(item.type === 'inspection_scheduled' && String(item.appId || '').trim() === appId);
+    });
+
+    notifications.unshift({
+      id: 'NOTIF-inspection_scheduled-' + appId,
+      type: 'inspection_scheduled',
+      appId: appId,
+      applicantName: app.applicantName || '',
+      applicantEmail: app.email || '',
+      businessName: app.businessName || '',
+      title: 'Inspection Scheduled',
+      message: 'Your inspection for application <b>' + appId + '</b> is scheduled for <b>' + date + '</b> at <b>' + time + '</b>.',
+      createdAt: nowIso
+    });
+
+    localStorage.setItem('tz_applicant_notifications', JSON.stringify(notifications));
+  }
   var apps = [];
+  var notifyApp = null;
   try { apps = JSON.parse(localStorage.getItem('applications') || '[]'); } catch(e){}
   apps.forEach(function(a) {
-    if (a.id === appId) {
+    if (String(a.id).trim() === appId || String(a.appRef).trim() === appId) {
       a.inspectionDate = date;
       a.inspectionTime = time;
+      a.inspectionScheduledAt = nowIso;
+      a.updatedAt = nowIso;
       a.status = 'Scheduled';
+      notifyApp = Object.assign({}, a);
     }
   });
   localStorage.setItem('applications', JSON.stringify(apps));
+  
+  var tzApps = [];
+  try { tzApps = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e){}
+  
+  var foundInTz = false;
+  var newTzApps = tzApps.map(function(a) {
+    if (String(a.id).trim() === appId || String(a.appRef).trim() === appId) {
+      var updated = Object.assign({}, a, {
+          inspectionDate: date,
+          inspectionTime: time,
+          inspectionScheduledAt: nowIso,
+          updatedAt: nowIso,
+          status: 'Scheduled'
+      });
+      notifyApp = Object.assign({}, updated, notifyApp || {});
+      foundInTz = true;
+      return updated;
+    }
+    return a;
+  });
+  
+  localStorage.setItem('tz_submitted_apps', JSON.stringify(newTzApps));
+  
+  if (!foundInTz) {
+      alert("CRITICAL ERROR: Application '" + appId + "' was NOT FOUND in tz_submitted_apps array during Schedule!");
+  }
+
+  if (notifyApp) createApplicantNotification(notifyApp);
  
   // Show success popup then go to Record Inspection page
   alert('Inspection Scheduled Successfully!\nDate: ' + date + '\nTime: ' + time);
@@ -48,7 +109,7 @@ function schedule() {
 // Cancel button → go back to verification
 // Cancel button & Dynamic data load
 document.addEventListener('DOMContentLoaded', function() {
-  var appId = sessionStorage.getItem('selectedApp') || 'TL-2026-001';
+  var appId = sessionStorage.getItem('selectedApp') || '';
   var app = null;
 
   var applications = [];

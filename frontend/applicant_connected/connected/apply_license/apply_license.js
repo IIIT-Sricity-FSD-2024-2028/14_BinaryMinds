@@ -1,13 +1,37 @@
 
+function getCurrentApplicantUser() {
+  try { return JSON.parse(sessionStorage.getItem('loggedInUser') || '{}') || {}; } catch(e) { return {}; }
+}
+
 // Auto-fill name and email from session on page load
 window.onload = function() {
-  var user = null;
-  try { user = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
+  var user = getCurrentApplicantUser();
+
+  function findRegisteredUser(email) {
+    if (!email) return {};
+    try {
+      var users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      return users.find(function(item) {
+        return item.email && item.email.toLowerCase() === email.toLowerCase();
+      }) || {};
+    } catch(e) {
+      return {};
+    }
+  }
+
+  var localUser = {};
+  try { localUser = JSON.parse(localStorage.getItem('user') || '{}') || {}; } catch(e) {}
+  var registeredUser = findRegisteredUser((user && user.email) || localUser.email);
+  if (user && user.email && !user.phone && registeredUser.phone) {
+    user.phone = registeredUser.phone;
+    sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+  }
 
   // Prefill from session
   if (user) {
     var f1 = document.getElementById('f1'); if (f1 && !f1.value) f1.value = user.name  || '';
     var f2 = document.getElementById('f2'); if (f2 && !f2.value) f2.value = user.email || '';
+    var f3 = document.getElementById('f3'); if (f3 && !f3.value) f3.value = user.phone || registeredUser.phone || localUser.phone || '';
   }
 
   // Restore saved form (Edit button from review page)
@@ -15,6 +39,21 @@ window.onload = function() {
   if (!saved) return;
   var form = {};
   try { form = JSON.parse(saved); } catch(e){ return; }
+  var formOwner = String(form.ownerEmail || form.email || '').trim().toLowerCase();
+  var currentOwner = String((user && user.email) || localUser.email || '').trim().toLowerCase();
+  if (!formOwner || !currentOwner || formOwner !== currentOwner) {
+    sessionStorage.removeItem('applicationForm');
+    sessionStorage.removeItem('uploadedDocs');
+    sessionStorage.removeItem('documentsUploaded');
+    sessionStorage.removeItem('documentsUploadedCount');
+    sessionStorage.removeItem('currentApplication');
+    Object.keys(sessionStorage).forEach(function(key) {
+      if (key.indexOf('upload_status') === 0 || key.indexOf('upload_error') === 0) {
+        sessionStorage.removeItem(key);
+      }
+    });
+    return;
+  }
   var map = {
     f1: form.fullName,    f2: form.email,       f3: form.phone,
     f4: form.aadhaar,     f5: form.motherName,  f6: form.gender,
@@ -29,6 +68,7 @@ window.onload = function() {
   }
 };
 function go() {
+  var user = getCurrentApplicantUser();
   var valid = true;
 
   // Validate required fields (skip f9 select, f16 optional)
@@ -82,10 +122,20 @@ function go() {
     state:         document.getElementById('f13').value.trim(),
     pincode:       document.getElementById('f14').value.trim(),
     tradeCategory: document.getElementById('f15') ? document.getElementById('f15').value.trim() : '',
-    shopArea:      document.getElementById('f16') ? document.getElementById('f16').value.trim() : ''
+    shopArea:      document.getElementById('f16') ? document.getElementById('f16').value.trim() : '',
+    ownerEmail:    user.email || document.getElementById('f2').value.trim()
   };
 
   sessionStorage.setItem('applicationForm', JSON.stringify(formData));
 
   window.location.href = '../upload_document/upload_document.html';
 }
+
+window.go = go;
+
+document.addEventListener('DOMContentLoaded', function() {
+  var nextBtn = document.getElementById('nextApplicationBtn');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', go);
+  }
+});

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Field Officer Profile</title>
     <link rel="stylesheet" href="style.css">
-<script src="../session_guard.js"></script>
+<script src="../session_guard.js?v=20260505_notifications_fix"></script>
 </head>
 <body>
 
@@ -42,7 +42,7 @@
                 Dashboard
             </li>
 
-            <li>
+            <li class="active">
                 <img src="../assets/icons/verification.png" class="icon">
                 Verification
             </li>
@@ -79,25 +79,25 @@
     <div class="card">
       <h2>&#9632; Business Information</h2>
       <div class="grid">
-        <div class="field"><label>Application ID</label><p id="appId">TL-2026-001</p></div>
-        <div class="field"><label>Business Name</label><p id="bizName">Green Valley Restaurant</p></div>
-        <div class="field"><label>Applicant Name</label><p id="appName">Rajesh Kumar</p></div>
-        <div class="field"><label>Contact Number</label><p id="contact">+91 98765 43210</p></div>
-        <div class="field"><label>Email Address</label><p id="email">rajesh.kumar@greenvalley.com</p></div>
+        <div class="field"><label>Application ID</label><p id="appId">-</p></div>
+        <div class="field"><label>Business Name</label><p id="bizName">-</p></div>
+        <div class="field"><label>Applicant Name</label><p id="appName">-</p></div>
+        <div class="field"><label>Contact Number</label><p id="contact">-</p></div>
+        <div class="field"><label>Email Address</label><p id="email">-</p></div>
         
-        <div class="field"><label>Aadhaar Number</label><p id="aadhaar">XXXX-XXXX-4582</p></div>
-        <div class="field"><label>Gender</label><p id="gender">Male</p></div>
-        <div class="field"><label>Father's Name</label><p id="fatherName">Ramesh Kumar</p></div>
-        <div class="field"><label>Mother's Name</label><p id="motherName">Sunita Devi</p></div>
+        <div class="field"><label>Aadhaar Number</label><p id="aadhaar">-</p></div>
+        <div class="field"><label>Gender</label><p id="gender">-</p></div>
+        <div class="field"><label>Father's Name</label><p id="fatherName">-</p></div>
+        <div class="field"><label>Mother's Name</label><p id="motherName">-</p></div>
 
-        <div class="field"><label>Trade Category</label><p id="category">Food & Beverage</p></div>
-        <div class="field"><label>Shop Area (sq.ft)</label><p id="shopArea">1200</p></div>
-        <div class="field" style="grid-column: span 2;"><label>Full Shop Address</label><p id="address">123 Main Street, Sector 45</p></div>
+        <div class="field"><label>Trade Category</label><p id="category">-</p></div>
+        <div class="field"><label>Shop Area (sq.ft)</label><p id="shopArea">-</p></div>
+        <div class="field" style="grid-column: span 2;"><label>Full Shop Address</label><p id="address">-</p></div>
 
-        <div class="field"><label>City</label><p id="city">Gurugram</p></div>
-        <div class="field"><label>District</label><p id="district">Gurugram</p></div>
-        <div class="field"><label>State</label><p id="state">Haryana</p></div>
-        <div class="field"><label>Pincode</label><p id="pincode">122003</p></div>
+        <div class="field"><label>City</label><p id="city">-</p></div>
+        <div class="field"><label>District</label><p id="district">-</p></div>
+        <div class="field"><label>State</label><p id="state">-</p></div>
+        <div class="field"><label>Pincode</label><p id="pincode">-</p></div>
       </div>
     </div>
 
@@ -116,8 +116,8 @@
 
     <!-- ACTION BUTTONS -->
     <div class="action-btns">
-      <button class="approve-btn" onclick="approve()">Approve Application ✓</button>
-      <button class="reject-btn" onclick="reject()">Reject Application ✕</button>
+      <button class="approve-btn" onclick="approve()">Approve Application &#10003;</button>
+      <button class="reject-btn" onclick="reject()">Reject Application &#10005;</button>
     </div>
 
     <!-- BACK -->
@@ -125,7 +125,7 @@
 
   </div>
 <script src="../../mockdata.js"></script>
-<script src="script.js"></script>
+<script src="detail_v2.js?v=20260505_notifications_fix"></script>
 <script src="../fo_nav.js"></script>
 </body>
 </html>

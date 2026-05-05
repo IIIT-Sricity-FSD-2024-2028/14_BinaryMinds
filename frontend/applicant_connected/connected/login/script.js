@@ -75,6 +75,38 @@ function getBackendLoginUsers() {
   });
 }
 
+function formatAuditRole(role) {
+  var normalized = String(role || '').toLowerCase().replace(/_/g, ' ').trim();
+  if (normalized === 'superuser') return 'Super User';
+  if (normalized === 'field officer') return 'Field Officer';
+  if (normalized === 'department officer') return 'Department Officer';
+  if (normalized === 'applicant') return 'Applicant';
+  return normalized || 'Unknown';
+}
+
+function writeAuditLog(entry) {
+  var existing = safeJsonArray('tradezo_audit_logs');
+  existing.unshift(entry);
+  localStorage.setItem('tradezo_audit_logs', JSON.stringify(existing.slice(0, 200)));
+
+  if (!window.fetch) return Promise.resolve();
+  return fetch('http://localhost:3000/api/audit-logs', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      user_name: entry.user,
+      role: entry.role,
+      action: entry.action,
+      module: entry.module,
+      description: entry.desc,
+      ip_address: entry.ip,
+      source: 'frontend',
+    }),
+  }).catch(function() {
+    return null;
+  });
+}
+
 async function handleLogin() {
   var email    = emailInput.value.trim();
   var password = passwordInput.value.trim();
@@ -87,7 +119,14 @@ async function handleLogin() {
 
   // Include applicant registrations and Super User-created field officers from localStorage
   var backendUsers = await getBackendLoginUsers();
-  var allUsers = MOCK_USERS.concat(getStoredLoginUsers(), backendUsers);
+  
+  // Filter out any mock users that were explicitly deleted by Super User
+  var deletedEmails = safeJsonArray('deletedUserEmails');
+  var activeMockUsers = MOCK_USERS.filter(function(u) {
+    return deletedEmails.indexOf((u.email || '').toLowerCase()) === -1;
+  });
+  
+  var allUsers = activeMockUsers.concat(getStoredLoginUsers(), backendUsers);
 
   var emailMatch = allUsers.find(function(u) { return u.email.toLowerCase() === email.toLowerCase(); });
   if (!emailMatch) { showError(emailInput, 'No account found with this email.'); return; }
@@ -104,6 +143,35 @@ async function handleLogin() {
   });
   if (!fullMatch) { showError(roleSelect, 'Wrong role selected. Your role is: ' + passMatch.role); return; }
 
+  function clearApplicantDraftIfNeeded(nextEmail) {
+    var draft = {};
+    try { draft = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch(e) {}
+    var draftOwner = (draft.ownerEmail || draft.email || '').toLowerCase();
+    var loginEmail = (nextEmail || '').toLowerCase();
+    if (draftOwner && draftOwner === loginEmail) return;
+
+    [
+      'applicationForm',
+      'uploadedDocs',
+      'documentsUploaded',
+      'documentsUploadedCount',
+      'currentApplication',
+      'calculatedFeeString'
+    ].forEach(function(key) { sessionStorage.removeItem(key); });
+
+    Object.keys(sessionStorage).forEach(function(key) {
+      if (key.indexOf('upload_status') === 0 || key.indexOf('upload_error') === 0) {
+        sessionStorage.removeItem(key);
+      }
+    });
+  }
+
+  clearApplicantDraftIfNeeded(fullMatch.email);
+  sessionStorage.removeItem('applicationRef');
+  Object.keys(sessionStorage).forEach(function(key) {
+    if (key.indexOf('notifsRead_') === 0) sessionStorage.removeItem(key);
+  });
+  sessionStorage.setItem('applicantLastLoginAt', new Date().toISOString());
   sessionStorage.setItem('loggedInUser', JSON.stringify({
     id: fullMatch.id || '',
     empId: fullMatch.empId || fullMatch.id || '',
@@ -113,8 +181,33 @@ async function handleLogin() {
     role: fullMatch.role
   }));
 
+  if (fullMatch.role && fullMatch.role.toLowerCase() === 'applicant') {
+    localStorage.setItem('user', JSON.stringify({
+      name: fullMatch.name,
+      email: fullMatch.email,
+      phone: fullMatch.phone || ''
+    }));
+  }
+
   var btn = document.querySelector('button');
   if (btn) { btn.textContent = 'Redirecting...'; btn.disabled = true; }
+
+  var auditEntry = {
+    time: new Date().toLocaleString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }),
+    user: fullMatch.name,
+    role: formatAuditRole(fullMatch.role),
+    action: 'Login',
+    module: 'Authentication',
+    desc: 'Login successful',
+    ip: '127.0.0.1'
+  };
+  writeAuditLog(auditEntry);
 
   setTimeout(function() {
     window.location.href = DASHBOARDS[fullMatch.role.toLowerCase()];

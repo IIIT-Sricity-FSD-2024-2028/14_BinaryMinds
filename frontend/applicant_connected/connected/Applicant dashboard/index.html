@@ -2,7 +2,7 @@
 <html>
 <head>
 <script src="../../../mockdata.js"></script>
-<script src="../session_guard.js"></script>
+<script src="../session_guard.js?v=20260505_notifications_fix"></script>
   <title>Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -20,13 +20,13 @@
 <!-- NAVBAR -->
 <div class="navbar">
   <a href="index.html" class="active">Dashboard</a>
-  <a href="../landing page/index.html">Home</a>
-  <a href="../apply_license/apply_license.html">Apply License</a>
-  <a href="../Track Application Status/index.html">Track Application</a>
+  <a href="index.html">Home</a>
+  <a href="../apply_license/apply_license.html" onclick="goApplyLicense(event)">Apply License</a>
+  <a href="../Track%20Application%20Status/index.html">Track Application</a>
   <a href="../download/index.html">Download License</a>
-  
   <a href="../payments/index.html">Payments</a>
   <a href="../Profile/index.html">Profile</a>
+  <a href="#" onclick="handleLogout()" style="color:#fca5a5;">Logout</a>
 </div>
 
 <div class="main">
@@ -34,8 +34,8 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
     <p class="active">Dashboard</p>
-    <p onclick="window.location.href='../apply_license/apply_license.html'" style="cursor:pointer">Apply License</p>
-    <p onclick="window.location.href='../Track Application Status/index.html'" style="cursor:pointer">Application Review</p>
+    <p onclick="goApplyLicense()" style="cursor:pointer">Apply License</p>
+    <p onclick="window.location.href='../Track%20Application%20Status/index.html'" style="cursor:pointer">Track Application</p>
     <p onclick="window.location.href='../review_license/review_license.html'" style="cursor:pointer">Renew Licenses</p>
     <p onclick="handleLogout()" style="cursor:pointer">Logout</p>
   </div>
@@ -47,7 +47,7 @@
     <div class="card welcome">
       <div>
         <h2 id="welcomeText">Welcome</h2>
-        <p>Applicant ID: APP-1024</p>
+        <p>applicant@example.com</p>
       </div>
       <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
     </div>
@@ -78,7 +78,7 @@
 
       <div class="card">
         <h3>My Current License</h3>
-        <p><b>License No:</b> TL-2026-001</p>
+        <p><b>License No:</b> -</p>
         <p><b>Business:</b> Grocery Shop</p>
         <p><b>Valid:</b> 2026 - 2027</p>
 
@@ -92,7 +92,7 @@
   </div>
 </div>
 
-<script src="script.js?v=logout-login-20260504"></script>
+<script src="script.js?v=20260504_profile_sync"></script>
 
 </body>
 </html>

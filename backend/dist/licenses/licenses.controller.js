@@ -23,13 +23,27 @@ const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const roles_guard_1 = require("../common/guards/roles.guard");
 const role_enum_1 = require("../common/enums/role.enum");
 const swagger_1 = require("@nestjs/swagger");
+const api_route_decorator_1 = require("../common/swagger/api-route.decorator");
+const audit_logs_service_1 = require("../audit-logs/audit-logs.service");
 let LicensesController = class LicensesController {
     service;
-    constructor(service) {
+    auditLogsService;
+    constructor(service, auditLogsService) {
         this.service = service;
+        this.auditLogsService = auditLogsService;
     }
     create(createDto) {
-        return this.service.create(createDto);
+        const license = this.service.create(createDto);
+        this.auditLogsService.log({
+            user_name: 'Department Officer',
+            role: 'department_officer',
+            action: 'Create',
+            module: 'Licenses',
+            description: `Created license ${license.license_number || license.license_id}`,
+            ip_address: '127.0.0.1',
+            source: 'backend',
+        });
+        return license;
     }
     findAll() {
         return this.service.findAll();
@@ -44,7 +58,17 @@ let LicensesController = class LicensesController {
         return this.service.findOne(id);
     }
     update(id, updateDto) {
-        return this.service.update(id, updateDto);
+        const license = this.service.update(id, updateDto);
+        this.auditLogsService.log({
+            user_name: 'Department Officer',
+            role: 'department_officer',
+            action: 'Update',
+            module: 'Licenses',
+            description: `Updated license ${id}`,
+            ip_address: '127.0.0.1',
+            source: 'backend',
+        });
+        return license;
     }
     suspend(id) {
         return this.service.suspend(id);
@@ -63,6 +87,13 @@ exports.LicensesController = LicensesController;
 __decorate([
     (0, common_1.Post)(),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Create license',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER],
+        bodyType: create_license_dto_1.CreateLicenseDto,
+        status: 201,
+        responseExample: { license_id: 1, license_number: 'LIC-20260505-1234', status: 'active' },
+    }),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -72,6 +103,11 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List licenses',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER, role_enum_1.Role.FIELD_OFFICER],
+        responseExample: [{ license_id: 1, license_number: 'LIC-20260505-1234' }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -80,6 +116,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)('application/:applicationId'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER, role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.APPLICANT),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Get license by application',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER, role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.APPLICANT],
+        params: [{ name: 'applicationId', description: 'Application ID' }],
+        responseExample: { license_id: 1, application_id: 1 },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('applicationId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -89,6 +131,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)('number/:licenseNumber'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER, role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.APPLICANT),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Get license by license number',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER, role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.APPLICANT],
+        params: [{ name: 'licenseNumber', description: 'License number', type: 'string' }],
+        responseExample: { license_id: 1, license_number: 'LIC-20260505-1234' },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('licenseNumber')),
     __metadata("design:type", Function),
@@ -98,6 +146,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER, role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.APPLICANT),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Get license by ID',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER, role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.APPLICANT],
+        params: [{ name: 'id', description: 'License ID' }],
+        responseExample: { license_id: 1, license_number: 'LIC-20260505-1234' },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -107,6 +161,13 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Update license by ID',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER],
+        params: [{ name: 'id', description: 'License ID' }],
+        bodyType: update_license_dto_1.UpdateLicenseDto,
+        responseExample: { license_id: 1, status: 'active' },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
@@ -117,6 +178,13 @@ __decorate([
 __decorate([
     (0, common_1.Post)(':id/suspend'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Suspend license',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER],
+        params: [{ name: 'id', description: 'License ID' }],
+        status: 201,
+        responseExample: { license_id: 1, status: 'suspended' },
+    }),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -126,6 +194,13 @@ __decorate([
 __decorate([
     (0, common_1.Post)(':id/revoke'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Revoke license',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER],
+        params: [{ name: 'id', description: 'License ID' }],
+        status: 201,
+        responseExample: { license_id: 1, status: 'revoked' },
+    }),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -135,6 +210,14 @@ __decorate([
 __decorate([
     (0, common_1.Post)(':id/renew'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Renew license',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.SUPER_USER],
+        params: [{ name: 'id', description: 'License ID' }],
+        bodyType: renew_license_dto_1.RenewLicenseDto,
+        status: 201,
+        responseExample: { license_id: 1, status: 'active', expiry_date: '2027-05-05T00:00:00.000Z' },
+    }),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
@@ -145,6 +228,12 @@ __decorate([
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.SUPER_USER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Delete license by ID',
+        roles: [role_enum_1.Role.SUPER_USER],
+        params: [{ name: 'id', description: 'License ID' }],
+        responseExample: true,
+    }),
     openapi.ApiResponse({ status: 200 }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -155,6 +244,7 @@ exports.LicensesController = LicensesController = __decorate([
     (0, swagger_1.ApiTags)('Licenses'),
     (0, common_1.Controller)('licenses'),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
-    __metadata("design:paramtypes", [licenses_service_1.LicensesService])
+    __metadata("design:paramtypes", [licenses_service_1.LicensesService,
+        audit_logs_service_1.AuditLogsService])
 ], LicensesController);
 //# sourceMappingURL=licenses.controller.js.map

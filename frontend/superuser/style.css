@@ -530,7 +530,8 @@ button {
 
 .search-input,
 .filter-select,
-.form-input {
+.form-input,
+.assign-select {
   min-height: 42px;
   border: 1px solid #cfd6e4;
   border-radius: 7px;
@@ -554,9 +555,16 @@ button {
   padding: 0 12px;
 }
 
+.assign-select {
+  min-width: 210px;
+  width: 100%;
+  padding: 0 12px;
+}
+
 .form-input:focus,
 .search-input:focus,
-.filter-select:focus {
+.filter-select:focus,
+.assign-select:focus {
   border-color: var(--navy-2);
   box-shadow: 0 0 0 3px rgba(31, 63, 150, 0.12);
 }

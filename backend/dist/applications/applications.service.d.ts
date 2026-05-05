@@ -2,11 +2,14 @@ import { ApplicationsRepository } from './applications.repository';
 import { Application } from './application.interface';
 import { ApplicationStatus } from '../common/enums/application-status.enum';
 import { CreateApplicationDto } from './dto/create-application.dto';
+import { CreateSimpleApplicationDto } from './dto/create-simple-application.dto';
 import { UsersService } from '../users/users.service';
+import { OfficersService } from '../officers/officers.service';
 export declare class ApplicationsService {
     private readonly applicationsRepository;
     private readonly usersService;
-    constructor(applicationsRepository: ApplicationsRepository, usersService: UsersService);
+    private readonly officersService;
+    constructor(applicationsRepository: ApplicationsRepository, usersService: UsersService, officersService: OfficersService);
     findAll(): Application[];
     findAllWithApplicantDetails(): {
         applicant: import("../users/user.interface").User;
@@ -29,6 +32,8 @@ export declare class ApplicationsService {
         business_start_date?: Date | string;
         application_status: ApplicationStatus;
         submitted_at?: Date;
+        paymentDone?: boolean;
+        assignedOfficerId?: number | null;
     }[];
     findOne(id: number): Application;
     findOneWithApplicantDetails(id: number): {
@@ -52,9 +57,16 @@ export declare class ApplicationsService {
         business_start_date?: Date | string;
         application_status: ApplicationStatus;
         submitted_at?: Date;
+        paymentDone?: boolean;
+        assignedOfficerId?: number | null;
     };
     findByApplicant(applicantId: number): Application[];
     create(applicationData: CreateApplicationDto): Application;
+    createSimple(data: CreateSimpleApplicationDto): Application;
+    findSubmitted(): Application[];
+    assignToOfficer(id: number, officerId?: number): Application;
+    findByOfficer(officerId: number): Application[];
+    verify(id: number): Application;
     update(id: number, updateData: Partial<Application>): Application;
     remove(id: number): void;
     private validateStatusTransition;

@@ -4,11 +4,13 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profile - TradeZo</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css?v=20260504_1"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+    <script src="../session_guard.js?v=20260505_notifications_fix"></script>
 </head>
 <body>
 
+  <!-- TOP BAR -->
   <div class="top-bar">
     <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo"/>
     <div class="brand">
@@ -17,10 +19,15 @@
     </div>
   </div>
 
+  <!-- NAV -->
   <nav>
-    <a href="../Applicant dashboard/index.html">Dashboard</a><a href="../landing page/index.html">Home</a><a href="../apply_license/apply_license.html">Apply License</a>
-    <a href="../Track Application Status/index.html">Track Application</a><a href="../download/index.html">Download License</a>
-    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a><a href="../payments/index.html">Payments</a>
+    <a href="../Applicant%20dashboard/index.html">Dashboard</a>
+    <a href="../landing%20page/index.html">Home</a>
+    <a href="../apply_license/apply_license.html">Apply License</a>
+    <a href="../Track%20Application%20Status/index.html">Track Application</a>
+    <a href="../download/index.html">Download License</a>
+    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a>
+    <a href="../payments/index.html">Payments</a>
     <a href="index.html" class="active">Profile</a>
   </nav>
 
@@ -40,10 +47,12 @@
             <div class="cam-icon"><i class="fa-solid fa-camera"></i></div>
           </div>
           <div class="profile-info">
-            <h2 id="dispName"></h2>
-            <p><i class="fa-solid fa-at"></i> <span id="dispEmail"></span></p>
-            <p><i class="fa-solid fa-phone"></i> <span id="dispPhone"></span></p>
-            <button onclick="window.location.href='../Profile_edit/index.html'" style="margin-top:14px; background:#1e3a8a; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;"><i class="fa-solid fa-pen" style="margin-right:6px;"></i>Edit Profile</button>
+            <h2 id="dispName">—</h2>
+            <p><i class="fa-solid fa-at"></i> <span id="dispEmail">—</span></p>
+            <p><i class="fa-solid fa-phone"></i> <span id="dispPhone">—</span></p>
+            <button class="btn-edit" onclick="window.location.href='../Profile_edit/index.html'">
+              <i class="fa-solid fa-pen"></i> Edit Profile
+            </button>
           </div>
         </div>
 
@@ -52,13 +61,12 @@
           <div class="detail-grid">
             <div>
               <small>AADHAAR NUMBER</small>
-              <p id="dispAadhaar"></p>
+              <p id="dispAadhaar">—</p>
             </div>
             <div>
               <small>GENDER</small>
-              <p id="dispGender"></p>
+              <p id="dispGender">—</p>
             </div>
-
             <div>
               <small>NATIONALITY</small>
               <p>Indian</p>
@@ -66,7 +74,7 @@
           </div>
           <div class="address-block">
             <small>ADDRESS</small>
-            <p id="dispAddress" style="white-space: pre-wrap;"></p>
+            <p id="dispAddress">—</p>
           </div>
         </div>
 
@@ -76,33 +84,11 @@
             <h3>Recent Activity</h3>
             <a href="#">View All</a>
           </div>
-          <div class="act-item">
-            <div class="act-icon blue"><i class="fa-solid fa-right-to-bracket"></i></div>
-            <div class="act-info">
-              <strong>Login Successful</strong>
-              <p>Today at 10:45 AM from IP 192.168.1.1</p>
-            </div>
-          </div>
-          <div class="act-item">
-            <div class="act-icon orange"><i class="fa-solid fa-file-circle-check"></i></div>
-            <div class="act-info">
-              <strong>Application Submitted</strong>
-              <p>Trade License Renewal #TL-2023-8842</p>
-            </div>
-            <span class="act-time">2 days ago</span>
-          </div>
-          <div class="act-item">
-            <div class="act-icon green"><i class="fa-solid fa-indian-rupee-sign"></i></div>
-            <div class="act-info">
-              <strong>Payment Received</strong>
-              <p id="profileRecentPayment">₹2,500.00 processed for application</p>
-            </div>
-            <span class="act-time" id="profileRecentPaymentTime">3 days ago</span>
-          </div>
         </div>
 
-        <button class="btn-cancel" onclick="window.location.href='../Applicant dashboard/index.html'">← Back to Dashboard</button>
-      </div>
+        <button class="btn-cancel" onclick="window.location.href='../Applicant%20dashboard/index.html'">← Back to Dashboard</button>
+
+      </div><!-- end left-col -->
 
       <!-- RIGHT COLUMN -->
       <div class="right-col">
@@ -118,8 +104,6 @@
           <div class="update-date">Last profile update: 12 Jan 2024</div>
         </div>
 
-
-
         <!-- NEED HELP -->
         <div class="help-card">
           <i class="fa-solid fa-headset fa-2x"></i>
@@ -130,85 +114,348 @@
           </div>
         </div>
 
-      </div>
-    </div>
+      </div><!-- end right-col -->
+    </div><!-- end layout -->
   </main>
 
   <script src="../../../mockdata.js"></script>
-  <script src="../session_guard.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var loggedIn = {};
-        try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser')) || {}; } catch(e) {}
+      var loggedIn = {};
+      try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser')) || {}; } catch(e) {}
 
-        var stored = {};
-        try { stored = JSON.parse(localStorage.getItem('applicant_profile_data')) || {}; } catch(e) {}
-        if (stored.email && loggedIn.email && stored.email.toLowerCase() !== loggedIn.email.toLowerCase()) {
-            stored = {}; // Ignore local storage profile if it belongs to someone else
+      function findRegisteredUser(email) {
+        if (!email) return {};
+        try {
+          var users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+          return users.find(function(item) {
+            return item.email && item.email.toLowerCase() === email.toLowerCase();
+          }) || {};
+        } catch(e) {
+          return {};
         }
+      }
 
-        var sessionApp = {};
-        try { sessionApp = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch(e) {}
+      var localUser = {};
+      try { localUser = JSON.parse(localStorage.getItem('user') || '{}') || {}; } catch(e) {}
+      var registeredUser = findRegisteredUser(loggedIn.email || localUser.email);
+      if (loggedIn.email && !loggedIn.phone && registeredUser.phone) {
+        loggedIn.phone = registeredUser.phone;
+        sessionStorage.setItem('loggedInUser', JSON.stringify(loggedIn));
+      }
 
-        var apps = [];
-        try { apps = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e){}
-        try { var legacy = JSON.parse(localStorage.getItem('applications') || '[]'); apps = apps.concat(legacy); } catch(e){}
-        if (typeof TRADEZO !== 'undefined' && TRADEZO.applications) {
-            apps = apps.concat(TRADEZO.applications);
-        }
-        var userApp = apps.find(function(a) { 
-            var emailMatch = a.email && loggedIn.email && a.email.toLowerCase() === loggedIn.email.toLowerCase();
-            var idMatch = a.applicantId && loggedIn.email && a.applicantId.toLowerCase() === loggedIn.email.toLowerCase();
-            return emailMatch || idMatch;
+      // Only use stored profile data if it belongs to the currently logged-in user
+      var stored = {};
+      try { stored = JSON.parse(localStorage.getItem('applicant_profile_data') || '{}'); } catch(e) {}
+      // Check ownership via ownerEmail (new format) or stored.email (legacy)
+      var ownerKey = (stored.ownerEmail || stored.email || '').toLowerCase();
+      var loginKey = (loggedIn.email || '').toLowerCase();
+      if (!ownerKey || !loginKey || ownerKey !== loginKey) stored = {};
+
+      var sessionApp = {};
+      try { sessionApp = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch(e) {}
+
+      // Pull all app sources
+      var apps = [];
+      try { apps = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e){}
+      try { var legacy = JSON.parse(localStorage.getItem('applications') || '[]'); apps = apps.concat(legacy); } catch(e){}
+      if (typeof TRADEZO !== 'undefined' && TRADEZO.applications) {
+        apps = apps.concat(TRADEZO.applications);
+      }
+
+      // Find app — prefer applicationRef (most reliable), then email, then applicantId
+      var appRef = sessionStorage.getItem('applicationRef') || '';
+      var userApp = null;
+      if (appRef) {
+        userApp = apps.find(function(a){ return a.id === appRef || a.appRef === appRef; });
+      }
+      if (!userApp) {
+        userApp = apps.find(function(a) {
+          var emailMatch = a.email && loggedIn.email && a.email.toLowerCase() === loggedIn.email.toLowerCase();
+          var idMatch = a.applicantId && loggedIn.email && a.applicantId.toLowerCase() === loggedIn.email.toLowerCase();
+          return emailMatch || idMatch;
         });
-        
-        var appData = userApp || sessionApp || {};
+      }
 
-        var appAddress = appData.shopAddress || appData.address || '';
-        if (appAddress) {
-            if (appData.city) appAddress += ', ' + appData.city;
-            if (appData.state) appAddress += ', ' + appData.state;
-            if (appData.pincode) appAddress += ' - ' + appData.pincode;
+      function belongsToApplicant(app) {
+        if (!app) return false;
+        var userEmail = (loggedIn.email || '').toLowerCase();
+        var userName = (loggedIn.name || '').toLowerCase();
+        return (app.email && app.email.toLowerCase() === userEmail) ||
+               (app.applicantId && app.applicantId.toLowerCase() === userEmail) ||
+               (app.applicantName && userName && app.applicantName.toLowerCase() === userName);
+      }
+
+      function appIdentity(app) {
+        return String((app && (app.appRef || app.id || app.appId || app.applicationId || app.application_id)) || '').trim().toLowerCase();
+      }
+
+      function mergeApplication(existing, incoming) {
+        return Object.assign({}, existing || {}, incoming || {});
+      }
+
+      function dedupeApplications(list) {
+        var map = {};
+        var result = [];
+        list.forEach(function(app) {
+          if (!app) return;
+          var key = appIdentity(app);
+          if (!key) key = [
+            (app.email || app.applicantId || '').toLowerCase(),
+            (app.businessName || app.business || '').toLowerCase(),
+            app.submittedDate || app.date || ''
+          ].join('|');
+          if (map[key]) {
+            map[key].merged = mergeApplication(map[key].merged, app);
+          } else {
+            map[key] = { index: result.length, merged: app };
+            result.push(app);
+          }
+        });
+        Object.keys(map).forEach(function(key) {
+          result[map[key].index] = map[key].merged;
+        });
+        return result;
+      }
+
+      var userApps = dedupeApplications(apps.filter(belongsToApplicant));
+      if (userApp && !userApps.some(function(app) { return appIdentity(app) && appIdentity(app) === appIdentity(userApp); })) {
+        userApps.unshift(userApp);
+      }
+      userApps = dedupeApplications(userApps);
+      if (typeof TRADEZO !== 'undefined' && typeof TRADEZO.sortFreshFirst === 'function') {
+        TRADEZO.sortFreshFirst(userApps);
+      }
+
+      var appData = userApp || sessionApp || {};
+
+      var appAddress = appData.shopAddress || appData.address || '';
+      if (appAddress) {
+        if (appData.city)    appAddress += ', ' + appData.city;
+        if (appData.state)   appAddress += ', ' + appData.state;
+        if (appData.pincode) appAddress += ' - ' + appData.pincode;
+      }
+
+      // Priority: edited profile name → application form name → session name
+      // Application's applicantName/fullName is the real person's name (filled during apply)
+      // loggedIn.name could be a username (e.g. 'echo') — use only as last resort
+      var name    = stored.name
+                 || appData.applicantName || appData.fullName
+                 || loggedIn.name
+                 || '—';
+      // Email: always from session (identity anchor, never override)
+      var email   = loggedIn.email || appData.email || '—';
+      // Phone: edited profile → session → application form
+      var phone   = stored.phone || loggedIn.phone || registeredUser.phone || localUser.phone || appData.phone || '—';
+      // Address: edited profile → application shop address
+      var address = stored.address || appAddress || '—';
+
+      var aadhaarRaw = (userApp && userApp.aadhaar) || (sessionApp && sessionApp.aadhaar) || appData.aadhaar;
+      var aadhaar = aadhaarRaw ? 'XXXX-XXXX-' + String(aadhaarRaw).slice(-4) : '—';
+      var gender  = (userApp && userApp.gender) || (sessionApp && sessionApp.gender) || appData.gender || '—';
+
+      document.getElementById('dispName').textContent    = name;
+      document.getElementById('dispEmail').textContent   = email;
+      document.getElementById('dispPhone').textContent   = phone;
+      document.getElementById('dispAddress').textContent = address;
+      document.getElementById('dispAadhaar').textContent = aadhaar;
+      document.getElementById('dispGender').textContent  = gender;
+
+      // Recent payment
+      function getDynamicFee() {
+        var feeStr = '₹2,205.00';
+        try {
+          var fees = JSON.parse(localStorage.getItem('tradezo_fees'));
+          if (fees && fees.new) {
+            var val = parseInt(fees.new, 10);
+            feeStr = '₹' + (val + val * 0.05).toFixed(2);
+          }
+        } catch(e) {}
+        return feeStr;
+      }
+
+      var pRecent = document.getElementById('profileRecentPayment');
+      if (pRecent) {
+        var amount = (userApp && userApp.paymentAmount) ? userApp.paymentAmount : getDynamicFee();
+        var appId  = (userApp && (userApp.id || userApp.appRef)) ? ('#' + (userApp.id || userApp.appRef)) : '';
+        pRecent.textContent = amount + ' processed for application ' + appId;
+      }
+
+      var appIdEl = document.getElementById('profileAppId');
+      if (appIdEl && userApp) {
+        appIdEl.textContent = 'Trade License ' + (userApp.id || userApp.appRef || '');
+      }
+
+      function parseActivityDate(value) {
+        if (!value) return null;
+        var parsed = new Date(value);
+        if (!isNaN(parsed.getTime())) return parsed;
+        var parts = String(value).replace(/,/g, '').split(/\s+/);
+        if (parts.length >= 3) {
+          var alt = new Date(parts[1] + ' ' + parts[0] + ' ' + parts[2]);
+          if (!isNaN(alt.getTime())) return alt;
+        }
+        return null;
+      }
+
+      function formatActivityTime(value, fallback) {
+        var date = parseActivityDate(value);
+        if (!date) return fallback || value || 'Recently';
+        return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
+
+      function activityScore(item) {
+        var date = parseActivityDate(item.date);
+        return date ? date.getTime() : item.rank;
+      }
+
+      function addActivity(list, title, text, icon, color, date, fallbackTime, rank) {
+        var normalizedText = String(text || '').replace(/\s+/g, ' ').trim().toLowerCase();
+        var eventKey = [
+          title,
+          normalizedText,
+          date || fallbackTime || ''
+        ].join('|').toLowerCase();
+        if (list.some(function(item) { return item.eventKey === eventKey; })) return;
+        list.push({
+          eventKey: eventKey,
+          title: title,
+          text: text,
+          icon: icon,
+          color: color,
+          date: date,
+          time: formatActivityTime(date, fallbackTime),
+          rank: rank || 0
+        });
+      }
+
+      function renderRecentActivity() {
+        var card = document.querySelector('.activity-card');
+        if (!card) return;
+        card.querySelectorAll('.act-item').forEach(function(item) { item.remove(); });
+
+        var activities = [];
+        addActivity(
+          activities,
+          'Login Successful',
+          loggedIn.email ? 'Signed in as ' + loggedIn.email : 'Current applicant session is active.',
+          'fa-right-to-bracket',
+          'blue',
+          sessionStorage.getItem('applicantLastLoginAt'),
+          'Current session',
+          10
+        );
+
+        if (stored.updatedAt) {
+          addActivity(activities, 'Profile Updated', 'Applicant profile details were updated.', 'fa-pen', 'blue', stored.updatedAt, 'Recently', 20);
         }
 
-        var name = stored.name || loggedIn.name || appData.fullName || appData.applicantName || 'Not provided';
-        var email = stored.email || loggedIn.email || appData.email || 'Not provided';
-        var phone = stored.phone || loggedIn.phone || appData.phone || 'Not provided';
-        var address = stored.address || appAddress || 'Not provided';
-        
-        var aadhaarRaw = (userApp && userApp.aadhaar) || (sessionApp && sessionApp.aadhaar) || appData.aadhaar;
-        var aadhaar = aadhaarRaw ? 'XXXX-XXXX-' + String(aadhaarRaw).slice(-4) : 'Not provided';
-        var gender = (userApp && userApp.gender) || (sessionApp && sessionApp.gender) || appData.gender || 'Not provided';
-
-        document.getElementById('dispName').textContent = name;
-        document.getElementById('dispEmail').textContent = email;
-        document.getElementById('dispPhone').textContent = phone;
-        document.getElementById('dispAddress').textContent = address;
-        
-        var dA = document.getElementById('dispAadhaar');
-        if(dA) dA.textContent = aadhaar;
-        var dG = document.getElementById('dispGender');
-        if(dG) dG.textContent = gender;
-
-        // Dynamic fee fallback
-        function getDynamicFeeFallback() {
-          var feeStr = '₹2100.00';
-          try {
-             var fees = JSON.parse(localStorage.getItem('tradezo_fees'));
-             if (fees && fees.new) {
-                var val = parseInt(fees.new, 10);
-                feeStr = '₹' + (val + (val * 0.05)).toFixed(2);
-             }
-          } catch(e) {}
-          return feeStr;
+        if (sessionApp && (sessionApp.fullName || sessionApp.businessName) && !userApps.length) {
+          addActivity(
+            activities,
+            'Application Draft Started',
+            (sessionApp.businessName || 'Trade license application') + ' details are saved for submission.',
+            'fa-file-lines',
+            'orange',
+            null,
+            'Draft saved',
+            15
+          );
         }
 
-        var pRecent = document.getElementById('profileRecentPayment');
-        if (pRecent) {
-           var amount = (userApp && userApp.paymentAmount) ? userApp.paymentAmount : getDynamicFeeFallback();
-           var appId = (userApp && (userApp.id || userApp.appRef)) ? (userApp.id || userApp.appRef) : 'Pending setup';
-           pRecent.textContent = amount + ' processed for application #' + appId;
+        userApps.forEach(function(app, index) {
+          var appId = app.id || app.appRef || '';
+          var business = app.businessName || app.business || 'Trade License Application';
+          var submittedDate = app.submittedDate || app.date || app.createdAt || app.updatedAt;
+          addActivity(
+            activities,
+            'Application Submitted',
+            business + (appId ? ' (' + appId + ')' : '') + ' was submitted.',
+            'fa-file-circle-check',
+            'orange',
+            submittedDate,
+            submittedDate || 'Recently',
+            30 - index
+          );
+
+          if ((app.paymentStatus || '').toLowerCase() === 'paid' || (app.paymentStatus || '').toLowerCase() === 'success') {
+            addActivity(
+              activities,
+              'Payment Received',
+              (app.paymentAmount || getDynamicFee()) + ' processed for application ' + (appId || ''),
+              'fa-indian-rupee-sign',
+              'green',
+              app.paymentDate || submittedDate,
+              app.paymentDate || submittedDate || 'Paid',
+              40 - index
+            );
+          }
+
+          if (app.inspectionDate) {
+            addActivity(
+              activities,
+              'Inspection Scheduled',
+              'Inspection scheduled for ' + business + (app.inspectionTime ? ' at ' + app.inspectionTime : '') + '.',
+              'fa-calendar-check',
+              'blue',
+              app.inspectionDate,
+              app.inspectionDate,
+              50 - index
+            );
+          }
+
+          if (app.reviewDate || app.doReview === 'Approved' || app.status === 'Review Done') {
+            addActivity(
+              activities,
+              'Department Review Updated',
+              'Application ' + (appId || '') + ' review status: ' + (app.doReview || app.status || 'Updated') + '.',
+              'fa-clipboard-check',
+              'blue',
+              app.reviewDate || app.updatedAt,
+              'Recently',
+              60 - index
+            );
+          }
+
+          if (app.approvedDate || app.licenseId || app.licenseNo || app.status === 'Approved' || app.status === 'License Issued') {
+            addActivity(
+              activities,
+              'License Generated',
+              'License ' + (app.licenseId || app.licenseNo || '') + ' is available for download.',
+              'fa-certificate',
+              'green',
+              app.approvedDate || app.licenseIssueDate || app.updatedAt,
+              'Available now',
+              70 - index
+            );
+          }
+        });
+
+        activities.sort(function(a, b) { return activityScore(b) - activityScore(a); });
+        activities = activities.slice(0, 5);
+
+        if (!activities.length) {
+          addActivity(activities, 'No Activity Yet', 'Start an application to see updates here.', 'fa-circle-info', 'blue', null, 'No records', 0);
         }
+
+        activities.forEach(function(item) {
+          var row = document.createElement('div');
+          row.className = 'act-item';
+          row.innerHTML =
+            '<div class="act-icon ' + item.color + '"><i class="fa-solid ' + item.icon + '"></i></div>' +
+            '<div class="act-info"><strong>' + item.title + '</strong><p>' + item.text + '</p></div>' +
+            '<span class="act-time">' + item.time + '</span>';
+          card.appendChild(row);
+        });
+
+        var viewAll = card.querySelector('.act-header a');
+        if (viewAll) {
+          viewAll.href = '../Track%20Application%20Status/index.html';
+          viewAll.textContent = 'View Status';
+        }
+      }
+
+      renderRecentActivity();
     });
   </script>
 </body>

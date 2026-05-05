@@ -8,6 +8,7 @@ var DO_PAGES = {
   review:        '../review/index.html',
   authorization: '../authorization/index.html',
   compliance:    '../compliance/index.html',
+  generated:     '../compliance/index.html',
   inspection:    '../inspection-report/index.html',
   login: '../../applicant_connected/connected/login/index.html'
 };
@@ -36,7 +37,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (text.includes('worklist'))             item.addEventListener('click', function(){ doNav('worklist'); });
     if (text.includes('final authorization') || text.includes('authorization'))
                                                item.addEventListener('click', function(){ doNav('authorization'); });
-    if (text.includes('compliance') || text.includes('reports'))
+    if (text.includes('generated license'))
+                                               item.addEventListener('click', function(){ doNav('generated'); });
+    else if (text.includes('compliance') || text.includes('reports'))
                                                item.addEventListener('click', function(){ doNav('compliance'); });
   });
 
@@ -48,7 +51,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (text.includes('dashboard'))     { link.href = DO_PAGES.dashboard; }
     if (text.includes('worklist'))      { link.href = DO_PAGES.worklist; }
     if (text.includes('authorization')) { link.href = DO_PAGES.authorization; }
-    if (text.includes('compliance') || text.includes('reports'))
+    if (text.includes('generated license'))
+                                        { link.href = DO_PAGES.generated; }
+    else if (text.includes('compliance') || text.includes('reports'))
                                         { link.href = DO_PAGES.compliance; }
   });
 

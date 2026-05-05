@@ -88,28 +88,33 @@
     </div>
 </div>
 
-<script src="../fo_nav.js?v=officer-specific-dashboard-20260504"></script>
+<script src="../../mockdata.js?v=fo-assignment-filter-20260505-2"></script>
+<script src="../fo_nav.js?v=fo-assignment-filter-20260505-2"></script>
+<script src="../fodashboard/db.js?v=fo-assignment-filter-20260505-2"></script>
 
 <!-- 🔥 SCRIPT FOR DYNAMIC DATA -->
 <script>
 function loadVerificationApps() {
-    let applications = JSON.parse(localStorage.getItem("applications")) || [];
-    let centralApplications = (window.TRADEZO && TRADEZO.applications) ? TRADEZO.applications : [];
-    applications = centralApplications.concat(applications);
+    // Leverage the dashboard's exact data fetching logic so they are 100% in sync
+    let applications = typeof getAssignedApplications === 'function' ? getAssignedApplications() : [];
 
     let container = document.getElementById("verificationList");
     container.innerHTML = "";
 
-    let seen = {};
+    let decidedHistory = JSON.parse(localStorage.getItem('tz_verification_history')) || [];
+    let decidedIds = decidedHistory.map(item => item.appId);
+
     let pendingApps = applications.filter(app => {
-        let id = app.id || app.appRef || "";
-        if (!id || seen[id]) return false;
-        seen[id] = true;
-        return app.applicantName &&
-            app.applicantName.trim() !== "" &&
-            (app.status === "Pending" || app.status === "Under Verification" || app.status === "Pending Review") &&
-            (!window.foIsAssignedToCurrentOfficer || window.foIsAssignedToCurrentOfficer(app));
+        let status = (app.status || "").toLowerCase();
+        let isDecided = decidedIds.includes(app.id || app.appRef) || status === 'approved' || status === 'rejected' || status.includes('completed');
+        return !isDecided;
     });
+
+    if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
+        TRADEZO.sortFreshFirst(pendingApps);
+    } else {
+        pendingApps.reverse();
+    }
     
     if (pendingApps.length === 0) {
         container.innerHTML = "<p>No pending applications for verification.</p>";
@@ -118,19 +123,23 @@ function loadVerificationApps() {
     }
     
     pendingApps.forEach(app => {
+        let applicant = app.applicantName || app.applicant || app.ownerName || "Applicant";
+        let id = app.id || app.appRef || app.application_id || "";
+        let business = app.businessName || app.business || "N/A";
+        let tradeType = app.tradeCategory || app.licenseType || app.category || app.businessType || "N/A";
+        let submittedDate = app.submittedDate || app.date || app.createdAt || "N/A";
         let card = `
             <div class="card">
                 <div class="card-top"></div>
                 <div class="card-body">
-                    <h3>${app.applicantName || ""}</h3>
-                    <p class="app-id">${app.id || ""}</p>
-                    <p>Business: ${app.businessName || ""}</p>
-                    <p>Type: ${app.licenseType || ""}</p>
-                    <p>Date: ${app.submittedDate || ""}</p>
-                    <p>Status: ${app.status || ""}</p>
+                    <h3>${applicant}</h3>
+                    <p class="app-id">${id}</p>
+                    <p>Business: ${business}</p>
+                    <p>Type: ${tradeType}</p>
+                    <p>Date: ${submittedDate}</p>
+                    <p>Status: ${app.status || "Assigned"}</p>
 
-                    <button onclick="viewDetails('${app.id}')">View Details</button>
-                    <button onclick="rejectApp('${app.id}')">Reject</button>
+                    <button onclick="viewDetails('${id}')">View Details</button>
                 </div>
             </div>
         `;
@@ -145,17 +154,6 @@ function viewDetails(id) {
     window.location.href = "../detail/index.html";
 }
 
-function rejectApp(id) {
-    let applications = JSON.parse(localStorage.getItem("applications")) || [];
-
-    applications = applications.map(app => {
-        if (app.id === id) app.status = "Rejected";
-        return app;
-    });
-
-    localStorage.setItem("applications", JSON.stringify(applications));
-    loadVerificationApps();
-}
 
 function searchCards() {
     let input = document.getElementById("searchInput").value.toLowerCase();

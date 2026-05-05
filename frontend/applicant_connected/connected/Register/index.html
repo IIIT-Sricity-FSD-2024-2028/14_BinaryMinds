@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TradeZo - Register</title>
+  <style>
+    /* Base Reset & Styling to match TradeZo theme */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background: #f0f4f8; display: flex; flex-direction: column; min-height: 100vh; }
+    
+    /* Top Header */
+    .top-header { background: #1a237e; color: white; display: flex; align-items: center; padding: 10px 20px; }
+    .top-header img.emblem { height: 40px; margin-right: 15px; }
+    .top-header .gov-text { font-size: 12px; opacity: 0.8; }
+    .top-header .brand-name { font-size: 20px; font-weight: bold; }
+    
+    /* Navbar */
+    .navbar { background: white; padding: 10px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .navbar a { text-decoration: none; color: #333; margin-right: 20px; font-weight: 500; font-size: 14px; }
+    .navbar a:hover { color: #1a237e; }
+    
+    /* Main Content */
+    .main-content { display: flex; justify-content: center; align-items: center; flex: 1; padding: 40px 20px; }
+    
+    /* Card */
+    .register-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+    .register-card h3 { color: #1a237e; margin-bottom: 25px; font-size: 22px; text-align: center; }
+    
+    /* Form Group */
+    .form-group { margin-bottom: 18px; position: relative; }
+    .form-group input { width: 100%; padding: 12px 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+    .form-group input:focus { border-color: #1a237e; }
+    
+    /* Terms */
+    .terms-group { display: flex; align-items: flex-start; margin-bottom: 25px; font-size: 13px; color: #555; position: relative; }
+    .terms-group input { margin-right: 8px; margin-top: 2px; }
+    .terms-group a { color: #1a237e; text-decoration: none; }
+    .terms-group a:hover { text-decoration: underline; }
+    
+    /* Button */
+    .btn-register { width: 100%; padding: 14px; background: #1a237e; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-register:hover { background: #283593; }
+    
+    /* Links */
+    .login-text { text-align: center; margin-top: 20px; font-size: 14px; color: #555; }
+    .login-text a { color: #1a237e; text-decoration: none; font-weight: 600; }
+    .login-text a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <div class="top-header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem" class="emblem" />
+    <div>
+      <p class="gov-text">Government of India</p>
+      <p class="brand-name">TradeZo</p>
+    </div>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <nav class="navbar">
+    <a href="../../landing%20page/index.html">Home</a>
+    <a href="../login/index.html">Login</a>
+    <a href="index.html">Register</a>
+    <a href="../helpdesk/index.html">Help</a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="register-card">
+      <h3>Create an Account</h3>
+
+      <div class="form-group">
+        <input type="text" placeholder="Full Name" />
+      </div>
+
+      <div class="form-group">
+        <input type="email" placeholder="Email Address" />
+      </div>
+
+      <div class="form-group">
+        <input type="tel" placeholder="Phone Number (10 digits)" />
+      </div>
+
+      <div class="form-group">
+        <input type="password" placeholder="Password (Min. 6 chars)" />
+      </div>
+
+      <div class="form-group">
+        <input type="password" placeholder="Confirm Password" />
+      </div>
+
+      <label class="terms-group">
+        <input type="checkbox" id="terms" />
+        <span>I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>.</span>
+      </label>
+
+      <button class="btn-register">Register</button>
+
+      <p class="login-text">
+        Already have an account? <a href="../login/index.html">Login Here</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

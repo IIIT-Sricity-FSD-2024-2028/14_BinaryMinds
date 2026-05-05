@@ -26,4 +26,8 @@ export interface Application {
 
   application_status: ApplicationStatus;
   submitted_at?: Date;
+
+  // New workflow fields
+  paymentDone?: boolean;
+  assignedOfficerId?: number | null;
 }

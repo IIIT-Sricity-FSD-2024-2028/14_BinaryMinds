@@ -19,4 +19,6 @@ export interface Application {
     business_start_date?: Date | string;
     application_status: ApplicationStatus;
     submitted_at?: Date;
+    paymentDone?: boolean;
+    assignedOfficerId?: number | null;
 }

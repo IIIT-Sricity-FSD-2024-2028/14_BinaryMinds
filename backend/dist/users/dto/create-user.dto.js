@@ -17,10 +17,11 @@ class CreateUserDto {
     full_name;
     email;
     phone;
+    employee_id;
     password_hash;
     role;
     static _OPENAPI_METADATA_FACTORY() {
-        return { full_name: { required: true, type: () => String, maxLength: 120 }, email: { required: true, type: () => String, maxLength: 120, format: "email" }, phone: { required: true, type: () => String, maxLength: 15 }, password_hash: { required: true, type: () => String, minLength: 6, maxLength: 255 }, role: { required: true, enum: require("../../common/enums/role.enum").Role } };
+        return { full_name: { required: true, type: () => String, maxLength: 120 }, email: { required: true, type: () => String, maxLength: 120, format: "email" }, phone: { required: true, type: () => String, maxLength: 15 }, employee_id: { required: false, type: () => String, maxLength: 30 }, password_hash: { required: true, type: () => String, minLength: 6, maxLength: 255 }, role: { required: true, enum: require("../../common/enums/role.enum").Role } };
     }
 }
 exports.CreateUserDto = CreateUserDto;
@@ -42,6 +43,11 @@ __decorate([
     (0, class_validator_1.MaxLength)(15),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "phone", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(30),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "employee_id", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),

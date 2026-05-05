@@ -1,6 +1,10 @@
 // DO review/script.js — uses TRADEZO mock data
 document.addEventListener('DOMContentLoaded', function() {
-  var appId = sessionStorage.getItem('selectedAppDO') || 'TL-2026-001';
+  var appId = sessionStorage.getItem('selectedAppDO') || '';
+  if (!appId) {
+    window.location.href = '../worklist/index.html';
+    return;
+  }
   var app   = TRADEZO.getApplication(appId);
   if (!app) return;
 

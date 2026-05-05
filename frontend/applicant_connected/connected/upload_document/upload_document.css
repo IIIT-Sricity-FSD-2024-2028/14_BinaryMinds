@@ -1,0 +1,260 @@
+/* ===== RESET ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  color: #1a1a2e;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  background: #fff;
+  border-bottom: 1px solid #e0e4ec;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand small {
+  display: block;
+  font-size: 11px;
+  color: #666;
+}
+
+.brand strong {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1E3A8A;
+  line-height: 1.2;
+}
+
+/* ===== NAVBAR ===== */
+nav {
+  background: #1E3A8A;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  height: 46px;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 12px 16px;
+  display: inline-block;
+  transition: background 0.2s;
+}
+
+nav a:hover { background: rgba(255,255,255,0.12); }
+nav a.active { background: rgba(255,255,255,0.2); font-weight: 600; }
+
+/* ===== CONTAINER ===== */
+.container {
+  max-width: 860px;
+  margin: 32px auto;
+  padding: 0 20px;
+}
+
+/* ===== PAGE TOP ===== */
+.page-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-top h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1E3A8A;
+  margin-bottom: 4px;
+}
+
+.page-top p {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ===== PROGRESS BOX ===== */
+.progress-box {
+  min-width: 180px;
+  text-align: right;
+}
+
+.progress-box span {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1E3A8A;
+  margin-bottom: 6px;
+}
+
+.progress-bg {
+  background: #e2e8f0;
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  width: 75%;
+  height: 100%;
+  background: linear-gradient(90deg, #1E3A8A, #2d5be3);
+  border-radius: 999px;
+}
+
+/* ===== INFO NOTE ===== */
+.info-note {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #1d4ed8;
+  margin-bottom: 20px;
+}
+
+/* ===== DOC CARD ===== */
+.doc-card {
+  background: #fff;
+  border: 1px solid #e0e4ec;
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.doc-header strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.doc-header span {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ===== UPLOAD AREA ===== */
+.upload-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 16px 20px;
+  transition: border-color 0.2s;
+  flex-wrap: wrap;
+}
+
+.upload-area:hover {
+  border-color: #1E3A8A;
+}
+
+.upload-area button {
+  background: #1E3A8A;
+  color: #fff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.upload-area button:hover { background: #162e6e; }
+
+.upload-area span {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.upload-area input[type="file"] {
+  display: none;
+}
+
+.browse {
+  color: #1E3A8A;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ===== FILE STATUS ===== */
+.file-status {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #15803d;
+  font-weight: 600;
+  min-height: 18px;
+}
+
+.error {
+  font-size: 12px;
+  color: #dc2626;
+  margin-top: 4px;
+  min-height: 16px;
+}
+
+/* ===== BOTTOM BUTTONS ===== */
+.bottom-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 28px;
+  padding-bottom: 40px;
+  gap: 12px;
+}
+
+.btn-back {
+  padding: 11px 28px;
+  background: #fff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #374151;
+  transition: background 0.2s;
+}
+
+.btn-back:hover { background: #f1f5f9; }
+
+.btn-preview {
+  padding: 11px 32px;
+  background: #1E3A8A;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-preview:hover { background: #162e6e; }

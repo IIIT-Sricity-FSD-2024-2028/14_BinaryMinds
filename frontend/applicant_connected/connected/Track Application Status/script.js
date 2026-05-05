@@ -29,12 +29,28 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   var combinedApps = Object.values(aggregateMap);
+  if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
+    TRADEZO.sortFreshFirst(combinedApps);
+  }
+
+  function normalize(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  function belongsToUser(a) {
+    if (!a) return false;
+    if (user.email && normalize(a.email) === normalize(user.email)) return true;
+    if (user.email && normalize(a.applicantId) === normalize(user.email)) return true;
+    if (user.name && normalize(a.applicantName) === normalize(user.name)) return true;
+    if (user.id && (normalize(a.userId) === normalize(user.id) || normalize(a.applicantId) === normalize(user.id))) return true;
+    return false;
+  }
 
   if (appRef) {
-    app = combinedApps.find(function(a) { return a.appRef === appRef || a.id === appRef; }) || null;
+    app = combinedApps.find(function(a) { return (a.appRef === appRef || a.id === appRef) && belongsToUser(a); }) || null;
   }
   if (!app) {
-    app = combinedApps.find(function(a) { return a.email && a.email.toLowerCase() === user.email.toLowerCase(); }) || null;
+    app = combinedApps.find(belongsToUser) || null;
   }
   if (!app) {
     app = combinedApps.find(function(a) { return a.applicantName && a.applicantName.toLowerCase() === user.name.toLowerCase(); }) || null;

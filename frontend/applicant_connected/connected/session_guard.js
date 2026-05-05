@@ -3,6 +3,16 @@
     try { return JSON.parse(value); } catch (error) { return null; }
   }
 
+  window.handleLogout = function() {
+    sessionStorage.removeItem('loggedInUser');
+    sessionStorage.removeItem('applicationRef');
+    Object.keys(sessionStorage).forEach(function(key) {
+      if (key.indexOf('notifsRead_') === 0) sessionStorage.removeItem(key);
+    });
+    localStorage.removeItem('user');
+    window.location.href = '../login/index.html';
+  };
+
   var user = safeParse(sessionStorage.getItem('loggedInUser') || 'null');
   if (!user || !user.email) {
     var localUser = safeParse(localStorage.getItem('user') || 'null');
@@ -10,6 +20,7 @@
       user = {
         name: localUser.name || 'Applicant',
         email: localUser.email,
+        phone: localUser.phone || '',
         role: 'applicant'
       };
       sessionStorage.setItem('loggedInUser', JSON.stringify(user));
@@ -56,20 +67,111 @@ document.addEventListener('DOMContentLoaded', function() {
   var itemsHTML = '';
   var notifCount = 0;
   
+  function safeArray(key) {
+    try {
+      var value = JSON.parse(localStorage.getItem(key) || '[]');
+      return Array.isArray(value) ? value : [];
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function normalizeText(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  function getAppId(a) {
+    return String(a && (a.appId || a.id || a.appRef || a.application_id || a.applicationId || a.backendId) || '').trim();
+  }
+
+  function sameAppId(a, appId) {
+    return getAppId(a) === String(appId || '').trim();
+  }
+
   var mockApps = window.TRADEZO && window.TRADEZO.applications ? window.TRADEZO.applications : [];
-  var localApps = [];
-  try { localApps = JSON.parse(localStorage.getItem('applications') || '[]'); } catch(e){}
-  
-  var app = localApps.find(function(a) { 
-      return (a.email && a.email.toLowerCase() === (user.email||'').toLowerCase()) || 
-             (a.applicantName && user.name && a.applicantName.toLowerCase() === user.name.toLowerCase()); 
-  }) || mockApps.find(function(a) { 
-      return (a.email && a.email.toLowerCase() === (user.email||'').toLowerCase()) || 
-             (a.applicantName && user.name && a.applicantName.toLowerCase() === user.name.toLowerCase()); 
+  var localApps = safeArray('applications');
+  // Also search tz_submitted_apps (where payment-confirmed apps are stored)
+  var submittedApps = safeArray('tz_submitted_apps');
+  var generatedLicenses = safeArray('tz_generated_licenses');
+  var applicantNotifications = safeArray('tz_applicant_notifications');
+  // Merge all sources
+  var allApps = submittedApps.concat(localApps).concat(mockApps);
+
+  generatedLicenses.forEach(function(lic) {
+    var licAppId = String(lic.appId || lic.applicationId || lic.application_id || '').trim();
+    if (!licAppId) return;
+
+    var existing = allApps.find(function(a) { return sameAppId(a, licAppId); });
+    if (!existing) return;
+
+    existing.status = 'License Issued';
+    existing.licenseNo = lic.licenseNo || lic.licenseId || lic.id;
+    existing.licenseId = lic.licenseNo || lic.licenseId || lic.id;
+    existing.licenseIssueDate = lic.licenseIssueDate || lic.issueDate || existing.licenseIssueDate;
+    existing.licenseExpiryDate = lic.licenseExpiryDate || lic.expiryDate || existing.licenseExpiryDate;
+    existing.updatedAt = lic.createdAt || lic.updatedAt || lic.date || existing.updatedAt;
   });
 
-  if (app) {
-    if (app.status === 'Pending Inspection' || app.status === 'Scheduled') {
+  function matchesUser(a) {
+    return (a.email && normalizeText(a.email) === normalizeText(user.email)) ||
+           (a.applicantEmail && normalizeText(a.applicantEmail) === normalizeText(user.email)) ||
+           (a.applicantId && normalizeText(a.applicantId) === normalizeText(user.email)) ||
+           (a.applicantName && user.name && normalizeText(a.applicantName) === normalizeText(user.name)) ||
+           (a.userId && user.id && normalizeText(a.userId) === normalizeText(user.id));
+  }
+
+  function notificationMatchesUser(n) {
+    if (!n) return false;
+    if (user.email && normalizeText(n.applicantEmail || n.email || n.applicantId) === normalizeText(user.email)) return true;
+    if (user.name && normalizeText(n.applicantName) === normalizeText(user.name)) return true;
+    if (user.id && normalizeText(n.userId || n.applicantId) === normalizeText(user.id)) return true;
+    return false;
+  }
+
+  function newestFirst(a, b) {
+    return new Date(b.createdAt || b.date || 0).getTime() - new Date(a.createdAt || a.date || 0).getTime();
+  }
+
+  function notificationMarkup(item) {
+    var title = item.title || 'Notification';
+    var message = item.message || '';
+    return '<div class="notif-item"><strong>' + title + '</strong>' + message + '</div>';
+  }
+
+  // Also check applicationRef from session for most accurate match
+  var appRef = sessionStorage.getItem('applicationRef') || '';
+  var app = null;
+  if (appRef) {
+    app = allApps.find(function(a){ return sameAppId(a, appRef); });
+  }
+  if (!app) app = allApps.find(matchesUser) || null;
+
+  var applicantEventNotifications = applicantNotifications
+    .filter(function(n) {
+      if (notificationMatchesUser(n)) return true;
+      return app && String(n.appId || '') === getAppId(app);
+    })
+    .sort(newestFirst);
+
+  var latestApplicantNotification = applicantEventNotifications[0] || null;
+  if (!app && latestApplicantNotification && latestApplicantNotification.appId) {
+    app = allApps.find(function(a) { return sameAppId(a, latestApplicantNotification.appId); }) || null;
+  }
+
+  if (applicantEventNotifications.length) {
+    notifCount = applicantEventNotifications.length;
+    itemsHTML = applicantEventNotifications.slice(0, 5).map(notificationMarkup).join('');
+  }
+  else if (app) {
+    var st = (app.status || '').toLowerCase();
+
+    if (st === 'submitted' || st === 'pending' || st === 'under verification') {
+      notifCount++;
+      var appIdStr = app.id || app.appRef || '';
+      itemsHTML += '<div class="notif-item"><strong>Application Received ✅</strong>Your application <b>' + appIdStr + '</b> has been submitted and is under review.</div>';
+      itemsHTML += '<div class="notif-item"><strong>Payment Confirmed 💳</strong>Payment of ' + (app.paymentAmount || '₹2,205.00') + ' was received successfully.</div>';
+    }
+    else if (app.status === 'Pending Inspection' || app.status === 'Scheduled') {
       notifCount += 2;
       var insDate = app.inspectionDate || 'TBD';
       var insTime = app.inspectionTime || 'TBD';
@@ -83,7 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
       var myReport = reports.find(function(r) { return r.appId === app.id; });
       var inspResult = myReport ? myReport.result : 'Completed';
       var inspEmoji = inspResult === 'Approved' ? '✅' : (inspResult === 'Rejected' ? '❌' : '📋');
-      
       itemsHTML += '<div class="notif-item"><strong>Inspection ' + inspResult + ' ' + inspEmoji + '</strong>Field officer recorded inspection report.</div>';
       itemsHTML += '<div class="notif-item"><strong>Documents Verified! ✅</strong>Your submitted documents have been approved.</div>';
     }
@@ -93,18 +194,26 @@ document.addEventListener('DOMContentLoaded', function() {
     } 
     else if (app.status === 'Approved' || app.status === 'License Issued' || app.status === 'Licensed') {
       notifCount++;
-      var licStr = (app.licenseId || app.licenseNo) ? ('Your Trade License <b>' + (app.licenseId || app.licenseNo) + '</b> has been issued successfully!') : 'Your trade license has been issued successfully!';
-      itemsHTML += '<div class="notif-item"><strong>License Generated 🎉</strong>' + licStr + '<br>You can now download it from your dashboard.</div>'; 
+      var licenseNo = app.licenseId || app.licenseNo;
+      var licStr = licenseNo ? ('Your Trade License <b>' + licenseNo + '</b> has been generated successfully!') : 'Your trade license has been generated successfully!';
+      itemsHTML += '<div class="notif-item"><strong>License Generated</strong>' + licStr + '<br>You can now download it from your dashboard.</div>'; 
     }
     
-    // Default base notification
-    itemsHTML += '<div class="notif-item"><strong>Application Submitted</strong>We received your application ' + app.id + '.</div>';
+    // Base notification always shown when app exists
+    if (!itemsHTML) {
+      notifCount++;
+      itemsHTML += '<div class="notif-item"><strong>Application Submitted</strong>We received your application ' + (app.id || app.appRef) + '.</div>';
+    }
   } else {
     itemsHTML = '<div class="notif-empty">No active notifications</div>';
   }
 
   // 3. Construct elements
-  var appStatus = app ? app.status : 'none';
+  var appStatus = applicantEventNotifications.length
+    ? applicantEventNotifications.map(function(item) { return item.id; }).join('|')
+    : app
+    ? [getAppId(app), app.status, app.licenseId || app.licenseNo || ''].join('_')
+    : 'none';
   var hasRead = sessionStorage.getItem('notifsRead_' + appStatus) === 'true';
 
   var wrapper = document.createElement('div');
@@ -112,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   var bell = document.createElement('div');
   bell.className = 'notif-bell';
-  bell.innerHTML = '🔔' + ((notifCount > 0 && !hasRead) ? '<span class="notif-badge">' + notifCount + '</span>' : '');
+  bell.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:2px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>' + ((notifCount > 0 && !hasRead) ? '<span class="notif-badge">' + notifCount + '</span>' : '');
   
   var drop = document.createElement('div');
   drop.className = 'notif-dropdown';

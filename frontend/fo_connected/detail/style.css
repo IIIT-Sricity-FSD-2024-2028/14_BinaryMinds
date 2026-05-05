@@ -4,6 +4,10 @@ body {
     background: #f5f6fa;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 /* Header */
 .top-header {
     display: flex;
@@ -78,14 +82,16 @@ body {
 /* Layout */
 .container {
     display: flex;
+    min-height: calc(100vh - 70px);
 }
 
 /* Sidebar */
 .sidebar {
     width: 240px;
     background: #f8f9fc;
-    height: 100vh;
+    flex: 0 0 240px;
     padding-top: 20px;
+    border-right: 1px solid #e5e7eb;
 }
 
 .sidebar ul {
@@ -129,26 +135,26 @@ body {
     padding: 30px;
 }
 /* MAIN */
-.main { flex: 1; padding: 28px 32px; }
+.main { flex: 1; padding: 28px 32px; min-width: 0; }
 .main h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
 .sub { font-size: 13px; color: #666; margin-bottom: 20px; }
 
 /* CARD */
-.card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px 24px; margin-bottom: 18px; }
+.card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px 24px; margin-bottom: 18px; }
 .card h2 { font-size: 15px; font-weight: 700; color: #1E3A8A; margin-bottom: 18px; }
-.card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.card-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
 
 /* FIELDS GRID */
-.grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px 32px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 32px; }
 .field label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 3px; }
-.field p { font-size: 13px; font-weight: 500; }
+.field p { font-size: 13px; font-weight: 500; margin: 0; overflow-wrap: anywhere; }
 
 /* VIEW ALL BUTTON */
 .view-btn { padding: 8px 16px; background: #1E3A8A; color: white; border: none; border-radius: 7px; font-size: 13px; cursor: pointer; }
 .view-btn:hover { background: #142e58; }
 
 /* DOCUMENT BOXES */
-.docs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.docs-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .doc-box { padding: 14px; border-radius: 8px; }
 .blue   { background: #eff6ff; border: 1px solid #bfdbfe; }
 .green  { background: #f0fdf4; border: 1px solid #bbf7d0; }
@@ -167,3 +173,75 @@ body {
 /* BACK ARROW */
 .back { font-size: 22px; cursor: pointer; color: #475569; display: inline-block; margin-top: 8px; }
 .back:hover { color: #1E3A8A; }
+
+@media (max-width: 960px) {
+    .grid,
+    .docs-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field[style*="grid-column"] {
+        grid-column: span 2 !important;
+    }
+}
+
+@media (max-width: 760px) {
+    .top-header,
+    .container,
+    .card-top,
+    .action-btns {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .top-header {
+        gap: 12px;
+    }
+
+    .header-right {
+        justify-content: space-between;
+    }
+
+    .user-info {
+        text-align: left;
+    }
+
+    .sidebar {
+        width: 100%;
+        flex-basis: auto;
+        padding: 10px;
+        border-right: 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .sidebar ul {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin: 0;
+    }
+
+    .sidebar li {
+        margin: 0;
+        min-height: 44px;
+    }
+
+    .main {
+        padding: 22px 16px;
+    }
+
+    .grid,
+    .docs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field[style*="grid-column"] {
+        grid-column: auto !important;
+    }
+
+    .approve-btn,
+    .reject-btn,
+    .view-btn {
+        width: 100%;
+    }
+}

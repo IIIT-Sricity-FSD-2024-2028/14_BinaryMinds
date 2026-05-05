@@ -1,291 +1,502 @@
-// DO authorization/script.js — uses TRADEZO mock data
+// DO authorization/script.js
+// Final authorization is driven by live/backend storage and FO inspection reports.
+
 var currentAppId = null;
+var authorizationApps = [];
+var DEMO_BUSINESS_NAMES = {
+  'green valley restaurant': true,
+  'singh electronics': true,
+  'sharma healthcare': true
+};
 
-// Removed state-clearing on reload to persist changes
+function safeArray(key) {
+  try {
+    var value = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(value) ? value : [];
+  } catch(e) {
+    return [];
+  }
+}
 
-// Shared state functions (same as worklist)
+function saveArray(key, value) {
+  localStorage.setItem(key, JSON.stringify(Array.isArray(value) ? value : []));
+}
+
+function createApplicantLicenseNotification(app, appId, licenseNo) {
+  var notifications = safeArray('tz_applicant_notifications').filter(function(item) {
+    return !(item.type === 'license_generated' &&
+      String(item.appId || '') === String(appId) &&
+      String(item.licenseNo || '') === String(licenseNo));
+  });
+
+  notifications.unshift({
+    id: 'NOTIF-LIC-' + licenseNo,
+    type: 'license_generated',
+    appId: appId,
+    licenseNo: licenseNo,
+    applicantName: app.applicantName || app.applicant || app.ownerName || '',
+    applicantEmail: app.email || app.applicantEmail || app.applicantId || '',
+    businessName: app.businessName || app.business || '',
+    title: 'License Generated',
+    message: 'Your Trade License ' + licenseNo + ' has been generated and is ready to download.',
+    read: false,
+    createdAt: new Date().toISOString()
+  });
+
+  saveArray('tz_applicant_notifications', notifications);
+}
+
+function normalizeText(value) {
+  return String(value || '').toLowerCase().replace(/[_-]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function getAppId(item) {
+  return String(item && (item.appId || item.id || item.appRef || item.application_id || item.applicationId) || '').trim();
+}
+
+function isDemoApplication(item) {
+  var businessName = normalizeText(item && (item.businessName || item.business_name || item.business || item.companyName));
+  return !!DEMO_BUSINESS_NAMES[businessName];
+}
+
+function sameApp(item, appId) {
+  var wanted = String(appId || '').trim();
+  return [
+    item && item.appId,
+    item && item.id,
+    item && item.appRef,
+    item && item.application_id,
+    item && item.applicationId,
+    item && item.backendId
+  ].some(function(value) {
+    return String(value || '').trim() === wanted;
+  });
+}
+
+function escapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function getAppStatus(appId) {
   var data = localStorage.getItem('doAppStatus_' + appId);
-  return data ? JSON.parse(data) : { status: 'pending', licenseNo: null };
+  if (!data) return { status: 'pending', licenseNo: null };
+  try {
+    return JSON.parse(data) || { status: 'pending', licenseNo: null };
+  } catch(e) {
+    return { status: 'pending', licenseNo: null };
+  }
 }
 
 function setAppStatus(appId, status, licenseNo) {
-  localStorage.setItem('doAppStatus_' + appId, JSON.stringify({ status: status, licenseNo: licenseNo || null }));
+  localStorage.setItem('doAppStatus_' + appId, JSON.stringify({
+    status: status,
+    licenseNo: licenseNo || null
+  }));
 }
 
-// Modal helper functions
+function mergeByApplicationId(sources) {
+  var byId = {};
+  var order = [];
+
+  sources.forEach(function(app) {
+    if (!app) return;
+    var id = getAppId(app);
+    if (!id) return;
+
+    if (!byId[id]) {
+      byId[id] = {};
+      order.push(id);
+    }
+
+    byId[id] = Object.assign({}, byId[id], app, {
+      id: app.id || byId[id].id || id,
+      appId: id,
+      appRef: app.appRef || byId[id].appRef || id
+    });
+  });
+
+  return order.map(function(id) { return byId[id]; });
+}
+
+function inspectionByApplication() {
+  var byId = {};
+
+  if (window.TRADEZO && Array.isArray(TRADEZO.inspections)) {
+    TRADEZO.inspections.forEach(function(inspection) {
+      var id = getAppId(inspection);
+      if (id) byId[id] = inspection;
+    });
+  }
+
+  safeArray('tz_inspection_reports').forEach(function(report) {
+    var id = getAppId(report);
+    if (id) byId[id] = Object.assign({}, byId[id] || {}, report);
+  });
+
+  return byId;
+}
+
+function foResultForApp(app, inspections) {
+  var id = getAppId(app);
+  var inspection = inspections[id] || {};
+  return inspection.result || app.inspectionResult || '';
+}
+
+function isFieldOfficerApproved(app, inspections) {
+  return normalizeText(foResultForApp(app, inspections)) === 'approved';
+}
+
+function normalizeApplication(app, inspections) {
+  var id = getAppId(app);
+  var inspection = inspections[id] || {};
+
+  return Object.assign({}, app, {
+    id: id,
+    appId: id,
+    appRef: app.appRef || id,
+    businessName: app.businessName || app.business || '-',
+    applicantName: app.applicantName || app.applicant || app.ownerName || '-',
+    tradeCategory: app.tradeCategory || app.category || app.licenseType || app.type || 'Trade License',
+    submittedDate: app.submittedDate || app.submitted || app.date || '-',
+    foResult: inspection.result || app.inspectionResult || 'Approved',
+    inspection: inspection
+  });
+}
+
+function loadAuthorizationApplications() {
+  var inspections = inspectionByApplication();
+  var sources = []
+    .concat((window.TRADEZO && Array.isArray(TRADEZO.applications)) ? TRADEZO.applications : [])
+    .concat(safeArray('tradezo_applications'))
+    .concat(safeArray('applications'))
+    .concat(safeArray('tz_submitted_apps'))
+    .concat(safeArray('tz_inspection_reports'));
+
+  var apps = mergeByApplicationId(sources).filter(function(app) {
+    if (isDemoApplication(app)) return false;
+    return isFieldOfficerApproved(app, inspections);
+  }).map(function(app) {
+    return normalizeApplication(app, inspections);
+  });
+
+  if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
+    return TRADEZO.sortFreshFirst(apps);
+  }
+  return apps.reverse();
+}
+
+function findAuthorizationApp(appId) {
+  var app = authorizationApps.find(function(item) {
+    return sameApp(item, appId);
+  });
+  if (app) return app;
+
+  var inspections = inspectionByApplication();
+  var app = mergeByApplicationId(
+    []
+      .concat((window.TRADEZO && Array.isArray(TRADEZO.applications)) ? TRADEZO.applications : [])
+      .concat(safeArray('tradezo_applications'))
+      .concat(safeArray('applications'))
+      .concat(safeArray('tz_submitted_apps'))
+      .concat(safeArray('tz_inspection_reports'))
+  ).find(function(item) {
+    return sameApp(item, appId);
+  });
+
+  if (app && isDemoApplication(app)) return normalizeApplication({ id: appId, appId: appId }, inspections);
+  return normalizeApplication(app || { id: appId, appId: appId }, inspections);
+}
+
+function updateStoredApplications(appId, changes) {
+  ['tradezo_applications', 'applications', 'tz_submitted_apps'].forEach(function(key) {
+    var list = safeArray(key);
+    var changed = false;
+    list = list.map(function(app) {
+      if (!sameApp(app, appId)) return app;
+      changed = true;
+      return Object.assign({}, app, changes);
+    });
+    if (changed) saveArray(key, list);
+  });
+
+  if (window.TRADEZO && Array.isArray(TRADEZO.applications)) {
+    TRADEZO.applications.forEach(function(app) {
+      if (sameApp(app, appId)) Object.assign(app, changes);
+    });
+  }
+}
+
+function syncBackendStatus(appId, status) {
+  var app = findAuthorizationApp(appId);
+  var backendId = Number(app && (app.backendId || app.application_id || app.id));
+  if (backendId && window.TRADEZO && typeof TRADEZO.syncApplicationToBackend === 'function') {
+    TRADEZO.syncApplicationToBackend(Object.assign({}, app, { id: backendId, status: status }), 'department_officer');
+  }
+}
+
 function openModal(id) {
-  document.getElementById(id).classList.add('active');
+  var modal = document.getElementById(id);
+  if (modal) modal.classList.add('active');
 }
 
 function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
+  var modal = document.getElementById(id);
+  if (modal) modal.classList.remove('active');
 }
 
-// Show approve modal
+window.closeModal = closeModal;
+
+function appInfoHtml(app, includeFoResult) {
+  var html =
+    '<p><strong>Application ID:</strong> ' + escapeHtml(app.appId) + '</p>' +
+    '<p><strong>Business:</strong> ' + escapeHtml(app.businessName) + '</p>' +
+    '<p><strong>Category:</strong> ' + escapeHtml(app.tradeCategory) + '</p>';
+  if (includeFoResult) {
+    html += '<p><strong>FO Result:</strong> ' + escapeHtml(app.foResult) + '</p>';
+  }
+  return html;
+}
+
 function showApproveModal(appId) {
   currentAppId = appId;
-  var app = TRADEZO.getApplication(appId);
-  var inspection = TRADEZO.inspections.find(function(ins) { return ins.appId === appId; });
-  
+  var app = findAuthorizationApp(appId);
+
   document.getElementById('approveDesc').textContent = 'Are you sure you want to approve this application?';
-  document.getElementById('approveInfo').innerHTML = 
-    '<p><strong>Application ID:</strong> ' + appId + '</p>' +
-    '<p><strong>Business:</strong> ' + app.businessName + '</p>' +
-    '<p><strong>Category:</strong> ' + app.tradeCategory + '</p>' +
-    '<p><strong>FO Result:</strong> ' + (inspection ? inspection.result : 'Pending') + '</p>';
-  
+  document.getElementById('approveInfo').innerHTML = appInfoHtml(app, true);
   openModal('approveModal');
 }
 
-// Show reject modal
 function showRejectModal(appId) {
   currentAppId = appId;
-  var app = TRADEZO.getApplication(appId);
-  
+  var app = findAuthorizationApp(appId);
+
   document.getElementById('rejectDesc').textContent = 'Please provide a reason for rejecting this application.';
-  document.getElementById('rejectInfo').innerHTML = 
-    '<p><strong>Application ID:</strong> ' + appId + '</p>' +
-    '<p><strong>Business:</strong> ' + app.businessName + '</p>' +
-    '<p><strong>Category:</strong> ' + app.tradeCategory + '</p>';
+  document.getElementById('rejectInfo').innerHTML = appInfoHtml(app, false);
   document.getElementById('rejectReason').value = '';
-  
   openModal('rejectModal');
 }
 
-// Show license modal
 function showLicenseModal(appId) {
   currentAppId = appId;
-  var app = TRADEZO.getApplication(appId);
-  
+  var app = findAuthorizationApp(appId);
+
   document.getElementById('licenseDesc').textContent = 'Ready to generate the official trade license?';
-  document.getElementById('licenseInfo').innerHTML = 
-    '<p><strong>Application ID:</strong> ' + appId + '</p>' +
-    '<p><strong>Business:</strong> ' + app.businessName + '</p>' +
-    '<p><strong>Category:</strong> ' + app.tradeCategory + '</p>';
-  
+  document.getElementById('licenseInfo').innerHTML = appInfoHtml(app, false);
   openModal('licenseModal');
 }
 
-// Confirm approve action
+window.showApproveModal = showApproveModal;
+window.showRejectModal = showRejectModal;
+window.showLicenseModal = showLicenseModal;
+
 function confirmApprove() {
   if (!currentAppId) return;
-  var app = TRADEZO.getApplication(currentAppId);
-  
+  var app = findAuthorizationApp(currentAppId);
+
   setAppStatus(currentAppId, 'approved', null);
-  
+  updateStoredApplications(currentAppId, {
+    status: 'Department Approved',
+    doReview: 'Approved',
+    updatedAt: new Date().toISOString()
+  });
+  syncBackendStatus(currentAppId, 'Department Review');
+
   closeModal('approveModal');
-  
-  // Show success modal
   document.getElementById('successTitle').textContent = 'Application Approved!';
-  document.getElementById('successDesc').innerHTML = 
-    '<strong>' + app.businessName + '</strong> has been approved.<br>Click "Generate License" to issue the license.';
+  document.getElementById('successDesc').innerHTML =
+    '<strong>' + escapeHtml(app.businessName) + '</strong> has been approved.<br>Click "Generate License" to issue the license.';
   openModal('successModal');
-  
+
   renderTable();
 }
 
-// Confirm reject action
 function confirmReject() {
   if (!currentAppId) return;
-  var app = TRADEZO.getApplication(currentAppId);
-  var reason = document.getElementById('rejectReason').value.trim();
-  
+  var app = findAuthorizationApp(currentAppId);
+  var reasonEl = document.getElementById('rejectReason');
+  var reason = reasonEl.value.trim();
+
   if (!reason) {
-    document.getElementById('rejectReason').style.borderColor = '#dc2626';
-    document.getElementById('rejectReason').style.boxShadow = '0 0 0 3px rgba(220,38,38,0.1)';
+    reasonEl.style.borderColor = '#dc2626';
+    reasonEl.style.boxShadow = '0 0 0 3px rgba(220,38,38,0.1)';
     return;
   }
-  
+
+  reasonEl.style.borderColor = '';
+  reasonEl.style.boxShadow = '';
+
   setAppStatus(currentAppId, 'rejected', null);
   localStorage.setItem('doRejectReason_' + currentAppId, reason);
-  
+  updateStoredApplications(currentAppId, {
+    status: 'Rejected',
+    doReview: 'Rejected',
+    rejectionReason: reason,
+    updatedAt: new Date().toISOString()
+  });
+  syncBackendStatus(currentAppId, 'Rejected');
+
   closeModal('rejectModal');
-  
-  // Show success modal
   document.getElementById('successTitle').textContent = 'Application Rejected';
-  document.getElementById('successDesc').innerHTML = 
-    '<strong>' + app.businessName + '</strong> has been rejected.<br>Reason: ' + reason;
+  document.getElementById('successDesc').innerHTML =
+    '<strong>' + escapeHtml(app.businessName) + '</strong> has been rejected.<br>Reason: ' + escapeHtml(reason);
   openModal('successModal');
-  
+
   renderTable();
 }
 
-// Confirm generate license action
 function confirmGenerateLicense() {
   if (!currentAppId) return;
-  var app = TRADEZO.getApplication(currentAppId);
+  var app = findAuthorizationApp(currentAppId);
   var licenseId = 'LIC-' + Date.now().toString().slice(-6);
-  
+
   var issueDate = new Date();
-  var expiryDate = new Date();
+  var expiryDate = new Date(issueDate);
   expiryDate.setFullYear(issueDate.getFullYear() + 1);
   var issueStr = issueDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
   var expiryStr = expiryDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-  
-  var loggedInDO = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}');
+
+  var loggedInDO = {};
+  try { loggedInDO = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}'); } catch(e) {}
   var doName = loggedInDO.name || 'Department Officer';
 
   setAppStatus(currentAppId, 'licensed', licenseId);
-  
-  // Persist generated license to localStorage globally
-  var generatedLicenses = [];
-  try { generatedLicenses = JSON.parse(localStorage.getItem('tz_generated_licenses') || '[]'); } catch(e){}
-  generatedLicenses.push({
-      appId: currentAppId,
-      licenseNo: licenseId,
-      businessName: app ? app.businessName : 'Unknown Business',
-      category: app ? (app.tradeCategory || app.category) : 'N/A',
-      status: 'Active',
-      date: new Date().toISOString(),
-      licenseIssueDate: issueStr,
-      licenseExpiryDate: expiryStr,
-      issuedBy: doName
+  updateStoredApplications(currentAppId, {
+    status: 'License Issued',
+    doReview: 'Approved',
+    licenseNo: licenseId,
+    licenseId: licenseId,
+    licenseIssueDate: issueStr,
+    licenseExpiryDate: expiryStr,
+    issuedBy: doName,
+    updatedAt: new Date().toISOString()
   });
-  localStorage.setItem('tz_generated_licenses', JSON.stringify(generatedLicenses));
+  syncBackendStatus(currentAppId, 'Approved');
 
-  // Update applications array so applicant profile updates status
-  var applications = [];
-  try { applications = JSON.parse(localStorage.getItem('applications') || '[]'); } catch(e){}
-  applications.forEach(function(a) {
-      if (a.id === currentAppId) {
-          a.status = 'License Issued';
-          a.licenseNo = licenseId;
-          a.licenseIssueDate = issueStr;
-          a.licenseExpiryDate = expiryStr;
-          a.issuedBy = doName;
-      }
+  var backendId = Number(app && (app.backendId || app.application_id || app.id));
+  if (backendId && window.TRADEZO && typeof TRADEZO.createBackendLicense === 'function') {
+    TRADEZO.createBackendLicense(backendId, loggedInDO.backendUserId || loggedInDO.user_id || 4);
+  }
+
+  var generatedLicenses = safeArray('tz_generated_licenses');
+  generatedLicenses = generatedLicenses.filter(function(lic) {
+    return String(lic.appId || '') !== String(currentAppId) && String(lic.licenseNo || '') !== licenseId;
   });
-  localStorage.setItem('applications', JSON.stringify(applications));
+  generatedLicenses.unshift({
+    id: licenseId,
+    appId: currentAppId,
+    licenseNo: licenseId,
+    businessName: app.businessName,
+    category: app.tradeCategory,
+    status: 'Active',
+    date: new Date().toISOString(),
+    licenseIssueDate: issueStr,
+    licenseExpiryDate: expiryStr,
+    issuedBy: doName
+  });
+  saveArray('tz_generated_licenses', generatedLicenses);
+  createApplicantLicenseNotification(app, currentAppId, licenseId);
 
   closeModal('licenseModal');
-  
-  // Show license success modal
-  document.getElementById('licenseSuccessInfo').innerHTML = 
-    '<p><strong>License No:</strong> ' + licenseId + '</p>' +
-    '<p><strong>Business:</strong> ' + (app ? app.businessName : '') + '</p>' +
-    '<p><strong>Category:</strong> ' + (app ? (app.tradeCategory || app.category) : '') + '</p>';
+  document.getElementById('licenseSuccessInfo').innerHTML =
+    '<p><strong>License No:</strong> ' + escapeHtml(licenseId) + '</p>' +
+    '<p><strong>Business:</strong> ' + escapeHtml(app.businessName) + '</p>' +
+    '<p><strong>Category:</strong> ' + escapeHtml(app.tradeCategory) + '</p>';
   openModal('licenseSuccessModal');
-  
+
   renderTable();
 }
 
-// Function to render table
-function renderTable() {
+function statusBadgeHtml(state) {
+  var status = normalizeText(state.status);
+  if (status === 'licensed' && state.licenseNo) {
+    return '<span style="background:#dcfce7;color:#16a34a;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Licensed</span>';
+  }
+  if (status === 'approved') {
+    return '<span style="background:#dcfce7;color:#16a34a;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Approved</span>';
+  }
+  if (status === 'rejected') {
+    return '<span style="background:#fee2e2;color:#dc2626;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Rejected</span>';
+  }
+  return '<span style="background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Pending</span>';
+}
+
+function actionHtml(appId, state) {
+  var status = normalizeText(state.status);
+  if (status === 'licensed' && state.licenseNo) {
+    return '<span style="background:#dcfce7;color:#16a34a;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">License: ' + escapeHtml(state.licenseNo) + '</span>';
+  }
+  if (status === 'approved') {
+    return '<button class="generate-btn" onclick="showLicenseModal(\'' + escapeHtml(appId) + '\')" style="background:#16a34a;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-weight:600;">Generate License</button>';
+  }
+  if (status === 'rejected') {
+    return '<span style="background:#fee2e2;color:#dc2626;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Rejected</span>';
+  }
+  return '<button class="approve-btn" onclick="showApproveModal(\'' + escapeHtml(appId) + '\')" style="background:#16a34a;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-weight:600;margin-right:6px;">Approve</button>' +
+    '<button class="reject-btn" onclick="showRejectModal(\'' + escapeHtml(appId) + '\')" style="background:#dc2626;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-weight:600;">Reject</button>';
+}
+
+function renderTable(data) {
   var tbody = document.querySelector('tbody');
   if (!tbody) return;
+
+  authorizationApps = data || loadAuthorizationApplications();
   tbody.innerHTML = '';
 
-  // Sort applications by most recent
-  TRADEZO.applications.sort(function(a, b) {
-    var dateA = new Date(a.submittedDate || 0);
-    var dateB = new Date(b.submittedDate || 0);
-    return dateB - dateA;
-  });
+  if (!authorizationApps.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:30px;">No field-officer-approved applications are ready for final authorization.</td></tr>';
+    return;
+  }
 
-  // Remove duplicates by business name, keeping the most recent
-  var seen = new Set();
-  var uniqueApps = TRADEZO.applications.filter(function(app) {
-    var key = app.businessName || app.applicantName || app.id || app.appRef;
-    if (!key) return true;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-
-  uniqueApps.forEach(function(app) {
-    var thisAppId = app.id || app.appRef;
-    // Find inspection for this app across mockdata and localstorage
-    var inspection = TRADEZO.inspections.find(function(ins) { return ins.appId === thisAppId; });
-    var foResult = inspection ? inspection.result : app.inspectionResult;
-
-    // Check dynamic FO inspection reports from local storage
-    var lsInspections = [];
-    try { lsInspections = JSON.parse(localStorage.getItem('tz_inspection_reports') || '[]'); } catch(e){}
-    var dynamicIns = lsInspections.find(function(r) { return r.appId === thisAppId; });
-    if (dynamicIns && dynamicIns.result && dynamicIns.result !== 'Pending') {
-      foResult = dynamicIns.result;
-    }
-
-    // Check DO action status from shared sessionStorage
-    var appData = getAppStatus(thisAppId);
-    var doStatus = appData.status;
-    var licenseNo = appData.licenseNo;
-
-    // Determine Status column display
-    var statusBadge = '';
-    if (doStatus === 'licensed' && licenseNo) {
-      statusBadge = '<span style="background:#dcfce7;color:#16a34a;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Licensed</span>';
-    } else if (doStatus === 'approved') {
-      statusBadge = '<span style="background:#dcfce7;color:#16a34a;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Approved</span>';
-    } else if (doStatus === 'rejected') {
-      statusBadge = '<span style="background:#fee2e2;color:#dc2626;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Rejected</span>';
-    } else if (foResult === 'Rejected') {
-      statusBadge = '<span style="background:#fee2e2;color:#dc2626;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">FO Rejected</span>';
-    } else {
-      // Pending or FO Approved - both show as Pending for DO
-      statusBadge = '<span style="background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Pending</span>';
-    }
-
-    // Determine Action column - must match Status
-    var actionHtml = '';
-    if (statusBadge.includes('Pending')) {
-      // Status = Pending → Show Approve/Reject
-      actionHtml = '<button class="approve-btn" onclick="showApproveModal(\'' + thisAppId + '\')" style="background:#16a34a;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-weight:600;margin-right:6px;">Approve</button>' +
-                   '<button class="reject-btn" onclick="showRejectModal(\'' + thisAppId + '\')" style="background:#dc2626;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-weight:600;">Reject</button>';
-    } else if (statusBadge.includes('Approved')) {
-      // Status = Approved → Show Generate License
-      actionHtml = '<button class="generate-btn" onclick="showLicenseModal(\'' + thisAppId + '\')" style="background:#16a34a;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-weight:600;">Generate License</button>';
-    } else if (statusBadge.includes('Licensed')) {
-      // Status = Licensed → Show License Number
-      actionHtml = '<span style="background:#dcfce7;color:#16a34a;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">License: ' + licenseNo + '</span>';
-    } else if (statusBadge.includes('Rejected')) {
-      // Status = Rejected → Show Rejected
-      actionHtml = '<span style="background:#fee2e2;color:#dc2626;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Rejected</span>';
-    } else {
-      // Fallback
-      actionHtml = '<span style="color:#94a3b8;font-size:13px;">-</span>';
-    }
-
+  authorizationApps.forEach(function(app) {
+    var appId = app.appId;
+    var state = getAppStatus(appId);
     var row = document.createElement('tr');
-    row.setAttribute('data-id', thisAppId);
-    
+    row.setAttribute('data-id', appId);
     row.innerHTML =
-      '<td style="color:#1E3A8A;font-weight:600;">' + thisAppId + '</td>' +
-      '<td><strong>' + app.businessName + '</strong><br><small style="color:#64748b;">' + (app.tradeCategory || app.category) + '</small></td>' +
-      '<td>' + statusBadge + '</td>' +
-      '<td>' + actionHtml + '</td>';
+      '<td style="color:#1E3A8A;font-weight:600;">' + escapeHtml(appId) + '</td>' +
+      '<td><strong>' + escapeHtml(app.businessName) + '</strong><br><small style="color:#64748b;">' + escapeHtml(app.tradeCategory) + '</small></td>' +
+      '<td>' + statusBadgeHtml(state) + '</td>' +
+      '<td>' + actionHtml(appId, state) + '</td>';
     tbody.appendChild(row);
   });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   var searchInput = document.querySelector('.search-bar input');
+  var approveBtn = document.getElementById('confirmApproveBtn');
+  var rejectBtn = document.getElementById('confirmRejectBtn');
+  var licenseBtn = document.getElementById('confirmLicenseBtn');
 
-  // Wire modal confirm buttons
-  document.getElementById('confirmApproveBtn').addEventListener('click', confirmApprove);
-  document.getElementById('confirmRejectBtn').addEventListener('click', confirmReject);
-  document.getElementById('confirmLicenseBtn').addEventListener('click', confirmGenerateLicense);
+  if (approveBtn) approveBtn.addEventListener('click', confirmApprove);
+  if (rejectBtn) rejectBtn.addEventListener('click', confirmReject);
+  if (licenseBtn) licenseBtn.addEventListener('click', confirmGenerateLicense);
 
-  // Close modals on overlay click
   document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
     overlay.addEventListener('click', function(e) {
-      if (e.target === overlay) {
-        overlay.classList.remove('active');
-      }
+      if (e.target === overlay) overlay.classList.remove('active');
     });
   });
 
-  // Initial render
   renderTable();
 
-  // Search functionality
   if (searchInput) {
     searchInput.addEventListener('input', function() {
-      var q = this.value.toLowerCase();
-      document.querySelectorAll('tbody tr').forEach(function(row) {
-        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+      var q = this.value.toLowerCase().trim();
+      var filtered = loadAuthorizationApplications().filter(function(app) {
+        return [
+          app.appId,
+          app.businessName,
+          app.tradeCategory,
+          app.applicantName,
+          getAppStatus(app.appId).status
+        ].join(' ').toLowerCase().includes(q);
       });
+      renderTable(filtered);
     });
   }
 });

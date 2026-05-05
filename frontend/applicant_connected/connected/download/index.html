@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TradeZo - Trade License</title>
-  <link rel="stylesheet" href="style.css" />
-<script src="../session_guard.js"></script>
+  <link rel="stylesheet" href="style.css?v=20260504_1" />
+  <script src="../session_guard.js?v=20260505_notifications_fix"></script>
 </head>
 <body>
  
@@ -21,13 +21,12 @@
  
   <!-- NAVIGATION LINKS -->
   <div class="navbar">
-    <a href="../Applicant dashboard/index.html">Dashboard</a>
-    <a href="../landing page/index.html">Home</a>
+    <a href="../Applicant%20dashboard/index.html">Dashboard</a>
+    <a href="../landing%20page/index.html">Home</a>
     <a href="../apply_license/apply_license.html">Apply License</a>
-    <a href="../Track Application Status/index.html">Track Application</a>
-    <a href="index.html">Download License</a>
-    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../landing page/index.html')" style="color:#fca5a5;">Logout</a>
-    
+    <a href="../Track%20Application%20Status/index.html">Track Application</a>
+    <a href="index.html" class="active">Download License</a>
+    <a href="#" onclick="typeof handleLogout !== 'undefined' ? handleLogout() : (sessionStorage.clear(), window.location.href='../login/index.html')" style="color:#fca5a5;">Logout</a>
     <a href="../payments/index.html">Payments</a>
     <a href="../Profile/index.html">Profile</a>
   </div>
@@ -89,7 +88,7 @@
       </div>
  
       <!-- Cancel Button -->
-      <button class="cancel-btn" onclick="window.location.href='../Applicant dashboard/index.html'">+ Cancel</button>
+      <button class="cancel-btn" onclick="window.location.href='../Applicant%20dashboard/index.html'">← Back to Dashboard</button>
     </div>
  
     <!-- RIGHT SIDE: Preview + Help -->
@@ -126,7 +125,7 @@
  
   <!-- Link to JavaScript file -->
   <script src="../../../mockdata.js"></script>
-<script src="script.js"></script>
+<script src="script.js?v=20260504_1"></script>
  
 </body>
 </html>

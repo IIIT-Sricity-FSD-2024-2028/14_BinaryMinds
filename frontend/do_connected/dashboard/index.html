@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <script src="../../mockdata.js"></script>
-<script src="../session_guard.js"></script>
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="style.css">
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../session_guard.js?v=20260505_notifications_fix"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Department Officer Dashboard</title>
+  <link rel="stylesheet" href="style.css?v=20260505_1">
 </head>
 
 <body>
 
-<!-- ===== TOP HEADER ===== -->
 <div class="top-header">
   <div class="header">
     <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo">
@@ -25,57 +23,72 @@
   <button class="logout-btn">Logout</button>
 </div>
 
-<!-- ===== MAIN LAYOUT ===== -->
 <div class="container">
-
-  <!-- ===== SIDEBAR ===== -->
   <div class="sidebar">
     <div class="nav-item active">Dashboard</div>
     <div class="nav-item">Worklist</div>
     <div class="nav-item">Final Authorization</div>
-    <div class="nav-item">Reports</div>
+    <div class="nav-item" onclick="window.location.href='../compliance/index.html'">Generated Licenses</div>
   </div>
 
-  <!-- ===== MAIN CONTENT ===== -->
-  <div class="main">
-
-    <!-- Title -->
+  <main class="main">
     <div class="topbar">
-      <h2>Department Officer Dashboard</h2>
+      <div>
+        <h2>Department Officer Dashboard</h2>
+        <p class="subtitle">Applications approved by field officers and ready for department review.</p>
+      </div>
     </div>
 
-    <!-- Cards -->
     <div class="cards">
-      <div class="card">
-        <p>Pending Applications</p>
-        <h2>1,284</h2>
+      <div class="card blue">
+        <p>FO Approved</p>
+        <h2 id="foApprovedCount">0</h2>
       </div>
 
-      <div class="card">
-        <p>Licenses Issued</p>
-        <h2>45,920</h2>
+      <div class="card orange">
+        <p>Pending DO Review</p>
+        <h2 id="pendingCount">0</h2>
       </div>
 
-      <div class="card">
-        <p>SLA Compliance</p>
-        <h2>132 / 142</h2>
+      <div class="card green">
+        <p>Authorized</p>
+        <h2 id="authorizedCount">0</h2>
+      </div>
+
+      <div class="card red">
+        <p>Rejected</p>
+        <h2 id="rejectedCount">0</h2>
       </div>
     </div>
 
-<!-- Chart -->
-    <div class="chart-box">
-      <h3>Weekly Application Volume</h3>
-      <canvas id="chart"></canvas>
+    <div class="search-bar">
+      <input type="text" id="searchApplications" placeholder="Search by Application ID, Business Name, Applicant, or Status">
     </div>
 
-  </div>
+    <section class="table-section">
+      <div class="table-title">
+        <h3>FO Approved Applications</h3>
+        <p id="countText">Showing 0 application(s)</p>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Application ID</th>
+            <th>Applicant Name</th>
+            <th>Business Name</th>
+            <th>FO Status</th>
+            <th>Department Status</th>
+            <th>Submitted Date</th>
+          </tr>
+        </thead>
+        <tbody id="applicationTableBody"></tbody>
+      </table>
+    </section>
+  </main>
 </div>
 
-<!-- ===== JS ===== -->
-<script src="script.js"></script>
-
-<script src="../do_nav.js"></script>
-
-
+<script src="script.js?v=20260505_notifications_fix"></script>
+<script src="../do_nav.js?v=20260505_generated_nav"></script>
 </body>
 </html>

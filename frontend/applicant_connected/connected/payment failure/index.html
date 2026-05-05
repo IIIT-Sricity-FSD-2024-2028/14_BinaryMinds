@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Payment Failed – TradeZo</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=20260505_1" />
 <script src="../session_guard.js"></script>
 </head>
 <body>
@@ -53,19 +53,19 @@
         <div class="info-grid">
           <div class="info-item">
             <label>APPLICATION ID</label>
-            <span>TL-2023-8842</span>
+            <span id="dispAppId">TL-2023-8842</span>
           </div>
           <div class="info-item">
             <label>TRANSACTION ID</label>
-            <span>TXN-45678255</span>
+            <span id="dispTxnId">TXN-45678255</span>
           </div>
           <div class="info-item">
             <label>AMOUNT</label>
-            <span class="red">₹2,100.00</span>
+            <span class="red" id="dispAmount">₹2,100.00</span>
           </div>
           <div class="info-item">
             <label>DATE & TIME</label>
-            <span>20 March 2026, 02:45 PM</span>
+            <span id="dispDate">20 March 2026, 02:45 PM</span>
           </div>
         </div>
 
@@ -125,6 +125,6 @@
   </main>
 
   <script src="../../../mockdata.js"></script>
-<script src="script.js"></script>
+<script src="script.js?v=20260505_1"></script>
 </body>
 </html>

@@ -56,20 +56,20 @@ document.addEventListener('DOMContentLoaded', function() {
             name: document.getElementById('profName').value,
             email: document.getElementById('profEmail').value,
             phone: document.getElementById('profPhone').value,
-            address: document.getElementById('profAddress').value
+            address: document.getElementById('profAddress').value,
+            updatedAt: new Date().toISOString(),
+            // Store the original login email so profile ownership can always be verified
+            ownerEmail: loggedIn.email || document.getElementById('profEmail').value
         };
   
         // 1. Update active local profile overwrite
         localStorage.setItem('applicant_profile_data', JSON.stringify(dataToSave));
         
-        // 2. Overwrite active session user & saved registry
+        // 2. Overwrite session user name and phone (NOT email — email is identity)
         if (loggedIn && loggedIn.email) {
-            var oldEmail = loggedIn.email;
-            
-            // Session scope update
             loggedIn.name = dataToSave.name;
-            loggedIn.email = dataToSave.email;
             loggedIn.phone = dataToSave.phone;
+            // Do NOT change loggedIn.email — it's the identity anchor from login
             sessionStorage.setItem('loggedInUser', JSON.stringify(loggedIn));
             
             // Global registry database update
@@ -77,9 +77,8 @@ document.addEventListener('DOMContentLoaded', function() {
             try { reg = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) {}
             var updated = false;
             for (var i = 0; i < reg.length; i++) {
-                if (reg[i].email.toLowerCase() === oldEmail.toLowerCase()) {
+                if (reg[i].email.toLowerCase() === loggedIn.email.toLowerCase()) {
                     reg[i].name = dataToSave.name;
-                    reg[i].email = dataToSave.email;
                     reg[i].phone = dataToSave.phone;
                     updated = true;
                     break;

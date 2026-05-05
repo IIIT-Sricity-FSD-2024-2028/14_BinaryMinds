@@ -92,11 +92,22 @@ document.addEventListener('DOMContentLoaded', function() {
       return (app.status || '').toLowerCase() === 'pending review';
     });
 
+  if (window.foIsAssignedToCurrentOfficer) {
+    data = data.filter(function(app) {
+      return window.foIsAssignedToCurrentOfficer(app);
+    });
+  }
+
   data = data.filter(function(app) {
     var status = (app.status || '').toLowerCase();
     var isDecided = decidedIds.indexOf(app.appId) !== -1;
     return !isDecided && status !== 'approved' && status !== 'rejected';
   });
+  if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
+    TRADEZO.sortFreshFirst(data);
+  } else {
+    data.reverse();
+  }
   renderVerificationCards(data);
 
   var searchEl = document.getElementById('searchInput');
@@ -131,10 +142,20 @@ function searchCards() {
   if (countEl) countEl.textContent = 'Showing ' + count + ' application(s)';
 }
 function loadVerificationApps() {
-    let applications = JSON.parse(localStorage.getItem("applications")) || [];
+    let applications = typeof getAssignedApplications === 'function'
+      ? getAssignedApplications()
+      : (JSON.parse(localStorage.getItem("applications")) || []).filter(function(app) {
+          return !window.foIsAssignedToCurrentOfficer || window.foIsAssignedToCurrentOfficer(app);
+        });
 
     let container = document.getElementById("verificationList");
     container.innerHTML = "";
+
+    if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
+        TRADEZO.sortFreshFirst(applications);
+    } else {
+        applications.reverse();
+    }
 
     applications.forEach(app => {
         let card = `

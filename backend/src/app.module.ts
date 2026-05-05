@@ -12,6 +12,8 @@ import { InspectionsModule } from './inspections/inspections.module';
 import { DepartmentReviewsModule } from './department-reviews/department-reviews.module';
 import { LicensesModule } from './licenses/licenses.module';
 import { ComplianceModule } from './compliance/compliance.module';
+import { OfficersModule } from './officers/officers.module';
+import { AuditLogsModule } from './audit-logs/audit-logs.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { ComplianceModule } from './compliance/compliance.module';
     DepartmentReviewsModule,
     LicensesModule,
     ComplianceModule,
+    OfficersModule,
+    AuditLogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -22,6 +22,7 @@ const roles_guard_1 = require("../common/guards/roles.guard");
 const role_enum_1 = require("../common/enums/role.enum");
 const verification_status_enum_1 = require("../common/enums/verification-status.enum");
 const swagger_1 = require("@nestjs/swagger");
+const api_route_decorator_1 = require("../common/swagger/api-route.decorator");
 let DocumentsController = class DocumentsController {
     documentsService;
     constructor(documentsService) {
@@ -50,6 +51,13 @@ exports.DocumentsController = DocumentsController;
 __decorate([
     (0, common_1.Post)(),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.APPLICANT, role_enum_1.Role.DEPARTMENT_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Create uploaded document record',
+        roles: [role_enum_1.Role.APPLICANT, role_enum_1.Role.DEPARTMENT_OFFICER],
+        bodyType: create_document_dto_1.CreateDocumentDto,
+        status: 201,
+        responseExample: { document_id: 1, application_id: 1, verification_status: 'pending' },
+    }),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -59,6 +67,11 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List documents',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        responseExample: [{ document_id: 1, application_id: 1 }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -67,6 +80,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)('application/:applicationId'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.APPLICANT, role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List documents by application',
+        roles: [role_enum_1.Role.APPLICANT, role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'applicationId', description: 'Application ID' }],
+        responseExample: [{ document_id: 1, application_id: 1 }],
+    }),
     openapi.ApiResponse({ status: 200, type: [Object] }),
     __param(0, (0, common_1.Param)('applicationId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -76,6 +95,12 @@ __decorate([
 __decorate([
     (0, common_1.Get)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.APPLICANT, role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Get document by ID',
+        roles: [role_enum_1.Role.APPLICANT, role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'id', description: 'Document ID' }],
+        responseExample: { document_id: 1, verification_status: 'pending' },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -85,6 +110,19 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(':id/status'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Update document verification status',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER],
+        params: [{ name: 'id', description: 'Document ID' }],
+        bodySchema: {
+            type: 'object',
+            required: ['status'],
+            properties: {
+                status: { enum: Object.values(verification_status_enum_1.VerificationStatus), example: verification_status_enum_1.VerificationStatus.VERIFIED },
+            },
+        },
+        responseExample: { document_id: 1, verification_status: 'verified' },
+    }),
     openapi.ApiResponse({ status: 200, type: Object }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)('status')),
@@ -95,6 +133,12 @@ __decorate([
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.APPLICANT),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'Delete document by ID',
+        roles: [role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.APPLICANT],
+        params: [{ name: 'id', description: 'Document ID' }],
+        responseExample: true,
+    }),
     openapi.ApiResponse({ status: 200 }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),

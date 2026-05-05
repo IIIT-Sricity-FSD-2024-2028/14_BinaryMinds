@@ -21,6 +21,8 @@ const inspections_module_1 = require("./inspections/inspections.module");
 const department_reviews_module_1 = require("./department-reviews/department-reviews.module");
 const licenses_module_1 = require("./licenses/licenses.module");
 const compliance_module_1 = require("./compliance/compliance.module");
+const officers_module_1 = require("./officers/officers.module");
+const audit_logs_module_1 = require("./audit-logs/audit-logs.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -38,6 +40,8 @@ exports.AppModule = AppModule = __decorate([
             department_reviews_module_1.DepartmentReviewsModule,
             licenses_module_1.LicensesModule,
             compliance_module_1.ComplianceModule,
+            officers_module_1.OfficersModule,
+            audit_logs_module_1.AuditLogsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -3,6 +3,23 @@ document.addEventListener('DOMContentLoaded', function() {
   var countText = document.getElementById('countText');
   var searchInput = document.getElementById('searchInput');
 
+  function normalizeText(value) {
+    return String(value || '').toLowerCase().replace(/[_-]/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  function isDemoRecord(item) {
+    if (window.TRADEZO && typeof TRADEZO.isDemoRecord === 'function') {
+      return TRADEZO.isDemoRecord(item);
+    }
+    var demoNames = {
+      'green valley restaurant': true,
+      'singh electronics': true,
+      'sharma healthcare': true,
+      'tech hub electronics': true
+    };
+    return !!demoNames[normalizeText(item && (item.businessName || item.business || item.business_name))];
+  }
+
   function getGeneratedLicenses() {
     var generated = [];
 
@@ -11,32 +28,34 @@ document.addEventListener('DOMContentLoaded', function() {
       window.TRADEZO.licenses.forEach(function(lic) {
         generated.push({
           appId: lic.appId || 'N/A',
-          licenseNo: lic.id,
+          licenseNo: lic.licenseNo || lic.licenseId || lic.id,
           businessName: lic.businessName,
-          category: lic.category,
+          category: lic.category || lic.tradeCategory,
           status: lic.status,
-          date: new Date(lic.issueDate || 0)
+          date: new Date(lic.issueDate || lic.licenseIssueDate || lic.date || 0)
         });
       });
     }
 
-    // 2. Fetch from sessionStorage keys doAppStatus_ for LIVE dynamic creations (legacy)
-    Object.keys(sessionStorage).forEach(function(key) {
-      if (key.startsWith('doAppStatus_')) {
-        var statusObj = JSON.parse(sessionStorage.getItem(key));
-        if (statusObj && statusObj.status === 'licensed' && statusObj.licenseNo) {
-          var appId = key.replace('doAppStatus_', '');
-          var appData = window.TRADEZO && window.TRADEZO.applications ? window.TRADEZO.applications.find(function(a){ return a.id === appId || a.appRef === appId; }) : null;
-          generated.push({
-             appId: appId,
-             licenseNo: statusObj.licenseNo,
-             businessName: appData ? appData.businessName : 'Unknown Business',
-             category: appData ? (appData.tradeCategory || appData.category) : '-',
-             status: 'Active',
-             date: new Date()
-          });
-        }
-      }
+    // 2. Fetch doAppStatus_ keys for live dynamic creations.
+    [localStorage, sessionStorage].forEach(function(store) {
+      Object.keys(store).forEach(function(key) {
+        if (!key.startsWith('doAppStatus_')) return;
+        var statusObj = null;
+        try { statusObj = JSON.parse(store.getItem(key)); } catch(e) {}
+        if (!statusObj || statusObj.status !== 'licensed' || !statusObj.licenseNo) return;
+
+        var appId = key.replace('doAppStatus_', '');
+        var appData = window.TRADEZO && window.TRADEZO.applications ? window.TRADEZO.applications.find(function(a){ return a.id === appId || a.appRef === appId; }) : null;
+        generated.push({
+           appId: appId,
+           licenseNo: statusObj.licenseNo,
+           businessName: appData ? appData.businessName : 'Unknown Business',
+           category: appData ? (appData.tradeCategory || appData.category) : '-',
+           status: 'Active',
+           date: new Date()
+        });
+      });
     });
 
     // 3. Fetch newly generated licenses globally from localStorage
@@ -49,13 +68,14 @@ document.addEventListener('DOMContentLoaded', function() {
          businessName: lic.businessName,
          category: lic.category,
          status: lic.status,
-         date: new Date(lic.date)
+         date: new Date(lic.date || lic.licenseIssueDate || lic.issueDate)
       });
     });
 
     // 4. Deduplicate by licenseNo
     var seen = new Set();
     generated = generated.filter(function(lic) {
+      if (isDemoRecord(lic)) return false;
       if (seen.has(lic.licenseNo)) return false;
       seen.add(lic.licenseNo);
       return true;

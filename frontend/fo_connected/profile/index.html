@@ -23,7 +23,7 @@
     <div class="header-right">
         <div class="user-info">
             <span>Welcome</span>
-            <b>Myra</b>
+            <b id="headerName">Field Officer</b>
         </div>
 
         <div class="header-icons">
@@ -92,7 +92,7 @@
             <p><b>Email:</b> <span id="dispEmail">myra@gov.in</span></p>
             <p><b>Phone:</b> <span id="dispPhone">+91 98765 43210</span></p>
             <p><b>Location:</b> <span id="dispLocation">Municipal Corporation, Delhi</span></p>
-            <p><b>Join Date:</b> Jan 15, 2024</p>
+            <p><b>Join Date:</b> <span id="dispJoinDate">—</span></p>
 
 
         </div>
@@ -147,46 +147,48 @@
 </main>
 </div>
 
-<script src="../../mockdata.js"></script>
+<script src="../../mockdata.js?v=fo-assignment-filter-20260505-2"></script>
+<script src="../fo_nav.js?v=fo-assignment-filter-20260505-2"></script>
 <script>
 function go(path){
     window.location.href = path;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    var stored = {};
-    try {
-        stored = JSON.parse(localStorage.getItem('fo_profile_data')) || {};
-    } catch(e) {}
-    var loggedIn = {};
-    try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}'); } catch(e) {}
-    var allOfficers = [];
-    try { allOfficers = JSON.parse(localStorage.getItem('users') || '[]'); } catch(e) {}
-    var officerRecord = allOfficers.find(function(user) {
-        return (user.email || '').toLowerCase() === (loggedIn.email || '').toLowerCase();
-    }) || {};
-    var currentOfficer = Object.assign({}, stored, officerRecord, loggedIn);
-    currentOfficer.name = currentOfficer.name || currentOfficer.full_name || 'Field Officer';
-    currentOfficer.id = currentOfficer.id || currentOfficer.empId || currentOfficer.user_id || '';
-    currentOfficer.role = currentOfficer.role || 'Field Officer';
-    currentOfficer.department = currentOfficer.department || currentOfficer.dept || 'Trade License Department';
-    currentOfficer.location = currentOfficer.location || 'Municipal Corporation';
+    // ── 1. Resolve Profile from Central foCurrentOfficer ──
+    var officer = window.foCurrentOfficer();
     
-    // Profile details...
-    document.querySelector('.user-info b').textContent = currentOfficer.name;
-    document.querySelector('.avatar').textContent = currentOfficer.name.charAt(0).toUpperCase();
-    document.getElementById('dispName').textContent = currentOfficer.name;
-    document.getElementById('dispEmpId').textContent = currentOfficer.id || 'Field Officer';
-    document.getElementById('dispRole').textContent = currentOfficer.role.replace(/\b\w/g, function(letter) { return letter.toUpperCase(); });
-    document.getElementById('dispDept').textContent = currentOfficer.department;
-    document.getElementById('dispEmail').textContent = currentOfficer.email || 'N/A';
-    document.getElementById('dispPhone').textContent = currentOfficer.phone || 'N/A';
-    document.getElementById('dispLocation').textContent = currentOfficer.location;
+    var name     = officer.name || 'Field Officer';
+    var empId    = officer.empId || '';
+    var role     = officer.role || 'Field Officer';
+    var dept     = officer.department || 'Trade License Department';
+    var email    = officer.email || '—';
+    var phone    = officer.phone || '—';
+    var location = officer.location || 'Municipal Corporation';
+    var joinDate = officer.joinDate || '—';
+
+    if (joinDate && joinDate !== '—') {
+        try { joinDate = new Date(joinDate).toLocaleDateString('en-IN', { year:'numeric', month:'short', day:'numeric' }); } catch(e) {}
+    }
+    var roleLabel = role.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase(); });
+
+    // ── 3. Render profile fields ─────────────────────────────────────
+    var headerNameEl = document.getElementById('headerName');
+    if (headerNameEl) headerNameEl.textContent = name;
+    document.querySelector('.avatar').textContent = name.charAt(0).toUpperCase();
+    document.getElementById('dispName').textContent     = name;
+    document.getElementById('dispEmpId').textContent    = empId || 'N/A';
+    document.getElementById('dispRole').textContent     = roleLabel;
+    document.getElementById('dispDept').textContent     = dept;
+    document.getElementById('dispEmail').textContent    = email;
+    document.getElementById('dispPhone').textContent    = phone;
+    document.getElementById('dispLocation').textContent = location;
+    document.getElementById('dispJoinDate').textContent = joinDate;
 
     function isAssigned(item) {
         var values = [item.assignedFO, item.foName, item.fieldOfficerEmail, item.fieldOfficerId, item.assignedTo]
             .filter(Boolean).map(function(value) { return String(value).toLowerCase().trim(); });
-        var keys = [currentOfficer.id, currentOfficer.empId, currentOfficer.name, currentOfficer.email]
+        var keys = [empId, name, email]
             .filter(Boolean).map(function(value) { return String(value).toLowerCase().trim(); });
         return values.some(function(value) { return keys.indexOf(value) !== -1; });
     }
@@ -204,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('statPendingInspections').textContent = pending;
     
     // Dynamic Activity Log
-    var currentName = currentOfficer.name;
+    var currentName = name;
     
     var activityContainer = document.querySelector('.activity');
     if (activityContainer) {
@@ -274,6 +276,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script src="../fo_nav.js?v=officer-specific-dashboard-20260504"></script>
 </body>
 </html>
