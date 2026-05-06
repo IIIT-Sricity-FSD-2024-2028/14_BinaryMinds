@@ -13,12 +13,13 @@ const licenses_service_1 = require("./licenses.service");
 const licenses_controller_1 = require("./licenses.controller");
 const applications_module_1 = require("../applications/applications.module");
 const users_module_1 = require("../users/users.module");
+const audit_logs_module_1 = require("../audit-logs/audit-logs.module");
 let LicensesModule = class LicensesModule {
 };
 exports.LicensesModule = LicensesModule;
 exports.LicensesModule = LicensesModule = __decorate([
     (0, common_1.Module)({
-        imports: [applications_module_1.ApplicationsModule, users_module_1.UsersModule],
+        imports: [applications_module_1.ApplicationsModule, users_module_1.UsersModule, audit_logs_module_1.AuditLogsModule],
         controllers: [licenses_controller_1.LicensesController],
         providers: [licenses_repository_1.LicensesRepository, licenses_service_1.LicensesService],
         exports: [licenses_repository_1.LicensesRepository, licenses_service_1.LicensesService],

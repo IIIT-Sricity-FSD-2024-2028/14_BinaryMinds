@@ -13,12 +13,13 @@ const officers_module_1 = require("../officers/officers.module");
 const applications_service_1 = require("./applications.service");
 const applications_repository_1 = require("./applications.repository");
 const applications_controller_1 = require("./applications.controller");
+const audit_logs_module_1 = require("../audit-logs/audit-logs.module");
 let ApplicationsModule = class ApplicationsModule {
 };
 exports.ApplicationsModule = ApplicationsModule;
 exports.ApplicationsModule = ApplicationsModule = __decorate([
     (0, common_1.Module)({
-        imports: [users_module_1.UsersModule, (0, common_1.forwardRef)(() => officers_module_1.OfficersModule)],
+        imports: [users_module_1.UsersModule, (0, common_1.forwardRef)(() => officers_module_1.OfficersModule), audit_logs_module_1.AuditLogsModule],
         controllers: [applications_controller_1.ApplicationsController],
         providers: [applications_service_1.ApplicationsService, applications_repository_1.ApplicationsRepository],
         exports: [applications_service_1.ApplicationsService, applications_repository_1.ApplicationsRepository],

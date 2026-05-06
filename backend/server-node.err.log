@@ -1,0 +1,37 @@
+[31m[Nest] 39088  - [39m06/05/2026, 2:06:17 am [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39mUnknownDependenciesException [Error]: Nest can't resolve dependencies of the UsersController (UsersService, ?). Please make sure that the argument AuditLogsService at index [1] is available in the UsersModule module.
+
+Potential solutions:
+- Is UsersModule a valid NestJS module?
+- If AuditLogsService is a provider, is it part of the current UsersModule?
+- If AuditLogsService is exported from a separate @Module, is that module imported within UsersModule?
+  @Module({
+    imports: [ /* the Module containing AuditLogsService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+    at Injector.lookupComponentInParentModules [90m(C:\Users\manas\OneDrive\Documents\ffsd1\14_BinaryMinds\backend\[39mnode_modules\[4m@nestjs\core[24m\injector\injector.js:290:19[90m)[39m
+    at async resolveParam [90m(C:\Users\manas\OneDrive\Documents\ffsd1\14_BinaryMinds\backend\[39mnode_modules\[4m@nestjs\core[24m\injector\injector.js:140:38[90m)[39m
+    at async Promise.all (index 1)
+    at async Injector.resolveConstructorParams [90m(C:\Users\manas\OneDrive\Documents\ffsd1\14_BinaryMinds\backend\[39mnode_modules\[4m@nestjs\core[24m\injector\injector.js:169:27[90m)[39m
+    at async Injector.loadInstance [90m(C:\Users\manas\OneDrive\Documents\ffsd1\14_BinaryMinds\backend\[39mnode_modules\[4m@nestjs\core[24m\injector\injector.js:75:13[90m)[39m
+    at async Injector.loadController [90m(C:\Users\manas\OneDrive\Documents\ffsd1\14_BinaryMinds\backend\[39mnode_modules\[4m@nestjs\core[24m\injector\injector.js:94:9[90m)[39m
+    at async [90mC:\Users\manas\OneDrive\Documents\ffsd1\14_BinaryMinds\backend\[39mnode_modules\[4m@nestjs\core[24m\injector\instance-loader.js:68:13
+    at async Promise.all (index 0)
+    at async InstanceLoader.createInstancesOfControllers [90m(C:\Users\manas\OneDrive\Documents\ffsd1\14_BinaryMinds\backend\[39mnode_modules\[4m@nestjs\core[24m\injector\instance-loader.js:67:9[90m)[39m
+    at async [90mC:\Users\manas\OneDrive\Documents\ffsd1\14_BinaryMinds\backend\[39mnode_modules\[4m@nestjs\core[24m\injector\instance-loader.js:42:13 {
+  type: [32m'UsersController'[39m,
+  context: {
+    index: [33m1[39m,
+    dependencies: [
+      [36m[class UsersService][39m,
+      [36m[class AuditLogsService][39m
+    ],
+    name: [36m[class AuditLogsService][39m
+  },
+  metadata: {
+    id: [32m'fc2b3ae99b95c6e806828'[39m
+  },
+  moduleRef: {
+    id: [32m'21138dca6bc67b1fa8525'[39m
+  }
+}

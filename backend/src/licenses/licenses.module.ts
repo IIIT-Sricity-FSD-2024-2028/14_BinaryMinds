@@ -4,9 +4,10 @@ import { LicensesService } from './licenses.service';
 import { LicensesController } from './licenses.controller';
 import { ApplicationsModule } from '../applications/applications.module';
 import { UsersModule } from '../users/users.module';
+import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 
 @Module({
-  imports: [ApplicationsModule, UsersModule],
+  imports: [ApplicationsModule, UsersModule, AuditLogsModule],
   controllers: [LicensesController],
   providers: [LicensesRepository, LicensesService],
   exports: [LicensesRepository, LicensesService],

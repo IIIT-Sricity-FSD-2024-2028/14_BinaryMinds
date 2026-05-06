@@ -12,12 +12,13 @@ const inspections_repository_1 = require("./inspections.repository");
 const inspections_service_1 = require("./inspections.service");
 const inspections_controller_1 = require("./inspections.controller");
 const field_officer_assignments_module_1 = require("../field-officer-assignments/field-officer-assignments.module");
+const audit_logs_module_1 = require("../audit-logs/audit-logs.module");
 let InspectionsModule = class InspectionsModule {
 };
 exports.InspectionsModule = InspectionsModule;
 exports.InspectionsModule = InspectionsModule = __decorate([
     (0, common_1.Module)({
-        imports: [field_officer_assignments_module_1.FieldOfficerAssignmentsModule],
+        imports: [field_officer_assignments_module_1.FieldOfficerAssignmentsModule, audit_logs_module_1.AuditLogsModule],
         controllers: [inspections_controller_1.InspectionsController],
         providers: [inspections_repository_1.InspectionsRepository, inspections_service_1.InspectionsService],
         exports: [inspections_repository_1.InspectionsRepository, inspections_service_1.InspectionsService],
