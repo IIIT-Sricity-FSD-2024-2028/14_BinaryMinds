@@ -27,5 +27,6 @@ echo "==================================================="
 echo ""
 echo "To start the development server, run:"
 echo "  cd backend"
+
 echo "  npm run start:dev"
 echo ""
