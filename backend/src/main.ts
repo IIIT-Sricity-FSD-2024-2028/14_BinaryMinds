@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { RequestLoggingMiddleware } from './common/middleware/request-logging.middleware';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -9,6 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const requestLoggingMiddleware = new RequestLoggingMiddleware();
   app.use(requestLoggingMiddleware.use.bind(requestLoggingMiddleware));
+  app.useGlobalFilters(new GlobalExceptionFilter());
   app.enableCors();
   app.setGlobalPrefix('api');
 
