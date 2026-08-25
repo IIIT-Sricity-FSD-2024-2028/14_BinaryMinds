@@ -1,14 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { RequestLoggingMiddleware } from './common/middleware/request-logging.middleware';
 
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const requestLoggingMiddleware = new RequestLoggingMiddleware();
+  app.use(requestLoggingMiddleware.use.bind(requestLoggingMiddleware));
   app.enableCors();
   app.setGlobalPrefix('api');
-  
+
   // Use global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
