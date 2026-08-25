@@ -93,6 +93,7 @@ function doPayment() {
       try { user = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
 
       var appRef = sessionStorage.getItem('applicationRef');
+      var backendApplicationId = Number(sessionStorage.getItem('backendApplicationId')) || null;
       if (!appRef || /^\d+$/.test(String(appRef).trim()) || /^APP-/i.test(String(appRef).trim())) {
         appRef = (window.TRADEZO && typeof TRADEZO.generateApplicationId === 'function')
           ? TRADEZO.generateApplicationId()
@@ -105,6 +106,7 @@ function doPayment() {
       var newApp = {
         id:            appRef,
         appRef:        appRef,
+        backendId:     backendApplicationId,
         applicantId:   user ? (user.email || '') : '',
         applicantName: form.fullName     || (user ? user.name : ''),
         email:         form.email        || (user ? user.email : ''),
@@ -145,7 +147,7 @@ function doPayment() {
         // Remove old entry with same ref if exists
         TRADEZO.applications = TRADEZO.applications.filter(function(a){ return a.appRef !== appRef; });
         TRADEZO.applications.unshift(newApp);
-        if (typeof TRADEZO.syncApplicationToBackend === 'function') {
+        if (!backendApplicationId && typeof TRADEZO.syncApplicationToBackend === 'function') {
           TRADEZO.syncApplicationToBackend(newApp, 'applicant');
         }
       }

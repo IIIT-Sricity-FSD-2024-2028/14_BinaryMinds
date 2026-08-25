@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   Post,
@@ -8,15 +9,34 @@ import {
   ParseIntPipe,
   UseGuards,
   Patch,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { randomUUID } from 'node:crypto';
+import { mkdirSync, unlinkSync } from 'node:fs';
+import { extname, resolve } from 'node:path';
+import { diskStorage } from 'multer';
 import { DocumentsService } from './documents.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Role } from '../common/enums/role.enum';
+import { DocumentType } from '../common/enums/document-type.enum';
 import { VerificationStatus } from '../common/enums/verification-status.enum';
-import { ApiTags } from '@nestjs/swagger';
 import { ApiRoute } from '../common/swagger/api-route.decorator';
+
+const uploadDirectory = resolve(__dirname, '..', '..', 'uploads', 'documents');
+const maximumFileSize = 5 * 1024 * 1024;
+const allowedFileTypes: Record<string, string> = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.pdf': 'application/pdf',
+};
+
+mkdirSync(uploadDirectory, { recursive: true });
 
 @ApiTags('Documents')
 @Controller('documents')
@@ -26,15 +46,68 @@ export class DocumentsController {
 
   @Post()
   @Roles(Role.APPLICANT, Role.DEPARTMENT_OFFICER)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Document metadata and the file to upload.',
+    schema: {
+      type: 'object',
+      required: ['application_id', 'document_type', 'file'],
+      properties: {
+        application_id: { type: 'number', example: 1 },
+        document_type: {
+          enum: Object.values(DocumentType),
+          example: DocumentType.AADHAR_CARD,
+        },
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: uploadDirectory,
+        filename: (_request, file, callback) => {
+          callback(null, `${randomUUID()}${extname(file.originalname).toLowerCase()}`);
+        },
+      }),
+      limits: { fileSize: maximumFileSize },
+      fileFilter: (_request, file, callback) => {
+        const extension = extname(file.originalname).toLowerCase();
+        if (allowedFileTypes[extension] !== file.mimetype) {
+          callback(
+            new BadRequestException('Only JPG, JPEG, PNG, and PDF files are allowed'),
+            false,
+          );
+          return;
+        }
+
+        callback(null, true);
+      },
+    }),
+  )
   @ApiRoute({
     summary: 'Create uploaded document record',
     roles: [Role.APPLICANT, Role.DEPARTMENT_OFFICER],
-    bodyType: CreateDocumentDto,
     status: 201,
     responseExample: { document_id: 1, application_id: 1, verification_status: 'pending' },
   })
-  create(@Body() createDocumentDto: CreateDocumentDto) {
-    return this.documentsService.create(createDocumentDto);
+  create(
+    @Body() createDocumentDto: CreateDocumentDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('A document file is required');
+    }
+
+    try {
+      return this.documentsService.create(
+        createDocumentDto,
+        `uploads/documents/${file.filename}`,
+      );
+    } catch (error) {
+      unlinkSync(file.path);
+      throw error;
+    }
   }
 
   @Get()

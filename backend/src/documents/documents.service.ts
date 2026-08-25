@@ -30,16 +30,13 @@ export class DocumentsService {
     return this.documentsRepository.findByApplication(applicationId);
   }
 
-  create(createDocumentDto: CreateDocumentDto): Document {
+  create(createDocumentDto: CreateDocumentDto, filePath: string): Document {
     // Validate application exists before assigning document
     this.applicationsService.findOne(createDocumentDto.application_id);
 
-    // Basic file path management logic: trim and ensure clean string mapping
-    const sanitizedPath = createDocumentDto.file_path.trim();
-
     const newDoc = {
       ...createDocumentDto,
-      file_path: sanitizedPath,
+      file_path: filePath,
       verification_status: VerificationStatus.PENDING,
     };
 
