@@ -5,6 +5,7 @@
 
   window.handleLogout = function() {
     sessionStorage.removeItem('loggedInUser');
+    sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('applicationRef');
     Object.keys(sessionStorage).forEach(function(key) {
       if (key.indexOf('notifsRead_') === 0) sessionStorage.removeItem(key);
@@ -14,25 +15,11 @@
   };
 
   var user = safeParse(sessionStorage.getItem('loggedInUser') || 'null');
-  if (!user || !user.email) {
-    var localUser = safeParse(localStorage.getItem('user') || 'null');
-    if (localUser && localUser.email) {
-      user = {
-        name: localUser.name || 'Applicant',
-        email: localUser.email,
-        phone: localUser.phone || '',
-        role: 'applicant'
-      };
-      sessionStorage.setItem('loggedInUser', JSON.stringify(user));
-    }
-  }
-
-  if (!user) {
+  if (!user || typeof user.name !== 'string' || !user.name.trim() || typeof user.email !== 'string' || !user.email.trim() || typeof user.role !== 'string' || !user.role.trim() || typeof user.accessToken !== 'string' || !user.accessToken.trim() || user.role.toLowerCase() !== 'applicant') {
+    sessionStorage.removeItem('loggedInUser');
+    sessionStorage.removeItem('accessToken');
     window.location.href = '../login/index.html';
     return;
-  }
-  if (user.role && user.role.toLowerCase() !== 'applicant') {
-    window.location.href = '../login/index.html';
   }
 })();
 

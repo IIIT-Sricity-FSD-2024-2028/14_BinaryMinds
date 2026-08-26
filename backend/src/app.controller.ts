@@ -2,6 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { ApiRoute } from './common/swagger/api-route.decorator';
+import { Public } from './common/decorators/public.decorator';
 
 @ApiTags('Health')
 @Controller()
@@ -9,6 +10,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
+  @Public()
   @ApiRoute({
     summary: 'Health check',
     responseDescription: 'Plain-text service health response.',

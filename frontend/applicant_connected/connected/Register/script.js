@@ -21,7 +21,7 @@ document.querySelectorAll('input').forEach(function(input) {
 });
 
 // Register button click
-document.querySelector('.btn-register').addEventListener('click', function() {
+document.querySelector('.btn-register').addEventListener('click', async function() {
   var inputs   = document.querySelectorAll('input');
   var name     = inputs[0];
   var email    = inputs[1];
@@ -95,23 +95,21 @@ document.querySelector('.btn-register').addEventListener('click', function() {
 
   if (!valid) return;
 
-  // Save to registeredUsers array in localStorage (includes password for login)
-  var registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-  registeredUsers.push({
-    name:     name.value.trim(),
-    email:    email.value.trim(),
-    phone:    phone.value.trim(),
-    password: password.value,
-    role:     'applicant'
-  });
-  localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-
-  // Also save current user session data (without password)
-  localStorage.setItem('user', JSON.stringify({
-    name:  name.value.trim(),
-    email: email.value.trim(),
-    phone: phone.value.trim()
-  }));
+  try {
+    var response = await fetch('http://localhost:3000/api/users/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ full_name: name.value.trim(), email: email.value.trim(), phone: phone.value.trim(), password: password.value })
+    });
+    if (!response.ok) {
+      var error = await response.json().catch(function() { return {}; });
+      showError(email, Array.isArray(error.message) ? error.message[0] : (error.message || 'Registration failed.'));
+      return;
+    }
+  } catch (error) {
+    showError(email, 'Registration service is unavailable.');
+    return;
+  }
 
   alert('Account registered successfully! You can now login with your email and password.');
   window.location.href = '../login/index.html';

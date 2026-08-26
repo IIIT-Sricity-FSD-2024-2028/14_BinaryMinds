@@ -48,8 +48,47 @@ let UsersRepository = class UsersRepository {
             role: role_enum_1.Role.DEPARTMENT_OFFICER,
             created_at: new Date('2026-01-01T00:00:00Z'),
         },
+        {
+            user_id: 5,
+            full_name: 'Rajesh Kumar',
+            email: 'rajesh@applicant.com',
+            phone: '9876543220',
+            password_hash: 'applicant123',
+            role: role_enum_1.Role.APPLICANT,
+            created_at: new Date('2026-02-20T10:00:00Z'),
+        },
+        {
+            user_id: 6,
+            full_name: 'Myra Singh',
+            email: 'myra@fieldofficer.com',
+            phone: '9876543221',
+            employee_id: 'FO-2026-042',
+            password_hash: 'field@123',
+            role: role_enum_1.Role.FIELD_OFFICER,
+            created_at: new Date('2026-02-18T14:30:00Z'),
+        },
+        {
+            user_id: 7,
+            full_name: 'Anjali Mehta',
+            email: 'admin@deptofficer.com',
+            phone: '9876543223',
+            employee_id: 'DO-001',
+            password_hash: 'dept123',
+            role: role_enum_1.Role.DEPARTMENT_OFFICER,
+            created_at: new Date('2026-02-12T09:15:00Z'),
+        },
+        {
+            user_id: 8,
+            full_name: 'Admin User',
+            email: 'admin@tradezo.gov.in',
+            phone: '9000000020',
+            employee_id: 'SU-001',
+            password_hash: 'super123',
+            role: role_enum_1.Role.SUPER_USER,
+            created_at: new Date('2026-01-01T00:00:00Z'),
+        },
     ];
-    idCounter = 5;
+    idCounter = 9;
     find() {
         return this.users;
     }

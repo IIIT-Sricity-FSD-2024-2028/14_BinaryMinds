@@ -12,6 +12,7 @@ const documents_repository_1 = require("./documents.repository");
 const documents_service_1 = require("./documents.service");
 const documents_controller_1 = require("./documents.controller");
 const applications_module_1 = require("../applications/applications.module");
+const document_upload_cleanup_interceptor_1 = require("./document-upload-cleanup.interceptor");
 let DocumentsModule = class DocumentsModule {
 };
 exports.DocumentsModule = DocumentsModule;
@@ -19,7 +20,7 @@ exports.DocumentsModule = DocumentsModule = __decorate([
     (0, common_1.Module)({
         imports: [applications_module_1.ApplicationsModule],
         controllers: [documents_controller_1.DocumentsController],
-        providers: [documents_service_1.DocumentsService, documents_repository_1.DocumentsRepository],
+        providers: [documents_service_1.DocumentsService, documents_repository_1.DocumentsRepository, document_upload_cleanup_interceptor_1.DocumentUploadCleanupInterceptor],
         exports: [documents_service_1.DocumentsService],
     })
 ], DocumentsModule);

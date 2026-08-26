@@ -4,6 +4,7 @@ import { ApplicationsService } from '../applications/applications.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { Document } from './document.interface';
 import { VerificationStatus } from '../common/enums/verification-status.enum';
+import { removeStoredUpload, resolveStoredDocumentPath } from './document-storage';
 
 @Injectable()
 export class DocumentsService {
@@ -57,7 +58,9 @@ export class DocumentsService {
   }
 
   remove(id: number): void {
-    this.findOne(id); // validates existence before removal
+    const document = this.findOne(id);
+    const storedFile = resolveStoredDocumentPath(document.file_path);
+    removeStoredUpload(storedFile);
     this.documentsRepository.delete(id);
   }
 }

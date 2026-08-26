@@ -24,6 +24,8 @@ const role_enum_1 = require("../common/enums/role.enum");
 const swagger_1 = require("@nestjs/swagger");
 const api_route_decorator_1 = require("../common/swagger/api-route.decorator");
 const audit_logs_service_1 = require("../audit-logs/audit-logs.service");
+const public_decorator_1 = require("../common/decorators/public.decorator");
+const register_applicant_dto_1 = require("./dto/register-applicant.dto");
 let UsersController = class UsersController {
     usersService;
     auditLogsService;
@@ -31,7 +33,29 @@ let UsersController = class UsersController {
         this.usersService = usersService;
         this.auditLogsService = auditLogsService;
     }
+    register(registration) {
+        const user = this.usersService.create({
+            full_name: registration.full_name,
+            email: registration.email,
+            phone: registration.phone,
+            password_hash: registration.password,
+            role: role_enum_1.Role.APPLICANT,
+        });
+        this.auditLogsService.log({
+            user_name: user.full_name,
+            role: role_enum_1.Role.APPLICANT,
+            action: 'Create',
+            module: 'Users',
+            description: `Registered applicant ${user.email}`,
+            ip_address: 'server',
+            source: 'backend',
+        });
+        return user;
+    }
     create(createUserDto) {
+        if (createUserDto.role === role_enum_1.Role.SUPER_USER || createUserDto.role === role_enum_1.Role.APPLICANT) {
+            throw new common_1.BadRequestException('Only Field Officer and Department Officer accounts can be provisioned');
+        }
         const user = this.usersService.create(createUserDto);
         this.auditLogsService.log({
             user_name: user.full_name,
@@ -80,7 +104,17 @@ let UsersController = class UsersController {
 };
 exports.UsersController = UsersController;
 __decorate([
+    (0, common_1.Post)('register'),
+    (0, public_decorator_1.Public)(),
+    openapi.ApiResponse({ status: 201, type: Object }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [register_applicant_dto_1.RegisterApplicantDto]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "register", null);
+__decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(role_enum_1.Role.SUPER_USER),
     (0, api_route_decorator_1.ApiRoute)({
         summary: 'Create user',
         description: 'Registers or creates a user record.',

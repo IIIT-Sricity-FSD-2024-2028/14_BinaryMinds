@@ -1,0 +1,924 @@
+[2026-08-25T19:29:27.719Z] GET /favicon.ico | Status: 404 | NotFoundException: Cannot GET /favicon.ico
+NotFoundException: Cannot GET /favicon.ico
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:77:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:342:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at read (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\read.js:53:5)
+    at urlencodedParser (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\types\urlencoded.js:57:5)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-25T19:31:04.690Z] GET /.well-known/appspecific/com.chrome.devtools.json | Status: 404 | NotFoundException: Cannot GET /.well-known/appspecific/com.chrome.devtools.json
+NotFoundException: Cannot GET /.well-known/appspecific/com.chrome.devtools.json
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:77:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:342:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at read (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\read.js:53:5)
+    at urlencodedParser (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\types\urlencoded.js:57:5)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-25T19:31:32.087Z] GET /.well-known/appspecific/com.chrome.devtools.json | Status: 404 | NotFoundException: Cannot GET /.well-known/appspecific/com.chrome.devtools.json
+NotFoundException: Cannot GET /.well-known/appspecific/com.chrome.devtools.json
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:77:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:342:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at read (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\read.js:53:5)
+    at urlencodedParser (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\types\urlencoded.js:57:5)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T05:40:34.287Z] POST /api/applications | Status: 400 | BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at RoutesResolver.mapExternalException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:100:24)
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:86:24)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:21:23
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:116:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:111:12)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+[2026-08-26T05:40:34.870Z] POST /api/documents | Status: 404 | NotFoundException: Application with ID 0 not found
+NotFoundException: Application with ID 0 not found
+    at ApplicationsService.findOne (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\applications\applications.service.ts:44:13)
+    at DocumentsService.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\documents\documents.service.ts:35:30)
+    at DocumentsController.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\documents\documents.controller.ts:103:36)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-08-26T05:40:34.915Z] POST /api/documents | Status: 404 | NotFoundException: Application with ID 0 not found
+NotFoundException: Application with ID 0 not found
+    at ApplicationsService.findOne (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\applications\applications.service.ts:44:13)
+    at DocumentsService.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\documents\documents.service.ts:35:30)
+    at DocumentsController.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\documents\documents.controller.ts:103:36)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-08-26T05:40:34.951Z] POST /api/documents | Status: 404 | NotFoundException: Application with ID 0 not found
+NotFoundException: Application with ID 0 not found
+    at ApplicationsService.findOne (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\applications\applications.service.ts:44:13)
+    at DocumentsService.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\documents\documents.service.ts:35:30)
+    at DocumentsController.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\documents\documents.controller.ts:103:36)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-08-26T05:41:04.753Z] POST /api/applications | Status: 400 | BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at RoutesResolver.mapExternalException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:100:24)
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:86:24)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:21:23
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:116:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:111:12)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+[2026-08-26T05:42:17.399Z] POST /api/applications | Status: 400 | BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at RoutesResolver.mapExternalException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:100:24)
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:86:24)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:21:23
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:116:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:111:12)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+[2026-08-26T05:48:20.030Z] GET /favicon.ico | Status: 404 | NotFoundException: Cannot GET /favicon.ico
+NotFoundException: Cannot GET /favicon.ico
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:77:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:342:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at read (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\read.js:53:5)
+    at urlencodedParser (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\types\urlencoded.js:57:5)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:13:55.326Z] PATCH /api/applications/5 | Status: 400 | BadRequestException: Invalid status transition from submitted to department_review
+BadRequestException: Invalid status transition from submitted to department_review
+    at ApplicationsService.validateStatusTransition (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\applications\applications.service.ts:242:13)
+    at ApplicationsService.update (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\applications\applications.service.ts:173:12)
+    at ApplicationsController.update (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\applications\applications.controller.ts:228:42)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:17
+[2026-08-26T07:23:52.354Z] GET /api/users | Status: 403 | ForbiddenException: Role header is missing
+ForbiddenException: Role header is missing
+    at RolesGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\common\guards\roles.guard.ts:47:13)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:24:26.944Z] GET /api/documents | Status: 403 | ForbiddenException: You do not have access to this resource
+ForbiddenException: You do not have access to this resource
+    at RolesGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\common\guards\roles.guard.ts:53:13)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:24:27.012Z] GET /api/applications | Status: 403 | ForbiddenException: Role header is missing
+ForbiddenException: Role header is missing
+    at RolesGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\common\guards\roles.guard.ts:47:13)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:36:15.271Z] GET /api/applications/officer/1 | Status: 403 | ForbiddenException: Role header is missing
+ForbiddenException: Role header is missing
+    at RolesGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\common\guards\roles.guard.ts:47:13)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:36:15.309Z] GET /api/applications/officer/1 | Status: 403 | ForbiddenException: You do not have access to this resource
+ForbiddenException: You do not have access to this resource
+    at RolesGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\common\guards\roles.guard.ts:53:13)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:36:15.378Z] GET /api/officers | Status: 403 | ForbiddenException: You do not have access to this resource
+ForbiddenException: You do not have access to this resource
+    at RolesGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\common\guards\roles.guard.ts:53:13)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:36:53.272Z] POST /api/documents | Status: 400 | BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+    at fileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\documents\documents.controller.ts:78:13)
+    at wrappedFileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\index.js:45:7)
+    at Multipart.<anonymous> (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:183:7)
+    at Multipart.emit (node:events:508:28)
+    at HeaderParser.cb (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:358:14)
+    at HeaderParser.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:394:37)
+    at feed (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:219:14)
+    at SBMH.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:104:16)
+    at Multipart._write (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:567:19)
+[2026-08-26T07:37:37.620Z] POST /api/documents | Status: 400 | BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+    at fileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\documents\documents.controller.ts:78:13)
+    at wrappedFileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\index.js:45:7)
+    at Multipart.<anonymous> (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:183:7)
+    at Multipart.emit (node:events:508:28)
+    at HeaderParser.cb (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:358:14)
+    at HeaderParser.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:394:37)
+    at feed (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:248:10)
+    at SBMH.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:104:16)
+    at Multipart._write (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:567:19)
+[2026-08-26T07:37:37.696Z] POST /api/documents | Status: 413 | PayloadTooLargeException: File too large
+PayloadTooLargeException: File too large
+    at transformException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\multer\multer.utils.js:14:20)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\interceptors\file.interceptor.js:27:73
+    at done (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:69:7)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:89:11
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\remove-uploaded-files.js:20:9
+    at FSReqCallback.oncomplete (node:fs:184:23)
+[2026-08-26T07:39:23.972Z] POST /api/documents | Status: 400 | BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+    at fileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\documents\documents.controller.ts:78:13)
+    at wrappedFileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\index.js:45:7)
+    at Multipart.<anonymous> (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:183:7)
+    at Multipart.emit (node:events:508:28)
+    at HeaderParser.cb (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:358:14)
+    at HeaderParser.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:394:37)
+    at feed (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:248:10)
+    at SBMH.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:104:16)
+    at Multipart._write (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:567:19)
+[2026-08-26T07:39:24.031Z] POST /api/documents | Status: 413 | PayloadTooLargeException: File too large
+PayloadTooLargeException: File too large
+    at transformException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\multer\multer.utils.js:14:20)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\interceptors\file.interceptor.js:27:73
+    at done (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:69:7)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:89:11
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\remove-uploaded-files.js:20:9
+    at FSReqCallback.oncomplete (node:fs:184:23)
+[2026-08-26T07:40:06.579Z] GET /api/documents/17 | Status: 404 | NotFoundException: Document with ID 17 not found
+NotFoundException: Document with ID 17 not found
+    at DocumentsService.findOne (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\documents\documents.service.ts:22:13)
+    at DocumentsController.findOne (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\documents\documents.controller.ts:147:34)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:17
+[2026-08-26T07:40:06.622Z] POST /api/users | Status: 400 | BadRequestException: Bad Request Exception
+BadRequestException: Bad Request Exception
+    at ValidationPipe.exceptionFactory (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:112:20)
+    at ValidationPipe.transform (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:79:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async resolveParamValue (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:148:23)
+    at async Promise.all (index 0)
+    at async pipesFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:151:13)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:37:30
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:17
+[2026-08-26T07:50:33.674Z] GET /api/auth/login | Status: 404 | NotFoundException: Cannot GET /api/auth/login
+NotFoundException: Cannot GET /api/auth/login
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:77:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:342:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at read (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\read.js:53:5)
+    at urlencodedParser (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\types\urlencoded.js:57:5)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:51:17.672Z] GET /api/auth/login | Status: 404 | NotFoundException: Cannot GET /api/auth/login
+NotFoundException: Cannot GET /api/auth/login
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:77:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:342:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at read (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\read.js:53:5)
+    at urlencodedParser (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\types\urlencoded.js:57:5)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:51:36.914Z] POST /api/auth/login | Status: 400 | BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at RoutesResolver.mapExternalException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:100:24)
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:86:24)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:21:23
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:116:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:111:12)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+[2026-08-26T07:51:37.195Z] POST /api/auth/login | Status: 400 | BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at RoutesResolver.mapExternalException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:100:24)
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:86:24)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:21:23
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:116:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:111:12)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+[2026-08-26T07:51:37.227Z] POST /api/auth/login | Status: 400 | BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at RoutesResolver.mapExternalException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:100:24)
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:86:24)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:21:23
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:116:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:111:12)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+[2026-08-26T07:51:37.260Z] POST /api/auth/login | Status: 400 | BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at RoutesResolver.mapExternalException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:100:24)
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:86:24)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:21:23
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:116:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:111:12)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+[2026-08-26T07:51:37.294Z] POST /api/auth/login | Status: 400 | BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at RoutesResolver.mapExternalException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:100:24)
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:86:24)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:21:23
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:116:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:111:12)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+[2026-08-26T07:51:37.345Z] GET /api/officers | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:51:37.385Z] GET /api/officers | Status: 401 | UnauthorizedException: Invalid or expired access token
+UnauthorizedException: Invalid or expired access token
+    at AuthService.validateToken (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.service.js:53:19)
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:40:41)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+[2026-08-26T07:51:37.423Z] GET /api/documents/application/1 | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:51:37.453Z] GET /api/officers | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:51:37.485Z] GET /api/officers | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:51:37.517Z] GET /api/applications/officer/1 | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:51:37.608Z] GET /api/users | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:51:37.638Z] GET /api/officers | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:51:44.769Z] POST /api/auth/login | Status: 400 | BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+BadRequestException: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at RoutesResolver.mapExternalException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:100:24)
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:86:24)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:21:23
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:116:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at Layer.handleError (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:111:12)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:340:13)
+[2026-08-26T07:52:08.191Z] POST /api/auth/login | Status: 401 | UnauthorizedException: Invalid email, password, or role
+UnauthorizedException: Invalid email, password, or role
+    at AuthService.login (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.service.js:34:19)
+    at AuthController.login (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.controller.js:27:33)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:17
+[2026-08-26T07:52:08.314Z] GET /api/officers | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:52:08.322Z] GET /api/officers | Status: 401 | UnauthorizedException: Invalid or expired access token
+UnauthorizedException: Invalid or expired access token
+    at AuthService.validateToken (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.service.js:53:19)
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:40:41)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+[2026-08-26T07:52:08.331Z] GET /api/documents/application/1 | Status: 404 | NotFoundException: Application with ID 1 not found
+NotFoundException: Application with ID 1 not found
+    at ApplicationsService.findOne (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\applications\applications.service.js:46:19)
+    at DocumentsService.findByApplication (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.service.js:35:34)
+    at DocumentsController.findByApplication (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:62:38)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:17
+[2026-08-26T07:52:08.336Z] GET /api/officers | Status: 403 | ForbiddenException: You do not have access to this resource
+ForbiddenException: You do not have access to this resource
+    at RolesGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\common\guards\roles.guard.js:32:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:52:08.341Z] GET /api/officers | Status: 403 | ForbiddenException: You do not have access to this resource
+ForbiddenException: You do not have access to this resource
+    at RolesGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\common\guards\roles.guard.js:32:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:52:33.703Z] GET /api/users/1 | Status: 401 | UnauthorizedException: Invalid or expired access token
+UnauthorizedException: Invalid or expired access token
+    at AuthService.validateToken (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.service.js:54:19)
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:40:41)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+[2026-08-26T07:55:57.517Z] GET /api/officers | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T07:55:57.589Z] GET /api/officers | Status: 403 | ForbiddenException: You do not have access to this resource
+ForbiddenException: You do not have access to this resource
+    at RolesGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\common\guards\roles.guard.js:32:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T08:03:28.475Z] GET /api/users/not-a-number | Status: 400 | BadRequestException: Validation failed (numeric string is expected)
+BadRequestException: Validation failed (numeric string is expected)
+    at ParseIntPipe.exceptionFactory (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\parse-int.pipe.js:24:27)
+    at ParseIntPipe.transform (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\parse-int.pipe.js:38:24)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\pipes\pipes-consumer.js:16:33
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async resolveParamValue (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:148:23)
+    at async Promise.all (index 0)
+    at async pipesFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:151:13)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:37:30
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:17
+[2026-08-26T08:04:18.502Z] POST /api/documents | Status: 400 | BadRequestException: Bad Request Exception
+BadRequestException: Bad Request Exception
+    at ValidationPipe.exceptionFactory (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:112:20)
+    at ValidationPipe.transform (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:79:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async resolveParamValue (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:148:23)
+    at async Promise.all (index 1)
+    at async pipesFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:151:13)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:37:30
+[2026-08-26T08:04:18.536Z] POST /api/documents | Status: 400 | BadRequestException: Bad Request Exception
+BadRequestException: Bad Request Exception
+    at ValidationPipe.exceptionFactory (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:112:20)
+    at ValidationPipe.transform (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:79:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async resolveParamValue (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:148:23)
+    at async Promise.all (index 1)
+    at async pipesFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:151:13)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:37:30
+[2026-08-26T08:04:18.571Z] POST /api/documents | Status: 400 | BadRequestException: Bad Request Exception
+BadRequestException: Bad Request Exception
+    at ValidationPipe.exceptionFactory (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:112:20)
+    at ValidationPipe.transform (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:79:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async resolveParamValue (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:148:23)
+    at async Promise.all (index 1)
+    at async pipesFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:151:13)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:37:30
+[2026-08-26T08:04:18.604Z] POST /api/documents | Status: 400 | BadRequestException: Bad Request Exception
+BadRequestException: Bad Request Exception
+    at ValidationPipe.exceptionFactory (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:112:20)
+    at ValidationPipe.transform (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:79:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async resolveParamValue (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:148:23)
+    at async Promise.all (index 1)
+    at async pipesFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:151:13)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:37:30
+[2026-08-26T08:04:18.638Z] POST /api/documents | Status: 400 | BadRequestException: Bad Request Exception
+BadRequestException: Bad Request Exception
+    at ValidationPipe.exceptionFactory (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:112:20)
+    at ValidationPipe.transform (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:79:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async resolveParamValue (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:148:23)
+    at async Promise.all (index 1)
+    at async pipesFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:151:13)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:37:30
+[2026-08-26T08:04:18.673Z] POST /api/documents | Status: 400 | BadRequestException: Bad Request Exception
+BadRequestException: Bad Request Exception
+    at ValidationPipe.exceptionFactory (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:112:20)
+    at ValidationPipe.transform (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:79:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async resolveParamValue (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:148:23)
+    at async Promise.all (index 1)
+    at async pipesFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:151:13)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:37:30
+[2026-08-26T08:04:45.531Z] POST /api/documents | Status: 400 | BadRequestException: A document file is required
+BadRequestException: A document file is required
+    at DocumentsController.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:48:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-08-26T08:04:45.628Z] POST /api/documents | Status: 400 | BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+    at fileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:105:26)
+    at wrappedFileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\index.js:45:7)
+    at Multipart.<anonymous> (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:183:7)
+    at Multipart.emit (node:events:508:28)
+    at HeaderParser.cb (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:358:14)
+    at HeaderParser.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:394:37)
+    at feed (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:219:14)
+    at SBMH.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:104:16)
+    at Multipart._write (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:567:19)
+[2026-08-26T08:04:45.663Z] POST /api/documents | Status: 400 | BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+    at fileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:105:26)
+    at wrappedFileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\index.js:45:7)
+    at Multipart.<anonymous> (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:183:7)
+    at Multipart.emit (node:events:508:28)
+    at HeaderParser.cb (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:358:14)
+    at HeaderParser.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:394:37)
+    at feed (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:219:14)
+    at SBMH.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:104:16)
+    at Multipart._write (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:567:19)
+[2026-08-26T08:04:45.729Z] POST /api/documents | Status: 413 | PayloadTooLargeException: File too large
+PayloadTooLargeException: File too large
+    at transformException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\multer\multer.utils.js:14:20)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\interceptors\file.interceptor.js:27:73
+    at done (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:69:7)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:89:11
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\remove-uploaded-files.js:20:9
+    at FSReqCallback.oncomplete (node:fs:184:23)
+[2026-08-26T08:04:45.766Z] POST /api/documents | Status: 400 | BadRequestException: Bad Request Exception
+BadRequestException: Bad Request Exception
+    at ValidationPipe.exceptionFactory (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:112:20)
+    at ValidationPipe.transform (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:79:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async resolveParamValue (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:148:23)
+    at async Promise.all (index 1)
+    at async pipesFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:151:13)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:37:30
+[2026-08-26T08:04:45.802Z] POST /api/documents | Status: 404 | NotFoundException: Application with ID 999999 not found
+NotFoundException: Application with ID 999999 not found
+    at ApplicationsService.findOne (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\applications\applications.service.js:46:19)
+    at DocumentsService.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.service.js:39:34)
+    at DocumentsController.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:51:42)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-08-26T08:05:07.563Z] GET /api/officers | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T08:05:07.656Z] GET /api/officers | Status: 403 | ForbiddenException: You do not have access to this resource
+ForbiddenException: You do not have access to this resource
+    at RolesGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\common\guards\roles.guard.js:32:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T08:05:07.662Z] POST /api/users | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T08:05:07.670Z] GET /api/audit-logs | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T08:05:19.646Z] GET /api/officers | Status: 401 | UnauthorizedException: Invalid or expired access token
+UnauthorizedException: Invalid or expired access token
+    at AuthService.validateToken (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.service.js:54:19)
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:40:41)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+[2026-08-26T08:18:50.399Z] POST /api/auth/login | Status: 404 | NotFoundException: Cannot POST /api/auth/login
+NotFoundException: Cannot POST /api/auth/login
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:77:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:342:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at read (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\read.js:42:5)
+    at urlencodedParser (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\types\urlencoded.js:57:5)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T08:18:50.982Z] GET /api/applications | Status: 403 | ForbiddenException: Role header is missing
+ForbiddenException: Role header is missing
+    at RolesGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\src\common\guards\roles.guard.ts:47:13)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T08:20:01.994Z] POST /api/documents | Status: 400 | BadRequestException: A document file is required
+BadRequestException: A document file is required
+    at DocumentsController.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:48:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-08-26T08:20:02.031Z] POST /api/documents | Status: 400 | BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+    at fileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:105:26)
+    at wrappedFileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\index.js:45:7)
+    at Multipart.<anonymous> (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:183:7)
+    at Multipart.emit (node:events:508:28)
+    at HeaderParser.cb (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:358:14)
+    at HeaderParser.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:394:37)
+    at feed (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:219:14)
+    at SBMH.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:104:16)
+    at Multipart._write (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:567:19)
+[2026-08-26T08:20:02.138Z] POST /api/documents | Status: 413 | PayloadTooLargeException: File too large
+PayloadTooLargeException: File too large
+    at transformException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\multer\multer.utils.js:14:20)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\interceptors\file.interceptor.js:27:73
+    at done (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:69:7)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:89:11
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\remove-uploaded-files.js:20:9
+    at FSReqCallback.oncomplete (node:fs:184:23)
+[2026-08-26T08:20:02.298Z] DELETE /api/documents/ | Status: 404 | NotFoundException: Cannot DELETE /api/documents/
+NotFoundException: Cannot DELETE /api/documents/
+    at callback (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:77:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:342:13)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at read (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\read.js:53:5)
+    at urlencodedParser (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\body-parser\lib\types\urlencoded.js:57:5)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T08:20:28.688Z] GET /api | Status: 401 | UnauthorizedException: Bearer access token is required
+UnauthorizedException: Bearer access token is required
+    at AuthGuard.canActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\auth\auth.guard.js:34:19)
+    at GuardsConsumer.tryActivate (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\guards\guards-consumer.js:15:34)
+    at canActivateFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:135:59)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:42:37
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T08:21:15.762Z] POST /api/documents | Status: 400 | BadRequestException: A document file is required
+BadRequestException: A document file is required
+    at DocumentsController.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:49:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-08-26T08:21:15.801Z] POST /api/documents | Status: 400 | BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+    at fileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:100:26)
+    at wrappedFileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\index.js:45:7)
+    at Multipart.<anonymous> (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:183:7)
+    at Multipart.emit (node:events:508:28)
+    at HeaderParser.cb (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:358:14)
+    at HeaderParser.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:394:37)
+    at feed (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:219:14)
+    at SBMH.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:104:16)
+    at Multipart._write (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:567:19)
+[2026-08-26T08:21:15.859Z] POST /api/documents | Status: 400 | BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+    at fileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:100:26)
+    at wrappedFileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\index.js:45:7)
+    at Multipart.<anonymous> (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:183:7)
+    at Multipart.emit (node:events:508:28)
+    at HeaderParser.cb (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:358:14)
+    at HeaderParser.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:394:37)
+    at feed (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:248:10)
+    at SBMH.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:104:16)
+    at Multipart._write (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:567:19)
+[2026-08-26T08:21:15.962Z] POST /api/documents | Status: 413 | PayloadTooLargeException: File too large
+PayloadTooLargeException: File too large
+    at transformException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\multer\multer.utils.js:14:20)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\interceptors\file.interceptor.js:27:73
+    at done (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:69:7)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:89:11
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\remove-uploaded-files.js:20:9
+    at FSReqCallback.oncomplete (node:fs:184:23)
+[2026-08-26T08:21:16.004Z] POST /api/documents | Status: 400 | BadRequestException: Bad Request Exception
+BadRequestException: Bad Request Exception
+    at ValidationPipe.exceptionFactory (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:112:20)
+    at ValidationPipe.transform (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:79:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async resolveParamValue (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:148:23)
+    at async Promise.all (index 1)
+    at async pipesFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:151:13)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:37:30
+[2026-08-26T08:21:16.045Z] POST /api/documents | Status: 404 | NotFoundException: Application with ID 999999 not found
+NotFoundException: Application with ID 999999 not found
+    at ApplicationsService.findOne (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\applications\applications.service.js:46:19)
+    at DocumentsService.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.service.js:40:34)
+    at DocumentsController.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:51:38)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-08-26T08:23:01.742Z] POST /api/documents | Status: 400 | BadRequestException: A document file is required
+BadRequestException: A document file is required
+    at DocumentsController.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:49:19)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-08-26T08:23:01.783Z] POST /api/documents | Status: 400 | BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+    at fileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:101:26)
+    at wrappedFileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\index.js:45:7)
+    at Multipart.<anonymous> (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:183:7)
+    at Multipart.emit (node:events:508:28)
+    at HeaderParser.cb (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:358:14)
+    at HeaderParser.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:394:37)
+    at feed (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:219:14)
+    at SBMH.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:104:16)
+    at Multipart._write (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:567:19)
+[2026-08-26T08:23:01.842Z] POST /api/documents | Status: 400 | BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+BadRequestException: Only JPG, JPEG, PNG, and PDF files are allowed
+    at fileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:101:26)
+    at wrappedFileFilter (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\index.js:45:7)
+    at Multipart.<anonymous> (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:183:7)
+    at Multipart.emit (node:events:508:28)
+    at HeaderParser.cb (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:358:14)
+    at HeaderParser.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:394:37)
+    at feed (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:248:10)
+    at SBMH.push (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\streamsearch\lib\sbmh.js:104:16)
+    at Multipart._write (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\busboy\lib\types\multipart.js:567:19)
+[2026-08-26T08:23:01.887Z] POST /api/documents | Status: 400 | BadRequestException: Uploaded file content does not match its allowed file type
+BadRequestException: Uploaded file content does not match its allowed file type
+    at assertValidDocumentSignature (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\document-storage.js:35:15)
+    at DocumentUploadCleanupInterceptor.intercept (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\document-upload-cleanup.interceptor.js:19:69)
+    at nextFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\interceptors\interceptors-consumer.js:23:36)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\interceptors\interceptors-consumer.js:21:88
+    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)
+    at bound (node:async_hooks:245:16)
+    at Observable._subscribe (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\rxjs\dist\cjs\internal\observable\defer.js:8:31)
+    at Observable._trySubscribe (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\rxjs\dist\cjs\internal\Observable.js:41:25)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\rxjs\dist\cjs\internal\Observable.js:35:31
+    at Object.errorContext (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\rxjs\dist\cjs\internal\util\errorContext.js:22:9)
+[2026-08-26T08:23:01.957Z] POST /api/documents | Status: 413 | PayloadTooLargeException: File too large
+PayloadTooLargeException: File too large
+    at transformException (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\multer\multer.utils.js:14:20)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\platform-express\multer\interceptors\file.interceptor.js:27:73
+    at done (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:69:7)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\make-middleware.js:89:11
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\multer\lib\remove-uploaded-files.js:20:9
+    at FSReqCallback.oncomplete (node:fs:184:23)
+[2026-08-26T08:23:02.003Z] POST /api/documents | Status: 400 | BadRequestException: Bad Request Exception
+BadRequestException: Bad Request Exception
+    at ValidationPipe.exceptionFactory (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:112:20)
+    at ValidationPipe.transform (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\common\pipes\validation.pipe.js:79:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async resolveParamValue (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:148:23)
+    at async Promise.all (index 1)
+    at async pipesFn (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:151:13)
+    at async C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:37:30
+[2026-08-26T08:23:02.046Z] POST /api/documents | Status: 404 | NotFoundException: Application with ID 999999 not found
+NotFoundException: Application with ID 999999 not found
+    at ApplicationsService.findOne (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\applications\applications.service.js:46:19)
+    at DocumentsService.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.service.js:40:34)
+    at DocumentsController.create (C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\dist\documents\documents.controller.js:51:38)
+    at C:\Users\hasin\OneDrive\Desktop\fdfed\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+{"level":"WARN","event":"request_error","timestamp":"2026-08-26T08:29:46.611Z","requestId":"97a00db2-1720-48e2-91dc-8af64fc6bfdc","method":"POST","path":"/api/auth/login","statusCode":400,"category":"client_error","message":["email must be shorter than or equal to 120 characters","email should not be empty","email must be an email","password must be shorter than or equal to 255 characters","password must be longer than or equal to 6 characters","password should not be empty","password must be a string","role must be shorter than or equal to 50 characters","role should not be empty","role must be a string"]}
+{"level":"WARN","event":"request_error","timestamp":"2026-08-26T08:29:46.644Z","requestId":"8f16c665-9e19-4cf7-b563-a7f2f2d34691","method":"GET","path":"/api/documents","statusCode":401,"category":"authentication","message":"Bearer access token is required"}
+{"level":"WARN","event":"request_error","timestamp":"2026-08-26T08:29:46.708Z","requestId":"e808d626-1a2e-4cfa-b25f-d69287a46531","method":"GET","path":"/api/documents/999999","statusCode":404,"category":"not_found","message":"Document with ID 999999 not found"}
+{"level":"WARN","event":"request_error","timestamp":"2026-08-26T08:30:04.545Z","requestId":"394b8dcf-6e1b-4ce3-99cf-0df789a4d504","method":"GET","path":"/api/documents","statusCode":403,"category":"authorization","message":"You do not have access to this resource"}

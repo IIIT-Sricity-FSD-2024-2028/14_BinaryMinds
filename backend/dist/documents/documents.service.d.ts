@@ -10,7 +10,7 @@ export declare class DocumentsService {
     findAll(): Document[];
     findOne(id: number): Document;
     findByApplication(applicationId: number): Document[];
-    create(createDocumentDto: CreateDocumentDto): Document;
+    create(createDocumentDto: CreateDocumentDto, filePath: string): Document;
     updateVerificationStatus(id: number, status: VerificationStatus): Document;
     remove(id: number): void;
 }

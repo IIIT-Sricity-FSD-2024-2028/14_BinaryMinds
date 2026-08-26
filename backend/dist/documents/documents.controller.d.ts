@@ -4,7 +4,7 @@ import { VerificationStatus } from '../common/enums/verification-status.enum';
 export declare class DocumentsController {
     private readonly documentsService;
     constructor(documentsService: DocumentsService);
-    create(createDocumentDto: CreateDocumentDto): import("./document.interface").Document;
+    create(createDocumentDto: CreateDocumentDto, file?: Express.Multer.File): import("./document.interface").Document;
     findAll(): import("./document.interface").Document[];
     findByApplication(applicationId: number): import("./document.interface").Document[];
     findOne(id: number): import("./document.interface").Document;

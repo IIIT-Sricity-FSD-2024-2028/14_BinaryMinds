@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { RequestLoggingMiddleware } from './common/middleware/request-logging.middleware';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
@@ -11,7 +12,31 @@ async function bootstrap() {
   const requestLoggingMiddleware = new RequestLoggingMiddleware();
   app.use(requestLoggingMiddleware.use.bind(requestLoggingMiddleware));
   app.useGlobalFilters(new GlobalExceptionFilter());
-  app.enableCors();
+
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          // Swagger UI uses inline configuration and styles. Keep those narrowly
+          // permitted while retaining Helmet's remaining default CSP directives.
+          'script-src': ["'self'", "'unsafe-inline'"],
+          'style-src': ["'self'", "'unsafe-inline'"],
+          'img-src': ["'self'", 'data:'],
+        },
+      },
+    }),
+  );
+
+  const corsOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:5173')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  app.enableCors({
+    origin: corsOrigins,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'role'],
+  });
   app.setGlobalPrefix('api');
 
   // Use global validation pipe

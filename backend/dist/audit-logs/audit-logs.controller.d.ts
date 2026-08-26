@@ -6,16 +6,4 @@ export declare class AuditLogsController {
         success: boolean;
         data: import("./audit-log.interface").AuditLogEntry[];
     };
-    create(body: {
-        user_name?: string;
-        role?: string;
-        action?: string;
-        module?: string;
-        description?: string;
-        ip_address?: string;
-        source?: 'frontend' | 'backend';
-    }): {
-        success: boolean;
-        data: import("./audit-log.interface").AuditLogEntry;
-    };
 }

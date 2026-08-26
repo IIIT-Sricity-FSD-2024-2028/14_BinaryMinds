@@ -334,11 +334,12 @@ TRADEZO.roleFor = function(role) {
 
 TRADEZO.backendRequest = function(method, path, body, role, sync) {
   var url = TRADEZO.API_BASE + path;
+  var accessToken = sessionStorage.getItem('accessToken') || '';
   if (sync) {
     try {
       var xhr = new XMLHttpRequest();
       xhr.open(method, url, false);
-      xhr.setRequestHeader('role', TRADEZO.roleFor(role));
+      if (accessToken) xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
       if (body !== undefined && body !== null) xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.send(body !== undefined && body !== null ? JSON.stringify(body) : null);
       if (xhr.status >= 200 && xhr.status < 300) return JSON.parse(xhr.responseText || 'null');
@@ -348,7 +349,10 @@ TRADEZO.backendRequest = function(method, path, body, role, sync) {
     return null;
   }
 
-  var options = { method: method, headers: { role: TRADEZO.roleFor(role) } };
+  var options = {
+    method: method,
+    headers: accessToken ? { Authorization: 'Bearer ' + accessToken } : {}
+  };
   if (body !== undefined && body !== null) {
     options.headers['Content-Type'] = 'application/json';
     options.body = JSON.stringify(body);

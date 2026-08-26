@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const documents_repository_1 = require("./documents.repository");
 const applications_service_1 = require("../applications/applications.service");
 const verification_status_enum_1 = require("../common/enums/verification-status.enum");
+const document_storage_1 = require("./document-storage");
 let DocumentsService = class DocumentsService {
     documentsRepository;
     applicationsService;
@@ -35,12 +36,11 @@ let DocumentsService = class DocumentsService {
         this.applicationsService.findOne(applicationId);
         return this.documentsRepository.findByApplication(applicationId);
     }
-    create(createDocumentDto) {
+    create(createDocumentDto, filePath) {
         this.applicationsService.findOne(createDocumentDto.application_id);
-        const sanitizedPath = createDocumentDto.file_path.trim();
         const newDoc = {
             ...createDocumentDto,
-            file_path: sanitizedPath,
+            file_path: filePath,
             verification_status: verification_status_enum_1.VerificationStatus.PENDING,
         };
         return this.documentsRepository.create(newDoc);
@@ -56,7 +56,9 @@ let DocumentsService = class DocumentsService {
         return updated;
     }
     remove(id) {
-        this.findOne(id);
+        const document = this.findOne(id);
+        const storedFile = (0, document_storage_1.resolveStoredDocumentPath)(document.file_path);
+        (0, document_storage_1.removeStoredUpload)(storedFile);
         this.documentsRepository.delete(id);
     }
 };

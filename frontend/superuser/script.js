@@ -79,6 +79,37 @@ var activityLog = [
 var defaultFees = { new: 2100, renewal: 1000 };
 var FIELD_OFFICER_DEFAULT_PASSWORD = 'field@123';
 var API_BASE_URL = 'http://localhost:3000/api';
+var backendApplications = [];
+
+function authenticatedHeaders(extra) {
+  var token = sessionStorage.getItem('accessToken') || '';
+  return Object.assign({}, extra || {}, token ? { Authorization: 'Bearer ' + token } : {});
+}
+
+function fetchBackendApplications() {
+  if (!window.fetch) return Promise.resolve();
+
+  return fetch(API_BASE_URL + '/applications', { headers: authenticatedHeaders() })
+    .then(function(response) {
+      if (!response.ok) throw new Error('Failed to load backend applications');
+      return response.json();
+    })
+    .then(function(payload) {
+      backendApplications = Array.isArray(payload) ? payload : (payload && payload.data) || [];
+      refreshDynamicData();
+
+      if (document.getElementById('page-dashboard') && document.getElementById('page-dashboard').classList.contains('active')) {
+        renderDashboard();
+      }
+      if (document.getElementById('page-applications') && document.getElementById('page-applications').classList.contains('active')) {
+        renderApplicationStats();
+        renderApplications();
+      }
+    })
+    .catch(function() {
+      return null;
+    });
+}
  
 // Track which user or category is being edited
 var editUserId = null;
@@ -138,7 +169,7 @@ function loadPersistedAuditLogs() {
 
 function fetchBackendAuditLogs() {
   if (!window.fetch) return Promise.resolve();
-  return fetch(API_BASE_URL + '/audit-logs')
+  return fetch(API_BASE_URL + '/audit-logs', { headers: authenticatedHeaders() })
     .then(function(response) {
       if (!response.ok) throw new Error('Failed to load backend audit logs');
       return response.json();
@@ -260,7 +291,7 @@ function syncFieldOfficerToBackend(user) {
 
   return fetch(API_BASE_URL + '/users', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authenticatedHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({
       full_name: user.name,
       email: user.email,
@@ -563,6 +594,22 @@ function isUnassignedApplication(app) {
     'assignedFO',
     'assignedOfficerId'
   ]);
+}
+
+function applicationStatusLabel(value) {
+  var normalized = String(value || '').toLowerCase().replace(/_/g, ' ').trim();
+  var labels = {
+    submitted: 'Submitted',
+    assigned: 'Assigned',
+    verified: 'Verified',
+    'documents uploaded': 'Documents Verified',
+    'inspection scheduled': 'Inspection Scheduled',
+    'inspection completed': 'Inspection Completed',
+    'department review': 'Department Review',
+    approved: 'Approved',
+    rejected: 'Rejected'
+  };
+  return labels[normalized] || value || 'Pending';
 }
 
 function escapeHtml(value) {
@@ -900,7 +947,7 @@ function syncDepartmentOfficerToBackend(officer) {
 
   return fetch(API_BASE_URL + '/users', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authenticatedHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({
       full_name: officer.name,
       email: officer.email,
@@ -1119,7 +1166,7 @@ function refreshDynamicData() {
     return -1;
   }
 
-  sysApps.concat(localApps).concat(legacyApps).concat(tradezoApps).forEach(function(la) {
+   backendApplications.concat(sysApps).concat(localApps).concat(legacyApps).concat(tradezoApps).forEach(function(la) {
      if (!isLiveApplicationRecord(la)) return;
      if (!isAllowedApplicationApplicant(la)) return;
      var existingIndex = findExistingApplicationIndex(la);
@@ -1136,7 +1183,7 @@ function refreshDynamicData() {
     applications = allApps.map(function(a) {
       var submittedDate = a.submittedDate || a.submitted_at || a.date || a.createdAt || a.created_at || '';
       return {
-        id: a.id || a.appId || a.appRef || 'N/A',
+        id: a.application_id || a.id || a.appId || a.appRef || 'N/A',
         applicant: a.applicantName || a.applicant || a.fullName || a.full_name || a.ownerName || a.name || 'Unknown',
         business: a.businessName || a.business || a.business_name || 'N/A',
         category: a.tradeCategory || a.category || a.businessType || a.business_type || 'N/A',
@@ -1144,7 +1191,7 @@ function refreshDynamicData() {
         submittedDate: submittedDate,
         updatedDate: a.updatedDate || a.updatedAt || a.updated_at || a.lastUpdated || a.reviewDate || a.approvedDate || '',
         createdAt: a.createdAt || a.created_at || '',
-        status: a.status || 'Pending',
+        status: applicationStatusLabel(a.status || a.application_status || 'Pending'),
         paymentStatus: a.paymentStatus || '',
         paymentRef: a.paymentRef || '',
         paymentDate: a.paymentDate || '',
@@ -2167,4 +2214,5 @@ function validPhone(phone) {
 window.onload = function() {
   renderDashboard();
   fetchBackendAuditLogs();
+  fetchBackendApplications();
 };

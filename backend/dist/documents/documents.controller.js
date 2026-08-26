@@ -15,21 +15,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentsController = void 0;
 const openapi = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
+const swagger_1 = require("@nestjs/swagger");
+const node_crypto_1 = require("node:crypto");
+const node_fs_1 = require("node:fs");
+const node_path_1 = require("node:path");
+const multer_1 = require("multer");
 const documents_service_1 = require("./documents.service");
 const create_document_dto_1 = require("./dto/create-document.dto");
 const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const roles_guard_1 = require("../common/guards/roles.guard");
 const role_enum_1 = require("../common/enums/role.enum");
+const document_type_enum_1 = require("../common/enums/document-type.enum");
 const verification_status_enum_1 = require("../common/enums/verification-status.enum");
-const swagger_1 = require("@nestjs/swagger");
 const api_route_decorator_1 = require("../common/swagger/api-route.decorator");
+const document_storage_1 = require("./document-storage");
+const document_upload_cleanup_interceptor_1 = require("./document-upload-cleanup.interceptor");
+const maximumFileSize = 5 * 1024 * 1024;
+const allowedFileTypes = {
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.pdf': 'application/pdf',
+};
+(0, node_fs_1.mkdirSync)(document_storage_1.documentUploadDirectory, { recursive: true });
 let DocumentsController = class DocumentsController {
     documentsService;
     constructor(documentsService) {
         this.documentsService = documentsService;
     }
-    create(createDocumentDto) {
-        return this.documentsService.create(createDocumentDto);
+    create(createDocumentDto, file) {
+        if (!file) {
+            throw new common_1.BadRequestException('A document file is required');
+        }
+        return this.documentsService.create(createDocumentDto, `uploads/documents/${file.filename}`);
     }
     findAll() {
         return this.documentsService.findAll();
@@ -51,17 +70,51 @@ exports.DocumentsController = DocumentsController;
 __decorate([
     (0, common_1.Post)(),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.APPLICANT, role_enum_1.Role.DEPARTMENT_OFFICER),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({
+        description: 'Document metadata and the file to upload.',
+        schema: {
+            type: 'object',
+            required: ['application_id', 'document_type', 'file'],
+            properties: {
+                application_id: { type: 'number', example: 1 },
+                document_type: {
+                    enum: Object.values(document_type_enum_1.DocumentType),
+                    example: document_type_enum_1.DocumentType.AADHAR_CARD,
+                },
+                file: { type: 'string', format: 'binary' },
+            },
+        },
+    }),
+    (0, common_1.UseInterceptors)(document_upload_cleanup_interceptor_1.DocumentUploadCleanupInterceptor),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
+        storage: (0, multer_1.diskStorage)({
+            destination: document_storage_1.documentUploadDirectory,
+            filename: (_request, file, callback) => {
+                callback(null, `${(0, node_crypto_1.randomUUID)()}${(0, node_path_1.extname)(file.originalname).toLowerCase()}`);
+            },
+        }),
+        limits: { fileSize: maximumFileSize },
+        fileFilter: (_request, file, callback) => {
+            const extension = (0, node_path_1.extname)(file.originalname).toLowerCase();
+            if (allowedFileTypes[extension] !== file.mimetype) {
+                callback(new common_1.BadRequestException('Only JPG, JPEG, PNG, and PDF files are allowed'), false);
+                return;
+            }
+            callback(null, true);
+        },
+    })),
     (0, api_route_decorator_1.ApiRoute)({
         summary: 'Create uploaded document record',
         roles: [role_enum_1.Role.APPLICANT, role_enum_1.Role.DEPARTMENT_OFFICER],
-        bodyType: create_document_dto_1.CreateDocumentDto,
         status: 201,
         responseExample: { document_id: 1, application_id: 1, verification_status: 'pending' },
     }),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_document_dto_1.CreateDocumentDto]),
+    __metadata("design:paramtypes", [create_document_dto_1.CreateDocumentDto, Object]),
     __metadata("design:returntype", void 0)
 ], DocumentsController.prototype, "create", null);
 __decorate([

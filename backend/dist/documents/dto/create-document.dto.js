@@ -11,18 +11,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateDocumentDto = void 0;
 const openapi = require("@nestjs/swagger");
+const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 const document_type_enum_1 = require("../../common/enums/document-type.enum");
 class CreateDocumentDto {
     application_id;
     document_type;
-    file_path;
     static _OPENAPI_METADATA_FACTORY() {
-        return { application_id: { required: true, type: () => Number }, document_type: { required: true, enum: require("../../common/enums/document-type.enum").DocumentType }, file_path: { required: true, type: () => String } };
+        return { application_id: { required: true, type: () => Number }, document_type: { required: true, enum: require("../../common/enums/document-type.enum").DocumentType } };
     }
 }
 exports.CreateDocumentDto = CreateDocumentDto;
 __decorate([
+    (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
@@ -32,9 +33,4 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateDocumentDto.prototype, "document_type", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateDocumentDto.prototype, "file_path", void 0);
 //# sourceMappingURL=create-document.dto.js.map

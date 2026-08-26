@@ -5,14 +5,14 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { appendFileSync, mkdirSync } from 'node:fs';
-import { EOL } from 'node:os';
-import { resolve } from 'node:path';
 import { Request, Response } from 'express';
+import { LogLevel, LogManager } from '../logging/log-manager';
+import { RequestWithId } from '../middleware/request-logging.middleware';
 
 interface ErrorResponseBody {
   success: false;
   timestamp: string;
+  requestId?: string;
   statusCode: number;
   method: string;
   path: string;
@@ -21,17 +21,12 @@ interface ErrorResponseBody {
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  private readonly logDirectory = resolve(__dirname, '../../../logs');
-  private readonly logFilePath = resolve(this.logDirectory, 'error.log');
-
-  constructor() {
-    mkdirSync(this.logDirectory, { recursive: true });
-  }
+  private readonly logger = new LogManager();
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
-    const request = context.getRequest<Request>();
+    const request = context.getRequest<RequestWithId>();
     const timestamp = new Date().toISOString();
     const statusCode =
       exception instanceof HttpException
@@ -45,6 +40,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       success: false,
       timestamp,
       statusCode,
+      requestId: request.requestId,
       method: request.method,
       path: request.originalUrl,
       message,
@@ -84,11 +80,29 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     statusCode: number,
     timestamp: string,
   ): void {
-    const errorName = exception instanceof Error ? exception.name : 'UnknownError';
-    const errorMessage = exception instanceof Error ? exception.message : 'Unknown exception';
-    const stack = exception instanceof Error && exception.stack ? `${EOL}${exception.stack}` : '';
-    const logEntry = `[${timestamp}] ${request.method} ${request.originalUrl} | Status: ${statusCode} | ${errorName}: ${errorMessage}${stack}${EOL}`;
+    const category = this.getCategory(statusCode);
+    const isServerError = statusCode >= HttpStatus.INTERNAL_SERVER_ERROR;
+    this.logger.write('error.log', {
+      level: (isServerError ? 'ERROR' : 'WARN') as LogLevel,
+      event: 'request_error',
+      timestamp,
+      requestId: (request as RequestWithId).requestId,
+      method: request.method,
+      path: request.originalUrl,
+      statusCode,
+      category,
+      message: isServerError ? 'Internal server error' : this.getClientMessage(exception),
+      ...(isServerError && exception instanceof Error && exception.stack
+        ? { stack: exception.stack }
+        : {}),
+    });
+  }
 
-    appendFileSync(this.logFilePath, logEntry, 'utf8');
+  private getCategory(statusCode: number): string {
+    if (statusCode === HttpStatus.UNAUTHORIZED) return 'authentication';
+    if (statusCode === HttpStatus.FORBIDDEN) return 'authorization';
+    if (statusCode === HttpStatus.NOT_FOUND) return 'not_found';
+    if (statusCode >= 400 && statusCode < 500) return 'client_error';
+    return 'server_error';
   }
 }

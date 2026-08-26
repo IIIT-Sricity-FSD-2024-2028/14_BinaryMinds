@@ -15,6 +15,7 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const app_service_1 = require("./app.service");
 const api_route_decorator_1 = require("./common/swagger/api-route.decorator");
+const public_decorator_1 = require("./common/decorators/public.decorator");
 let AppController = class AppController {
     appService;
     constructor(appService) {
@@ -27,6 +28,7 @@ let AppController = class AppController {
 exports.AppController = AppController;
 __decorate([
     (0, common_1.Get)(),
+    (0, public_decorator_1.Public)(),
     (0, api_route_decorator_1.ApiRoute)({
         summary: 'Health check',
         responseDescription: 'Plain-text service health response.',

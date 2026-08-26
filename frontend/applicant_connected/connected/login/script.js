@@ -57,22 +57,7 @@ function getStoredLoginUsers() {
 }
 
 function getBackendLoginUsers() {
-  if (!window.fetch) return Promise.resolve([]);
-
-  return fetch('http://localhost:3000/api/users', {
-    headers: { role: 'department_officer' }
-  })
-  .then(function(response) {
-    if (!response.ok) return [];
-    return response.json();
-  })
-  .then(function(users) {
-    if (!Array.isArray(users)) return [];
-    return users.map(normalizeStoredUser);
-  })
-  .catch(function() {
-    return [];
-  });
+  return Promise.resolve([]);
 }
 
 function formatAuditRole(role) {
@@ -116,6 +101,58 @@ async function handleLogin() {
   if (!email)    { showError(emailInput, 'Email is required.');       return; }
   if (!password) { showError(passwordInput, 'Password is required.'); return; }
   if (!role)     { showError(roleSelect, 'Please select your role.'); return; }
+
+  var backendRole = {
+    'applicant': 'applicant',
+    'field officer': 'field_officer',
+    'department officer': 'department_officer',
+    'superuser': 'super_user'
+  }[role.toLowerCase()];
+
+  try {
+    var loginResponse = await fetch('http://localhost:3000/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password, role: backendRole })
+    });
+    var loginPayload = await loginResponse.json().catch(function() { return {}; });
+    if (!loginResponse.ok || !loginPayload.accessToken || !loginPayload.user) {
+      showError(passwordInput, 'Invalid email, password, or role.');
+      return;
+    }
+
+    var canonicalRole = {
+      applicant: 'applicant',
+      field_officer: 'field officer',
+      department_officer: 'department officer',
+      super_user: 'superuser'
+    }[String(loginPayload.user.role || '').toLowerCase()] || '';
+    if (canonicalRole !== role.toLowerCase()) {
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('loggedInUser');
+      showError(roleSelect, 'Wrong role selected.');
+      return;
+    }
+
+    var dashboard = DASHBOARDS[canonicalRole];
+    if (!dashboard) { showError(roleSelect, 'No dashboard is available for this role.'); return; }
+    sessionStorage.setItem('accessToken', loginPayload.accessToken);
+    sessionStorage.setItem('loggedInUser', JSON.stringify({
+      id: loginPayload.user.user_id,
+      name: loginPayload.user.full_name,
+      email: loginPayload.user.email,
+      phone: loginPayload.user.phone || '',
+      role: canonicalRole,
+      accessToken: loginPayload.accessToken
+    }));
+    window.location.assign(dashboard);
+    return;
+  } catch (error) {
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('loggedInUser');
+    showError(passwordInput, 'Unable to sign in. Please try again.');
+    return;
+  }
 
   // Include applicant registrations and Super User-created field officers from localStorage
   var backendUsers = await getBackendLoginUsers();
@@ -189,6 +226,14 @@ async function handleLogin() {
     }));
   }
 
+  // Resolve the destination while the validated role is still in scope. This
+  // prevents a delayed callback from falling back to the current login URL.
+  var dashboardPath = DASHBOARDS[fullMatch.role.toLowerCase()];
+  if (!dashboardPath) {
+    showError(roleSelect, 'No dashboard is available for this role.');
+    return;
+  }
+
   var btn = document.querySelector('button');
   if (btn) { btn.textContent = 'Redirecting...'; btn.disabled = true; }
 
@@ -208,10 +253,7 @@ async function handleLogin() {
     ip: '127.0.0.1'
   };
   writeAuditLog(auditEntry);
-
-  setTimeout(function() {
-    window.location.href = DASHBOARDS[fullMatch.role.toLowerCase()];
-  }, 800);
+  window.location.assign(dashboardPath);
 }
 
 function showError(el, msg) {

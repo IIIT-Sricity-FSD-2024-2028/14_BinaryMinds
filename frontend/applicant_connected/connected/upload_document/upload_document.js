@@ -50,10 +50,11 @@
     formData.append('application_id', String(applicationId));
     formData.append('document_type', documentConfig.type);
     formData.append('file', file);
+    var accessToken = sessionStorage.getItem('accessToken') || '';
 
     return fetch(TRADEZO.API_BASE + '/documents', {
       method: 'POST',
-      headers: { role: TRADEZO.roleFor('applicant') },
+      headers: accessToken ? { Authorization: 'Bearer ' + accessToken } : {},
       body: formData
     }).then(function (response) {
       return response.text().then(function (text) {

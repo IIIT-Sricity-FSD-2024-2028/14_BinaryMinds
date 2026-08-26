@@ -6,6 +6,7 @@ import {
   Put,
   Param,
   Delete,
+  BadRequestException,
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
@@ -18,6 +19,8 @@ import { Role } from '../common/enums/role.enum';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRoute } from '../common/swagger/api-route.decorator';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
+import { Public } from '../common/decorators/public.decorator';
+import { RegisterApplicantDto } from './dto/register-applicant.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -28,7 +31,30 @@ export class UsersController {
     private readonly auditLogsService: AuditLogsService,
   ) {}
 
+  @Post('register')
+  @Public()
+  register(@Body() registration: RegisterApplicantDto) {
+    const user = this.usersService.create({
+      full_name: registration.full_name,
+      email: registration.email,
+      phone: registration.phone,
+      password_hash: registration.password,
+      role: Role.APPLICANT,
+    });
+    this.auditLogsService.log({
+      user_name: user.full_name,
+      role: Role.APPLICANT,
+      action: 'Create',
+      module: 'Users',
+      description: `Registered applicant ${user.email}`,
+      ip_address: 'server',
+      source: 'backend',
+    });
+    return user;
+  }
+
   @Post()
+  @Roles(Role.SUPER_USER)
   @ApiRoute({
     summary: 'Create user',
     description: 'Registers or creates a user record.',
@@ -38,10 +64,10 @@ export class UsersController {
     responseExample: { user_id: 1, full_name: 'Applicant Name', email: 'user@example.com', role: 'applicant' },
     notFound: false,
   })
-  // No strict role needed for registration usually, but here is an example:
-  // If creation must be tied to a role, uncomment below to restrict it.
-  // @Roles(Role.DEPARTMENT_OFFICER, Role.APPLICANT)
   create(@Body() createUserDto: CreateUserDto) {
+    if (createUserDto.role === Role.SUPER_USER || createUserDto.role === Role.APPLICANT) {
+      throw new BadRequestException('Only Field Officer and Department Officer accounts can be provisioned');
+    }
     const user = this.usersService.create(createUserDto);
     this.auditLogsService.log({
       user_name: user.full_name,

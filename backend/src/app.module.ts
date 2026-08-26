@@ -14,10 +14,12 @@ import { LicensesModule } from './licenses/licenses.module';
 import { ComplianceModule } from './compliance/compliance.module';
 import { OfficersModule } from './officers/officers.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    AuthModule,
     UsersModule,
     ApplicationsModule,
     DocumentsModule,

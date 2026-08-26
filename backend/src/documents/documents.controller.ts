@@ -15,8 +15,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { randomUUID } from 'node:crypto';
-import { mkdirSync, unlinkSync } from 'node:fs';
-import { extname, resolve } from 'node:path';
+import { mkdirSync } from 'node:fs';
+import { extname } from 'node:path';
 import { diskStorage } from 'multer';
 import { DocumentsService } from './documents.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
@@ -26,8 +26,9 @@ import { Role } from '../common/enums/role.enum';
 import { DocumentType } from '../common/enums/document-type.enum';
 import { VerificationStatus } from '../common/enums/verification-status.enum';
 import { ApiRoute } from '../common/swagger/api-route.decorator';
+import { documentUploadDirectory } from './document-storage';
+import { DocumentUploadCleanupInterceptor } from './document-upload-cleanup.interceptor';
 
-const uploadDirectory = resolve(__dirname, '..', '..', 'uploads', 'documents');
 const maximumFileSize = 5 * 1024 * 1024;
 const allowedFileTypes: Record<string, string> = {
   '.jpg': 'image/jpeg',
@@ -36,7 +37,7 @@ const allowedFileTypes: Record<string, string> = {
   '.pdf': 'application/pdf',
 };
 
-mkdirSync(uploadDirectory, { recursive: true });
+mkdirSync(documentUploadDirectory, { recursive: true });
 
 @ApiTags('Documents')
 @Controller('documents')
@@ -62,10 +63,13 @@ export class DocumentsController {
       },
     },
   })
+  // Decorator metadata is applied bottom-up. Keep cleanup above Multer so it
+  // executes after Multer has assigned request.file and before the handler.
+  @UseInterceptors(DocumentUploadCleanupInterceptor)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: uploadDirectory,
+        destination: documentUploadDirectory,
         filename: (_request, file, callback) => {
           callback(null, `${randomUUID()}${extname(file.originalname).toLowerCase()}`);
         },
@@ -99,15 +103,10 @@ export class DocumentsController {
       throw new BadRequestException('A document file is required');
     }
 
-    try {
-      return this.documentsService.create(
-        createDocumentDto,
-        `uploads/documents/${file.filename}`,
-      );
-    } catch (error) {
-      unlinkSync(file.path);
-      throw error;
-    }
+    return this.documentsService.create(
+      createDocumentDto,
+      `uploads/documents/${file.filename}`,
+    );
   }
 
   @Get()

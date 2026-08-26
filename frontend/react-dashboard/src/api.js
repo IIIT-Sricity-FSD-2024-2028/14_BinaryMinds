@@ -3,18 +3,18 @@ import axios from 'axios';
 const API_BASE = 'http://localhost:3000/api';
 
 /**
- * Create an axios instance that automatically attaches the `role` header.
+ * Create an axios instance that attaches the authenticated bearer token.
  */
-function createClient(role) {
+function createClient() {
   return axios.create({
     baseURL: API_BASE,
-    headers: { role },
+    headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken') || ''}` },
   });
 }
 
 // ── Superuser APIs ──────────────────────────────────────────────────────
 
-const superuserClient = createClient('superuser');
+const superuserClient = createClient();
 
 export const getSubmittedApplications = () =>
   superuserClient.get('/applications/submitted').then((r) => r.data);
@@ -32,7 +32,7 @@ export const createApplication = (applicantName) =>
 
 // ── Officer APIs ────────────────────────────────────────────────────────
 
-const officerClient = createClient('officer');
+const officerClient = createClient();
 
 export const getOfficerApplications = (officerId) =>
   officerClient

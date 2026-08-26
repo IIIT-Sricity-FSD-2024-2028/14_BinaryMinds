@@ -1,3 +1,1 @@
-[2026-08-25 12:59:00] GET / | Status: 404 | Response Time: 12ms
-[2026-08-25 13:10:08] GET /api | Status: 200 | Response Time: 20ms
-[2026-08-25 13:11:06] GET /api/applications | Status: 403 | Response Time: 14ms
+{"level":"INFO","event":"request_completed","requestId":"d6be09e6-8301-4187-80ec-e8c72a8140c2","method":"GET","path":"/api","statusCode":200,"responseTimeMs":1,"timestamp":"2026-08-26T10:59:58.573Z"}
