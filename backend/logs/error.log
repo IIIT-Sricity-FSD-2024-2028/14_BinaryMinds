@@ -1,0 +1,36 @@
+[2026-08-26T06:33:56.184Z] GET / | Status: 404 | NotFoundException: Cannot GET /
+NotFoundException: Cannot GET /
+    at callback (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:77:19)
+    at C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:342:13)
+    at C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at read (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\body-parser\lib\read.js:53:5)
+    at urlencodedParser (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\body-parser\lib\types\urlencoded.js:57:5)
+    at Layer.handleRequest (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T06:34:15.165Z] GET / | Status: 404 | NotFoundException: Cannot GET /
+NotFoundException: Cannot GET /
+    at callback (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:77:19)
+    at C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:342:13)
+    at C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at read (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\body-parser\lib\read.js:53:5)
+    at urlencodedParser (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\body-parser\lib\types\urlencoded.js:57:5)
+    at Layer.handleRequest (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+[2026-08-26T06:34:50.555Z] GET / | Status: 404 | NotFoundException: Cannot GET /
+NotFoundException: Cannot GET /
+    at callback (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\@nestjs\core\router\routes-resolver.js:77:19)
+    at C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handleRequest (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:342:13)
+    at C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\index.js:291:5)
+    at read (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\body-parser\lib\read.js:53:5)
+    at urlencodedParser (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\body-parser\lib\types\urlencoded.js:57:5)
+    at Layer.handleRequest (C:\Users\samri\OneDrive\Documents\FSD_project\14_BinaryMinds\backend\node_modules\router\lib\layer.js:152:17)
