@@ -2,6 +2,7 @@ import { ApplicationStatus } from '../common/enums/application-status.enum';
 
 export interface Application {
   application_id: number;
+  application_ref: string;
   applicant_id: number;
 
   full_name: string;

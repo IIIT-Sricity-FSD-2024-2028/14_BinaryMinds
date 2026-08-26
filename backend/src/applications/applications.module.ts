@@ -1,10 +1,11 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule, forwardRef } from '@nestjs/common';
 import { UsersModule } from '../users/users.module';
 import { OfficersModule } from '../officers/officers.module';
 import { ApplicationsService } from './applications.service';
 import { ApplicationsRepository } from './applications.repository';
 import { ApplicationsController } from './applications.controller';
 import { AuditLogsModule } from '../audit-logs/audit-logs.module';
+import { RouteAccessMiddleware } from '../common/middleware/route-access.middleware';
 
 @Module({
   imports: [UsersModule, forwardRef(() => OfficersModule), AuditLogsModule],
@@ -12,4 +13,8 @@ import { AuditLogsModule } from '../audit-logs/audit-logs.module';
   providers: [ApplicationsService, ApplicationsRepository],
   exports: [ApplicationsService, ApplicationsRepository],
 })
-export class ApplicationsModule {}
+export class ApplicationsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(RouteAccessMiddleware).forRoutes(ApplicationsController);
+  }
+}

@@ -15,10 +15,12 @@ import { ComplianceModule } from './compliance/compliance.module';
 import { OfficersModule } from './officers/officers.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { AuthModule } from './auth/auth.module';
+import { PersistenceModule } from './common/persistence/persistence.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    PersistenceModule,
     AuthModule,
     UsersModule,
     ApplicationsModule,

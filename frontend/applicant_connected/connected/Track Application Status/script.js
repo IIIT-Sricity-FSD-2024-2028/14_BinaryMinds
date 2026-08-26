@@ -1,59 +1,70 @@
 // Track Application Status — fills the EXISTING HTML structure dynamically
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
 
   // Get logged in user
   var user = null;
   try { user = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
   if (!user) { window.location.href = '../login/index.html'; return; }
 
-  // Find this user's application
-  // Match by email in TRADEZO.applications OR use applicationRef from session
-  var appRef = sessionStorage.getItem('applicationRef') || '';
-  var app    = null;
+  var token = sessionStorage.getItem('accessToken') || '';
+  var app = null;
 
-  // Try to find by appRef or email across all pools and MERGE state
-  var appsPool = [];
-  if (window.TRADEZO && Array.isArray(TRADEZO.applications)) appsPool = appsPool.concat(TRADEZO.applications);
-  try { appsPool = appsPool.concat(JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]')); } catch(e){}
-  try { appsPool = appsPool.concat(JSON.parse(localStorage.getItem('applications') || '[]')); } catch(e){}
-  
-  // Aggregate to get the absolute latest status
-  var aggregateMap = {};
-  appsPool.forEach(function(a) {
-      if (!a) return;
-      var key = a.id || a.appRef;
-      if (!key) return;
-      if (!aggregateMap[key]) aggregateMap[key] = a;
-      else aggregateMap[key] = Object.assign({}, aggregateMap[key], a); // later elements (like `applications`) override earlier ones
-  });
-
-  var combinedApps = Object.values(aggregateMap);
-  if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
-    TRADEZO.sortFreshFirst(combinedApps);
+  function showLoadError(message) {
+    var appCard = document.querySelector('.app-card');
+    if (appCard) {
+      appCard.innerHTML =
+        '<div style="text-align:center;padding:40px 20px;">' +
+        '<div style="font-size:48px;margin-bottom:16px;">⚠️</div>' +
+        '<h3 style="color:#b91c1c;margin-bottom:8px;">Unable to Load Application</h3>' +
+        '<p style="color:#64748b;margin-bottom:24px;">' + message + '</p>' +
+        '<button onclick="window.location.reload()" style="background:#1E3A8A;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px;">Try Again</button>' +
+        '</div>';
+    }
   }
 
-  function normalize(value) {
-    return String(value || '').trim().toLowerCase();
+  function toUiApplication(item) {
+    var statusMap = {
+      submitted: 'Submitted', assigned: 'Assigned', verified: 'Documents Verified',
+      documents_uploaded: 'Documents Verified', inspection_scheduled: 'Inspection Scheduled',
+      inspection_completed: 'Inspection Completed', department_review: 'Under Review',
+      approved: 'Approved', rejected: 'Rejected'
+    };
+    var submitted = item.submitted_at || item.submittedDate || '';
+    return {
+      id: item.application_ref || item.application_id || item.id,
+      applicantName: item.full_name || user.name,
+      businessName: item.business_name || '',
+      businessType: item.business_type || '',
+      tradeCategory: item.trade_category || item.business_type || '',
+      shopAddress: item.shop_address || '',
+      submittedDate: submitted ? new Date(submitted).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—',
+      status: statusMap[String(item.application_status || '').toLowerCase()] || item.application_status || 'Submitted',
+      paymentStatus: item.paymentDone ? 'Paid' : 'Pending',
+      paymentDone: item.paymentDone === true
+    };
   }
 
-  function belongsToUser(a) {
-    if (!a) return false;
-    if (user.email && normalize(a.email) === normalize(user.email)) return true;
-    if (user.email && normalize(a.applicantId) === normalize(user.email)) return true;
-    if (user.name && normalize(a.applicantName) === normalize(user.name)) return true;
-    if (user.id && (normalize(a.userId) === normalize(user.id) || normalize(a.applicantId) === normalize(user.id))) return true;
-    return false;
+  if (!token) {
+    showLoadError('Your session has expired. Please sign in again.');
+    return;
   }
 
-  if (appRef) {
-    app = combinedApps.find(function(a) { return (a.appRef === appRef || a.id === appRef) && belongsToUser(a); }) || null;
-  }
-  if (!app) {
-    app = combinedApps.find(belongsToUser) || null;
-  }
-  if (!app) {
-    app = combinedApps.find(function(a) { return a.applicantName && a.applicantName.toLowerCase() === user.name.toLowerCase(); }) || null;
+  try {
+    var response = await fetch('http://localhost:3000/api/applications/mine', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    var payload = await response.json().catch(function() { return null; });
+    if (!response.ok) throw new Error((payload && payload.message) || ('Request failed (' + response.status + ')'));
+    if (!payload || !Array.isArray(payload.data)) throw new Error('The server returned an invalid application list.');
+    if (payload.data.length) {
+      app = toUiApplication(payload.data.slice().sort(function(a, b) {
+        return new Date(b.submitted_at || 0).getTime() - new Date(a.submitted_at || 0).getTime();
+      })[0]);
+    }
+  } catch (error) {
+    showLoadError(error && error.message ? error.message : 'Please check your connection and try again.');
+    return;
   }
 
   // No application found — show message
@@ -85,6 +96,14 @@ document.addEventListener('DOMContentLoaded', function() {
   if (infoBlocks[2]) {
     var s2 = infoBlocks[2].querySelector('strong');
     if (s2) s2.textContent = app.applicantName || user.name;
+  }
+  if (infoBlocks[3]) {
+    var s3 = infoBlocks[3].querySelector('strong');
+    if (s3) s3.textContent = app.businessName || '—';
+  }
+  if (infoBlocks[4]) {
+    var s4 = infoBlocks[4].querySelector('strong');
+    if (s4) s4.textContent = app.paymentStatus || '—';
   }
 
   // ---- STATUS FLOW ----
@@ -182,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var statusEl = document.querySelector('.status-approved, .detail-left p.status-approved, p[class*="status"]');
   if (statusEl) {
     statusEl.textContent = app.status;
-    var c = TRADEZO.statusColor(app.status);
+    var c = app.status === 'Approved' ? '#16a34a' : app.status === 'Rejected' ? '#dc2626' : '#2563eb';
     statusEl.style.color = c;
     statusEl.style.fontWeight = '700';
     // Remove old class and apply dynamic style

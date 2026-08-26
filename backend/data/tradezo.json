@@ -1,0 +1,229 @@
+{
+  "users": [
+    {
+      "user_id": 1,
+      "full_name": "Rajesh Kumar",
+      "email": "rajesh@example.com",
+      "phone": "9876543210",
+      "password_hash": "demo",
+      "role": "applicant",
+      "created_at": "2026-02-20T10:00:00.000Z"
+    },
+    {
+      "user_id": 2,
+      "full_name": "Vikram Singh",
+      "email": "vikram@example.com",
+      "phone": "9876543211",
+      "password_hash": "demo",
+      "role": "applicant",
+      "created_at": "2026-02-18T14:30:00.000Z"
+    },
+    {
+      "user_id": 3,
+      "full_name": "Priya Sharma",
+      "email": "priya@example.com",
+      "phone": "9876543213",
+      "password_hash": "demo",
+      "role": "applicant",
+      "created_at": "2026-02-12T09:15:00.000Z"
+    },
+    {
+      "user_id": 4,
+      "full_name": "Department Officer",
+      "email": "do@tradezo.gov.in",
+      "phone": "9000000000",
+      "employee_id": "DO-1001",
+      "password_hash": "demo",
+      "role": "department_officer",
+      "created_at": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "user_id": 5,
+      "full_name": "Rajesh Kumar",
+      "email": "rajesh@applicant.com",
+      "phone": "9876543220",
+      "password_hash": "applicant123",
+      "role": "applicant",
+      "created_at": "2026-02-20T10:00:00.000Z"
+    },
+    {
+      "user_id": 6,
+      "full_name": "Myra Singh",
+      "email": "myra@fieldofficer.com",
+      "phone": "9876543221",
+      "employee_id": "FO-2026-042",
+      "password_hash": "field@123",
+      "role": "field_officer",
+      "created_at": "2026-02-18T14:30:00.000Z"
+    },
+    {
+      "user_id": 7,
+      "full_name": "Anjali Mehta",
+      "email": "admin@deptofficer.com",
+      "phone": "9876543223",
+      "employee_id": "DO-001",
+      "password_hash": "dept123",
+      "role": "department_officer",
+      "created_at": "2026-02-12T09:15:00.000Z"
+    },
+    {
+      "user_id": 8,
+      "full_name": "Admin User",
+      "email": "admin@tradezo.gov.in",
+      "phone": "9000000020",
+      "employee_id": "SU-001",
+      "password_hash": "super123",
+      "role": "super_user",
+      "created_at": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "full_name": "Migration Applicant",
+      "email": "migration.1787766058457@example.com",
+      "phone": "9876500001",
+      "password_hash": "Migration123",
+      "role": "applicant",
+      "user_id": 9,
+      "created_at": "2026-08-26T17:40:58.519Z"
+    },
+    {
+      "full_name": "surekha",
+      "email": "surekha@gmail.com",
+      "phone": "7794910468",
+      "password_hash": "Surekha@123",
+      "role": "applicant",
+      "user_id": 10,
+      "created_at": "2026-08-26T18:24:16.267Z"
+    },
+    {
+      "full_name": "suryateja",
+      "email": "suryateja@gmail.com",
+      "phone": "3456789876",
+      "password_hash": "Surya@123",
+      "role": "applicant",
+      "user_id": 11,
+      "created_at": "2026-08-26T18:32:02.305Z"
+    },
+    {
+      "full_name": "rameshchandra",
+      "email": "rameshchandra@gmail.com",
+      "phone": "9160113388",
+      "password_hash": "ramesh@123",
+      "role": "applicant",
+      "user_id": 12,
+      "created_at": "2026-08-26T19:17:58.675Z"
+    }
+  ],
+  "applications": [
+    {
+      "applicant_id": 9,
+      "full_name": "Migration Applicant",
+      "business_name": "Migration Business",
+      "business_type": "Retail",
+      "trade_category": "Retail",
+      "shop_address": "1 Migration Road",
+      "applicant_phone": "9876500001",
+      "application_status": "approved",
+      "paymentDone": true,
+      "assignedOfficerId": null,
+      "application_id": 1,
+      "application_ref": "TL-2026-000001",
+      "submitted_at": "2026-08-26T17:40:58.527Z"
+    },
+    {
+      "applicant_id": 10,
+      "full_name": "surekha",
+      "business_name": "uuytghbejdic",
+      "business_type": "jkhdmanj",
+      "trade_category": "jkhdmanj",
+      "shop_address": "uhyghvbejfkdslkiuhyghfvhbfjnkdsckioushyj",
+      "applicant_phone": "7794910468",
+      "application_status": "submitted",
+      "paymentDone": true,
+      "assignedOfficerId": null,
+      "application_id": 2,
+      "application_ref": "TL-2026-000002",
+      "submitted_at": "2026-08-26T18:25:47.906Z"
+    },
+    {
+      "applicant_id": 11,
+      "full_name": "suryateja",
+      "business_name": "ytrfghjkjkuytrdfghjk",
+      "business_type": "kjhgfdghj",
+      "trade_category": "kjhgfdghj",
+      "shop_address": "hdfghjhgfertyvjjhgf",
+      "applicant_phone": "3456789876",
+      "application_status": "verified",
+      "paymentDone": true,
+      "assignedOfficerId": null,
+      "application_id": 3,
+      "application_ref": "TL-2026-000003",
+      "submitted_at": "2026-08-26T18:33:36.521Z"
+    },
+    {
+      "applicant_id": 12,
+      "full_name": "rameshchandra",
+      "business_name": "drftgvbhnjkml,",
+      "business_type": "fgvbhjnkmdcx",
+      "trade_category": "fgvbhjnkmdcx",
+      "shop_address": "dfvgbhjnkmdsczxgybhjfsc",
+      "applicant_phone": "9160113388",
+      "application_status": "verified",
+      "paymentDone": true,
+      "assignedOfficerId": null,
+      "application_id": 4,
+      "application_ref": "TL-2026-000004",
+      "submitted_at": "2026-08-26T19:19:52.793Z"
+    }
+  ],
+  "payments": [
+    {
+      "application_id": 1,
+      "amount": 2100,
+      "payment_status": "COMPLETED",
+      "transaction_id": "TXN-7eeb10ab-7b19-4dbe-8980-8acf01e1ddd3",
+      "payment_id": 1,
+      "payment_date": "2026-08-26T17:40:58.529Z"
+    },
+    {
+      "application_id": 2,
+      "amount": 2205,
+      "payment_status": "COMPLETED",
+      "transaction_id": "TXN-f3b447bf-67ef-4e9c-98e4-627487dbdd11",
+      "payment_id": 2,
+      "payment_date": "2026-08-26T18:25:52.336Z"
+    },
+    {
+      "application_id": 3,
+      "amount": 2205,
+      "payment_status": "COMPLETED",
+      "transaction_id": "TXN-132bc533-7125-41d9-900a-b5014b7ab930",
+      "payment_id": 3,
+      "payment_date": "2026-08-26T18:33:40.531Z"
+    },
+    {
+      "application_id": 4,
+      "amount": 2205,
+      "payment_status": "COMPLETED",
+      "transaction_id": "TXN-b9174478-ad29-49ba-8437-12259a9aca02",
+      "payment_id": 4,
+      "payment_date": "2026-08-26T19:19:56.723Z"
+    }
+  ],
+  "licenses": [
+    {
+      "application_id": 1,
+      "issued_by": 7,
+      "license_number": "LIC-20260826-2962",
+      "issued_date": "2026-08-26T17:40:58.541Z",
+      "expiry_date": "2027-12-31T00:00:00.000Z",
+      "status": "ACTIVE",
+      "license_id": 1
+    }
+  ],
+  "counters": {
+    "users": 13,
+    "applications": 5,
+    "payments": 5,
+    "licenses": 2
+  }
+}

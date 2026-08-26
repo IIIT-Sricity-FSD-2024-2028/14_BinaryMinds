@@ -9,6 +9,7 @@ import { CreateLicenseDto } from './dto/create-license.dto';
 import { LicenseStatus } from '../common/enums/license-status.enum';
 import { ApplicationsService } from '../applications/applications.service';
 import { UsersService } from '../users/users.service';
+import { ApplicationStatus } from '../common/enums/application-status.enum';
 
 @Injectable()
 export class LicensesService {
@@ -59,7 +60,10 @@ export class LicensesService {
   }
 
   create(data: CreateLicenseDto): License {
-    this.applicationsService.findOne(data.application_id);
+    const application = this.applicationsService.findOne(data.application_id);
+    if (application.application_status !== ApplicationStatus.APPROVED) {
+      throw new BadRequestException('Only approved applications can receive a license');
+    }
     this.usersService.findOne(data.issued_by);
     
     const existing = this.repository.findByApplication(data.application_id);

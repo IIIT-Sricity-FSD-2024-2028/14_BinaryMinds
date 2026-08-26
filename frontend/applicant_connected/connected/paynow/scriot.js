@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-function doPayment() {
+async function doPayment() {
   var selected = document.querySelector('input[name="method"]:checked');
   if (!selected) {
     alert('Please select a payment method.');
@@ -78,7 +78,7 @@ function doPayment() {
   var btn = document.querySelector('.pay-btn');
   if (btn) { btn.textContent = 'Processing...'; btn.disabled = true; }
 
-  setTimeout(function() {
+  setTimeout(async function() {
     // 80% success, 20% failure
     var success = Math.random() > 0.2;
 
@@ -94,11 +94,23 @@ function doPayment() {
 
       var appRef = sessionStorage.getItem('applicationRef');
       var backendApplicationId = Number(sessionStorage.getItem('backendApplicationId')) || null;
-      if (!appRef || /^\d+$/.test(String(appRef).trim()) || /^APP-/i.test(String(appRef).trim())) {
-        appRef = (window.TRADEZO && typeof TRADEZO.generateApplicationId === 'function')
-          ? TRADEZO.generateApplicationId()
-          : ('TL-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6));
-        sessionStorage.setItem('applicationRef', appRef);
+      if (!backendApplicationId || !appRef) {
+        alert('Application details are missing. Please restart the application process.');
+        if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
+        return;
+      }
+
+      try {
+        var paymentResponse = await fetch('http://localhost:3000/api/payments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (sessionStorage.getItem('accessToken') || '') },
+          body: JSON.stringify({ application_id: backendApplicationId, amount: Number(String(sessionStorage.getItem('calculatedFeeString') || '').replace(/[^0-9.]/g, '')) || 0, payment_status: 'COMPLETED' })
+        });
+        if (!paymentResponse.ok) throw new Error('Payment could not be recorded.');
+      } catch (error) {
+        alert(error.message || 'Payment could not be recorded.');
+        if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
+        return;
       }
 
       // Build new application object

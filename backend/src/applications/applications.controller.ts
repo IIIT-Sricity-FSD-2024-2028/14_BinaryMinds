@@ -6,9 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  ForbiddenException,
   ParseIntPipe,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { CreateSimpleApplicationDto } from './dto/create-simple-application.dto';
@@ -19,6 +22,7 @@ import { Role } from '../common/enums/role.enum';
 import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { ApiRoute } from '../common/swagger/api-route.decorator';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
+import { AuthenticatedUser } from '../auth/auth-session.interface';
 
 @ApiTags('Applications')
 @ApiExtraModels(CreateApplicationDto, CreateSimpleApplicationDto)
@@ -45,11 +49,15 @@ export class ApplicationsController {
     responseExample: { application_id: 1, application_status: 'submitted' },
     notFound: true,
   })
-  create(@Body() body: CreateApplicationDto | CreateSimpleApplicationDto) {
+  create(
+    @Body() body: CreateApplicationDto | CreateSimpleApplicationDto,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
     // If simplified DTO (only applicantName), use createSimple
     if ('applicantName' in body && !('applicant_id' in body)) {
       const app = this.applicationsService.createSimple(
         body as CreateSimpleApplicationDto,
+        request.user.userId,
       );
       this.auditLogsService.log({
         user_name: (app as any).full_name || (body as CreateSimpleApplicationDto).applicantName || 'Applicant',
@@ -194,8 +202,29 @@ export class ApplicationsController {
     wrappedResponse: true,
     responseExample: [{ application_id: 1, applicant_id: 3 }],
   })
-  findByApplicant(@Param('applicantId', ParseIntPipe) applicantId: number) {
+  findByApplicant(
+    @Param('applicantId', ParseIntPipe) applicantId: number,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
+    if (request.user.role === Role.APPLICANT && request.user.userId !== applicantId) {
+      throw new ForbiddenException('Applicants can only view their own applications');
+    }
     return { success: true, data: this.applicationsService.findByApplicant(applicantId) };
+  }
+
+  @Get('mine')
+  @Roles(Role.APPLICANT)
+  @ApiRoute({
+    summary: 'List applications for the authenticated applicant',
+    roles: [Role.APPLICANT],
+    wrappedResponse: true,
+    responseExample: [{ application_id: 1, applicant_id: 3 }],
+  })
+  findMine(@Req() request: Request & { user: AuthenticatedUser }) {
+    return {
+      success: true,
+      data: this.applicationsService.findByApplicant(request.user.userId),
+    };
   }
 
   @Get(':id')

@@ -78,11 +78,12 @@ export class ApplicationsService {
 
   /**
    * Simplified create — used by the new workflow.
-   * Only requires applicantName. Sets paymentDone = true, status = submitted.
+   * Only requires applicantName. Payment is recorded separately, status starts submitted.
    */
-  createSimple(data: CreateSimpleApplicationDto): Application {
+  createSimple(data: CreateSimpleApplicationDto, applicantId: number): Application {
+    this.usersService.findOne(applicantId);
     const newAppRecord = {
-      applicant_id: 0, // No user system dependency for simplified flow
+      applicant_id: applicantId,
       full_name: data.applicantName,
       business_name: data.businessName || 'N/A',
       business_type: data.tradeCategory || 'General',
@@ -90,7 +91,7 @@ export class ApplicationsService {
       shop_address: data.shopAddress || '',
       applicant_phone: data.phone || '',
       application_status: ApplicationStatus.SUBMITTED,
-      paymentDone: true,
+      paymentDone: false,
       assignedOfficerId: null,
     };
     return this.applicationsRepository.create(newAppRecord);

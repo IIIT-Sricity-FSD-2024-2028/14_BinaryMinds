@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './user.interface';
 import { Role } from '../common/enums/role.enum';
+import { JsonStore } from '../common/persistence/json-store';
 
 @Injectable()
 export class UsersRepository {
-  // In-memory data storage for users
-  private users: User[] = [
+  private readonly defaultUsers: User[] = [
     {
       user_id: 1,
       full_name: 'Rajesh Kumar',
@@ -83,41 +83,67 @@ export class UsersRepository {
       created_at: new Date('2026-01-01T00:00:00Z'),
     },
   ];
-  private idCounter = 9;
+  constructor(private readonly store: JsonStore) {
+    const data = this.store.snapshot();
+    const existingEmails = new Set(
+      data.users.map((user) => user.email.trim().toLowerCase()),
+    );
+    const missingDefaultUsers = this.defaultUsers.filter(
+      (user) => !existingEmails.has(user.email.toLowerCase()),
+    );
+
+    // Persistent stores created before the API login integration can already
+    // contain registered users while lacking the advertised demo accounts.
+    // Merge only missing seeds so existing accounts and credentials are never
+    // overwritten during startup.
+    if (missingDefaultUsers.length) {
+      data.users.push(...missingDefaultUsers);
+      data.counters.users =
+        Math.max(data.counters.users, ...data.users.map((user) => user.user_id + 1));
+      this.store.save();
+    }
+  }
 
   find(): User[] {
-    return this.users;
+    return this.store.snapshot().users;
   }
 
   findById(id: number): User | undefined {
-    return this.users.find((user) => user.user_id === id);
+    return this.find().find((user) => user.user_id === id);
   }
 
   findByEmail(email: string): User | undefined {
-    return this.users.find((user) => user.email === email);
+    return this.find().find((user) => user.email === email);
   }
 
   create(user: Omit<User, 'user_id' | 'created_at'>): User {
     const newUser: User = {
       ...user,
-      user_id: this.idCounter++,
+      user_id: this.store.snapshot().counters.users++,
       created_at: new Date(),
     };
-    this.users.push(newUser);
+    this.find().push(newUser);
+    this.store.save();
     return newUser;
   }
 
   update(id: number, updateData: Partial<User>): User | undefined {
-    const userIndex = this.users.findIndex((user) => user.user_id === id);
+    const users = this.find();
+    const userIndex = users.findIndex((user) => user.user_id === id);
     if (userIndex === -1) return undefined;
 
-    this.users[userIndex] = { ...this.users[userIndex], ...updateData };
-    return this.users[userIndex];
+    users[userIndex] = { ...users[userIndex], ...updateData };
+    this.store.save();
+    return users[userIndex];
   }
 
   delete(id: number): boolean {
-    const initialLength = this.users.length;
-    this.users = this.users.filter((user) => user.user_id !== id);
-    return this.users.length !== initialLength;
+    const users = this.find();
+    const initialLength = users.length;
+    const remaining = users.filter((user) => user.user_id !== id);
+    if (remaining.length === initialLength) return false;
+    users.splice(0, users.length, ...remaining);
+    this.store.save();
+    return true;
   }
 }

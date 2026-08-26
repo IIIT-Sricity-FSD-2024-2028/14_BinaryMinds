@@ -39,6 +39,7 @@
       if (!applicationId) throw new Error('The backend did not return an application ID.');
 
       sessionStorage.setItem('backendApplicationId', String(applicationId));
+      if (application.application_ref) sessionStorage.setItem('applicationRef', application.application_ref);
       return applicationId;
     });
   }

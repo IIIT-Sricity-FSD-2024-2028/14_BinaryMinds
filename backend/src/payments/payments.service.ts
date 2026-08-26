@@ -43,7 +43,11 @@ export class PaymentsService {
       payment_status: data.payment_status || PaymentStatus.PENDING,
       transaction_id: transactionId,
     };
-    return this.repository.create(createData);
+    const payment = this.repository.create(createData);
+    if (payment.payment_status === PaymentStatus.COMPLETED) {
+      this.applicationsService.update(payment.application_id, { paymentDone: true });
+    }
+    return payment;
   }
 
   update(id: number, updateData: Partial<Payment>): Payment {
@@ -67,6 +71,9 @@ export class PaymentsService {
     if (!updated) {
       throw new NotFoundException(`Payment with ID ${id} not found`);
     }
+    if (updated.payment_status === PaymentStatus.COMPLETED) {
+      this.applicationsService.update(updated.application_id, { paymentDone: true });
+    }
     return updated;
   }
 
@@ -86,6 +93,10 @@ export class PaymentsService {
     
     if (!updated) {
        throw new NotFoundException(`Payment with ID ${id} not found`);
+    }
+
+    if (updated.payment_status === PaymentStatus.COMPLETED) {
+      this.applicationsService.update(updated.application_id, { paymentDone: true });
     }
 
     return updated;

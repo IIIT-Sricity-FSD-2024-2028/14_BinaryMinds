@@ -1,34 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { Application } from './application.interface';
 import { ApplicationStatus } from '../common/enums/application-status.enum';
+import { JsonStore } from '../common/persistence/json-store';
 
 @Injectable()
 export class ApplicationsRepository {
-  private applications: Application[] = [];
-  private idCounter = 1;
+  constructor(private readonly store: JsonStore) {}
 
   find(): Application[] {
-    return this.applications;
+    return this.store.snapshot().applications;
   }
 
   findById(id: number): Application | undefined {
-    return this.applications.find((app) => app.application_id === id);
+    return this.find().find((app) => app.application_id === id);
   }
 
   findByApplicant(applicantId: number): Application[] {
-    return this.applications.filter((app) => app.applicant_id === applicantId);
+    return this.find().filter((app) => app.applicant_id === applicantId);
   }
 
   // Included basic CRUD methods for seamless service integration
   create(
-    application: Omit<Application, 'application_id' | 'submitted_at'>,
+    application: Omit<Application, 'application_id' | 'application_ref' | 'submitted_at'>,
   ): Application {
+    const data = this.store.snapshot();
+    const applicationId = data.counters.applications++;
     const newApplication: Application = {
       ...application,
-      application_id: this.idCounter++,
+      application_id: applicationId,
+      application_ref: `TL-${new Date().getFullYear()}-${String(applicationId).padStart(6, '0')}`,
       submitted_at: new Date(),
     };
-    this.applications.push(newApplication);
+    data.applications.push(newApplication);
+    this.store.save();
     return newApplication;
   }
 
@@ -36,32 +40,38 @@ export class ApplicationsRepository {
     id: number,
     updateData: Partial<Application>,
   ): Application | undefined {
-    const index = this.applications.findIndex(
+    const applications = this.find();
+    const index = applications.findIndex(
       (app) => app.application_id === id,
     );
     if (index === -1) return undefined;
 
-    this.applications[index] = { ...this.applications[index], ...updateData };
-    return this.applications[index];
+    applications[index] = { ...applications[index], ...updateData };
+    this.store.save();
+    return applications[index];
   }
 
   findByStatus(status: ApplicationStatus): Application[] {
-    return this.applications.filter(
+    return this.find().filter(
       (app) => app.application_status === status,
     );
   }
 
   findByOfficer(officerId: number): Application[] {
-    return this.applications.filter(
+    return this.find().filter(
       (app) => app.assignedOfficerId === officerId,
     );
   }
 
   delete(id: number): boolean {
-    const initialLength = this.applications.length;
-    this.applications = this.applications.filter(
+    const applications = this.find();
+    const initialLength = applications.length;
+    const remaining = applications.filter(
       (app) => app.application_id !== id,
     );
-    return this.applications.length !== initialLength;
+    if (remaining.length === initialLength) return false;
+    applications.splice(0, applications.length, ...remaining);
+    this.store.save();
+    return true;
   }
 }

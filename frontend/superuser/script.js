@@ -80,6 +80,8 @@ var defaultFees = { new: 2100, renewal: 1000 };
 var FIELD_OFFICER_DEFAULT_PASSWORD = 'field@123';
 var API_BASE_URL = 'http://localhost:3000/api';
 var backendApplications = [];
+var backendApplicationsLoaded = false;
+var backendApplicationsError = '';
 
 function authenticatedHeaders(extra) {
   var token = sessionStorage.getItem('accessToken') || '';
@@ -91,11 +93,20 @@ function fetchBackendApplications() {
 
   return fetch(API_BASE_URL + '/applications', { headers: authenticatedHeaders() })
     .then(function(response) {
-      if (!response.ok) throw new Error('Failed to load backend applications');
-      return response.json();
+      return response.json().catch(function() { return null; }).then(function(payload) {
+        if (!response.ok) {
+          throw new Error((payload && payload.message) || ('Unable to load applications (' + response.status + ')'));
+        }
+        if (!payload || !Array.isArray(payload.data)) {
+          throw new Error('The server returned an invalid application list.');
+        }
+        return payload;
+      });
     })
     .then(function(payload) {
-      backendApplications = Array.isArray(payload) ? payload : (payload && payload.data) || [];
+      backendApplications = payload.data;
+      backendApplicationsLoaded = true;
+      backendApplicationsError = '';
       refreshDynamicData();
 
       if (document.getElementById('page-dashboard') && document.getElementById('page-dashboard').classList.contains('active')) {
@@ -106,8 +117,13 @@ function fetchBackendApplications() {
         renderApplications();
       }
     })
-    .catch(function() {
-      return null;
+    .catch(function(error) {
+      backendApplicationsLoaded = false;
+      backendApplicationsError = error && error.message ? error.message : 'Unable to load applications.';
+      if (document.getElementById('page-applications') && document.getElementById('page-applications').classList.contains('active')) {
+        renderApplicationStats();
+        renderApplications();
+      }
     });
 }
  
@@ -1166,7 +1182,10 @@ function refreshDynamicData() {
     return -1;
   }
 
-   backendApplications.concat(sysApps).concat(localApps).concat(legacyApps).concat(tradezoApps).forEach(function(la) {
+   var applicationSources = backendApplicationsLoaded
+     ? backendApplications
+     : sysApps.concat(localApps).concat(legacyApps).concat(tradezoApps);
+   applicationSources.forEach(function(la) {
      if (!isLiveApplicationRecord(la)) return;
      if (!isAllowedApplicationApplicant(la)) return;
      var existingIndex = findExistingApplicationIndex(la);
@@ -1183,7 +1202,7 @@ function refreshDynamicData() {
     applications = allApps.map(function(a) {
       var submittedDate = a.submittedDate || a.submitted_at || a.date || a.createdAt || a.created_at || '';
       return {
-        id: a.application_id || a.id || a.appId || a.appRef || 'N/A',
+        id: a.application_ref || a.application_id || a.id || a.appId || a.appRef || 'N/A',
         applicant: a.applicantName || a.applicant || a.fullName || a.full_name || a.ownerName || a.name || 'Unknown',
         business: a.businessName || a.business || a.business_name || 'N/A',
         category: a.tradeCategory || a.category || a.businessType || a.business_type || 'N/A',
@@ -1212,7 +1231,7 @@ function refreshDynamicData() {
         phone: a.phone || a.applicant_phone || 'N/A',
         email: a.email || a.applicantEmail || 'N/A'
       };
-    }).filter(isUnassignedApplication);
+    });
     applications.sort(function(a, b) {
       return activityTimestamp(latestActivityValue(b, ['updatedDate', 'createdAt', 'submittedDate', 'date']), 0) -
              activityTimestamp(latestActivityValue(a, ['updatedDate', 'createdAt', 'submittedDate', 'date']), 0);
@@ -1621,8 +1640,8 @@ function deleteUser(userId) {
 function renderApplicationStats() {
   refreshDynamicData();
   document.getElementById('app-total').textContent    = applications.length;
-  document.getElementById('app-pending').textContent  = applications.filter(function(a) { return a.status === 'Pending' || a.status === 'Under Review' || a.status === 'Pending Review' || a.status === 'Submitted'; }).length;
-  document.getElementById('app-approved').textContent = applications.filter(function(a) { return a.status === 'Approved' || a.status === 'Verified'; }).length;
+  document.getElementById('app-pending').textContent  = applications.filter(function(a) { return a.status !== 'Approved' && a.status !== 'Rejected'; }).length;
+  document.getElementById('app-approved').textContent = applications.filter(function(a) { return a.status === 'Approved'; }).length;
   document.getElementById('app-rejected').textContent = applications.filter(function(a) { return a.status === 'Rejected'; }).length;
 }
 
@@ -1722,9 +1741,7 @@ function assignApplication(appId, officerEmail) {
     (officer ? ('Assigned application ' + appId + ' to ' + officer.name) : ('Cleared field officer assignment for application ' + appId))
   );
 
-  filteredApps = officer
-    ? filteredApps.filter(function(app) { return activityId(app) !== appId; })
-    : applications.filter(isUnassignedApplication);
+  filteredApps = applications.slice();
   renderApplicationStats();
   renderApplications();
   showToast(officer ? ('Assigned to ' + officer.name + '.') : 'Field officer assignment cleared.');
@@ -1733,6 +1750,12 @@ function assignApplication(appId, officerEmail) {
 function renderApplications() {
   var tbody    = document.getElementById('apps-tbody');
   tbody.innerHTML = '';
+
+  if (backendApplicationsError) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Unable to load applications: ' + escapeHtml(backendApplicationsError) + '</td></tr>';
+    document.getElementById('apps-pagination').innerHTML = '';
+    return;
+  }
  
   var start    = (appPage - 1) * rowsPerPage;
   var pageData = filteredApps.slice(start, start + rowsPerPage);
@@ -1767,7 +1790,6 @@ function filterApplications() {
   var category = document.getElementById('app-category-filter').value;
  
   filteredApps = applications.filter(function(a) {
-    if (!isUnassignedApplication(a)) return false;
     var matchSearch   = !search   || a.id.toLowerCase().includes(search) || a.applicant.toLowerCase().includes(search) || a.business.toLowerCase().includes(search);
     var matchStatus   = !status   || a.status === status;
     var matchCategory = !category || a.category === category;

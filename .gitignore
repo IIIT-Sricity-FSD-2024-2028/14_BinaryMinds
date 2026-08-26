@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+
+# Build output
+dist/
+backend/dist/
+
+# Runtime logs
+*.log
+backend/logs/
+
+# Uploaded runtime files
+backend/uploads/
+
+# OS files
+.DS_Store
+
+# Temporary files
+*.tmp
