@@ -29,6 +29,16 @@ export class RequestLoggingMiddleware implements NestMiddleware {
         statusCode: response.statusCode,
         responseTimeMs: Date.now() - startTime,
       });
+      console.log(
+        'Logging middleware executed for requestId:',
+        requestWithId.requestId,
+        'Method:',
+        request.method,
+        'Path:',
+        request.originalUrl,
+        'Status Code:',
+        response.statusCode,
+      );
     });
 
     next();
