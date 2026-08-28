@@ -73,7 +73,7 @@
       "phone": "9000000020",
       "employee_id": "SU-001",
       "password_hash": "super123",
-      "role": "super_user",
+      "role": "municipal_commissioner",
       "created_at": "2026-01-01T00:00:00.000Z"
     },
     {
@@ -284,6 +284,86 @@
       "license_id": 1
     }
   ],
+  "platform": {
+    "corporations": [
+      {
+        "corporation_id": "municipal-corporation",
+        "name": "Municipal Corporation",
+        "status": "active"
+      }
+    ],
+    "revenue_settings": {
+      "tradezo_revenue_percentage": 20
+    },
+    "revenue_records": [
+      {
+        "payment_id": 1,
+        "transaction_id": "TXN-7eeb10ab-7b19-4dbe-8980-8acf01e1ddd3",
+        "corporation_id": "municipal-corporation",
+        "gross_amount": 2100,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 420,
+        "municipal_share": 1680,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-08-26T17:40:58.529Z"
+      },
+      {
+        "payment_id": 2,
+        "transaction_id": "TXN-f3b447bf-67ef-4e9c-98e4-627487dbdd11",
+        "corporation_id": "municipal-corporation",
+        "gross_amount": 2205,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 441,
+        "municipal_share": 1764,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-08-26T18:25:52.336Z"
+      },
+      {
+        "payment_id": 3,
+        "transaction_id": "TXN-132bc533-7125-41d9-900a-b5014b7ab930",
+        "corporation_id": "municipal-corporation",
+        "gross_amount": 2205,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 441,
+        "municipal_share": 1764,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-08-26T18:33:40.531Z"
+      },
+      {
+        "payment_id": 4,
+        "transaction_id": "TXN-b9174478-ad29-49ba-8437-12259a9aca02",
+        "corporation_id": "municipal-corporation",
+        "gross_amount": 2205,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 441,
+        "municipal_share": 1764,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-08-26T19:19:56.723Z"
+      },
+      {
+        "payment_id": 5,
+        "transaction_id": "TXN-e2cc3453-78fc-479b-90f7-f725a9826e70",
+        "corporation_id": "municipal-corporation",
+        "gross_amount": 2205,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 441,
+        "municipal_share": 1764,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-08-28T14:22:27.653Z"
+      },
+      {
+        "payment_id": 6,
+        "transaction_id": "TXN-a54795c1-ab8f-4e17-9166-df87095fee42",
+        "corporation_id": "municipal-corporation",
+        "gross_amount": 2205,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 441,
+        "municipal_share": 1764,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-08-28T14:58:25.735Z"
+      }
+    ]
+  },
   "counters": {
     "users": 16,
     "applications": 7,

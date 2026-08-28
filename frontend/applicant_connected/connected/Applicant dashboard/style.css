@@ -120,6 +120,13 @@ body {
   margin-bottom: 16px;
 }
 
+.welcome .applicant-role-label {
+  margin: 4px 0;
+  color: #dbeafe;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 /* ===== WELCOME CARD ===== */
 .welcome {
   display: flex;

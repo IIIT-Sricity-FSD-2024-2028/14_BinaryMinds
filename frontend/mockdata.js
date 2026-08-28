@@ -322,8 +322,7 @@ TRADEZO.backendLoaded = false;
 TRADEZO.roleFor = function(role) {
   var normalized = String(role || '').toLowerCase().replace(/\s+/g, '_');
   var map = {
-    superuser: 'superuser',
-    super_user: 'superuser',
+    municipal_commissioner: 'municipal_commissioner',
     department_officer: 'department_officer',
     field_officer: 'officer',
     officer: 'officer',

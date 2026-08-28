@@ -16,18 +16,19 @@ function Home() {
           <div>
             <span className="gov-text">Government of India</span>
             <h1>TradeZo</h1>
+            <span className="municipal-text">Municipal Corporation &ndash; Trade License Management System</span>
           </div>
         </div>
       </header>
 
       <section className="card home-card">
-        <h2>Digital Application & Licensing System</h2>
+        <h2>Municipal Corporation &ndash; Trade License Management System</h2>
         <p className="home-subtitle">Select your role to continue</p>
 
         <div className="role-grid">
           <Link to="/superuser" className="role-link superuser">
             <div className="role-icon">🛡️</div>
-            <h3>Superuser</h3>
+            <h3>Municipal Commissioner (Admin)</h3>
             <p>View submitted applications, assign to officers, monitor workload</p>
           </Link>
 

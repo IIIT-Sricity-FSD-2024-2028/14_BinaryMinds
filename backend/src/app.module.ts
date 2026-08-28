@@ -16,11 +16,13 @@ import { OfficersModule } from './officers/officers.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { AuthModule } from './auth/auth.module';
 import { PersistenceModule } from './common/persistence/persistence.module';
+import { PlatformAdminModule } from './platform-admin/platform-admin.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PersistenceModule,
+    PlatformAdminModule,
     AuthModule,
     UsersModule,
     ApplicationsModule,

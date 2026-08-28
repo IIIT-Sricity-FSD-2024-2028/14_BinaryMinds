@@ -3,6 +3,7 @@
    ===================================================== */
 
 var DO_PAGES = {
+  home:          '../../applicant_connected/connected/landing%20page/index.html',
   dashboard:     '../dashboard/index.html',
   worklist:      '../worklist/index.html',
   review:        '../review/index.html',
@@ -27,6 +28,16 @@ function doLogout() {
 
 /* Auto-wire ALL sidebar nav items on every page */
 document.addEventListener('DOMContentLoaded', function () {
+
+  document.querySelectorAll('.sidebar').forEach(function (sidebar) {
+    if (sidebar.querySelector('[data-canonical-home]')) return;
+    var home = document.createElement('div');
+    home.className = 'nav-item';
+    home.dataset.canonicalHome = 'true';
+    home.textContent = 'Home';
+    home.addEventListener('click', function () { doNav('home'); });
+    sidebar.insertBefore(home, sidebar.firstChild);
+  });
 
   /* Wire sidebar nav-item divs (dashboard page style) */
   document.querySelectorAll('.nav-item, .nav').forEach(function (item) {

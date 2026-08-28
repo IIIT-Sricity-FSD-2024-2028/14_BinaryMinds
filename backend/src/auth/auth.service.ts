@@ -21,15 +21,21 @@ export class AuthService {
 
   login(credentials: LoginDto) {
     let user: User;
-    try {
-      user = this.usersService.findByEmail(credentials.email.trim().toLowerCase());
-    } catch {
+    const requestedRole = this.normalizeRole(credentials.role);
+    if (!requestedRole) {
       throw new UnauthorizedException('Invalid email, password, or role');
     }
-
-    const requestedRole = this.normalizeRole(credentials.role);
-    if (!requestedRole || user.role !== requestedRole || !this.passwordMatches(credentials.password, user.password_hash)) {
-      throw new UnauthorizedException('Invalid email, password, or role');
+    if (requestedRole === Role.PLATFORM_ADMIN) {
+      user = this.platformAdminUser(credentials);
+    } else {
+      try {
+        user = this.usersService.findByEmail(credentials.email.trim().toLowerCase());
+      } catch {
+        throw new UnauthorizedException('Invalid email, password, or role');
+      }
+      if (user.role !== requestedRole || !this.passwordMatches(credentials.password, user.password_hash)) {
+        throw new UnauthorizedException('Invalid email, password, or role');
+      }
     }
 
     const session = this.createSession(user);
@@ -98,10 +104,21 @@ export class AuthService {
       officer: Role.FIELD_OFFICER,
       department_officer: Role.DEPARTMENT_OFFICER,
       departmentofficer: Role.DEPARTMENT_OFFICER,
-      superuser: Role.SUPER_USER,
-      super_user: Role.SUPER_USER,
+      municipal_commissioner: Role.MUNICIPAL_COMMISSIONER,
+      municipalcommissioner: Role.MUNICIPAL_COMMISSIONER,
+      platform_admin: Role.PLATFORM_ADMIN,
+      platformadmin: Role.PLATFORM_ADMIN,
     };
     return aliases[normalized] ?? null;
+  }
+
+  private platformAdminUser(credentials: LoginDto): User {
+    const email = process.env.PLATFORM_ADMIN_EMAIL?.trim().toLowerCase();
+    const password = process.env.PLATFORM_ADMIN_PASSWORD;
+    if (!email || !password || credentials.email.trim().toLowerCase() !== email || !this.passwordMatches(credentials.password, password)) {
+      throw new UnauthorizedException('Invalid email, password, or role');
+    }
+    return { user_id: 0, full_name: 'TradeZo Platform Admin', email, phone: '', password_hash: password, role: Role.PLATFORM_ADMIN };
   }
 
   private getSessionTtlMs(): number {

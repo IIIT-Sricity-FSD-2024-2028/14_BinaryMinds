@@ -65,6 +65,13 @@ body {
   display: block;
 }
 
+.municipal-text {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  opacity: 0.85;
+}
+
 .brand h1 {
   font-size: 22px;
   font-weight: 700;
@@ -119,6 +126,35 @@ body {
   font-weight: 700;
   color: var(--navy);
   margin-bottom: 16px;
+}
+
+.hierarchy-card {
+  text-align: center;
+  border-color: #bfdbfe;
+  background: linear-gradient(135deg, #eff6ff, #fff);
+}
+
+.hierarchy-eyebrow,
+.hierarchy-card h3 {
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hierarchy-card h3 {
+  margin: 12px 0 8px;
+}
+
+.hierarchy-card p {
+  color: var(--text-muted);
+}
+
+.hierarchy-card .hierarchy-applicants {
+  margin-top: 12px;
+  color: var(--text);
+  font-weight: 700;
 }
 
 /* ===== GRID 2-COL ===== */

@@ -5,7 +5,7 @@
 <script src="session_guard.js?v=dept-officer-management-20260504"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TradeZo - Super User Panel</title>
+  <title>TradeZo - Admin Panel</title>
   <link rel="stylesheet" href="style.css?v=dept-officer-management-20260504" />
 </head>
 <body>
@@ -18,10 +18,13 @@
       <div>
         <div class="logo-gov">Government of India</div>
         <div class="logo-title">TradeZo</div>
-        <div class="logo-sub">Licensing System</div>
+        <div class="logo-sub">Municipal Corporation &ndash; Trade License Management System</div>
       </div>
     </div>
     <nav class="sidebar-nav">
+      <a href="../applicant_connected/connected/landing%20page/index.html" class="nav-link">
+        <span class="nav-icon">&#8962;</span> Home
+      </a>
       <a href="#" class="nav-link active" onclick="showPage('dashboard', this)">
         <span class="nav-icon">&#9783;</span> Dashboard
       </a>
@@ -54,14 +57,14 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="45">
         <div>
           <div class="gov-title">Government of India</div>
-          <div class="gov-sub">Ministry of Commerce &amp; Industry</div>
+          <div class="gov-sub">Municipal Corporation &ndash; Trade License Management System</div>
         </div>
       </div>
       <div class="topbar-right">
         <div class="user-info">
           <div class="user-avatar">SU</div>
           <div>
-            <div class="user-name">Admin User</div>
+            <div class="user-name">Municipal Commissioner (Admin)</div>
             <div class="user-email">admin@tradezo.gov.in</div>
           </div>
         </div>
@@ -72,8 +75,20 @@
     <!-- ==================== PAGE: DASHBOARD ==================== -->
     <div id="page-dashboard" class="page active">
       <div class="content">
-        <div class="page-heading">Dashboard Overview</div>
-        <div class="page-sub">Welcome to TradeZo Licensing Management System</div>
+        <div class="page-heading">Municipal Commissioner &ndash; Admin Dashboard</div>
+        <div class="page-sub">Municipal Corporation &ndash; Trade License Management System</div>
+
+        <section class="hierarchy-card" aria-label="Municipal Corporation administration hierarchy">
+          <div class="hierarchy-eyebrow">Municipal Corporation</div>
+          <h2>Municipal Commissioner <span>(Admin)</span></h2>
+          <div class="hierarchy-arrow" aria-hidden="true">&darr;</div>
+          <h3>Admin Team</h3>
+          <div class="hierarchy-roles">
+            <div><strong>Field Officers</strong><span>Admin Team</span></div>
+            <div><strong>Department Officers</strong><span>Admin Team</span></div>
+          </div>
+          <div class="hierarchy-applicants">Applicants / Users</div>
+        </section>
  
         <div class="stat-row">
           <div class="stat-card">

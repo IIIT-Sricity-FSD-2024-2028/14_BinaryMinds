@@ -9,12 +9,14 @@ import { Payment } from './payment.interface';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { PaymentStatus } from '../common/enums/payment-status.enum';
 import { ApplicationsService } from '../applications/applications.service';
+import { PlatformAdminService } from '../platform-admin/platform-admin.service';
 
 @Injectable()
 export class PaymentsService {
   constructor(
     private readonly repository: PaymentsRepository,
     private readonly applicationsService: ApplicationsService,
+    private readonly platformAdminService: PlatformAdminService,
   ) {}
 
   findAll(): Payment[] {
@@ -46,6 +48,7 @@ export class PaymentsService {
     const payment = this.repository.create(createData);
     if (payment.payment_status === PaymentStatus.COMPLETED) {
       this.applicationsService.update(payment.application_id, { paymentDone: true });
+      this.platformAdminService.recordCompletedPayment(payment);
     }
     return payment;
   }
@@ -73,6 +76,7 @@ export class PaymentsService {
     }
     if (updated.payment_status === PaymentStatus.COMPLETED) {
       this.applicationsService.update(updated.application_id, { paymentDone: true });
+      this.platformAdminService.recordCompletedPayment(updated);
     }
     return updated;
   }
@@ -97,6 +101,7 @@ export class PaymentsService {
 
     if (updated.payment_status === PaymentStatus.COMPLETED) {
       this.applicationsService.update(updated.application_id, { paymentDone: true });
+      this.platformAdminService.recordCompletedPayment(updated);
     }
 
     return updated;

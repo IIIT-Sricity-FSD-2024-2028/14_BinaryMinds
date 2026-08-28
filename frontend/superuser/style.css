@@ -179,6 +179,74 @@ button {
   justify-content: flex-end;
 }
 
+.hierarchy-card {
+  margin: 22px 0;
+  padding: 22px;
+  border: 1px solid #cfd8f3;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f8faff, #ffffff);
+  text-align: center;
+}
+
+.hierarchy-eyebrow,
+.hierarchy-card h3 {
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hierarchy-card h2 {
+  margin-top: 8px;
+  font-size: 22px;
+}
+
+.hierarchy-card h2 span {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.hierarchy-arrow {
+  margin: 8px 0;
+  color: var(--navy);
+  font-size: 24px;
+}
+
+.hierarchy-roles {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 14px 0;
+}
+
+.hierarchy-roles div,
+.hierarchy-applicants {
+  min-width: 180px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #eaf0ff;
+  color: var(--navy);
+}
+
+.hierarchy-roles strong,
+.hierarchy-roles span {
+  display: block;
+}
+
+.hierarchy-roles span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.hierarchy-applicants {
+  margin: 0 auto;
+  background: #f3f4f6;
+  color: var(--text);
+  font-weight: 800;
+}
+
 .user-info {
   gap: 10px;
 }

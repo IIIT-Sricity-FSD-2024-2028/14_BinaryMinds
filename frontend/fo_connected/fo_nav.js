@@ -1,5 +1,6 @@
 (function() {
   var routes = {
+    home: '../../applicant_connected/connected/landing%20page/index.html',
     dashboard: '../fodashboard/index.html',
     verification: '../verification/index.html',
     recordinspection: '../recordinspection/index.html',
@@ -114,6 +115,17 @@
     });
   }
 
+  function addHomeNavigation() {
+    document.querySelectorAll('.sidebar ul').forEach(function(list) {
+      if (list.querySelector('[data-canonical-home]')) return;
+      var item = document.createElement('li');
+      item.dataset.canonicalHome = 'true';
+      item.textContent = 'Home';
+      item.addEventListener('click', function() { window.location.href = routes.home; });
+      list.insertBefore(item, list.firstChild);
+    });
+  }
+
   function injectFallbackStyles() {
     if (document.getElementById('fo-nav-fallback-styles')) return;
     var style = document.createElement('style');
@@ -166,6 +178,7 @@
       if (officer.name) el.textContent = officer.name;
     });
     addSidebarNavigation();
+    addHomeNavigation();
     patchMissingImages();
   });
 })();

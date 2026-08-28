@@ -63,9 +63,10 @@ export default function OfficerDashboard() {
           <div>
             <span className="gov-text">Government of India</span>
             <h1>TradeZo</h1>
+            <span className="municipal-text">Municipal Corporation &ndash; Trade License Management System</span>
           </div>
         </div>
-        <div className="role-badge officer">Officer #{officerId} Dashboard</div>
+        <div className="role-badge officer">Field Officer (Admin Team) Dashboard</div>
       </header>
 
       {message && <div className="toast">{message}</div>}

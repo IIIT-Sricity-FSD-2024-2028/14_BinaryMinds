@@ -5,7 +5,7 @@ var MOCK_USERS = [
   { email:"vikram@fieldofficer.com", password:"field@123",    role:"field officer",       name:"Vikram Desai" },
   { email:"admin@deptofficer.com",   password:"dept123",      role:"department officer",  name:"Anjali Mehta" },
   { email:"rahul@deptofficer.com",   password:"dept123",      role:"department officer",  name:"Rahul Gupta" },
-  { email:"admin@tradezo.gov.in",    password:"super123",     role:"superuser",           name:"Admin User" }
+  { email:"admin@tradezo.gov.in",    password:"super123",     role:"municipal_commissioner", name:"Admin User" }
 ];
 
 // login is at: applicant_connected/connected/login/
@@ -13,7 +13,7 @@ var DASHBOARDS = {
   "applicant":          "../Applicant dashboard/index.html",
   "field officer":      "../../../fo_connected/fodashboard/index.html",
   "department officer": "../../../do_connected/dashboard/index.html",
-  "superuser":          "../../../superuser/index.html"
+  "municipal_commissioner": "../../../superuser/index.html"
 };
 
 var emailInput    = document.querySelector('input[type="text"]');
@@ -62,7 +62,7 @@ function getBackendLoginUsers() {
 
 function formatAuditRole(role) {
   var normalized = String(role || '').toLowerCase().replace(/_/g, ' ').trim();
-  if (normalized === 'superuser') return 'Super User';
+  if (normalized === 'municipal commissioner') return 'Municipal Commissioner (Admin)';
   if (normalized === 'field officer') return 'Field Officer';
   if (normalized === 'department officer') return 'Department Officer';
   if (normalized === 'applicant') return 'Applicant';
@@ -106,7 +106,7 @@ async function handleLogin() {
     'applicant': 'applicant',
     'field officer': 'field_officer',
     'department officer': 'department_officer',
-    'superuser': 'super_user'
+    'municipal_commissioner': 'municipal_commissioner'
   }[role.toLowerCase()];
 
   try {
@@ -125,7 +125,7 @@ async function handleLogin() {
       applicant: 'applicant',
       field_officer: 'field officer',
       department_officer: 'department officer',
-      super_user: 'superuser'
+      municipal_commissioner: 'municipal_commissioner'
     }[String(loginPayload.user.role || '').toLowerCase()] || '';
     if (canonicalRole !== role.toLowerCase()) {
       sessionStorage.removeItem('accessToken');

@@ -88,12 +88,21 @@ export default function SuperuserDashboard() {
           <div>
             <span className="gov-text">Government of India</span>
             <h1>TradeZo</h1>
+            <span className="municipal-text">Municipal Corporation &ndash; Trade License Management System</span>
           </div>
         </div>
-        <div className="role-badge">Superuser Dashboard</div>
+        <div className="role-badge">Municipal Commissioner (Admin)</div>
       </header>
 
       {message && <div className="toast">{message}</div>}
+
+      <section className="card hierarchy-card">
+        <div className="hierarchy-eyebrow">Municipal Corporation</div>
+        <h2>Municipal Commissioner (Admin)</h2>
+        <h3>Admin Team</h3>
+        <p><strong>Field Officers</strong> and <strong>Department Officers</strong></p>
+        <p className="hierarchy-applicants">Applicants / Users</p>
+      </section>
 
       {/* Create Application */}
       <section className="card create-section">
@@ -113,7 +122,7 @@ export default function SuperuserDashboard() {
       <div className="grid-2">
         {/* Submitted Applications */}
         <section className="card">
-          <h2>📋 Submitted Applications</h2>
+          <h2>Users / Applicants — Submitted Applications</h2>
           {apps.length === 0 ? (
             <p className="empty">No submitted applications.</p>
           ) : (
@@ -163,7 +172,7 @@ export default function SuperuserDashboard() {
 
         {/* Officers */}
         <section className="card">
-          <h2>👥 Officers Workload</h2>
+          <h2>Admin Team — Field Officers Workload</h2>
           {officers.length === 0 ? (
             <p className="empty">No officers available.</p>
           ) : (
