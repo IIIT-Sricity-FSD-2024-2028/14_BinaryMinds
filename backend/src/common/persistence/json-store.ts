@@ -21,7 +21,7 @@ const EMPTY_DATA: PersistentData = {
 
 @Injectable()
 export class JsonStore {
-  private readonly filePath = join(process.cwd(), 'data', 'tradezo.json');
+  private readonly filePath = join(__dirname, '..', '..', '..', 'data', 'tradezo.json');
   private data: PersistentData;
 
   constructor() {
