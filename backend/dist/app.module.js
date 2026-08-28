@@ -24,6 +24,7 @@ const compliance_module_1 = require("./compliance/compliance.module");
 const officers_module_1 = require("./officers/officers.module");
 const audit_logs_module_1 = require("./audit-logs/audit-logs.module");
 const auth_module_1 = require("./auth/auth.module");
+const persistence_module_1 = require("./common/persistence/persistence.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,6 +32,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
+            persistence_module_1.PersistenceModule,
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
             applications_module_1.ApplicationsModule,

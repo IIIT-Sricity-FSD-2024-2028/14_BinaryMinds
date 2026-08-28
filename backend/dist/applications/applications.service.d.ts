@@ -14,6 +14,7 @@ export declare class ApplicationsService {
     findAllWithApplicantDetails(): {
         applicant: import("../users/user.interface").User;
         application_id: number;
+        application_ref: string;
         applicant_id: number;
         full_name: string;
         father_name?: string;
@@ -39,6 +40,7 @@ export declare class ApplicationsService {
     findOneWithApplicantDetails(id: number): {
         applicant: import("../users/user.interface").User;
         application_id: number;
+        application_ref: string;
         applicant_id: number;
         full_name: string;
         father_name?: string;
@@ -62,7 +64,7 @@ export declare class ApplicationsService {
     };
     findByApplicant(applicantId: number): Application[];
     create(applicationData: CreateApplicationDto): Application;
-    createSimple(data: CreateSimpleApplicationDto): Application;
+    createSimple(data: CreateSimpleApplicationDto, applicantId: number): Application;
     findSubmitted(): Application[];
     assignToOfficer(id: number, officerId?: number): Application;
     findByOfficer(officerId: number): Application[];

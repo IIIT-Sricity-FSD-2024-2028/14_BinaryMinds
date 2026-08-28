@@ -15,6 +15,7 @@ const licenses_repository_1 = require("./licenses.repository");
 const license_status_enum_1 = require("../common/enums/license-status.enum");
 const applications_service_1 = require("../applications/applications.service");
 const users_service_1 = require("../users/users.service");
+const application_status_enum_1 = require("../common/enums/application-status.enum");
 let LicensesService = class LicensesService {
     repository;
     applicationsService;
@@ -57,7 +58,10 @@ let LicensesService = class LicensesService {
         return `LIC-${year}${month}${day}-${randomPortion}`;
     }
     create(data) {
-        this.applicationsService.findOne(data.application_id);
+        const application = this.applicationsService.findOne(data.application_id);
+        if (application.application_status !== application_status_enum_1.ApplicationStatus.APPROVED) {
+            throw new common_1.BadRequestException('Only approved applications can receive a license');
+        }
         this.usersService.findOne(data.issued_by);
         const existing = this.repository.findByApplication(data.application_id);
         if (existing) {

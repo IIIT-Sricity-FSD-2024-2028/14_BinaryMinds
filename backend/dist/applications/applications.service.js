@@ -69,9 +69,10 @@ let ApplicationsService = class ApplicationsService {
         };
         return this.applicationsRepository.create(newAppRecord);
     }
-    createSimple(data) {
+    createSimple(data, applicantId) {
+        this.usersService.findOne(applicantId);
         const newAppRecord = {
-            applicant_id: 0,
+            applicant_id: applicantId,
             full_name: data.applicantName,
             business_name: data.businessName || 'N/A',
             business_type: data.tradeCategory || 'General',
@@ -79,7 +80,7 @@ let ApplicationsService = class ApplicationsService {
             shop_address: data.shopAddress || '',
             applicant_phone: data.phone || '',
             application_status: application_status_enum_1.ApplicationStatus.SUBMITTED,
-            paymentDone: true,
+            paymentDone: false,
             assignedOfficerId: null,
         };
         return this.applicationsRepository.create(newAppRecord);

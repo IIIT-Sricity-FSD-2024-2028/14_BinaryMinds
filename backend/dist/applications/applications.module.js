@@ -14,7 +14,11 @@ const applications_service_1 = require("./applications.service");
 const applications_repository_1 = require("./applications.repository");
 const applications_controller_1 = require("./applications.controller");
 const audit_logs_module_1 = require("../audit-logs/audit-logs.module");
+const route_access_middleware_1 = require("../common/middleware/route-access.middleware");
 let ApplicationsModule = class ApplicationsModule {
+    configure(consumer) {
+        consumer.apply(route_access_middleware_1.RouteAccessMiddleware).forRoutes(applications_controller_1.ApplicationsController);
+    }
 };
 exports.ApplicationsModule = ApplicationsModule;
 exports.ApplicationsModule = ApplicationsModule = __decorate([

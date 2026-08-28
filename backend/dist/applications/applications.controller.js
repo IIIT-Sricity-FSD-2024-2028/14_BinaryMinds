@@ -32,9 +32,9 @@ let ApplicationsController = class ApplicationsController {
         this.applicationsService = applicationsService;
         this.auditLogsService = auditLogsService;
     }
-    create(body) {
+    create(body, request) {
         if ('applicantName' in body && !('applicant_id' in body)) {
-            const app = this.applicationsService.createSimple(body);
+            const app = this.applicationsService.createSimple(body, request.user.userId);
             this.auditLogsService.log({
                 user_name: app.full_name || body.applicantName || 'Applicant',
                 role: 'applicant',
@@ -105,8 +105,17 @@ let ApplicationsController = class ApplicationsController {
     findAll() {
         return { success: true, data: this.applicationsService.findAll() };
     }
-    findByApplicant(applicantId) {
+    findByApplicant(applicantId, request) {
+        if (request.user.role === role_enum_1.Role.APPLICANT && request.user.userId !== applicantId) {
+            throw new common_1.ForbiddenException('Applicants can only view their own applications');
+        }
         return { success: true, data: this.applicationsService.findByApplicant(applicantId) };
+    }
+    findMine(request) {
+        return {
+            success: true,
+            data: this.applicationsService.findByApplicant(request.user.userId),
+        };
     }
     findOne(id) {
         return { success: true, data: this.applicationsService.findOne(id) };
@@ -155,8 +164,9 @@ __decorate([
     }),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], ApplicationsController.prototype, "create", null);
 __decorate([
@@ -257,10 +267,26 @@ __decorate([
     }),
     openapi.ApiResponse({ status: 200 }),
     __param(0, (0, common_1.Param)('applicantId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", void 0)
 ], ApplicationsController.prototype, "findByApplicant", null);
+__decorate([
+    (0, common_1.Get)('mine'),
+    (0, roles_decorator_1.Roles)(role_enum_1.Role.APPLICANT),
+    (0, api_route_decorator_1.ApiRoute)({
+        summary: 'List applications for the authenticated applicant',
+        roles: [role_enum_1.Role.APPLICANT],
+        wrappedResponse: true,
+        responseExample: [{ application_id: 1, applicant_id: 3 }],
+    }),
+    openapi.ApiResponse({ status: 200 }),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], ApplicationsController.prototype, "findMine", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, roles_decorator_1.Roles)(role_enum_1.Role.APPLICANT, role_enum_1.Role.DEPARTMENT_OFFICER, role_enum_1.Role.FIELD_OFFICER, role_enum_1.Role.SUPER_USER),

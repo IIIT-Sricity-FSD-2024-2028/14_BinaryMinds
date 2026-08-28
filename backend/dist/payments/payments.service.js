@@ -76,7 +76,11 @@ let PaymentsService = class PaymentsService {
             payment_status: data.payment_status || payment_status_enum_1.PaymentStatus.PENDING,
             transaction_id: transactionId,
         };
-        return this.repository.create(createData);
+        const payment = this.repository.create(createData);
+        if (payment.payment_status === payment_status_enum_1.PaymentStatus.COMPLETED) {
+            this.applicationsService.update(payment.application_id, { paymentDone: true });
+        }
+        return payment;
     }
     update(id, updateData) {
         const existing = this.findOne(id);
@@ -93,6 +97,9 @@ let PaymentsService = class PaymentsService {
         if (!updated) {
             throw new common_1.NotFoundException(`Payment with ID ${id} not found`);
         }
+        if (updated.payment_status === payment_status_enum_1.PaymentStatus.COMPLETED) {
+            this.applicationsService.update(updated.application_id, { paymentDone: true });
+        }
         return updated;
     }
     verifyPayment(id, transactionId, isSuccessful) {
@@ -108,6 +115,9 @@ let PaymentsService = class PaymentsService {
         });
         if (!updated) {
             throw new common_1.NotFoundException(`Payment with ID ${id} not found`);
+        }
+        if (updated.payment_status === payment_status_enum_1.PaymentStatus.COMPLETED) {
+            this.applicationsService.update(updated.application_id, { paymentDone: true });
         }
         return updated;
     }

@@ -5,12 +5,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersRepository = void 0;
 const common_1 = require("@nestjs/common");
 const role_enum_1 = require("../common/enums/role.enum");
+const json_store_1 = require("../common/persistence/json-store");
 let UsersRepository = class UsersRepository {
-    users = [
+    store;
+    defaultUsers = [
         {
             user_id: 1,
             full_name: 'Rajesh Kumar',
@@ -88,40 +93,60 @@ let UsersRepository = class UsersRepository {
             created_at: new Date('2026-01-01T00:00:00Z'),
         },
     ];
-    idCounter = 9;
+    constructor(store) {
+        this.store = store;
+        const data = this.store.snapshot();
+        const existingEmails = new Set(data.users.map((user) => user.email.trim().toLowerCase()));
+        const missingDefaultUsers = this.defaultUsers.filter((user) => !existingEmails.has(user.email.toLowerCase()));
+        if (missingDefaultUsers.length) {
+            data.users.push(...missingDefaultUsers);
+            data.counters.users =
+                Math.max(data.counters.users, ...data.users.map((user) => user.user_id + 1));
+            this.store.save();
+        }
+    }
     find() {
-        return this.users;
+        return this.store.snapshot().users;
     }
     findById(id) {
-        return this.users.find((user) => user.user_id === id);
+        return this.find().find((user) => user.user_id === id);
     }
     findByEmail(email) {
-        return this.users.find((user) => user.email === email);
+        return this.find().find((user) => user.email === email);
     }
     create(user) {
         const newUser = {
             ...user,
-            user_id: this.idCounter++,
+            user_id: this.store.snapshot().counters.users++,
             created_at: new Date(),
         };
-        this.users.push(newUser);
+        this.find().push(newUser);
+        this.store.save();
         return newUser;
     }
     update(id, updateData) {
-        const userIndex = this.users.findIndex((user) => user.user_id === id);
+        const users = this.find();
+        const userIndex = users.findIndex((user) => user.user_id === id);
         if (userIndex === -1)
             return undefined;
-        this.users[userIndex] = { ...this.users[userIndex], ...updateData };
-        return this.users[userIndex];
+        users[userIndex] = { ...users[userIndex], ...updateData };
+        this.store.save();
+        return users[userIndex];
     }
     delete(id) {
-        const initialLength = this.users.length;
-        this.users = this.users.filter((user) => user.user_id !== id);
-        return this.users.length !== initialLength;
+        const users = this.find();
+        const initialLength = users.length;
+        const remaining = users.filter((user) => user.user_id !== id);
+        if (remaining.length === initialLength)
+            return false;
+        users.splice(0, users.length, ...remaining);
+        this.store.save();
+        return true;
     }
 };
 exports.UsersRepository = UsersRepository;
 exports.UsersRepository = UsersRepository = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [json_store_1.JsonStore])
 ], UsersRepository);
 //# sourceMappingURL=users.repository.js.map

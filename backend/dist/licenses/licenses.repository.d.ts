@@ -1,7 +1,8 @@
 import { License } from './license.interface';
+import { JsonStore } from '../common/persistence/json-store';
 export declare class LicensesRepository {
-    private licenses;
-    private idCounter;
+    private readonly store;
+    constructor(store: JsonStore);
     find(): License[];
     findById(id: number): License | undefined;
     findByApplication(applicationId: number): License | undefined;

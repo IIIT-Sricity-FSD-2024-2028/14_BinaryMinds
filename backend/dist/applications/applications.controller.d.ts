@@ -1,13 +1,17 @@
+import { Request } from 'express';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { CreateSimpleApplicationDto } from './dto/create-simple-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
+import { AuthenticatedUser } from '../auth/auth-session.interface';
 export declare class ApplicationsController {
     private readonly applicationsService;
     private readonly auditLogsService;
     constructor(applicationsService: ApplicationsService, auditLogsService: AuditLogsService);
-    create(body: CreateApplicationDto | CreateSimpleApplicationDto): {
+    create(body: CreateApplicationDto | CreateSimpleApplicationDto, request: Request & {
+        user: AuthenticatedUser;
+    }): {
         success: boolean;
         data: import("./application.interface").Application;
     };
@@ -31,7 +35,15 @@ export declare class ApplicationsController {
         success: boolean;
         data: import("./application.interface").Application[];
     };
-    findByApplicant(applicantId: number): {
+    findByApplicant(applicantId: number, request: Request & {
+        user: AuthenticatedUser;
+    }): {
+        success: boolean;
+        data: import("./application.interface").Application[];
+    };
+    findMine(request: Request & {
+        user: AuthenticatedUser;
+    }): {
         success: boolean;
         data: import("./application.interface").Application[];
     };

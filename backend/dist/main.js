@@ -29,7 +29,13 @@ async function bootstrap() {
         .map((origin) => origin.trim())
         .filter(Boolean);
     app.enableCors({
-        origin: corsOrigins,
+        origin: (requestOrigin, callback) => {
+            if (!requestOrigin || requestOrigin === 'null' || corsOrigins.includes(requestOrigin)) {
+                callback(null, true);
+                return;
+            }
+            callback(null, false);
+        },
         methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'role'],
     });

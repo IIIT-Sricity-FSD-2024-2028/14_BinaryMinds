@@ -1,7 +1,9 @@
 import { User } from './user.interface';
+import { JsonStore } from '../common/persistence/json-store';
 export declare class UsersRepository {
-    private users;
-    private idCounter;
+    private readonly store;
+    private readonly defaultUsers;
+    constructor(store: JsonStore);
     find(): User[];
     findById(id: number): User | undefined;
     findByEmail(email: string): User | undefined;
