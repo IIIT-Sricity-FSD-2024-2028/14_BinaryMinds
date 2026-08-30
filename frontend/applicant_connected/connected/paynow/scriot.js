@@ -7,15 +7,16 @@ document.addEventListener('DOMContentLoaded', function() {
   try { form = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch(e){}
 
   // Calculate dynamic fee from system config
-  var processingFee = 2100; // default
+  var processingFee = 1200; // default
   try {
     var storedFees = JSON.parse(localStorage.getItem('tradezo_fees'));
-    if (storedFees && storedFees.new) processingFee = storedFees.new;
+    if (storedFees && storedFees.new) processingFee = Number(storedFees.new) || 1200;
   } catch(e) {}
   
+  var platformFee = 250;
   var area = parseInt(form.shopArea) || 100;
   var tax = processingFee * 0.05;
-  var total = processingFee + tax;
+  var total = processingFee + tax + platformFee;
   
   sessionStorage.setItem('calculatedFeeString', '₹' + total.toFixed(2));
 
@@ -23,6 +24,8 @@ document.addEventListener('DOMContentLoaded', function() {
   if(baseEl) baseEl.innerHTML = '&#8377;' + processingFee.toFixed(2);
   var taxEl = document.getElementById('taxFee');
   if(taxEl) taxEl.innerHTML = '&#8377;' + tax.toFixed(2);
+  var platformEl = document.getElementById('platformFee');
+  if(platformEl) platformEl.innerHTML = '&#8377;' + platformFee.toFixed(2);
   var totalEl = document.getElementById('totalFee');
   if(totalEl) totalEl.innerHTML = '&#8377;' + total.toFixed(2);
   var btnEl = document.getElementById('btnFee');
@@ -142,7 +145,7 @@ async function doPayment() {
         status:        'Submitted',
         paymentStatus: 'Paid',
         paymentDate: nowIso,
-        paymentAmount: sessionStorage.getItem('calculatedFeeString') || '₹2100.00',
+        paymentAmount: sessionStorage.getItem('calculatedFeeString') || '₹1510.00',
         paymentRef:    'PAY-' + String(Date.now()).slice(-8),
         assignedFO:    '',
         foName:        '',

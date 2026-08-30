@@ -59,7 +59,7 @@ window.onload = function() {
     f4: form.aadhaar,     f5: form.motherName,  f6: form.gender,
     f7: form.fatherName,  f8: form.businessName,f9: form.businessType,
     f10:form.shopAddress, f11:form.city,        f12:form.district,
-    f13:form.state,       f14:form.pincode,     f15:form.tradeCategory,
+    f13:form.state,       f14:form.pincode,
     f16:form.shopArea
   };
   for (var id in map) {
@@ -71,8 +71,8 @@ function go() {
   var user = getCurrentApplicantUser();
   var valid = true;
 
-  // Validate required fields (skip f9 select, f16 optional)
-  var required = ['f1','f2','f3','f4','f5','f6','f7','f8','f10','f11','f12','f13','f14','f15'];
+  // Validate required fields
+  var required = ['f1','f2','f3','f4','f5','f6','f7','f8','f10','f11','f12','f13','f14'];
   required.forEach(function(id) {
     var el  = document.getElementById(id);
     var err = document.getElementById('e' + id.substring(1));
@@ -103,6 +103,22 @@ function go() {
     document.getElementById('e14').classList.add('show'); valid = false;
   }
 
+  // Shop Area = between 100 and 1500 sq.ft
+  var areaEl = document.getElementById('f16');
+  var areaErr = document.getElementById('e16');
+  var areaVal = areaEl ? parseFloat(areaEl.value) : NaN;
+  if (!areaEl || isNaN(areaVal) || areaVal < 100 || areaVal > 1500) {
+    if (areaEl) areaEl.classList.add('invalid');
+    if (areaErr) {
+      areaErr.textContent = 'Enter area between 100 and 1500 sq.ft';
+      areaErr.classList.add('show');
+    }
+    valid = false;
+  } else {
+    if (areaEl) areaEl.classList.remove('invalid');
+    if (areaErr) areaErr.classList.remove('show');
+  }
+
   if (!valid) return;
 
   // Save ALL form data to sessionStorage so review page can show them
@@ -121,7 +137,7 @@ function go() {
     district:      document.getElementById('f12').value.trim(),
     state:         document.getElementById('f13').value.trim(),
     pincode:       document.getElementById('f14').value.trim(),
-    tradeCategory: document.getElementById('f15') ? document.getElementById('f15').value.trim() : '',
+    tradeCategory: document.getElementById('f9') ? document.getElementById('f9').value : 'Retail Shop',
     shopArea:      document.getElementById('f16') ? document.getElementById('f16').value.trim() : '',
     ownerEmail:    user.email || document.getElementById('f2').value.trim()
   };

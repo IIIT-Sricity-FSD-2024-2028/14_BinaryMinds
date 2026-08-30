@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Fallback dynamic fee logic based on payment success
   function getDynamicFeeFallback() {
-    var feeString = '₹2100.00';
+    var feeString = '₹1200.00';
     try {
        var fees = JSON.parse(localStorage.getItem('tradezo_fees'));
        if (fees && fees.new) {

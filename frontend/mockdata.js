@@ -112,7 +112,24 @@ TRADEZO.demoBusinessNames = {
   'green valley restaurant': true,
   'singh electronics': true,
   'sharma healthcare': true,
-  'tech hub electronics': true
+  'tech hub electronics': true,
+  'patel wholesale hub': true,
+  'reddy constructions': true,
+  'gupta retail store': true,
+  'verma foods': true,
+  'desai manufacturing': true,
+  'nair wholesale': true,
+  'joshi medical store': true,
+  'amit general store': true,
+  'kumar electronics': true,
+  'singh pharmaceuticals': true,
+  'sharma cafe': true,
+  'patel construction': true,
+  'gupta textiles': true,
+  'verma bakery': true,
+  'reddy pharma': true,
+  'tiwari traders': true,
+  'sneha fashion store': true
 };
 
 TRADEZO.normalizeText = function(value) {
@@ -257,13 +274,26 @@ TRADEZO.removeEvaluationDemoData();
 
 // Get an application by ID
 TRADEZO.getApplication = function(id) {
-  return TRADEZO.applications.find(function(a) {
-    return String(a.id) === String(id) ||
-      String(a.appId) === String(id) ||
-      String(a.appRef) === String(id) ||
-      String(a.backendId) === String(id) ||
-      String(a.application_id) === String(id);
-  }) || null;
+  var sources = [].concat(TRADEZO.applications || []);
+  ['tz_submitted_apps', 'applications', 'tradezo_applications', 'tz_verification_queue', 'tz_inspection_reports'].forEach(function(key) {
+    try {
+      var arr = JSON.parse(localStorage.getItem(key) || '[]');
+      if (Array.isArray(arr)) sources = sources.concat(arr);
+    } catch(e) {}
+  });
+
+  for (var i = 0; i < sources.length; i++) {
+    var a = sources[i];
+    if (!a) continue;
+    if (String(a.id) === String(id) ||
+        String(a.appId) === String(id) ||
+        String(a.appRef) === String(id) ||
+        String(a.backendId) === String(id) ||
+        String(a.application_id) === String(id)) {
+      return a;
+    }
+  }
+  return null;
 };
 
 // Get a license by ID

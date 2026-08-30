@@ -9,9 +9,10 @@
 // ============================================================
  
 // List of officers in the system
-var users = [
-  { id: 'FO-2026-042', name: 'Myra Singh', email: 'myra@fieldofficer.com', phone: '9876543210', role: 'Field Officer', status: 'Active', joinDate: '2025-10-15', empId: 'FO-2026-042' }
+var defaultFieldOfficers = [
+  { id: 'FO-2026-042', name: 'Myra Singh', email: 'myra@fieldofficer.com', phone: '9876543221', role: 'Field Officer', status: 'Active', joinDate: '2025-10-15', empId: 'FO-2026-042' }
 ];
+var users = defaultFieldOfficers.slice();
  
 // List of trade license applications
 var applications = [
@@ -76,7 +77,7 @@ var activityLog = [
 ];
  
 // Default fee values (used when resetting)
-var defaultFees = { new: 2100, renewal: 1000 };
+var defaultFees = { new: 1200, renewal: 1000 };
 var FIELD_OFFICER_DEFAULT_PASSWORD = 'field@123';
 var API_BASE_URL = 'http://localhost:3000/api';
 var backendApplications = [];
@@ -141,7 +142,8 @@ var appPage   = 1;
 var auditPage = 1;
 
 function isFieldOfficerUser(user) {
-  var name = (user.name || '').toLowerCase().trim();
+  if (!user) return false;
+  var name = (user.name || user.full_name || '').toLowerCase().trim();
   var email = (user.email || '').toLowerCase().trim();
   var isDepartmentOfficerAccount =
     name === 'anjali mehta' ||
@@ -149,7 +151,8 @@ function isFieldOfficerUser(user) {
     email === 'admin@deptofficer.com' ||
     email === 'rahul@deptofficer.com';
 
-  return !isDepartmentOfficerAccount && (user.role || '').toLowerCase().trim() === 'field officer';
+  var roleStr = (user.role || '').toLowerCase().trim().replace(/_/g, ' ');
+  return !isDepartmentOfficerAccount && (roleStr === 'field officer' || roleStr === 'fo' || (!user.role && email.includes('fieldofficer')));
 }
 
 function getLocalJson(key, fallback) {
@@ -180,7 +183,6 @@ function loadPersistedAuditLogs() {
   getLocalJson('tradezo_audit_logs', []).slice().reverse().forEach(function(log) {
     mergeAuditLogEntry(log);
   });
-  filteredAudit = auditLogs.slice();
 }
 
 function fetchBackendAuditLogs() {
@@ -210,9 +212,8 @@ function fetchBackendAuditLogs() {
         });
       });
       localStorage.setItem('tradezo_audit_logs', JSON.stringify(auditLogs.slice(0, 200)));
-      filteredAudit = auditLogs.slice();
       if (document.getElementById('page-audit') && document.getElementById('page-audit').classList.contains('active')) {
-        renderAudit();
+        filterAudit();
       }
     })
     .catch(function() {
@@ -1112,38 +1113,47 @@ function refreshDynamicData() {
   function safeParse(val, fb) { try { return JSON.parse(val) || fb; } catch(e) { return fb; } }
   
   // 1. DYNAMIC USERS
+  var deletedEmails = safeParse(localStorage.getItem('tz_deleted_officer_emails'), []);
   var sysUsers = window.TRADEZO && window.TRADEZO.users ? window.TRADEZO.users : [];
   var localUsers = safeParse(localStorage.getItem('users'), []);
   var registeredUsers = safeParse(localStorage.getItem('registeredUsers'), []);
   localUsers = localUsers.filter(isFieldOfficerUser);
   localStorage.setItem('users', JSON.stringify(localUsers));
-  var allUsers = sysUsers.slice();
+
+  var allUsers = defaultFieldOfficers.filter(function(dfo) {
+    return !deletedEmails.includes((dfo.email || '').toLowerCase());
+  });
+
   registeredUsers.forEach(function(ru) {
      if(!allUsers.find(function(u) { return (u.email || '').toLowerCase() === (ru.email || '').toLowerCase(); })) allUsers.push(ru);
   });
   localUsers.forEach(function(lu) { 
      if(!allUsers.find(function(u) { return (u.email || '').toLowerCase() === (lu.email || '').toLowerCase(); })) allUsers.push(lu);
   });
+  sysUsers.forEach(function(su) {
+     if(!allUsers.find(function(u) { return (u.email || '').toLowerCase() === (su.email || '').toLowerCase(); })) allUsers.push(su);
+  });
   
   var officerUsers = allUsers.filter(function(u) {
-     return isFieldOfficerUser(u);
+     return isFieldOfficerUser(u) && !deletedEmails.includes((u.email || '').toLowerCase());
   });
 
   if (officerUsers.length > 0) {
     users = officerUsers.map(function(u, i) {
       return {
-        id: u.id || ('USR' + i),
-        name: u.name || 'Unknown',
+        id: u.id || u.empId || ('FO-' + (i + 1)),
+        name: u.name || u.full_name || 'Unknown',
         email: u.email || 'N/A',
         phone: u.phone || 'N/A',
         role: 'Field Officer',
         status: u.status || 'Active',
-        empId: u.id || ('EMP-' + i),
-        joinDate: u.joinDate || u.createdAt || u.created_at || '',
+        empId: u.empId || u.employee_id || u.id || ('FO-' + (i + 1)),
+        joinDate: u.joinDate || u.createdAt || u.created_at || '2025-10-15',
         createdAt: u.createdAt || u.created_at || '',
         updatedAt: u.updatedAt || u.updated_at || u.lastUpdated || ''
       };
     });
+    users = uniqueFieldOfficers(users);
     users.sort(function(a, b) {
       return activityTimestamp(latestActivityValue(b, ['updatedAt', 'createdAt', 'joinDate']), 0) -
              activityTimestamp(latestActivityValue(a, ['updatedAt', 'createdAt', 'joinDate']), 0);
@@ -1316,7 +1326,7 @@ function showPage(pageName, clickedLink) {
   if (pageName === 'applications')    { renderApplicationStats(); renderApplications(); }
   
   if (pageName === 'settings')        renderCategories();
-  if (pageName === 'audit')           { renderAudit(); fetchBackendAuditLogs(); }
+  if (pageName === 'audit')           { loadPersistedAuditLogs(); filterAudit(); fetchBackendAuditLogs(); }
 }
  
  
@@ -1618,13 +1628,19 @@ function deleteUser(userId) {
  
   if (!confirm('Are you sure you want to delete "' + user.name + '"? This cannot be undone.')) return;
  
+  var deletedEmails = getLocalJson('tz_deleted_officer_emails', []);
+  if (user.email && !deletedEmails.includes(user.email.toLowerCase())) {
+    deletedEmails.push(user.email.toLowerCase());
+    localStorage.setItem('tz_deleted_officer_emails', JSON.stringify(deletedEmails));
+  }
+
   users = users.filter(function(u) { return u.id !== userId; });
   filteredUsers = users.slice();
   removeFieldOfficerCredentials(user);
   
   // Persist dynamically
   var localUsers = getLocalJson('users', []);
-  localUsers = localUsers.filter(function(lu) { return lu.id !== userId; });
+  localUsers = localUsers.filter(function(lu) { return lu.id !== userId && (lu.email || '').toLowerCase() !== (user.email || '').toLowerCase(); });
   localStorage.setItem('users', JSON.stringify(localUsers));
 
   addAuditLog('Delete', 'Users', 'Deleted officer ' + user.name);
@@ -2016,28 +2032,28 @@ function triggerManualBackup() {
 // ============================================================
  
 function renderAudit() {
-  loadPersistedAuditLogs();
-  var tbody    = document.getElementById('audit-tbody');
+  var tbody = document.getElementById('audit-tbody');
+  if (!tbody) return;
   tbody.innerHTML = '';
  
   var start    = (auditPage - 1) * rowsPerPage;
   var pageData = filteredAudit.slice(start, start + rowsPerPage);
  
   if (pageData.length === 0) {
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No logs found.</td></tr>';
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No logs found.</td></tr>';
   } else {
     for (var i = 0; i < pageData.length; i++) {
-      var log         = pageData[i];
-      var actionClass = 'action-' + log.action.toLowerCase();
+      var log = pageData[i];
+      var actionStr = String(log.action || 'Info');
+      var actionClass = 'action-' + actionStr.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
       tbody.innerHTML +=
         '<tr>' +
-          '<td>' + log.time + '</td>' +
-          '<td>' + log.user + '</td>' +
-          '<td>' + log.role + '</td>' +
-          '<td><span class="action-badge ' + actionClass + '">' + log.action + '</span></td>' +
-          '<td>' + log.module + '</td>' +
-          '<td>' + log.desc + '</td>' +
-          '<td>' + log.ip + '</td>' +
+          '<td>' + (log.time || '') + '</td>' +
+          '<td>' + (log.user || '') + '</td>' +
+          '<td>' + (log.role || '') + '</td>' +
+          '<td><span class="action-badge ' + actionClass + '">' + actionStr + '</span></td>' +
+          '<td>' + (log.module || '') + '</td>' +
+          '<td>' + (log.desc || log.description || '') + '</td>' +
         '</tr>';
     }
   }
@@ -2049,25 +2065,57 @@ function renderAudit() {
 }
  
 function filterAudit() {
-  var search = document.getElementById('audit-search').value.toLowerCase();
-  var action = document.getElementById('audit-action-filter').value;
-  var role   = document.getElementById('audit-role-filter').value;
- 
+  var searchInput = document.getElementById('audit-search');
+  var roleSelect  = document.getElementById('audit-role-filter');
+
+  var search = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  var selectedRole = roleSelect ? roleSelect.value.toLowerCase().trim() : '';
+
   filteredAudit = auditLogs.filter(function(log) {
-    var matchSearch = !search || log.user.toLowerCase().includes(search) || log.desc.toLowerCase().includes(search);
-    var matchAction = !action || log.action === action;
-    var matchRole   = !role   || log.role === role;
-    return matchSearch && matchAction && matchRole;
+    var userText   = String(log.user || '').toLowerCase();
+    var descText   = String(log.desc || log.description || '').toLowerCase();
+    var moduleText = String(log.module || '').toLowerCase();
+    var actionText = String(log.action || '').toLowerCase();
+    var ipText     = String(log.ip || log.ip_address || '').toLowerCase();
+    var roleText   = String(log.role || '').toLowerCase();
+
+    var matchSearch = !search ||
+      userText.includes(search) ||
+      descText.includes(search) ||
+      moduleText.includes(search) ||
+      actionText.includes(search) ||
+      ipText.includes(search) ||
+      roleText.includes(search);
+
+    var matchRole = true;
+    if (selectedRole) {
+      var normLogRole = roleText.replace(/[\s_-]+/g, '');
+      var normSelected = selectedRole.replace(/[\s_-]+/g, '');
+
+      if (normSelected === 'municipalcommissioner' || normSelected === 'superuser') {
+        matchRole = normLogRole === 'municipalcommissioner' || normLogRole === 'superuser';
+      } else if (normSelected === 'fieldofficer') {
+        matchRole = normLogRole === 'fieldofficer' || normLogRole === 'fo';
+      } else if (normSelected === 'departmentofficer') {
+        matchRole = normLogRole === 'departmentofficer' || normLogRole === 'do';
+      } else if (normSelected === 'applicant') {
+        matchRole = normLogRole === 'applicant';
+      } else {
+        matchRole = normLogRole === normSelected || normLogRole.includes(normSelected);
+      }
+    }
+
+    return matchSearch && matchRole;
   });
- 
+
   auditPage = 1;
   renderAudit();
 }
  
 function exportAuditCSV() {
-  var header = 'Timestamp,User Name,Role,Action,Module,Description,IP Address';
+  var header = 'Timestamp,User Name,Role,Action,Module,Description';
   var rows   = filteredAudit.map(function(log) {
-    return [log.time, log.user, log.role, log.action, log.module, '"' + log.desc + '"', log.ip].join(',');
+    return [log.time, log.user, log.role, log.action, log.module, '"' + (log.desc || log.description || '') + '"'].join(',');
   });
  
   var csvContent = header + '\n' + rows.join('\n');

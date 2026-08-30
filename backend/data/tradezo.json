@@ -129,6 +129,34 @@
       "role": "applicant",
       "user_id": 15,
       "created_at": "2026-08-28T14:56:36.564Z"
+    },
+    {
+      "full_name": "sami",
+      "email": "samiksha@123gmail.com",
+      "phone": "1234567890",
+      "password_hash": "123456",
+      "role": "applicant",
+      "user_id": 16,
+      "created_at": "2026-08-30T14:47:31.440Z"
+    },
+    {
+      "full_name": "sangi",
+      "email": "sangi@fieldofficer.com",
+      "phone": "9032084805",
+      "employee_id": "EMP-02027",
+      "password_hash": "field@123",
+      "role": "field_officer",
+      "user_id": 17,
+      "created_at": "2026-08-30T16:55:36.591Z"
+    },
+    {
+      "full_name": "manasa",
+      "email": "manasa2006@gmail.com",
+      "phone": "9087654213",
+      "password_hash": "manasa",
+      "role": "applicant",
+      "user_id": 18,
+      "created_at": "2026-08-30T17:02:17.541Z"
     }
   ],
   "applications": [
@@ -221,6 +249,36 @@
       "application_id": 6,
       "application_ref": "TL-2026-000006",
       "submitted_at": "2026-08-28T14:58:15.866Z"
+    },
+    {
+      "applicant_id": 5,
+      "full_name": "Rajesh Kumar",
+      "business_name": "Green Valley restraunt",
+      "business_type": "gdjf",
+      "trade_category": "gdjf",
+      "shop_address": "123 main street",
+      "applicant_phone": "9876543220",
+      "application_status": "submitted",
+      "paymentDone": true,
+      "assignedOfficerId": null,
+      "application_id": 7,
+      "application_ref": "TL-2026-000007",
+      "submitted_at": "2026-08-30T15:02:23.625Z"
+    },
+    {
+      "applicant_id": 18,
+      "full_name": "manasa",
+      "business_name": "manass bakery",
+      "business_type": "Manufacturer",
+      "trade_category": "Manufacturer",
+      "shop_address": "gachibowli",
+      "applicant_phone": "9087654213",
+      "application_status": "submitted",
+      "paymentDone": true,
+      "assignedOfficerId": null,
+      "application_id": 8,
+      "application_ref": "TL-2026-000008",
+      "submitted_at": "2026-08-30T17:08:14.236Z"
     }
   ],
   "payments": [
@@ -271,6 +329,22 @@
       "transaction_id": "TXN-a54795c1-ab8f-4e17-9166-df87095fee42",
       "payment_id": 6,
       "payment_date": "2026-08-28T14:58:25.735Z"
+    },
+    {
+      "application_id": 7,
+      "amount": 1510,
+      "payment_status": "COMPLETED",
+      "transaction_id": "TXN-92b4ddce-17f6-4c2f-83da-b795aff153d4",
+      "payment_id": 7,
+      "payment_date": "2026-08-30T15:14:39.162Z"
+    },
+    {
+      "application_id": 8,
+      "amount": 1510,
+      "payment_status": "COMPLETED",
+      "transaction_id": "TXN-c3df739f-2f41-4e6b-afa1-71390782b6a2",
+      "payment_id": 8,
+      "payment_date": "2026-08-30T17:08:27.820Z"
     }
   ],
   "licenses": [
@@ -361,13 +435,37 @@
         "municipal_share": 1764,
         "payment_status": "COMPLETED",
         "created_at": "2026-08-28T14:58:25.735Z"
+      },
+      {
+        "payment_id": 7,
+        "transaction_id": "TXN-92b4ddce-17f6-4c2f-83da-b795aff153d4",
+        "corporation_id": "municipal-corporation",
+        "gross_amount": 1510,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 302,
+        "municipal_share": 1208,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-08-30T15:14:39.162Z",
+        "backfilled": false
+      },
+      {
+        "payment_id": 8,
+        "transaction_id": "TXN-c3df739f-2f41-4e6b-afa1-71390782b6a2",
+        "corporation_id": "municipal-corporation",
+        "gross_amount": 1510,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 302,
+        "municipal_share": 1208,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-08-30T17:08:27.820Z",
+        "backfilled": false
       }
     ]
   },
   "counters": {
-    "users": 16,
-    "applications": 7,
-    "payments": 7,
+    "users": 19,
+    "applications": 9,
+    "payments": 9,
     "licenses": 2
   }
 }

@@ -113,7 +113,15 @@ export class UsersRepository {
   }
 
   findByEmail(email: string): User | undefined {
-    return this.find().find((user) => user.email === email);
+    const normalizedEmail = email.trim().toLowerCase();
+    return this.find().find(
+      (user) => user.email.trim().toLowerCase() === normalizedEmail,
+    );
+  }
+
+  findByPhone(phone: string): User | undefined {
+    const normalizedPhone = phone.trim();
+    return this.find().find((user) => user.phone.trim() === normalizedPhone);
   }
 
   create(user: Omit<User, 'user_id' | 'created_at'>): User {

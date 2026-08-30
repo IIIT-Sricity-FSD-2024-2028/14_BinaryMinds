@@ -107,7 +107,11 @@ function fieldOfficerStage(app, inspections) {
   if (isVerifiedForInspection(app)) {
     return { label: 'Verified', className: 'status-pending' };
   }
-  return null;
+  var raw = normalizeText(app.status || app.application_status);
+  if (raw === 'submitted' || raw === 'documents uploaded' || raw === 'pending' || raw === 'new' || raw === 'under review') {
+    return { label: 'Submitted', className: 'status-pending' };
+  }
+  return { label: app.status || 'Under Review', className: 'status-pending' };
 }
 
 function departmentStatus(appId) {
@@ -123,28 +127,39 @@ function departmentStatus(appId) {
 }
 
 function loadApprovedApplications() {
+  if (window.TRADEZO && typeof TRADEZO.removeEvaluationDemoData === 'function') {
+    TRADEZO.removeEvaluationDemoData();
+  }
   var inspections = inspectionByApplication();
   var sources = []
     .concat((window.TRADEZO && TRADEZO.applications) ? TRADEZO.applications : [])
+    .concat(safeArray('tz_submitted_apps'))
     .concat(safeArray('tradezo_applications'))
     .concat(safeArray('applications'))
-    .concat(safeArray('tz_submitted_apps'))
     .concat(safeArray('tz_inspection_reports'));
 
-  return mergeByApplicationId(sources).map(function(app) {
+  var merged = mergeByApplicationId(sources);
+
+  var apps = merged.filter(function(app) {
+    if (!app) return false;
+    var bizName = normalizeText(app.businessName || app.business || app.companyName);
+    var demoMap = window.TRADEZO && TRADEZO.demoBusinessNames ? TRADEZO.demoBusinessNames : {};
+    return !demoMap[bizName];
+  }).map(function(app) {
     var id = getAppId(app);
     var foStage = fieldOfficerStage(app, inspections);
-    if (!foStage) return null;
     return Object.assign({}, app, {
       appId: id,
       foStatus: foStage,
       doStatus: departmentStatus(id)
     });
   }).filter(function(app) {
-    return !!app;
-  }).map(function(app) {
-    return app;
+    return !!app && !!app.appId;
   });
+
+  return window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function'
+    ? TRADEZO.sortFreshFirst(apps)
+    : apps.reverse();
 }
 
 function renderStats(apps) {
@@ -179,7 +194,7 @@ function renderTable(apps) {
   if (countText) countText.textContent = 'Showing ' + apps.length + ' application(s)';
 
   if (!apps.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty-row">No field-officer-approved applications found.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-row">No applications found.</td></tr>';
     return;
   }
 

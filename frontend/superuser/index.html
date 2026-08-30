@@ -22,9 +22,6 @@
       </div>
     </div>
     <nav class="sidebar-nav">
-      <a href="../applicant_connected/connected/landing%20page/index.html" class="nav-link">
-        <span class="nav-icon">&#8962;</span> Home
-      </a>
       <a href="#" class="nav-link active" onclick="showPage('dashboard', this)">
         <span class="nav-icon">&#9783;</span> Dashboard
       </a>
@@ -36,9 +33,6 @@
       </a>
       <a href="#" class="nav-link" onclick="showPage('applications', this)">
         <span class="nav-icon">&#9998;</span> Applications Overview
-      </a>
-      <a href="#" class="nav-link" onclick="showPage('settings', this)">
-        <span class="nav-icon">&#9881;</span> System Settings
       </a>
       <a href="#" class="nav-link" onclick="showPage('audit', this)">
         <span class="nav-icon">&#9776;</span> Audit Logs
@@ -301,7 +295,7 @@
           <div class="form-grid-2">
             <div class="form-group">
               <label>New Application Fee *</label>
-              <input type="number" id="fee-new" class="form-input" value="2100" />
+              <input type="number" id="fee-new" class="form-input" value="1200" />
               <div class="form-hint">Fee charged for new license applications</div>
             </div>
             <div class="form-group">
@@ -313,7 +307,7 @@
           <div class="fee-summary-box">
             <div class="fee-summary-title">Current Fee Structure</div>
             <div class="fee-summary-row-2">
-              <div><div class="fee-label">New Application</div><div class="fee-val" id="display-fee-new">&#8377;2,100</div></div>
+              <div><div class="fee-label">New Application</div><div class="fee-val" id="display-fee-new">&#8377;1,200</div></div>
               <div><div class="fee-label">Renewal</div><div class="fee-val" id="display-fee-renewal">&#8377;1,000</div></div>
             </div>
           </div>
@@ -372,21 +366,13 @@
  
         <div class="card">
           <div class="filter-bar">
-            <input type="text" class="search-input" placeholder="Search by user..." oninput="filterAudit()" id="audit-search" />
-            <select class="filter-select" id="audit-action-filter" onchange="filterAudit()">
-              <option value="">All Actions</option>
-              <option value="Login">Login</option>
-              <option value="Create">Create</option>
-              <option value="Update">Update</option>
-              <option value="Delete">Delete</option>
-              <option value="Approve">Approve</option>
-              <option value="Reject">Reject</option>
-            </select>
+            <input type="text" class="search-input" placeholder="Search by user, description, module..." oninput="filterAudit()" id="audit-search" />
             <select class="filter-select" id="audit-role-filter" onchange="filterAudit()">
               <option value="">All Roles</option>
-              <option value="Super User">Super User</option>
-              <option value="Field Officer">Field Officer</option>
-              <option value="Applicant">Applicant</option>
+              <option value="applicant">Applicant</option>
+              <option value="field_officer">Field Officer</option>
+              <option value="department_officer">Department Officer</option>
+              <option value="municipal_commissioner">Municipal Commissioner</option>
             </select>
           </div>
           <table class="data-table">
@@ -398,7 +384,6 @@
                 <th>Action</th>
                 <th>Module</th>
                 <th>Description</th>
-                <th>IP Address</th>
               </tr>
             </thead>
             <tbody id="audit-tbody"></tbody>

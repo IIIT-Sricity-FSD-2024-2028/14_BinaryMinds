@@ -30,6 +30,18 @@ export class UsersService {
     return user;
   }
 
+  findByLoginIdentifier(identifier: string): User {
+    const normalizedIdentifier = identifier.trim();
+    const user = normalizedIdentifier.includes('@')
+      ? this.usersRepository.findByEmail(normalizedIdentifier)
+      : this.usersRepository.findByPhone(normalizedIdentifier);
+
+    if (!user) {
+      throw new NotFoundException(`User with login ${identifier} not found`);
+    }
+    return user;
+  }
+
   create(userData: Omit<User, 'user_id' | 'created_at'>): User {
     // Business logic data validation for email and phone uniqueness
     const existingEmail = this.usersRepository.findByEmail(userData.email);

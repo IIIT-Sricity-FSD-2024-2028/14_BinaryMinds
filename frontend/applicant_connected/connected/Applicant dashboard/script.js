@@ -2,7 +2,7 @@
 
 (function() {
   function getDynamicFeeFallback() {
-    var feeString = '₹2,100';
+    var feeString = '₹1,200';
     try {
        var fees = JSON.parse(localStorage.getItem('tradezo_fees'));
        if (fees && fees.new) {

@@ -1,6 +1,0 @@
-export declare enum ReviewStatus {
-    PENDING = "PENDING",
-    APPROVED = "APPROVED",
-    REJECTED = "REJECTED",
-    CLARIFICATION_REQUESTED = "CLARIFICATION_REQUESTED"
-}

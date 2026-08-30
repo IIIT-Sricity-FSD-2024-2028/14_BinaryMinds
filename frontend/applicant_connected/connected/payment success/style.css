@@ -61,7 +61,7 @@ nav a.active { background: rgba(255,255,255,0.2); font-weight: 600; }
 
 /* ===== MAIN ===== */
 main {
-  max-width: 900px;
+  max-width: 680px;
   margin: 32px auto;
   padding: 0 20px 40px;
 }
@@ -79,16 +79,9 @@ main {
   margin-bottom: 24px;
 }
 
-/* ===== GRID LAYOUT ===== */
+/* ===== GRID / CARD CONTAINER ===== */
 .grid {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 24px;
-  align-items: start;
-}
-
-@media (max-width: 768px) {
-  .grid { grid-template-columns: 1fr; }
+  display: block;
 }
 
 /* ===== LEFT CARD ===== */

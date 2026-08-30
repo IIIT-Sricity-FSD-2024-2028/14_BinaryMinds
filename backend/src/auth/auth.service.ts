@@ -29,7 +29,7 @@ export class AuthService {
       user = this.platformAdminUser(credentials);
     } else {
       try {
-        user = this.usersService.findByEmail(credentials.email.trim().toLowerCase());
+        user = this.usersService.findByLoginIdentifier(credentials.email);
       } catch {
         throw new UnauthorizedException('Invalid email, password, or role');
       }

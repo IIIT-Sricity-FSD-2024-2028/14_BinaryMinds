@@ -107,22 +107,59 @@ function fieldOfficerStage(app, inspections) {
   if (isVerifiedForInspection(app)) {
     return { label: 'Verified', className: 'verified' };
   }
-  return null;
+  var raw = normalizeText(app.status || app.application_status);
+  if (raw === 'submitted' || raw === 'documents uploaded' || raw === 'pending' || raw === 'new' || raw === 'under review') {
+    return { label: 'Submitted', className: 'submitted' };
+  }
+  return { label: app.status || 'Under Review', className: 'submitted' };
+}
+
+function getApplicationTimestamp(app) {
+  if (!app) return 0;
+  if (window.TRADEZO && typeof TRADEZO.freshness === 'function') {
+    var f = TRADEZO.freshness(app.rawApp || app);
+    if (f > 0) return f;
+  }
+  var fields = [
+    app.updatedDate, app.updatedAt, app.submittedDate, app.createdAt,
+    app.date, app.reviewDate, app.approvedDate,
+    (app.rawApp && app.rawApp.updatedAt), (app.rawApp && app.rawApp.createdAt),
+    (app.rawApp && app.rawApp.submitted_at), (app.rawApp && app.rawApp.submittedDate)
+  ];
+  for (var i = 0; i < fields.length; i++) {
+    var val = fields[i];
+    if (!val) continue;
+    if (typeof val === 'number' && val > 10000000000) return val;
+    var parsed = new Date(val).getTime();
+    if (!isNaN(parsed) && parsed > 0) return parsed;
+  }
+  var digits = String(app.appId || '').replace(/\D/g, '');
+  if (digits) return parseInt(digits.slice(-6), 10) || 0;
+  return 0;
 }
 
 function loadWorklistApplications() {
+  if (window.TRADEZO && typeof TRADEZO.removeEvaluationDemoData === 'function') {
+    TRADEZO.removeEvaluationDemoData();
+  }
   var inspections = inspectionByApplication();
   var sources = []
     .concat((window.TRADEZO && Array.isArray(TRADEZO.applications)) ? TRADEZO.applications : [])
+    .concat(safeArray('tz_submitted_apps'))
     .concat(safeArray('tradezo_applications'))
     .concat(safeArray('applications'))
-    .concat(safeArray('tz_submitted_apps'))
     .concat(safeArray('tz_inspection_reports'));
 
-  var apps = mergeByApplicationId(sources).map(function(app) {
+  var merged = mergeByApplicationId(sources);
+
+  var apps = merged.filter(function(app) {
+    if (!app) return false;
+    var bizName = normalizeText(app.businessName || app.business || app.companyName);
+    var demoMap = window.TRADEZO && TRADEZO.demoBusinessNames ? TRADEZO.demoBusinessNames : {};
+    return !demoMap[bizName];
+  }).map(function(app) {
     var appId = getAppId(app);
     var foStage = fieldOfficerStage(app, inspections);
-    if (!foStage) return null;
 
     return {
       appId: appId,
@@ -131,21 +168,32 @@ function loadWorklistApplications() {
       applicantName: app.applicantName || app.applicant || app.ownerName || 'N/A',
       submittedDate: app.submittedDate || app.submitted_at || app.date || app.createdAt || '',
       updatedDate: app.updatedDate || app.updatedAt || app.reviewDate || app.approvedDate || '',
+      createdAt: app.createdAt || app.created_at || app.submitted_at || '',
+      updatedAt: app.updatedAt || app.updated_at || app.lastUpdated || '',
       foStatus: foStage,
-      doStatus: getDoStatus(appId)
+      doStatus: getDoStatus(appId),
+      rawApp: app
     };
   }).filter(function(app) {
-    return !!app;
+    return !!app && !!app.appId;
   });
 
-  return window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function'
-    ? TRADEZO.sortFreshFirst(apps)
-    : apps.reverse();
+  apps.sort(function(a, b) {
+    var timeA = getApplicationTimestamp(a);
+    var timeB = getApplicationTimestamp(b);
+    if (timeB !== timeA) return timeB - timeA;
+    var seqA = (window.TRADEZO && typeof TRADEZO.applicationSequence === 'function') ? TRADEZO.applicationSequence(a.appId) : 0;
+    var seqB = (window.TRADEZO && typeof TRADEZO.applicationSequence === 'function') ? TRADEZO.applicationSequence(b.appId) : 0;
+    return seqB - seqA;
+  });
+
+  return apps;
 }
 
 function stagePriority(app) {
   if (app.foStatus.label === 'Inspection Recorded') return 0;
-  return 1;
+  if (app.foStatus.label === 'Verified') return 1;
+  return 2;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -171,7 +219,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (app.foStatus.label === 'Inspection Recorded') {
       return '<span style="background:#dbeafe;color:#1d4ed8;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Inspection Recorded</span>';
     }
-    return '<span style="background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Verified</span>';
+    if (app.foStatus.label === 'Verified') {
+      return '<span style="background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Verified</span>';
+    }
+    return '<span style="background:#e0f2fe;color:#0284c7;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Submitted</span>';
   }
 
   function actionHtml(app) {
@@ -186,10 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (doStatus === 'rejected') {
       return '<span style="background:#fee2e2;color:#dc2626;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Rejected</span>';
     }
-    if (app.foStatus.label === 'Inspection Recorded') {
-      return '<button class="review-btn" data-id="' + escapeHtml(app.appId) + '" style="background:#1E3A8A;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-weight:600;">Review Application</button>';
-    }
-    return '<span style="background:#e0f2fe;color:#0369a1;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">Awaiting Inspection</span>';
+    return '<button class="review-btn" data-id="' + escapeHtml(app.appId) + '" style="background:#1E3A8A;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-weight:600;">Review Application</button>';
   }
 
   function applyFilters(applications) {
@@ -211,11 +259,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     filtered.sort(function(a, b) {
-      var priority = stagePriority(a) - stagePriority(b);
-      if (priority !== 0) return priority;
-      var dateA = new Date(a.updatedDate || a.submittedDate || 0).getTime();
-      var dateB = new Date(b.updatedDate || b.submittedDate || 0).getTime();
-      return dateB - dateA;
+      var timeA = getApplicationTimestamp(a);
+      var timeB = getApplicationTimestamp(b);
+      if (timeB !== timeA) return timeB - timeA;
+
+      var seqA = (window.TRADEZO && typeof TRADEZO.applicationSequence === 'function') ? TRADEZO.applicationSequence(a.appId) : 0;
+      var seqB = (window.TRADEZO && typeof TRADEZO.applicationSequence === 'function') ? TRADEZO.applicationSequence(b.appId) : 0;
+      return seqB - seqA;
     });
 
     return filtered;
@@ -226,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
     tbody.innerHTML = '';
 
     if (!applications.length) {
-      tbody.innerHTML = '<tr><td colspan="5" class="empty-row">No verified or inspection-recorded applications found.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-row">No applications found.</td></tr>';
     } else {
       applications.forEach(function(app) {
         var row = document.createElement('tr');
