@@ -152,6 +152,16 @@ function loadWorklistApplications() {
 
   var merged = mergeByApplicationId(sources);
 
+  var loggedInUser = null;
+  try { loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
+  var currentMuniId = (loggedInUser && (loggedInUser.municipality_id || loggedInUser.municipalityId)) || '';
+
+  if (currentMuniId && window.TRADEZO && typeof TRADEZO.isAllowedForTenant === 'function') {
+    merged = merged.filter(function(app) {
+      return TRADEZO.isAllowedForTenant(app, currentMuniId);
+    });
+  }
+
   var apps = merged.filter(function(app) {
     if (!app) return false;
     var bizName = normalizeText(app.businessName || app.business || app.companyName);
@@ -165,7 +175,7 @@ function loadWorklistApplications() {
       appId: appId,
       businessName: app.businessName || app.business || 'N/A',
       tradeCategory: app.tradeCategory || app.category || app.licenseType || 'Trade License',
-      applicantName: app.applicantName || app.applicant || app.ownerName || 'N/A',
+      applicantName: app.applicantName || app.applicant || app.ownerName || app.full_name || 'N/A',
       submittedDate: app.submittedDate || app.submitted_at || app.date || app.createdAt || '',
       updatedDate: app.updatedDate || app.updatedAt || app.reviewDate || app.approvedDate || '',
       createdAt: app.createdAt || app.created_at || app.submitted_at || '',
@@ -177,6 +187,17 @@ function loadWorklistApplications() {
   }).filter(function(app) {
     return !!app && !!app.appId;
   });
+
+  var loggedIn = null;
+  try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
+  var officerMuni = (loggedIn && loggedIn.municipality_id) || '';
+
+  if (officerMuni) {
+    apps = apps.filter(function(item) {
+      var appMuni = (item.rawApp && (item.rawApp.municipalityId || item.rawApp.municipality_id)) || '';
+      return appMuni.toLowerCase() === officerMuni.toLowerCase();
+    });
+  }
 
   apps.sort(function(a, b) {
     var timeA = getApplicationTimestamp(a);
@@ -276,13 +297,14 @@ document.addEventListener('DOMContentLoaded', function() {
     tbody.innerHTML = '';
 
     if (!applications.length) {
-      tbody.innerHTML = '<tr><td colspan="5" class="empty-row">No applications found.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-row">No applications found.</td></tr>';
     } else {
       applications.forEach(function(app) {
         var row = document.createElement('tr');
         row.setAttribute('data-id', app.appId);
         row.innerHTML =
           '<td style="color:#1E3A8A;font-weight:600;">' + escapeHtml(app.appId) + '</td>' +
+          '<td>' + escapeHtml(app.applicantName) + '</td>' +
           '<td><strong>' + escapeHtml(app.businessName) + '</strong><br><small style="color:#64748b;">' + escapeHtml(app.tradeCategory) + '</small></td>' +
           '<td>' + escapeHtml(app.submittedDate || '-') + '</td>' +
           '<td>' + statusBadge(app) + '</td>' +

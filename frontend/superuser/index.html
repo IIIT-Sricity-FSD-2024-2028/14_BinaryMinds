@@ -173,28 +173,53 @@
         <div class="page-top-bar">
           <div>
             <div class="page-heading">Department Officer Management</div>
-            <div class="page-sub">Manage department officer terms and replacements</div>
+            <div class="page-sub">Manage the Department Officer for this Municipal Corporation</div>
+          </div>
+          <button class="btn-primary" id="btn-do-action" onclick="openDepartmentOfficerModal()">+ Add Department Officer</button>
+        </div>
+
+        <!-- DO Detail Card (rendered when active DO exists) -->
+        <div class="card" id="do-detail-card" style="display: none;">
+          <div class="card-title">Active Department Officer</div>
+          <div class="detail-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 15px;">
+            <div class="detail-item">
+              <label style="color: #64748b; font-size: 13px; font-weight: 500;">Full Name</label>
+              <p id="do-name" style="font-size: 16px; font-weight: 600; color: #1e293b; margin-top: 4px;">—</p>
+            </div>
+            <div class="detail-item">
+              <label style="color: #64748b; font-size: 13px; font-weight: 500;">Email Address</label>
+              <p id="do-email" style="font-size: 15px; color: #1e293b; margin-top: 4px;">—</p>
+            </div>
+            <div class="detail-item">
+              <label style="color: #64748b; font-size: 13px; font-weight: 500;">Phone Number</label>
+              <p id="do-phone" style="font-size: 15px; color: #1e293b; margin-top: 4px;">—</p>
+            </div>
+            <div class="detail-item">
+              <label style="color: #64748b; font-size: 13px; font-weight: 500;">Employee ID</label>
+              <p id="do-empid" style="font-size: 15px; color: #1e293b; margin-top: 4px;">—</p>
+            </div>
+            <div class="detail-item">
+              <label style="color: #64748b; font-size: 13px; font-weight: 500;">Department</label>
+              <p id="do-department" style="font-size: 15px; color: #1e293b; margin-top: 4px;">Trade License Department</p>
+            </div>
+            <div class="detail-item">
+              <label style="color: #64748b; font-size: 13px; font-weight: 500;">Status</label>
+              <p style="margin-top: 4px;"><span class="badge badge-green" id="do-status">Active</span></p>
+            </div>
+          </div>
+          <div style="margin-top: 25px; padding-top: 18px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end;">
+            <button class="btn-primary" id="btn-replace-do" onclick="openDepartmentOfficerModal()">&#8646; Replace Department Officer</button>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-title">Current Department Officers</div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="department-officers-tbody"></tbody>
-          </table>
-          <div class="alert-banner blue-banner" id="department-officer-message"></div>
-          <div class="form-actions">
-            <button class="btn-primary" id="btn-add-department-officer" onclick="openDepartmentOfficerModal()">Add New Department Officer</button>
-          </div>
+        <!-- DO Empty State (rendered when no active DO exists) -->
+        <div class="card" id="do-empty-card" style="text-align: center; padding: 50px 20px;">
+          <div style="font-size: 48px; margin-bottom: 12px;">&#127970;</div>
+          <h3 style="font-size: 18px; color: #1e293b; margin-bottom: 6px;">No Department Officer Added</h3>
+          <p style="color: #64748b; max-width: 450px; margin: 0 auto 20px auto; font-size: 14px;">
+            This municipality does not currently have an active Department Officer to review trade licenses and compliance reports.
+          </p>
+          <button class="btn-primary" onclick="openDepartmentOfficerModal()">+ Add Department Officer</button>
         </div>
       </div>
     </div>
@@ -419,51 +444,57 @@
           </div>
           <div class="form-group">
             <label>Phone Number *</label>
-            <input type="text" id="add-phone" class="form-input" placeholder="+91 XXXXX XXXXX" />
+            <input type="text" id="add-phone" class="form-input" placeholder="10-digit phone number" />
             <div class="error-msg" id="err-add-phone"></div>
           </div>
         </div>
         <div class="form-grid-2">
           <div class="form-group">
-            <label>Role *</label>
-            <select id="add-role" class="form-input">
-              <option value="Field Officer">Field Officer</option>
-            </select>
-            <div class="error-msg" id="err-add-role"></div>
+            <label>Initial Password *</label>
+            <input type="password" id="add-password" class="form-input" placeholder="TradeZo@123" value="TradeZo@123" />
+            <div class="error-msg" id="err-add-password"></div>
           </div>
           <div class="form-group">
             <label>Status *</label>
             <select id="add-status" class="form-input">
-              <option value="">Select Status</option>
-              <option value="Active">Active</option>
+              <option value="Active" selected>Active</option>
               <option value="Inactive">Inactive</option>
             </select>
             <div class="error-msg" id="err-add-status"></div>
           </div>
         </div>
-        <div class="form-group">
-          <label>Joining Date *</label>
-          <input type="date" id="add-date" class="form-input" />
-          <div class="error-msg" id="err-add-date"></div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Role *</label>
+            <select id="add-role" class="form-input" disabled>
+              <option value="Field Officer" selected>Field Officer</option>
+            </select>
+            <div class="error-msg" id="err-add-role"></div>
+          </div>
+          <div class="form-group">
+            <label>Joining Date *</label>
+            <input type="date" id="add-date" class="form-input" />
+            <div class="error-msg" id="err-add-date"></div>
+          </div>
         </div>
         <div class="info-note">
-          <strong>Note:</strong> Field officers will receive an email with login credentials and system access instructions. Please ensure the email address is correct.
+          <strong>Note:</strong> Password defaults to <code>TradeZo@123</code>. The field officer can log in at the TradeZo portal using their email and this password. Employee ID will be automatically generated by the system in sequence.
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn-outline" onclick="closeModal('modal-add')">Cancel</button>
-        <button class="btn-primary" onclick="addOfficer()">Add Field Officer</button>
+        <button class="btn-primary" id="btn-save-officer" onclick="addOfficer()">Add Field Officer</button>
       </div>
     </div>
   </div>
  
-  <!-- ==================== MODAL: ADD DEPARTMENT OFFICER ==================== -->
+  <!-- ==================== MODAL: ADD / REPLACE DEPARTMENT OFFICER ==================== -->
   <div class="modal-overlay" id="modal-department-officer">
     <div class="modal">
       <div class="modal-header">
         <div>
-          <div class="modal-title">Add New Department Officer</div>
-          <div class="modal-sub">A new officer can be added only for a department whose current officer term has expired.</div>
+          <div class="modal-title" id="modal-dept-title">Add Department Officer</div>
+          <div class="modal-sub" id="modal-dept-sub">Enter the details for this municipality's single active Department Officer</div>
         </div>
         <button class="modal-close" onclick="closeModal('modal-department-officer')">&times;</button>
       </div>
@@ -483,28 +514,34 @@
         <div class="form-grid-2">
           <div class="form-group">
             <label>Phone Number *</label>
-            <input type="text" id="dept-phone" class="form-input" placeholder="+91 XXXXX XXXXX" />
+            <input type="text" id="dept-phone" class="form-input" placeholder="10-digit phone number" />
             <div class="error-msg" id="err-dept-phone"></div>
           </div>
           <div class="form-group">
-            <label>Department *</label>
-            <select id="dept-department" class="form-input"></select>
-            <div class="error-msg" id="err-dept-department"></div>
+            <label>Employee ID (System Generated)</label>
+            <input type="text" id="dept-empid" class="form-input disabled-input" disabled readonly placeholder="System Generated" />
+            <div class="error-msg" id="err-dept-empid"></div>
           </div>
         </div>
-        <div class="form-group">
-          <label>Start Date *</label>
-          <input type="date" id="dept-start" class="form-input" />
-          <div class="form-hint">End date is automatically calculated as 5 years after the start date.</div>
-          <div class="error-msg" id="err-dept-start"></div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Department Name *</label>
+            <input type="text" id="dept-department" class="form-input" value="Trade License Department" placeholder="Trade License Department" />
+            <div class="error-msg" id="err-dept-department"></div>
+          </div>
+          <div class="form-group">
+            <label>Initial Password *</label>
+            <input type="password" id="dept-password" class="form-input" value="TradeZo@123" placeholder="TradeZo@123" />
+            <div class="error-msg" id="err-dept-password"></div>
+          </div>
         </div>
-        <div class="info-note">
-          <strong>Rule:</strong> Only one active department officer is allowed per department.
+        <div class="info-note" id="dept-modal-note">
+          <strong>Rule:</strong> Exactly one active Department Officer is assigned per municipality.
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn-outline" onclick="closeModal('modal-department-officer')">Cancel</button>
-        <button class="btn-primary" onclick="addDepartmentOfficer()">Create Department Officer</button>
+        <button class="btn-primary" id="btn-save-department-officer" onclick="saveDepartmentOfficer()">Save Department Officer</button>
       </div>
     </div>
   </div>

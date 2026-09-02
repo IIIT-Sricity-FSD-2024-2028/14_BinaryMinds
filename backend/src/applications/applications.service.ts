@@ -12,23 +12,53 @@ import { CreateApplicationDto } from './dto/create-application.dto';
 import { CreateSimpleApplicationDto } from './dto/create-simple-application.dto';
 import { UsersService } from '../users/users.service';
 import { OfficersService } from '../officers/officers.service';
+import { MunicipalitiesService } from '../municipalities/municipalities.service';
 
 @Injectable()
 export class ApplicationsService {
   constructor(
     private readonly applicationsRepository: ApplicationsRepository,
     private readonly usersService: UsersService,
+    private readonly municipalitiesService: MunicipalitiesService,
     @Inject(forwardRef(() => OfficersService))
     private readonly officersService: OfficersService,
   ) {}
 
-  findAll(): Application[] {
-    return this.applicationsRepository.find();
+  private enrichApplication(app: Application): Application {
+    if (!app) return app;
+    let email = (app as any).email || (app as any).applicant_email || (app as any).applicantEmail;
+    if (!email && app.applicant_id) {
+      try {
+        const applicant = this.usersService.findOne(app.applicant_id);
+        if (applicant && applicant.email) {
+          email = applicant.email;
+        }
+      } catch (e) {}
+    }
+    return {
+      ...app,
+      email: email || '',
+      applicant_email: email || '',
+    };
+  }
+
+  findAll(municipalityId?: string): Application[] {
+    const all = this.applicationsRepository.find();
+    const filtered = !municipalityId
+      ? all
+      : all.filter(
+          (app) => (app.municipality_id || '').toLowerCase() === municipalityId.toLowerCase(),
+        );
+    return filtered.map((app) => this.enrichApplication(app));
+  }
+
+  findByMunicipality(municipalityId: string): Application[] {
+    return this.findAll(municipalityId);
   }
 
   // Relationship query: fetching all applications along with applicant details
-  findAllWithApplicantDetails() {
-    const apps = this.findAll();
+  findAllWithApplicantDetails(municipalityId?: string) {
+    const apps = this.findAll(municipalityId);
     return apps.map((app) => {
       const applicant = this.usersService.findOne(app.applicant_id);
       return {
@@ -43,7 +73,7 @@ export class ApplicationsService {
     if (!application) {
       throw new NotFoundException(`Application with ID ${id} not found`);
     }
-    return application;
+    return this.enrichApplication(application);
   }
 
   // Relationship query: fetching an application along with applicant details
@@ -63,12 +93,53 @@ export class ApplicationsService {
   }
 
   create(applicationData: CreateApplicationDto): Application {
+    const applicantId = applicationData.applicant_id || 1;
     // Validate applicant existence before creating association
-    this.usersService.findOne(applicationData.applicant_id);
+    this.usersService.findOne(applicantId);
+
+    // Resolve municipality server-side based on location / municipality_id
+    const resolvedMuni = this.municipalitiesService.resolveMunicipality(
+      applicationData.state,
+      applicationData.city || applicationData.district,
+      applicationData.municipality_id || applicationData.municipalityId,
+    );
+
+    const fullName =
+      applicationData.full_name ||
+      applicationData.applicantName ||
+      'Applicant';
+
+    const businessName =
+      applicationData.business_name ||
+      applicationData.businessName ||
+      'N/A';
+
+    const tradeCat =
+      applicationData.trade_category ||
+      applicationData.tradeCategory ||
+      'General';
+
+    const shopAddr =
+      applicationData.shop_address ||
+      applicationData.shopAddress ||
+      '';
+
+    const phone =
+      applicationData.applicant_phone ||
+      applicationData.phone ||
+      '';
 
     // Default the status to submitted if not provided
     const newAppRecord = {
       ...applicationData,
+      applicant_id: applicantId,
+      full_name: fullName,
+      business_name: businessName,
+      trade_category: tradeCat,
+      shop_address: shopAddr,
+      applicant_phone: phone,
+      municipality_id: resolvedMuni.municipality_id,
+      municipalityName: resolvedMuni.name,
       application_status: ApplicationStatus.SUBMITTED,
       paymentDone: true,
       assignedOfficerId: null,
@@ -77,18 +148,31 @@ export class ApplicationsService {
   }
 
   /**
-   * Simplified create — used by the new workflow.
-   * Only requires applicantName. Payment is recorded separately, status starts submitted.
+   * Simplified create — used by the applicant workflow.
+   * Resolves target municipality server-side.
    */
   createSimple(data: CreateSimpleApplicationDto, applicantId: number): Application {
     this.usersService.findOne(applicantId);
+
+    const resolvedMuni = this.municipalitiesService.resolveMunicipality(
+      data.state,
+      data.city || data.district,
+      data.municipality_id || (data as any).municipalityId,
+    );
+
     const newAppRecord = {
       applicant_id: applicantId,
+      municipality_id: resolvedMuni.municipality_id,
+      municipalityName: resolvedMuni.name,
       full_name: data.applicantName,
       business_name: data.businessName || 'N/A',
-      business_type: data.tradeCategory || 'General',
+      business_type: data.businessType || data.tradeCategory || 'General',
       trade_category: data.tradeCategory || 'General',
       shop_address: data.shopAddress || '',
+      city: data.city,
+      district: data.district,
+      state: data.state,
+      pincode: data.pincode,
       applicant_phone: data.phone || '',
       application_status: ApplicationStatus.SUBMITTED,
       paymentDone: false,
@@ -100,10 +184,14 @@ export class ApplicationsService {
   /**
    * Return all applications where status = 'submitted' AND paymentDone = true.
    */
-  findSubmitted(): Application[] {
-    return this.applicationsRepository
+  findSubmitted(municipalityId?: string): Application[] {
+    const list = this.applicationsRepository
       .findByStatus(ApplicationStatus.SUBMITTED)
       .filter((app) => app.paymentDone === true);
+    if (!municipalityId) return list;
+    return list.filter(
+      (app) => (app.municipality_id || '').toLowerCase() === municipalityId.toLowerCase(),
+    );
   }
 
   /**
@@ -113,13 +201,31 @@ export class ApplicationsService {
   assignToOfficer(id: number, officerId?: number): Application {
     const application = this.findOne(id);
 
-    if (application.application_status !== ApplicationStatus.SUBMITTED) {
+    if (
+      application.application_status !== ApplicationStatus.SUBMITTED &&
+      application.application_status !== ApplicationStatus.ASSIGNED
+    ) {
       throw new BadRequestException(
-        `Application ${id} is not in 'submitted' status (current: ${application.application_status})`,
+        `Application ${id} is not in 'submitted' or 'assigned' status (current: ${application.application_status})`,
       );
     }
 
-    const assignedId = officerId !== undefined ? officerId : this.officersService.findLeastLoaded().id;
+    let assignedId: number;
+    if (officerId !== undefined) {
+      const officer = this.usersService.findOne(officerId);
+      if (
+        (officer.municipality_id || '').toLowerCase() !==
+        (application.municipality_id || '').toLowerCase()
+      ) {
+        throw new BadRequestException(
+          'Cannot assign an officer from a different municipality to this application',
+        );
+      }
+      assignedId = officerId;
+    } else {
+      const leastLoaded = this.officersService.findLeastLoaded(application.municipality_id);
+      assignedId = leastLoaded.id;
+    }
 
     const updated = this.applicationsRepository.update(id, {
       assignedOfficerId: assignedId,
@@ -132,6 +238,7 @@ export class ApplicationsService {
 
     return updated;
   }
+
 
   /**
    * Return all applications assigned to a specific officer.

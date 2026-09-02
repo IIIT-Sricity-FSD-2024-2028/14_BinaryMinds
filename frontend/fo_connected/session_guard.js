@@ -12,7 +12,7 @@
   }
 
   var role = (user.role || '').toLowerCase();
-  var isFieldOfficer = role === 'field officer' || role === 'fieldofficer';
+  var isFieldOfficer = role === 'field officer' || role === 'fieldofficer' || role === 'field_officer';
   if (!isFieldOfficer) {
     sessionStorage.removeItem('loggedInUser');
     sessionStorage.removeItem('accessToken');

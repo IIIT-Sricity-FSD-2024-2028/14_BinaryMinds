@@ -140,6 +140,16 @@ function loadApprovedApplications() {
 
   var merged = mergeByApplicationId(sources);
 
+  var loggedInUser = null;
+  try { loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
+  var currentMuniId = (loggedInUser && (loggedInUser.municipality_id || loggedInUser.municipalityId)) || '';
+
+  if (currentMuniId && window.TRADEZO && typeof TRADEZO.isAllowedForTenant === 'function') {
+    merged = merged.filter(function(app) {
+      return TRADEZO.isAllowedForTenant(app, currentMuniId);
+    });
+  }
+
   var apps = merged.filter(function(app) {
     if (!app) return false;
     var bizName = normalizeText(app.businessName || app.business || app.companyName);
@@ -219,6 +229,19 @@ function renderTable(apps) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  var user = null;
+  try { user = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
+  var muniId = (user && user.municipality_id) || 'muni-hyd';
+  var muni = (window.TRADEZO && typeof TRADEZO.getMunicipality === 'function')
+    ? TRADEZO.getMunicipality(muniId)
+    : { name: 'Greater Hyderabad Municipal Corporation (GHMC)' };
+
+  document.querySelectorAll('small, .subtitle').forEach(function(el) {
+    if (el.textContent && el.textContent.includes('Municipal Corporation')) {
+      el.textContent = muni.name + ' \u2013 Trade License Management System';
+    }
+  });
+
   var apps = loadApprovedApplications();
 
   renderStats(apps);

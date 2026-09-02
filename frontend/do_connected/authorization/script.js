@@ -160,7 +160,7 @@ function normalizeApplication(app, inspections) {
     appId: id,
     appRef: app.appRef || id,
     businessName: app.businessName || app.business || '-',
-    applicantName: app.applicantName || app.applicant || app.ownerName || '-',
+    applicantName: app.applicantName || app.applicant || app.ownerName || app.full_name || '-',
     tradeCategory: app.tradeCategory || app.category || app.licenseType || app.type || 'Trade License',
     submittedDate: app.submittedDate || app.submitted || app.date || '-',
     foResult: inspection.result || app.inspectionResult || 'Approved',
@@ -177,7 +177,19 @@ function loadAuthorizationApplications() {
     .concat(safeArray('tz_submitted_apps'))
     .concat(safeArray('tz_inspection_reports'));
 
-  var apps = mergeByApplicationId(sources).filter(function(app) {
+  var merged = mergeByApplicationId(sources);
+
+  var loggedInUser = null;
+  try { loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
+  var currentMuniId = (loggedInUser && (loggedInUser.municipality_id || loggedInUser.municipalityId)) || '';
+
+  if (currentMuniId && window.TRADEZO && typeof TRADEZO.isAllowedForTenant === 'function') {
+    merged = merged.filter(function(app) {
+      return TRADEZO.isAllowedForTenant(app, currentMuniId);
+    });
+  }
+
+  var apps = merged.filter(function(app) {
     if (isDemoApplication(app)) return false;
     return isFieldOfficerApproved(app, inspections);
   }).map(function(app) {
@@ -448,7 +460,7 @@ function renderTable(data) {
   tbody.innerHTML = '';
 
   if (!authorizationApps.length) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:30px;">No field-officer-approved applications are ready for final authorization.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:30px;">No field-officer-approved applications are ready for final authorization.</td></tr>';
     return;
   }
 
@@ -459,6 +471,7 @@ function renderTable(data) {
     row.setAttribute('data-id', appId);
     row.innerHTML =
       '<td style="color:#1E3A8A;font-weight:600;">' + escapeHtml(appId) + '</td>' +
+      '<td>' + escapeHtml(app.applicantName) + '</td>' +
       '<td><strong>' + escapeHtml(app.businessName) + '</strong><br><small style="color:#64748b;">' + escapeHtml(app.tradeCategory) + '</small></td>' +
       '<td>' + statusBadgeHtml(state) + '</td>' +
       '<td>' + actionHtml(appId, state) + '</td>';

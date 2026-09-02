@@ -30,9 +30,16 @@
     return TRADEZO.backendRequest('POST', '/applications', {
       applicantName: form.fullName || 'Applicant',
       businessName: form.businessName || '',
-      tradeCategory: form.tradeCategory || form.businessType || '',
+      businessType: form.businessType || form.tradeCategory || 'General',
+      tradeCategory: form.tradeCategory || form.businessType || 'General',
       shopAddress: form.shopAddress || '',
-      phone: form.phone || ''
+      city: form.city || form.district || '',
+      district: form.district || '',
+      state: form.state || '',
+      pincode: form.pincode || '',
+      phone: form.phone || '',
+      municipality_id: form.municipalityId || form.municipality_id || undefined,
+      municipalityId: form.municipalityId || form.municipality_id || undefined
     }, 'applicant').then(function (response) {
       var application = response && response.data;
       var applicationId = Number(application && application.application_id);

@@ -12,23 +12,43 @@ Executing this file will create a fresh database instance with all required tabl
 ```sql
 CREATE DATABASE IF NOT EXISTS licensing_system;
 USE licensing_system;
+
+CREATE TABLE municipalities (
+    municipality_id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    state VARCHAR(100) NOT NULL,
+    district VARCHAR(100) NOT NULL,
+    status ENUM('active', 'inactive') DEFAULT 'active',
+    base_processing_fee DECIMAL(10,2) DEFAULT 1200.00,
+    platform_fee DECIMAL(10,2) DEFAULT 250.00,
+    service_tax_percentage DECIMAL(5,2) DEFAULT 5.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
+    municipality_id VARCHAR(50),
     full_name VARCHAR(120) NOT NULL,
     email VARCHAR(120) UNIQUE NOT NULL,
     phone VARCHAR(15) UNIQUE NOT NULL,
+    employee_id VARCHAR(50),
     password_hash VARCHAR(255) NOT NULL,
 
     role ENUM(
-        'applicant',
+        'platform_admin',
+        'municipal_commissioner',
+        'super_user',
+        'department_officer',
         'field_officer',
-        'department_officer'
+        'applicant'
     ) NOT NULL,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (municipality_id) REFERENCES municipalities(municipality_id)
 );
 CREATE TABLE applications (
     application_id INT AUTO_INCREMENT PRIMARY KEY,
+    municipality_id VARCHAR(50) NOT NULL,
     applicant_id INT NOT NULL,
 
     full_name VARCHAR(120) NOT NULL,

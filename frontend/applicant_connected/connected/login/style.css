@@ -35,12 +35,12 @@ body { font-family: Arial, sans-serif; background: #f4f6f9; }
 /* ===== MAIN LAYOUT ===== */
 .main-content {
   display: flex;
-  height: calc(100vh - 100px);
+  min-height: calc(100vh - 100px);
 }
 
 /* ===== LEFT SIDE — IMAGE ===== */
 .left-card {
-  width: 55%;
+  width: 50%;
   background: #e8eeff;
   display: flex;
   flex-direction: column;
@@ -60,13 +60,13 @@ body { font-family: Arial, sans-serif; background: #f4f6f9; }
 
 /* ===== RIGHT SIDE — LOGIN FORM ===== */
 .login-card {
-  width: 45%;
+  width: 50%;
   background: #f4f6f9;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 40px 60px;
+  padding: 24px 36px;
 }
 
 .login-card h3 {
@@ -152,15 +152,21 @@ body { font-family: Arial, sans-serif; background: #f4f6f9; }
 /* Demo credentials box */
 .demo-box {
   width: 100%;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   padding: 12px 14px;
   font-size: 12px;
-  color: #1d4ed8;
-  line-height: 1.8;
+  color: #1e293b;
+  line-height: 1.5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-top: 14px;
+  text-align: left;
 }
-.demo-box strong { display: block; margin-bottom: 4px; }
+
+.demo-box code {
+  font-family: monospace;
+}
 
 /* Error messages */
 .login-error {

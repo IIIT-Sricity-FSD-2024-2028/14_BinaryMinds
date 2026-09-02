@@ -23,6 +23,7 @@
     <a href="../landing page/index.html">Home</a>
     <a href="index.html">Login</a>
     <a href="../Register/index.html">Register</a>
+    <a href="../../../platform_admin/login/index.html">Super Admin</a>
     <a href="../helpdesk/index.html">Help</a>
   </nav>
 
@@ -40,9 +41,9 @@
     <div class="login-card">
       <h3>Municipal Corporation<br>Trade License Management System</h3>
 
-      <input type="text" placeholder="Enter Email or Phone Number" />
+      <input type="text" id="loginEmail" placeholder="Enter Email or Phone Number" />
 
-      <input type="password" placeholder="Enter Password" />
+      <input type="password" id="loginPassword" placeholder="Enter Password" />
 
       <select required id="roleSelect">
         <option value="" disabled selected hidden>Login As</option>
@@ -52,7 +53,7 @@
          <option value="municipal_commissioner">Municipal Commissioner (Admin)</option>
       </select>
 
-      <button onclick="handleLogin()">Login</button>
+      <button id="loginBtn" onclick="handleLogin()">Login</button>
 
       <div class="row-links">
         <label>
@@ -61,22 +62,77 @@
         <a href="../forgotpassword/index.html">Forgot Password?</a>
       </div>
 
-            <!-- Demo Credentials for testing -->
-      <div class="demo-box">
-        <strong>Demo Login Credentials:</strong>
-        Applicant / User: rajesh@applicant.com / applicant123<br>
-        Field Officer (Admin Team): myra@fieldofficer.com / field@123<br>
-        Department Officer (Admin Team): admin@deptofficer.com / dept123<br>
-        Municipal Commissioner (Admin): admin@tradezo.gov.in / super123
-      </div>
-
-      <p class="register-text">
+      <p class="register-text" style="margin-bottom: 8px;">
         New Applicant? <a href="../Register/index.html">Register Here</a>
       </p>
+
+      <!-- DEMO CREDENTIALS BOX -->
+      <div class="demo-box" style="width:100%;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:12px 14px;font-size:12px;color:#1e293b;text-align:left;line-height:1.5;box-shadow:0 1px 3px rgba(0,0,0,0.05);margin-top:14px;">
+        <div style="font-weight:700;color:#1E3A8A;margin-bottom:8px;font-size:13px;border-bottom:1px solid #e2e8f0;padding-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+          <span>🔑 Demo Officer Credentials</span>
+          <span style="font-size:11px;font-weight:normal;color:#475569;">All Officers Pass: <strong style="color:#0f172a;background:#e2e8f0;padding:2px 6px;border-radius:4px;font-family:monospace;">TradeZo@123</strong></span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:11.5px;">
+          
+          <!-- Hyderabad GHMC -->
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:6px;padding:6px 10px;">
+            <div style="font-weight:700;color:#0284c7;font-size:11px;margin-bottom:4px;">🏛️ Greater Hyderabad (GHMC)</div>
+            
+            <div onclick="quickFill('ramesh@tradezo.gov.in', 'municipal_commissioner', false)" style="display:flex;justify-content:space-between;align-items:center;padding:3px 4px;border-radius:4px;cursor:pointer;" title="Click to fill Ramesh">
+              <span><strong>Commissioner:</strong> <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">ramesh@tradezo.gov.in</code></span>
+              <span style="color:#64748b;">Password: <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">TradeZo@123</code></span>
+            </div>
+
+            <div onclick="quickFill('kumar@tradezo.gov.in', 'department officer', false)" style="display:flex;justify-content:space-between;align-items:center;padding:3px 4px;border-radius:4px;cursor:pointer;" title="Click to fill Kumar">
+              <span><strong>Dept Officer (DO):</strong> <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">kumar@tradezo.gov.in</code></span>
+              <span style="color:#64748b;">Password: <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">TradeZo@123</code></span>
+            </div>
+
+            <div onclick="quickFill('ravi@tradezo.gov.in', 'field officer', false)" style="display:flex;justify-content:space-between;align-items:center;padding:3px 4px;border-radius:4px;cursor:pointer;" title="Click to fill Ravi">
+              <span><strong>Field Officer (FO):</strong> <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">ravi@tradezo.gov.in</code></span>
+              <span style="color:#64748b;">Password: <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">TradeZo@123</code></span>
+            </div>
+          </div>
+
+          <!-- Bengaluru BBMP -->
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:6px;padding:6px 10px;">
+            <div style="font-weight:700;color:#059669;font-size:11px;margin-bottom:4px;">🏛️ Bengaluru (BBMP)</div>
+            
+            <div onclick="quickFill('suraj@tradezo.gov.in', 'municipal_commissioner', false)" style="display:flex;justify-content:space-between;align-items:center;padding:3px 4px;border-radius:4px;cursor:pointer;" title="Click to fill Suraj">
+              <span><strong>Commissioner:</strong> <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">suraj@tradezo.gov.in</code></span>
+              <span style="color:#64748b;">Password: <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">TradeZo@123</code></span>
+            </div>
+
+            <div onclick="quickFill('naveen@tradezo.gov.in', 'department officer', false)" style="display:flex;justify-content:space-between;align-items:center;padding:3px 4px;border-radius:4px;cursor:pointer;" title="Click to fill Naveen">
+              <span><strong>Dept Officer (DO):</strong> <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">naveen@tradezo.gov.in</code></span>
+              <span style="color:#64748b;">Password: <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">TradeZo@123</code></span>
+            </div>
+
+            <div onclick="quickFill('arjun@tradezo.gov.in', 'field officer', false)" style="display:flex;justify-content:space-between;align-items:center;padding:3px 4px;border-radius:4px;cursor:pointer;" title="Click to fill Arjun">
+              <span><strong>Field Officer (FO):</strong> <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">arjun@tradezo.gov.in</code></span>
+              <span style="color:#64748b;">Password: <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">TradeZo@123</code></span>
+            </div>
+          </div>
+
+          <!-- Platform Super Admin & Citizen -->
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:6px;padding:6px 10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 4px;">
+              <span><strong>Super Admin:</strong> <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">superadmin@tradezo.gov.in</code></span>
+              <span style="color:#64748b;">Password: <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">admin123</code> (<a href="../../../platform_admin/login/index.html" style="color:#1E3A8A;text-decoration:underline;">Portal</a>)</span>
+            </div>
+            <div onclick="quickFill('applicant@tradezo.gov.in', 'applicant', false)" style="display:flex;justify-content:space-between;align-items:center;padding:3px 4px;border-radius:4px;cursor:pointer;" title="Click to fill Demo Applicant">
+              <span><strong>Demo Citizen:</strong> <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">applicant@tradezo.gov.in</code></span>
+              <span style="color:#64748b;">Password: <code style="color:#0f172a;background:#f1f5f9;padding:1px 5px;border-radius:3px;">TradeZo@123</code></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
 
   </div>
 
-  <script src="script.js?v=field-officer-login-20260504"></script>
+  <script src="script.js?v=officers-demo-20260901"></script>
 </body>
 </html>

@@ -10,6 +10,7 @@ import { LicenseStatus } from '../common/enums/license-status.enum';
 import { ApplicationsService } from '../applications/applications.service';
 import { UsersService } from '../users/users.service';
 import { ApplicationStatus } from '../common/enums/application-status.enum';
+import { Role } from '../common/enums/role.enum';
 
 @Injectable()
 export class LicensesService {
@@ -64,7 +65,17 @@ export class LicensesService {
     if (application.application_status !== ApplicationStatus.APPROVED) {
       throw new BadRequestException('Only approved applications can receive a license');
     }
-    this.usersService.findOne(data.issued_by);
+    const issuer = this.usersService.findOne(data.issued_by);
+    if (
+      issuer.role !== Role.PLATFORM_ADMIN &&
+      (issuer.municipality_id || '').toLowerCase() !== (application.municipality_id || '').toLowerCase()
+    ) {
+      throw new BadRequestException('Officer cannot issue licenses for applications in a different municipality');
+    }
+
+    if (!application.municipality_id) {
+      throw new BadRequestException('Application is missing municipality_id');
+    }
     
     const existing = this.repository.findByApplication(data.application_id);
     if (existing) {
@@ -75,6 +86,7 @@ export class LicensesService {
 
     return this.repository.create({
       application_id: data.application_id,
+      municipality_id: application.municipality_id,
       issued_by: data.issued_by,
       license_number: licenseNumber,
       issued_date: new Date(),

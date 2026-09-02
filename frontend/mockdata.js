@@ -64,6 +64,70 @@ TRADEZO.stats = {
   }
 };
 
+// ============================================================
+// 8. MUNICIPAL CORPORATIONS (TENANTS)
+// ============================================================
+TRADEZO.municipalities = [
+  {
+    municipality_id: 'muni-hyd',
+    name: 'Greater Hyderabad Municipal Corporation (GHMC)',
+    state: 'Telangana',
+    district: 'Hyderabad',
+    status: 'active',
+    base_processing_fee: 1200,
+    platform_fee: 250,
+    service_tax_percentage: 5
+  },
+  {
+    municipality_id: 'muni-blr',
+    name: 'Bruhat Bengaluru Mahanagara Palike (BBMP)',
+    state: 'Karnataka',
+    district: 'Bengaluru',
+    status: 'active',
+    base_processing_fee: 1200,
+    platform_fee: 250,
+    service_tax_percentage: 5
+  }
+];
+
+TRADEZO.getMunicipalities = function() {
+  try {
+    var stored = localStorage.getItem('tz_municipalities');
+    if (stored) {
+      var parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length) {
+        TRADEZO.municipalities = parsed;
+        return parsed;
+      }
+    }
+  } catch (e) {}
+
+  if (typeof window !== 'undefined' && window.XMLHttpRequest && typeof TRADEZO.backendRequest === 'function') {
+    try {
+      var munis = TRADEZO.backendRequest('GET', '/municipalities', null, null, true);
+      if (munis) {
+        var unwrapped = TRADEZO.unwrap(munis);
+        if (Array.isArray(unwrapped) && unwrapped.length) {
+          TRADEZO.municipalities = unwrapped;
+          try { localStorage.setItem('tz_municipalities', JSON.stringify(unwrapped)); } catch(e){}
+          return unwrapped;
+        }
+      }
+    } catch(e) {}
+  }
+
+  return TRADEZO.municipalities;
+};
+
+TRADEZO.getMunicipality = function(id) {
+  if (!id) return TRADEZO.getMunicipalities()[0];
+  var list = TRADEZO.getMunicipalities();
+  var match = list.find(function(m) {
+    return (m.municipality_id || '').toLowerCase() === String(id).toLowerCase();
+  });
+  return match || list[0];
+};
+
 TRADEZO.freshDateFields = [
   'updatedAt', 'updated_at', 'lastUpdated', 'last_updated',
   'createdAt', 'created_at', 'submitted_at', 'submittedDate',
@@ -439,6 +503,11 @@ TRADEZO.toUiApplication = function(app) {
   if (!app) return app;
   var displayId = TRADEZO.normalizeApplicationRef(app);
   var backendId = app.application_id || app.backendId || (TRADEZO.isPlainNumericId(app.id) ? Number(app.id) : null);
+  var email = app.email || app.applicant_email || app.applicantEmail || '';
+  if (!email && app.applicant_id && window.TRADEZO && Array.isArray(TRADEZO.users)) {
+    var user = TRADEZO.users.find(function(u) { return u.user_id === app.applicant_id || u.id === app.applicant_id; });
+    if (user && user.email) email = user.email;
+  }
   return Object.assign({}, app, {
     id: displayId,
     appId: displayId,
@@ -448,6 +517,9 @@ TRADEZO.toUiApplication = function(app) {
     applicantName: app.full_name || app.applicantName || app.applicant || '',
     applicant: app.full_name || app.applicant || app.applicantName || '',
     ownerName: app.full_name || app.ownerName || app.applicantName || '',
+    email: email,
+    applicantEmail: email,
+    applicant_email: email,
     businessName: app.business_name || app.businessName || app.business || '',
     business: app.business_name || app.business || app.businessName || '',
     businessType: app.business_type || app.businessType || '',
@@ -522,6 +594,15 @@ TRADEZO.normalizeStoredApplicationIds = function() {
 };
 
 TRADEZO.hydrateFromBackend = function() {
+  var munis = TRADEZO.backendRequest('GET', '/municipalities', null, null, true);
+  if (munis) {
+    var unwrappedMunis = TRADEZO.unwrap(munis);
+    if (Array.isArray(unwrappedMunis) && unwrappedMunis.length) {
+      TRADEZO.municipalities = unwrappedMunis;
+      try { localStorage.setItem('tz_municipalities', JSON.stringify(unwrappedMunis)); } catch(e){}
+    }
+  }
+
   var apps = TRADEZO.backendRequest('GET', '/applications', null, 'department_officer', true);
   if (!apps) return false;
   TRADEZO.applications = TRADEZO.unwrap(apps).map(TRADEZO.toUiApplication);
@@ -584,13 +665,48 @@ TRADEZO.createBackendLicense = function(appId, issuedBy) {
   });
 };
 
+TRADEZO.isAllowedForTenant = function(record, userMuniId) {
+  if (!record) return false;
+  if (!userMuniId) return true;
+  var targetMuni = String(userMuniId).toLowerCase().trim();
+  var recMuni = String(record.municipality_id || record.municipalityId || '').toLowerCase().trim();
+  if (recMuni) return recMuni === targetMuni;
+
+  var state = String(record.state || '').toLowerCase();
+  var city = String(record.city || record.district || '').toLowerCase();
+  var munis = typeof TRADEZO.getMunicipalities === 'function' ? TRADEZO.getMunicipalities() : [];
+  var match = munis.find(function(m) {
+    var mName = (m.name || '').toLowerCase();
+    var mDist = (m.district || '').toLowerCase();
+    var mState = (m.state || '').toLowerCase();
+    var mId = (m.municipality_id || '').toLowerCase().replace(/^muni-?/i, '');
+    return (city && (mName.includes(city) || mDist.includes(city) || city.includes(mDist) || city.includes(mId))) ||
+           (state && mState.includes(state));
+  });
+
+  if (match) {
+    return String(match.municipality_id).toLowerCase() === targetMuni;
+  }
+  return false;
+};
+
 TRADEZO.hydrateFromBackend();
 TRADEZO.normalizeStoredApplicationIds();
 
 // So all pages find dynamically-added apps after page refresh
 // ============================================================
 (function() {
+  var loggedIn = {};
+  try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}'); } catch(e) {}
+  var loggedMuni = loggedIn.municipality_id || loggedIn.municipalityId || '';
+  var isPlatformAdmin = String(loggedIn.role || '').toLowerCase().includes('platform_admin') || String(loggedIn.role || '').toLowerCase().includes('superadmin');
+
   if (TRADEZO.backendLoaded) {
+    if (!isPlatformAdmin && loggedMuni) {
+      TRADEZO.applications = TRADEZO.applications.filter(function(a) { return TRADEZO.isAllowedForTenant(a, loggedMuni); });
+      TRADEZO.licenses = TRADEZO.licenses.filter(function(l) { return TRADEZO.isAllowedForTenant(l, loggedMuni); });
+      TRADEZO.inspections = TRADEZO.inspections.filter(function(i) { return TRADEZO.isAllowedForTenant(i, loggedMuni); });
+    }
     TRADEZO.sortFreshFirst(TRADEZO.applications);
     TRADEZO.sortFreshFirst(TRADEZO.licenses);
     TRADEZO.sortFreshFirst(TRADEZO.inspections);

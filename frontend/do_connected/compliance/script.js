@@ -65,6 +65,7 @@ function normalizeLicense(raw) {
 
   return {
     appId: appId || '-',
+    applicantName: raw.applicantName || raw.applicant || raw.ownerName || (app ? (app.applicantName || app.applicant || app.ownerName || app.full_name) : '') || '-',
     licenseNo: raw.licenseNo || raw.id || raw.licenseId || '-',
     businessName: raw.businessName || raw.business || (app ? app.businessName : '') || 'Unknown Business',
     category: raw.category || raw.tradeCategory || (app ? (app.tradeCategory || app.category) : '') || '-',
@@ -116,10 +117,20 @@ function getGeneratedLicenses() {
     .concat(collectDoStatusLicenses(localStorage))
     .concat(collectDoStatusLicenses(sessionStorage));
 
+  var loggedInUser = null;
+  try { loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
+  var currentMuniId = (loggedInUser && (loggedInUser.municipality_id || loggedInUser.municipalityId)) || '';
+
   var seen = {};
   licenses = licenses.filter(function(lic) {
     if (isDemoRecord(lic)) return false;
     if (!lic.licenseNo || lic.licenseNo === '-') return false;
+    if (currentMuniId && window.TRADEZO && typeof TRADEZO.isAllowedForTenant === 'function') {
+      var app = lic.appId ? findApplication(lic.appId) : null;
+      if (!TRADEZO.isAllowedForTenant(lic, currentMuniId) && (!app || !TRADEZO.isAllowedForTenant(app, currentMuniId))) {
+        return false;
+      }
+    }
     if (seen[lic.licenseNo]) return false;
     seen[lic.licenseNo] = true;
     return true;
@@ -161,7 +172,7 @@ function renderTable(licenses) {
   if (countText) countText.textContent = 'Showing ' + licenses.length + ' license(s)';
 
   if (!licenses.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty-row">No generated licenses found.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" class="empty-row">No generated licenses found.</td></tr>';
     return;
   }
 
@@ -169,6 +180,7 @@ function renderTable(licenses) {
     tbody.innerHTML +=
       '<tr>' +
         '<td>' + escapeHtml(lic.appId) + '</td>' +
+        '<td>' + escapeHtml(lic.applicantName) + '</td>' +
         '<td class="license-no">' + escapeHtml(lic.licenseNo) + '</td>' +
         '<td>' + escapeHtml(lic.businessName) + '</td>' +
         '<td>' + escapeHtml(lic.category) + '</td>' +
@@ -180,9 +192,9 @@ function renderTable(licenses) {
 }
 
 function exportLicenses(licenses) {
-  var headers = ['Application ID', 'License Number', 'Business Name', 'Category', 'Issue Date', 'Expiry Date', 'Status'];
+  var headers = ['Application ID', 'Applicant Name', 'License Number', 'Business Name', 'Category', 'Issue Date', 'Expiry Date', 'Status'];
   var rows = licenses.map(function(lic) {
-    return [lic.appId, lic.licenseNo, lic.businessName, lic.category, formatDate(lic.issueDate), formatDate(lic.expiryDate), lic.status];
+    return [lic.appId, lic.applicantName, lic.licenseNo, lic.businessName, lic.category, formatDate(lic.issueDate), formatDate(lic.expiryDate), lic.status];
   });
 
   var csv = [headers].concat(rows).map(function(row) {
@@ -212,6 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var filtered = licenses.filter(function(lic) {
         return [
           lic.appId,
+          lic.applicantName,
           lic.licenseNo,
           lic.businessName,
           lic.category,

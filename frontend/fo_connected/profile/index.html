@@ -186,9 +186,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('dispJoinDate').textContent = joinDate;
 
     function isAssigned(item) {
-        var values = [item.assignedFO, item.foName, item.fieldOfficerEmail, item.fieldOfficerId, item.assignedTo]
+        if (!item) return false;
+        var values = [item.assignedFO, item.foName, item.fieldOfficerEmail, item.fieldOfficerId, item.field_officer_id, item.assignedTo, item.assignedOfficerId]
             .filter(Boolean).map(function(value) { return String(value).toLowerCase().trim(); });
-        var keys = [empId, name, email]
+        var keys = [empId, name, email, String(officer.backendUserId || officer.user_id || officer.id || '')]
             .filter(Boolean).map(function(value) { return String(value).toLowerCase().trim(); });
         return values.some(function(value) { return keys.indexOf(value) !== -1; });
     }

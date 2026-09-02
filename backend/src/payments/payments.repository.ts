@@ -38,7 +38,14 @@ export class PaymentsRepository {
     const index = payments.findIndex((p) => p.payment_id === id);
     if (index === -1) return undefined;
 
-    payments[index] = { ...payments[index], ...updateData };
+    const cleanedUpdates: Partial<Payment> = {};
+    for (const key of Object.keys(updateData) as (keyof Payment)[]) {
+      if (updateData[key] !== undefined) {
+        (cleanedUpdates as any)[key] = updateData[key];
+      }
+    }
+
+    payments[index] = { ...payments[index], ...cleanedUpdates };
     this.store.save();
     return payments[index];
   }

@@ -36,12 +36,33 @@ export class PaymentsService {
   }
 
   create(data: CreatePaymentDto): Payment {
-    this.applicationsService.findOne(data.application_id);
+    const app = this.applicationsService.findOne(data.application_id);
+    if (!app.municipality_id) {
+      throw new BadRequestException('Application is missing municipality_id');
+    }
+    if (
+      data.municipality_id &&
+      data.municipality_id.toLowerCase() !== app.municipality_id.toLowerCase()
+    ) {
+      throw new BadRequestException('Payment municipality does not match application municipality');
+    }
+    const municipalityId = app.municipality_id;
+    const settings = this.platformAdminService.settings();
+
+    const processingFee = data.processing_fee ?? settings.default_base_processing_fee ?? 1200;
+    const platformFee = data.platform_fee ?? settings.default_platform_fee ?? 250;
+    const serviceTax = data.service_tax ?? Math.round((processingFee * (settings.default_service_tax_percentage ?? 5)) / 100);
+    const totalAmount = data.amount || (processingFee + platformFee + serviceTax);
 
     const transactionId = data.transaction_id || `TXN-${crypto.randomUUID()}`;
 
     const createData = {
       ...data,
+      amount: totalAmount,
+      processing_fee: processingFee,
+      platform_fee: platformFee,
+      service_tax: serviceTax,
+      municipality_id: municipalityId,
       payment_status: data.payment_status || PaymentStatus.PENDING,
       transaction_id: transactionId,
     };

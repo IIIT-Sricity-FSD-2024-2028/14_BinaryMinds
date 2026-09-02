@@ -37,7 +37,12 @@ async function bootstrap() {
       requestOrigin: string | undefined,
       callback: (error: Error | null, allow?: boolean) => void,
     ) => {
-      if (!requestOrigin || requestOrigin === 'null' || corsOrigins.includes(requestOrigin)) {
+      if (
+        !requestOrigin ||
+        requestOrigin === 'null' ||
+        /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(requestOrigin) ||
+        corsOrigins.includes(requestOrigin)
+      ) {
         callback(null, true);
         return;
       }

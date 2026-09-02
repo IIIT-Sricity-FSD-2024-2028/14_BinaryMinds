@@ -1,0 +1,698 @@
+{
+  "municipalities": [
+    {
+      "municipality_id": "muni-hyd",
+      "name": "Greater Hyderabad Municipal Corporation (GHMC)",
+      "state": "Telangana",
+      "district": "Hyderabad",
+      "status": "active",
+      "base_processing_fee": 1200,
+      "platform_fee": 250,
+      "service_tax_percentage": 5,
+      "created_at": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "municipality_id": "muni-blr",
+      "name": "Bruhat Bengaluru Mahanagara Palike (BBMP)",
+      "state": "Karnataka",
+      "district": "Bengaluru",
+      "status": "active",
+      "base_processing_fee": 1200,
+      "platform_fee": 250,
+      "service_tax_percentage": 5,
+      "created_at": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "users": [
+    {
+      "user_id": 0,
+      "full_name": "TradeZo Platform Admin",
+      "email": "superadmin@tradezo.gov.in",
+      "phone": "9999999999",
+      "password_hash": "admin123",
+      "role": "platform_admin",
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "status": "Active"
+    },
+    {
+      "user_id": 1,
+      "full_name": "Ramesh",
+      "email": "ramesh@tradezo.gov.in",
+      "phone": "9876500001",
+      "password_hash": "TradeZo@123",
+      "role": "municipal_commissioner",
+      "municipality_id": "muni-hyd",
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "status": "Active"
+    },
+    {
+      "user_id": 2,
+      "full_name": "Ravi",
+      "email": "ravi@tradezo.gov.in",
+      "phone": "9876500002",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-hyd",
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "status": "Active"
+    },
+    {
+      "user_id": 3,
+      "full_name": "Kumar",
+      "email": "kumar@tradezo.gov.in",
+      "phone": "9876500003",
+      "password_hash": "TradeZo@123",
+      "role": "department_officer",
+      "municipality_id": "muni-hyd",
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "status": "Active"
+    },
+    {
+      "user_id": 4,
+      "full_name": "Suraj",
+      "email": "suraj@tradezo.gov.in",
+      "phone": "9876500004",
+      "password_hash": "TradeZo@123",
+      "role": "municipal_commissioner",
+      "municipality_id": "muni-blr",
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "status": "Active"
+    },
+    {
+      "user_id": 5,
+      "full_name": "Arjun",
+      "email": "arjun@tradezo.gov.in",
+      "phone": "9876500005",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-blr",
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "status": "Active"
+    },
+    {
+      "user_id": 6,
+      "full_name": "Naveen",
+      "email": "naveen@tradezo.gov.in",
+      "phone": "9876500006",
+      "password_hash": "TradeZo@123",
+      "role": "department_officer",
+      "municipality_id": "muni-blr",
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.test.reg@tradezo.gov.in",
+      "phone": "9876543299",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 11,
+      "created_at": "2026-09-01T22:44:44.855Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788302762207@gmail.com",
+      "phone": "9802762207",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 20,
+      "created_at": "2026-09-01T22:46:02.878Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788302777725@gmail.com",
+      "phone": "9802777725",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 25,
+      "created_at": "2026-09-01T22:46:18.271Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788303636989@gmail.com",
+      "phone": "9803636989",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 30,
+      "created_at": "2026-09-01T23:00:37.610Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788303721523@gmail.com",
+      "phone": "9803721523",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 36,
+      "created_at": "2026-09-01T23:02:01.925Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788303760518@gmail.com",
+      "phone": "9803760518",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 46,
+      "created_at": "2026-09-01T23:02:40.957Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788303807438@gmail.com",
+      "phone": "9803807438",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 56,
+      "created_at": "2026-09-01T23:03:27.844Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788323170384@gmail.com",
+      "phone": "9823170384",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 66,
+      "created_at": "2026-09-02T04:26:10.881Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788323190637@gmail.com",
+      "phone": "9823190637",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 79,
+      "created_at": "2026-09-02T04:26:31.028Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788323227997@gmail.com",
+      "phone": "9823227997",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 91,
+      "created_at": "2026-09-02T04:27:08.336Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788323243332@gmail.com",
+      "phone": "9823243332",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 104,
+      "created_at": "2026-09-02T04:27:24.544Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788324301895@gmail.com",
+      "phone": "9824301895",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 117,
+      "created_at": "2026-09-02T04:45:02.487Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788324342423@gmail.com",
+      "phone": "9824342423",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 141,
+      "created_at": "2026-09-02T04:45:42.978Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788324353595@gmail.com",
+      "phone": "9824353595",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 165,
+      "created_at": "2026-09-02T04:45:54.172Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788324421695@gmail.com",
+      "phone": "9824421695",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 189,
+      "created_at": "2026-09-02T04:47:02.030Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788324432872@gmail.com",
+      "phone": "9824432872",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 213,
+      "created_at": "2026-09-02T04:47:13.457Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788324623625@gmail.com",
+      "phone": "9824623625",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 237,
+      "created_at": "2026-09-02T04:50:23.970Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788324633144@gmail.com",
+      "phone": "9824633144",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 267,
+      "created_at": "2026-09-02T04:50:33.439Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788324762146@gmail.com",
+      "phone": "9824762146",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 297,
+      "created_at": "2026-09-02T04:52:42.475Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788324772721@gmail.com",
+      "phone": "9824772721",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 327,
+      "created_at": "2026-09-02T04:52:53.064Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788328130401@gmail.com",
+      "phone": "9828130401",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 357,
+      "created_at": "2026-09-02T05:48:50.873Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788328168283@gmail.com",
+      "phone": "9828168283",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 389,
+      "created_at": "2026-09-02T05:49:28.581Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788336089976@gmail.com",
+      "phone": "9836089976",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 421,
+      "created_at": "2026-09-02T08:01:30.516Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Rajesh Kumar",
+      "email": "rajesh.1788336296472@applicant.com",
+      "phone": "9736296472",
+      "password_hash": "applicant123",
+      "role": "applicant",
+      "user_id": 449,
+      "created_at": "2026-09-02T08:04:56.480Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788336296571@gmail.com",
+      "phone": "9836296571",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 454,
+      "created_at": "2026-09-02T08:04:57.018Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788340718072@gmail.com",
+      "phone": "9840718072",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 488,
+      "created_at": "2026-09-02T09:18:38.630Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788342667733@gmail.com",
+      "phone": "9842667733",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 522,
+      "created_at": "2026-09-02T09:51:08.199Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788342744801@gmail.com",
+      "phone": "9842744801",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 556,
+      "created_at": "2026-09-02T09:52:25.341Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788343926567@gmail.com",
+      "phone": "9843926567",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 590,
+      "created_at": "2026-09-02T10:12:07.305Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788346693917@gmail.com",
+      "phone": "9846693917",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 624,
+      "created_at": "2026-09-02T10:58:14.456Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788347041766@gmail.com",
+      "phone": "9847041766",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 658,
+      "created_at": "2026-09-02T11:04:02.246Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788349967925@gmail.com",
+      "phone": "9849967925",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 692,
+      "created_at": "2026-09-02T11:52:48.555Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788356259739@gmail.com",
+      "phone": "9856259739",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 726,
+      "created_at": "2026-09-02T13:37:40.314Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788356824821@gmail.com",
+      "phone": "9856824821",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 760,
+      "created_at": "2026-09-02T13:47:05.366Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788359357569@gmail.com",
+      "phone": "9859357569",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 794,
+      "created_at": "2026-09-02T14:29:18.122Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Saif",
+      "email": "saif.1788362550147@gmail.com",
+      "phone": "9862550147",
+      "password_hash": "Password@123",
+      "role": "applicant",
+      "user_id": 828,
+      "created_at": "2026-09-02T15:22:30.703Z",
+      "status": "Active"
+    },
+    {
+      "full_name": "Bengaluru Officer One",
+      "email": "fo.blr.seq.test1.1788362550875@tradezo.gov.in",
+      "phone": "9162550875",
+      "employee_id": "FO-BLR-001",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-blr",
+      "status": "Active",
+      "user_id": 832,
+      "created_at": "2026-09-02T15:22:30.878Z"
+    },
+    {
+      "full_name": "Bengaluru Officer Two",
+      "email": "fo.blr.seq.test2.1788362550882@tradezo.gov.in",
+      "phone": "9262550882",
+      "employee_id": "FO-BLR-002",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-blr",
+      "status": "Active",
+      "user_id": 833,
+      "created_at": "2026-09-02T15:22:30.885Z"
+    },
+    {
+      "full_name": "Hyderabad Officer One",
+      "email": "fo.hyd.seq.test1.1788362550890@tradezo.gov.in",
+      "phone": "9362550890",
+      "employee_id": "FO-HYD-001",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-hyd",
+      "status": "Active",
+      "user_id": 834,
+      "created_at": "2026-09-02T15:22:30.894Z"
+    },
+    {
+      "full_name": "Hyderabad Officer Two",
+      "email": "fo.hyd.seq.test2.1788362550897@tradezo.gov.in",
+      "phone": "9462550897",
+      "employee_id": "FO-HYD-002",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-hyd",
+      "status": "Active",
+      "user_id": 835,
+      "created_at": "2026-09-02T15:22:30.900Z"
+    },
+    {
+      "full_name": "Bengaluru Officer Three",
+      "email": "fo.blr.seq.test3.1788362550904@tradezo.gov.in",
+      "phone": "9562550904",
+      "employee_id": "FO-BLR-003",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-blr",
+      "status": "Active",
+      "user_id": 836,
+      "created_at": "2026-09-02T15:22:30.907Z"
+    },
+    {
+      "full_name": "Hyd Bulk Officer 3",
+      "email": "fo.hyd.bulk.3.1788362550911@tradezo.gov.in",
+      "phone": "7162550914",
+      "employee_id": "FO-HYD-003",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-hyd",
+      "status": "Active",
+      "user_id": 837,
+      "created_at": "2026-09-02T15:22:30.914Z"
+    },
+    {
+      "full_name": "Hyd Bulk Officer 4",
+      "email": "fo.hyd.bulk.4.1788362550917@tradezo.gov.in",
+      "phone": "7162550921",
+      "employee_id": "FO-HYD-004",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-hyd",
+      "status": "Active",
+      "user_id": 838,
+      "created_at": "2026-09-02T15:22:30.919Z"
+    },
+    {
+      "full_name": "Hyd Bulk Officer 5",
+      "email": "fo.hyd.bulk.5.1788362550922@tradezo.gov.in",
+      "phone": "7162550927",
+      "employee_id": "FO-HYD-005",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-hyd",
+      "status": "Active",
+      "user_id": 839,
+      "created_at": "2026-09-02T15:22:30.926Z"
+    },
+    {
+      "full_name": "Hyd Bulk Officer 6",
+      "email": "fo.hyd.bulk.6.1788362550931@tradezo.gov.in",
+      "phone": "7162550937",
+      "employee_id": "FO-HYD-006",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-hyd",
+      "status": "Active",
+      "user_id": 840,
+      "created_at": "2026-09-02T15:22:30.934Z"
+    },
+    {
+      "full_name": "Hyd Bulk Officer 7",
+      "email": "fo.hyd.bulk.7.1788362550937@tradezo.gov.in",
+      "phone": "7162550944",
+      "employee_id": "FO-HYD-007",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-hyd",
+      "status": "Active",
+      "user_id": 841,
+      "created_at": "2026-09-02T15:22:30.940Z"
+    },
+    {
+      "full_name": "Bengaluru Officer Four",
+      "email": "fo.blr.seq.test4.1788362550944@tradezo.gov.in",
+      "phone": "9662550944",
+      "employee_id": "FO-BLR-004",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-blr",
+      "status": "Active",
+      "user_id": 842,
+      "created_at": "2026-09-02T15:22:30.947Z"
+    },
+    {
+      "full_name": "Concurrent FO A",
+      "email": "fo.blr.concurrenta.1788362550953@tradezo.gov.in",
+      "phone": "8162550953",
+      "employee_id": "FO-BLR-005",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-blr",
+      "status": "Active",
+      "user_id": 843,
+      "created_at": "2026-09-02T15:22:30.957Z"
+    },
+    {
+      "full_name": "Concurrent FO B",
+      "email": "fo.blr.concurrentb.1788362550955@tradezo.gov.in",
+      "phone": "8262550955",
+      "employee_id": "FO-BLR-006",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-blr",
+      "status": "Active",
+      "user_id": 844,
+      "created_at": "2026-09-02T15:22:30.960Z"
+    },
+    {
+      "full_name": "Bypass Attempt Officer",
+      "email": "fo.blr.bypass.1788362550965@tradezo.gov.in",
+      "phone": "8362550965",
+      "employee_id": "FO-BLR-007",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-blr",
+      "status": "Active",
+      "user_id": 845,
+      "created_at": "2026-09-02T15:22:30.968Z"
+    },
+    {
+      "full_name": "Hyd Prefix Test",
+      "email": "fo.hyd.prefix.1788362550971@tradezo.gov.in",
+      "phone": "8462550971",
+      "employee_id": "FO-HYD-008",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-hyd",
+      "status": "Active",
+      "user_id": 846,
+      "created_at": "2026-09-02T15:22:30.974Z"
+    },
+    {
+      "full_name": "Blr Prefix Test",
+      "email": "fo.blr.prefix.1788362550979@tradezo.gov.in",
+      "phone": "8562550979",
+      "employee_id": "FO-BLR-008",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-blr",
+      "status": "Active",
+      "user_id": 847,
+      "created_at": "2026-09-02T15:22:30.981Z"
+    },
+    {
+      "full_name": "Login Verify Officer",
+      "email": "fo.login.verify.1788362550984@tradezo.gov.in",
+      "phone": "8662550985",
+      "employee_id": "FO-BLR-009",
+      "password_hash": "TradeZo@123",
+      "role": "field_officer",
+      "municipality_id": "muni-blr",
+      "status": "Active",
+      "user_id": 848,
+      "created_at": "2026-09-02T15:22:30.988Z"
+    }
+  ],
+  "applications": [],
+  "payments": [],
+  "licenses": [],
+  "platform": {
+    "corporations": [
+      {
+        "corporation_id": "muni-hyd",
+        "name": "Greater Hyderabad Municipal Corporation (GHMC)",
+        "status": "active"
+      },
+      {
+        "corporation_id": "muni-blr",
+        "name": "Bruhat Bengaluru Mahanagara Palike (BBMP)",
+        "status": "active"
+      }
+    ],
+    "revenue_settings": {
+      "tradezo_revenue_percentage": 20,
+      "default_base_processing_fee": 1200,
+      "default_platform_fee": 250,
+      "default_service_tax_percentage": 5
+    },
+    "revenue_records": []
+  },
+  "counters": {
+    "users": 858,
+    "applications": 326,
+    "payments": 74,
+    "licenses": 2
+  }
+}

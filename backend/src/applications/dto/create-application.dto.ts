@@ -1,6 +1,5 @@
 import {
   IsString,
-  IsNotEmpty,
   IsOptional,
   IsNumber,
   MaxLength,
@@ -8,14 +7,31 @@ import {
 } from 'class-validator';
 
 export class CreateApplicationDto {
-  @IsNumber()
-  @IsNotEmpty()
-  applicant_id!: number;
+  @IsString()
+  @IsOptional()
+  municipality_id?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
+  municipalityId?: string;
+
+  @IsString()
+  @IsOptional()
+  municipalityName?: string;
+
+  @IsNumber()
+  @IsOptional()
+  applicant_id?: number;
+
+  @IsString()
+  @IsOptional()
   @MaxLength(120)
-  full_name!: string;
+  applicantName?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(120)
+  full_name?: string;
 
   @IsString()
   @IsOptional()
@@ -38,13 +54,23 @@ export class CreateApplicationDto {
 
   @IsString()
   @IsOptional()
-  @MaxLength(15)
+  @MaxLength(20)
   applicant_phone?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
+  @MaxLength(20)
+  phone?: string;
+
+  @IsString()
+  @IsOptional()
   @MaxLength(150)
-  business_name!: string;
+  business_name?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(150)
+  businessName?: string;
 
   @IsString()
   @IsOptional()
@@ -54,11 +80,25 @@ export class CreateApplicationDto {
   @IsString()
   @IsOptional()
   @MaxLength(100)
+  businessType?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(100)
   trade_category?: string;
 
   @IsString()
   @IsOptional()
+  @MaxLength(100)
+  tradeCategory?: string;
+
+  @IsString()
+  @IsOptional()
   shop_address?: string;
+
+  @IsString()
+  @IsOptional()
+  shopAddress?: string;
 
   @IsString()
   @IsOptional()
@@ -77,7 +117,7 @@ export class CreateApplicationDto {
 
   @IsString()
   @IsOptional()
-  @MaxLength(10)
+  @MaxLength(100)
   pincode?: string;
 
   @IsDateString()

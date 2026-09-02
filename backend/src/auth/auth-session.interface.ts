@@ -5,6 +5,7 @@ export interface AuthenticatedUser {
   email: string;
   role: Role;
   fullName: string;
+  municipalityId?: string;
 }
 
 export interface AuthSession extends AuthenticatedUser {

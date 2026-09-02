@@ -162,6 +162,22 @@ document.addEventListener('DOMContentLoaded', function() {
     (generatedLicense && (generatedLicense.category || generatedLicense.tradeCategory)) ||
     'Trade License'
   );
+
+  var muniId = app.municipalityId || app.municipality_id || (user && user.municipality_id) || ((app.state && app.state.toLowerCase() === 'karnataka') ? 'muni-blr' : 'muni-hyd');
+  var muniName = 'Greater Hyderabad Municipal Corporation (GHMC)';
+  if (app.municipalityName) {
+    muniName = app.municipalityName;
+  } else if (window.TRADEZO && typeof TRADEZO.getMunicipality === 'function') {
+    var muniObj = TRADEZO.getMunicipality(muniId);
+    if (muniObj && muniObj.name) {
+      muniName = muniObj.name;
+    }
+  }
+
+  fill('.muni-authority-name', muniName);
+  fill('.muni-full-name', muniName);
+  fill('.muni-header-name', muniName + ' - Trade License');
+  fill('.preview-muni-name', muniName);
   
   var issueStr = app.licenseIssueDate;
   var expiryStr = app.licenseExpiryDate;

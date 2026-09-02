@@ -17,6 +17,6 @@ export class PlatformAdminController {
   @Get('settings') settings() { return this.service.settings(); }
   @Patch('settings')
   updateSettings(@Body() settings: UpdateRevenueSettingsDto) {
-    return this.service.updateSettings(settings.tradezo_revenue_percentage);
+    return this.service.updateSettings(settings);
   }
 }

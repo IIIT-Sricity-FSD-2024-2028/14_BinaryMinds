@@ -61,11 +61,19 @@ function loadHistoryData() {
     }) || {};
   }
 
+  var loggedInOfficer = {};
+  try { loggedInOfficer = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}'); } catch(e){}
+  var officerMuniId = loggedInOfficer.municipality_id || loggedInOfficer.municipalityId || '';
+
   var apps = []
     .concat(window.TRADEZO && Array.isArray(TRADEZO.applications) ? TRADEZO.applications : [])
     .concat(safeArray('tz_submitted_apps'))
     .concat(safeArray('applications'))
     .concat(safeArray('tradezo_applications'));
+
+  if (officerMuniId && window.TRADEZO && typeof TRADEZO.isAllowedForTenant === 'function') {
+    apps = apps.filter(function(a) { return TRADEZO.isAllowedForTenant(a, officerMuniId); });
+  }
 
   function normalizeInspection(item) {
     var id = appIdOf(item);
@@ -75,6 +83,20 @@ function loadHistoryData() {
 
     return {
       appId: id,
+      applicant: firstValue(
+        merged.applicantName,
+        merged.applicant,
+        merged.ownerName,
+        merged.full_name,
+        app.applicantName,
+        app.applicant,
+        app.ownerName,
+        app.full_name,
+        report.applicantName,
+        report.applicant,
+        item.applicantName,
+        item.applicant
+      ),
       businessName: firstValue(merged.businessName, merged.business_name, merged.business, app.businessName),
       type: firstValue(
         merged.type,
@@ -113,7 +135,14 @@ function loadHistoryData() {
 
   base = base
     .map(normalizeInspection)
-    .filter(function(item) { return clean(item.appId); });
+    .filter(function(item) {
+      if (!clean(item.appId)) return false;
+      if (officerMuniId && window.TRADEZO && typeof TRADEZO.isAllowedForTenant === 'function') {
+        var app = findByAppId(apps, item.appId);
+        return TRADEZO.isAllowedForTenant(item, officerMuniId) || (app && TRADEZO.isAllowedForTenant(app, officerMuniId));
+      }
+      return true;
+    });
 
   window.escapeInspectionHistoryHtml = escapeHtml;
 
@@ -136,6 +165,7 @@ function renderTable(data) {
     var tr = document.createElement('tr');
     tr.innerHTML =
       '<td>' + esc(item.appId) + '</td>' +
+      '<td>' + esc(item.applicant) + '</td>' +
       '<td>' + esc(item.businessName) + '</td>' +
       '<td>' + esc(item.type) + '</td>' +
       '<td>' + esc(item.date) + '</td>' +
@@ -161,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     searchEl.addEventListener('input', function() {
       var val = this.value.toLowerCase();
       var filtered = historyData.filter(function(i) {
-        return i.businessName.toLowerCase().includes(val) || i.appId.toLowerCase().includes(val);
+        return i.businessName.toLowerCase().includes(val) || i.appId.toLowerCase().includes(val) || (i.applicant && i.applicant.toLowerCase().includes(val));
       });
       renderTable(filtered);
     });

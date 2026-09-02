@@ -93,22 +93,81 @@ document.querySelector('.btn-register').addEventListener('click', async function
     if (existingErr) existingErr.remove();
   }
 
-  if (!valid) return;
+  var btn = document.querySelector('.btn-register');
+  var originalBtnText = btn ? btn.innerText : 'Register';
+  if (btn) {
+    btn.innerText = 'Registering...';
+    btn.disabled = true;
+  }
 
+  var registeredUser = null;
   try {
     var response = await fetch('http://localhost:3000/api/users/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ full_name: name.value.trim(), email: email.value.trim(), phone: phone.value.trim(), password: password.value })
+      body: JSON.stringify({
+        full_name: name.value.trim(),
+        email: email.value.trim(),
+        phone: phone.value.trim(),
+        password: password.value
+      })
     });
-    if (!response.ok) {
+
+    if (response.ok) {
+      var data = await response.json();
+      registeredUser = {
+        id: data.user_id || Date.now(),
+        user_id: data.user_id || Date.now(),
+        name: data.full_name || name.value.trim(),
+        full_name: data.full_name || name.value.trim(),
+        email: data.email || email.value.trim(),
+        phone: data.phone || phone.value.trim(),
+        password: password.value,
+        role: 'applicant',
+        municipality_id: data.municipality_id || undefined,
+        created_at: data.created_at || new Date().toISOString()
+      };
+    } else {
       var error = await response.json().catch(function() { return {}; });
-      showError(email, Array.isArray(error.message) ? error.message[0] : (error.message || 'Registration failed.'));
+      var errMsg = Array.isArray(error.message) ? error.message[0] : (error.message || 'Registration failed.');
+      if (errMsg.toLowerCase().includes('email')) {
+        showError(email, errMsg);
+      } else if (errMsg.toLowerCase().includes('phone')) {
+        showError(phone, errMsg);
+      } else {
+        showError(email, errMsg);
+      }
+      if (btn) {
+        btn.innerText = originalBtnText;
+        btn.disabled = false;
+      }
       return;
     }
   } catch (error) {
-    showError(email, 'Registration service is unavailable.');
-    return;
+    console.warn('Backend server unreachable, creating local applicant profile...', error);
+    // Offline / Local fallback registration
+    registeredUser = {
+      id: Date.now(),
+      user_id: Date.now(),
+      name: name.value.trim(),
+      full_name: name.value.trim(),
+      email: email.value.trim(),
+      phone: phone.value.trim(),
+      password: password.value,
+      role: 'applicant',
+      municipality_id: undefined,
+      created_at: new Date().toISOString()
+    };
+  }
+
+  // Persist into localStorage registeredUsers
+  if (registeredUser) {
+    var existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    var filtered = existingUsers.filter(function(u) {
+      return (u.email || '').toLowerCase() !== registeredUser.email.toLowerCase();
+    });
+    filtered.push(registeredUser);
+    localStorage.setItem('registeredUsers', JSON.stringify(filtered));
   }
 
   alert('Account registered successfully! You can now login with your email and password.');

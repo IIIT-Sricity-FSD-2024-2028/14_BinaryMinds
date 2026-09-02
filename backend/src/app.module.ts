@@ -17,12 +17,14 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { AuthModule } from './auth/auth.module';
 import { PersistenceModule } from './common/persistence/persistence.module';
 import { PlatformAdminModule } from './platform-admin/platform-admin.module';
+import { MunicipalitiesModule } from './municipalities/municipalities.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PersistenceModule,
     PlatformAdminModule,
+    MunicipalitiesModule,
     AuthModule,
     UsersModule,
     ApplicationsModule,

@@ -6,9 +6,25 @@ export class CreatePaymentDto {
   @IsNotEmpty()
   application_id!: number;
 
+  @IsString()
+  @IsOptional()
+  municipality_id?: string;
+
   @IsNumber()
   @IsNotEmpty()
   amount!: number;
+
+  @IsNumber()
+  @IsOptional()
+  processing_fee?: number;
+
+  @IsNumber()
+  @IsOptional()
+  platform_fee?: number;
+
+  @IsNumber()
+  @IsOptional()
+  service_tax?: number;
 
   @IsEnum(PaymentStatus)
   @IsOptional()

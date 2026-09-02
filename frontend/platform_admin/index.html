@@ -1,1 +1,251 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TradeZo Platform Admin</title><link rel="stylesheet" href="platform.css"></head><body><header><div><p>TradeZo Internal</p><h1>TradeZo Platform Admin</h1></div><nav><a href="../applicant_connected/connected/landing%20page/index.html">Public Home</a><button data-view="overview">Dashboard</button><button data-view="corporations">Municipal Corporations</button><button data-view="revenue">Revenue</button><button data-view="transactions">Transactions</button><button data-view="settings">Revenue Settings</button><button data-view="reports">Reports</button><button data-view="profile">Profile</button><button id="logout">Logout</button></nav></header><main><p class="subtitle">Platform Management &amp; Revenue</p><p id="message" role="status"></p><section id="overview" class="view active"><h2>Overview</h2><div id="metrics" class="metrics"></div></section><section id="corporations" class="view"><h2>Municipal Corporations</h2><div id="corporation-table"></div></section><section id="revenue" class="view"><h2>TradeZo Revenue</h2><div id="revenue-summary" class="metrics"></div><h3>Corporation-wise Revenue</h3><div id="revenue-corporations"></div></section><section id="transactions" class="view"><h2>Revenue Transaction History</h2><div id="transactions-table"></div></section><section id="settings" class="view"><h2>Revenue Settings</h2><form id="settings-form"><label>TradeZo Revenue Percentage <input id="percentage" type="number" min="0" max="100" step="1" required></label><button>Save percentage</button></form><p>Changes apply only to newly completed payments. Existing records retain their applied rate.</p></section><section id="reports" class="view"><h2>Reports</h2><p>Revenue records are the platform’s current reportable data. Select Revenue or Transactions to view the complete, real-time breakdown.</p></section><section id="profile" class="view"><h2>Profile</h2><div id="profile-details"></div></section></main><script src="platform.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TradeZo Super Admin & Platform Owner Portal</title>
+  <link rel="stylesheet" href="platform.css">
+</head>
+<body>
+
+  <!-- ===== LEFT SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="42">
+      <div>
+        <div class="logo-gov">Government of India</div>
+        <div class="logo-title">TradeZo</div>
+        <div class="logo-sub">Central Platform Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <button data-view="overview" class="nav-link active">
+        <span class="nav-icon">&#9783;</span> Dashboard
+      </button>
+      <button data-view="corporations" class="nav-link">
+        <span class="nav-icon">&#127970;</span> Municipal Corporations
+      </button>
+      <button data-view="revenue" class="nav-link">
+        <span class="nav-icon">&#128176;</span> Revenue & Fees
+      </button>
+      <button data-view="settings" class="nav-link">
+        <span class="nav-icon">&#9881;</span> Fee Settings
+      </button>
+    </nav>
+    <div class="sidebar-footer">&#169; 2026 Government of India</div>
+  </aside>
+
+  <!-- ===== MAIN WRAPPER ===== -->
+  <div class="main-wrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" class="emblem" height="38">
+        <div>
+          <div class="gov-title">Government of India &ndash; Ministry of Housing & Urban Affairs</div>
+          <div class="gov-sub">TradeZo Central Platform &ndash; Super Admin & Platform Governance</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="admin-badge">
+          <div class="admin-avatar">SA</div>
+          <div>
+            <div class="admin-name">TradeZo Super Admin</div>
+            <div class="admin-role">Platform Owner</div>
+          </div>
+        </div>
+        <a href="../applicant_connected/connected/login/index.html" class="topbar-btn">Public Home</a>
+        <a href="login/index.html" id="logout" class="topbar-btn logout-btn" onclick="sessionStorage.clear()">Logout</a>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <main class="content-area">
+      <p id="message" role="status" style="color:#059669;font-weight:600;margin-bottom:12px;"></p>
+
+      <!-- OVERVIEW SECTION (DASHBOARD) -->
+      <section id="overview" class="view active">
+        <div class="section-header">
+          <div>
+            <h2>Dashboard</h2>
+          </div>
+        </div>
+        <div id="overview-corporation-table"></div>
+      </section>
+
+      <!-- MUNICIPAL CORPORATIONS SECTION -->
+      <section id="corporations" class="view">
+        <div class="section-header">
+          <div>
+            <h2>Municipal Corporations</h2>
+            <p style="color:#667085;font-size:13px;margin-top:2px;">Configured cities, municipal heads, and officer strength</p>
+          </div>
+          <button class="btn-primary" id="openAddCorpBtn">+ Add Municipality</button>
+        </div>
+        <div id="corporation-table"></div>
+      </section>
+
+      <!-- APPLICATIONS DETAILS VIEW -->
+      <section id="applications" class="view">
+        <div class="section-header">
+          <div>
+            <h2 id="appsMuniTitle">Applications</h2>
+            <p id="appsMuniSubtitle" style="color:#667085;font-size:13px;margin-top:2px;">Trade license applications filed under this municipal corporation</p>
+          </div>
+          <button class="btn-secondary" id="backFromAppsBtn" style="padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;">← Back</button>
+        </div>
+        <div id="muni-applications-table"></div>
+      </section>
+
+      <!-- REVENUE SECTION -->
+      <section id="revenue" class="view">
+        <div class="page-header">
+          <h1>TradeZo Platform Revenue & Pricing</h1>
+          <p>Gross collections and revenue share distribution by municipality</p>
+        </div>
+        <div id="revenue-summary-cards" class="metrics"></div>
+        <div id="revenue-chart-container" style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:24px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,0.05);"></div>
+        <div class="section-header" style="margin-top:24px;margin-bottom:14px;">
+          <h2>Municipality Revenue Breakdown</h2>
+        </div>
+        <div id="revenue-corporations"></div>
+      </section>
+
+      <!-- SETTINGS SECTION -->
+      <section id="settings" class="view">
+        <div class="page-header">
+          <h1>Fee Settings</h1>
+          <p>Global platform fee and default municipality licensing fee structure</p>
+        </div>
+        <form id="settings-form" style="max-width:560px;background:#fff;padding:24px;border-radius:10px;border:1px solid #e5e7eb;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+          <div class="form-grid" style="margin-top:0;">
+            <div>
+              <label>Platform Fee (₹) *</label>
+              <input id="platformFeeInput" type="number" min="0" step="1" required>
+            </div>
+            <div>
+              <label>Base Processing Fee (₹) *</label>
+              <input id="baseFeeInput" type="number" min="0" step="1" required>
+            </div>
+            <div>
+              <label>Default Service Tax (%) *</label>
+              <input id="serviceTaxInput" type="number" min="0" max="100" step="1" required>
+            </div>
+          </div>
+          <div style="margin-top:20px;">
+            <button class="btn-primary" type="submit">Save Fee Settings</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+  </div>
+
+  <!-- MUNICIPALITY OFFICERS DETAILS MODAL -->
+  <div class="modal-overlay" id="muniOfficersModal">
+    <div class="modal-card" style="max-width: 540px; max-height: 88vh; overflow-y: auto; padding: 24px 28px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; border-bottom: 1px solid var(--line); padding-bottom: 14px;">
+        <div>
+          <h3 id="officersModalMuniTitle" style="margin: 0; color: var(--navy); font-size: 18px; font-weight: 700;">Municipal Corporation Officers</h3>
+          <p id="officersModalMuniSubtitle" style="margin: 4px 0 0; font-size: 13px; color: var(--muted);">Assigned hierarchy of administrative and field officers</p>
+        </div>
+        <button type="button" class="btn-secondary" id="closeOfficersModalBtn" style="padding: 4px 10px; font-size: 13px; cursor: pointer; border-radius: 6px;">&#x2715; Close</button>
+      </div>
+      <div id="muniOfficersContent"></div>
+    </div>
+  </div>
+
+  <!-- ADD MUNICIPALITY MODAL -->
+  <div class="modal-overlay" id="addCorpModal">
+    <div class="modal-card">
+      <h3 style="margin-top:0;color:var(--navy);">Add New Municipal Corporation</h3>
+      <p style="font-size:13px;color:#6b7280;margin-bottom:16px;">Add a new municipality tenant with localized processing fees and administrative scope.</p>
+      <form id="addCorpForm">
+        <div class="form-grid">
+          <div class="full">
+            <label>Municipality Name *</label>
+            <input type="text" id="muniName" placeholder="e.g. Pune Municipal Corporation (PMC)" required>
+          </div>
+          <div>
+            <label>Unique Tenant ID *</label>
+            <input type="text" id="muniId" placeholder="e.g. muni-pune" required>
+          </div>
+          <div>
+            <label>State *</label>
+            <input type="text" id="muniState" placeholder="e.g. Maharashtra" required>
+          </div>
+          <div>
+            <label>District *</label>
+            <input type="text" id="muniDistrict" placeholder="e.g. Pune" required>
+          </div>
+          <div>
+            <label>Processing Fee (₹) *</label>
+            <input type="number" id="muniFee" value="1200" min="0" required>
+          </div>
+          <div>
+            <label>Platform Fee (₹) *</label>
+            <input type="number" id="muniPlatformFee" value="250" min="0" required>
+          </div>
+          <div>
+            <label>Service Tax (%) *</label>
+            <input type="number" id="muniTax" value="5" min="0" max="100" required>
+          </div>
+          <div>
+            <label>Municipal Head Name (Optional)</label>
+            <input type="text" id="muniHeadName" placeholder="e.g. Ramesh Kulkarni">
+          </div>
+          <div>
+            <label>Municipal Head Email (Optional)</label>
+            <input type="email" id="muniHeadEmail" placeholder="e.g. pune.head@tradezo.gov.in">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="closeAddCorpBtn">Cancel</button>
+          <button type="submit" class="btn-primary">Add Corporation</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD MUNICIPAL HEAD MODAL -->
+  <div class="modal-overlay" id="addHeadModal">
+    <div class="modal-card">
+      <h3 style="margin-top:0;color:var(--navy);">Create Municipal Head (Commissioner)</h3>
+      <p style="font-size:13px;color:#6b7280;margin-bottom:16px;">Add a new Municipal Commissioner account with administrative authority over this corporation.</p>
+      <form id="addHeadForm">
+        <input type="hidden" id="headTargetMuniId">
+        <div class="form-grid">
+          <div class="full">
+            <label>Municipal Corporation</label>
+            <input type="text" id="headTargetMuniName" disabled style="background:#f1f5f9;">
+          </div>
+          <div class="full">
+            <label>Full Name *</label>
+            <input type="text" id="headFullName" placeholder="e.g. Ramesh Kulkarni" required>
+          </div>
+          <div>
+            <label>Email Address *</label>
+            <input type="email" id="headEmail" placeholder="e.g. commissioner@tradezo.gov.in" required>
+          </div>
+          <div>
+            <label>Phone Number *</label>
+            <input type="text" id="headPhone" placeholder="e.g. 9876543210" required>
+          </div>
+          <div class="full">
+            <label>Password *</label>
+            <input type="text" id="headPassword" value="super123" required>
+            <small style="color:#6b7280;font-size:11px;">Default temporary password is super123 (can be customized).</small>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="closeAddHeadBtn">Cancel</button>
+          <button type="submit" class="btn-primary">Create Municipal Head</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="platform.js"></script>
+</body>
+</html>

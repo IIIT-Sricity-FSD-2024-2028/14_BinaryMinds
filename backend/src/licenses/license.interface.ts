@@ -3,6 +3,7 @@ import { LicenseStatus } from '../common/enums/license-status.enum';
 export interface License {
   license_id: number;
   application_id: number;
+  municipality_id?: string;
   license_number: string;
   issued_date: Date;
   expiry_date: Date;

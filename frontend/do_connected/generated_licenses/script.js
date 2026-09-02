@@ -26,8 +26,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // 1. Fetch from mockdata licenses
     if (window.TRADEZO && window.TRADEZO.licenses) {
       window.TRADEZO.licenses.forEach(function(lic) {
+        var appData = window.TRADEZO && window.TRADEZO.applications ? window.TRADEZO.applications.find(function(a){ return String(a.id) === String(lic.appId) || String(a.appRef) === String(lic.appId); }) : null;
         generated.push({
           appId: lic.appId || 'N/A',
+          applicantName: lic.applicantName || lic.ownerName || (appData ? (appData.applicantName || appData.applicant || appData.ownerName || appData.full_name) : '') || '-',
           licenseNo: lic.licenseNo || lic.licenseId || lic.id,
           businessName: lic.businessName,
           category: lic.category || lic.tradeCategory,
@@ -46,9 +48,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!statusObj || statusObj.status !== 'licensed' || !statusObj.licenseNo) return;
 
         var appId = key.replace('doAppStatus_', '');
-        var appData = window.TRADEZO && window.TRADEZO.applications ? window.TRADEZO.applications.find(function(a){ return a.id === appId || a.appRef === appId; }) : null;
+        var appData = window.TRADEZO && window.TRADEZO.applications ? window.TRADEZO.applications.find(function(a){ return String(a.id) === String(appId) || String(a.appRef) === String(appId); }) : null;
         generated.push({
            appId: appId,
+           applicantName: appData ? (appData.applicantName || appData.applicant || appData.ownerName || appData.full_name) : '-',
            licenseNo: statusObj.licenseNo,
            businessName: appData ? appData.businessName : 'Unknown Business',
            category: appData ? (appData.tradeCategory || appData.category) : '-',
@@ -62,8 +65,10 @@ document.addEventListener('DOMContentLoaded', function() {
     var localGen = [];
     try { localGen = JSON.parse(localStorage.getItem('tz_generated_licenses') || '[]'); } catch(e){}
     localGen.forEach(function(lic) {
+      var appData = window.TRADEZO && window.TRADEZO.applications ? window.TRADEZO.applications.find(function(a){ return String(a.id) === String(lic.appId) || String(a.appRef) === String(lic.appId); }) : null;
       generated.push({
          appId: lic.appId,
+         applicantName: lic.applicantName || (appData ? (appData.applicantName || appData.applicant || appData.ownerName || appData.full_name) : '') || '-',
          licenseNo: lic.licenseNo,
          businessName: lic.businessName,
          category: lic.category,
@@ -73,9 +78,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 4. Deduplicate by licenseNo
+    var loggedInUser = null;
+    try { loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
+    var currentMuniId = (loggedInUser && (loggedInUser.municipality_id || loggedInUser.municipalityId)) || '';
+
     var seen = new Set();
     generated = generated.filter(function(lic) {
       if (isDemoRecord(lic)) return false;
+      if (currentMuniId && window.TRADEZO && typeof TRADEZO.isAllowedForTenant === 'function') {
+        var appData = window.TRADEZO && window.TRADEZO.applications ? window.TRADEZO.applications.find(function(a){ return String(a.id) === String(lic.appId) || String(a.appRef) === String(lic.appId); }) : null;
+        if (!TRADEZO.isAllowedForTenant(lic, currentMuniId) && (!appData || !TRADEZO.isAllowedForTenant(appData, currentMuniId))) {
+          return false;
+        }
+      }
       if (seen.has(lic.licenseNo)) return false;
       seen.add(lic.licenseNo);
       return true;
@@ -96,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
     tbody.innerHTML = '';
 
     if (data.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:30px;">No generated licenses found.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:30px;">No generated licenses found.</td></tr>';
       countText.textContent = 'Showing 0 licenses';
       return;
     }
@@ -105,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var tr = document.createElement('tr');
       tr.innerHTML = 
         '<td style="color:#1e40af;font-weight:600;">' + lic.appId + '</td>' +
+        '<td>' + (lic.applicantName || '-') + '</td>' +
         '<td style="font-weight:700;color:#0f172a;">' + lic.licenseNo + '</td>' +
         '<td><strong>' + lic.businessName + '</strong></td>' +
         '<td>' + lic.category + '</td>' +

@@ -1,0 +1,1538 @@
+[
+  {
+    "token": "1nj9SjCKYkFht6ylBqyGcFWqgsgsISRsOQQhxRgSEV4",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T17:51:07.920Z"
+  },
+  {
+    "token": "9ArpCVOjLMzcXqbrpgvNE7D3sOVa6Kh_Da3mYi6wkHk",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T17:51:07.936Z"
+  },
+  {
+    "token": "ax7pqTEQ1mWb9xR6-ZdbKpvhRa2fh_D_jCq5iQB3kSk",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T17:51:07.946Z"
+  },
+  {
+    "token": "9J8KzObPGi0p_pYYnX8ciEmo2IsZhOg1_hcKDySfY_A",
+    "userId": 520,
+    "email": "fo.hyd.flow@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Hyderabad Flow Officer",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T17:51:08.129Z"
+  },
+  {
+    "token": "sMp_Qzwa-5ZjoLiFZRedx3EF7LvPE2jBfZuz1Zqh6mg",
+    "userId": 521,
+    "email": "fo.blr.flow@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Bangalore Flow Officer",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T17:51:08.150Z"
+  },
+  {
+    "token": "Xf-vsERV1Ppq3nHWqPKRsGXuNnO-KtAClIA1JOoeWnw",
+    "userId": 522,
+    "email": "saif.1788342667733@gmail.com",
+    "role": "applicant",
+    "fullName": "Saif",
+    "expiresAt": "2026-09-02T17:51:08.208Z"
+  },
+  {
+    "token": "ONnCRqKhTeZvcW__P0H8wjiFZqZpPOp21mqbr-ugOII",
+    "userId": 523,
+    "email": "applicant.hyd.1788342668237@gmail.com",
+    "role": "applicant",
+    "fullName": "Hyd Citizen",
+    "expiresAt": "2026-09-02T17:51:08.248Z"
+  },
+  {
+    "token": "SNBDe8MAYUrOJ7TKN4pE0jMo2ZqQn8d-YCVp4hOou_A",
+    "userId": 524,
+    "email": "appu.1788342668268@gmail.com",
+    "role": "applicant",
+    "fullName": "Appu",
+    "expiresAt": "2026-09-02T17:51:08.278Z"
+  },
+  {
+    "token": "jCSH0mE6-8ZcYdSeXG9J3ofP-cSrEdrHoVrlz7jj4u4",
+    "userId": 542,
+    "email": "fo.login.verify.1788342668465@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Login Verify Officer",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T17:51:08.474Z"
+  },
+  {
+    "token": "nTNArq0XQnDD3SNWXmaAjlOEE9IDEpZ9OvissbV1534",
+    "userId": 2,
+    "email": "ravi@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ravi",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T17:51:08.482Z"
+  },
+  {
+    "token": "v2PxcaUtV-14MV71vTE4jKDgBHqu4afEn3BdADCrATc",
+    "userId": 5,
+    "email": "arjun@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Arjun",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T17:51:08.487Z"
+  },
+  {
+    "token": "S6x_JNHxcrV5FHx2PCDE-1nKzzuk_gcRVsv4Ma0xIZ0",
+    "userId": 543,
+    "email": "do.hyd.1.1788342667734@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Hyderabad DO One",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T17:51:08.512Z"
+  },
+  {
+    "token": "G85mff5oSrlLITipXWcrHtUvc9gFG7ax8Ceiq4Pw16I",
+    "userId": 544,
+    "email": "do.hyd.2.1788342667734@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Hyderabad DO Two (Replaced)",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T17:51:08.545Z"
+  },
+  {
+    "token": "RiGE__u-SqSSz_jtHeRsP6RvXq-lVnu7lgxLTcLRYOI",
+    "userId": 545,
+    "email": "do.blr.1.1788342667734@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Bangalore DO One",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T17:51:08.569Z"
+  },
+  {
+    "token": "CzKvIypzh4V556JnGwDsc_2wHV-bbcAB3rxslhS79tU",
+    "userId": 546,
+    "email": "pune.head.1788342668583@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Pune Commissioner",
+    "municipalityId": "muni-pune",
+    "expiresAt": "2026-09-02T17:51:08.595Z"
+  },
+  {
+    "token": "EBXv0kLj_aFlkQrTSuXG1RLCW3F0PHFHV6T1O7f42L0",
+    "userId": 547,
+    "email": "pune.do.1788342668598@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Pune Department Officer",
+    "municipalityId": "muni-pune",
+    "expiresAt": "2026-09-02T17:51:08.607Z"
+  },
+  {
+    "token": "O893DcnGh_PAxifzliGHH0nv0VQo1eM-qqCV8ZTqLcE",
+    "userId": 548,
+    "email": "hyd.applicant.docfix.1788342668617@gmail.com",
+    "role": "applicant",
+    "fullName": "HYD Doc Fix Applicant",
+    "expiresAt": "2026-09-02T17:51:08.626Z"
+  },
+  {
+    "token": "K_WfGuZyT9uXhlMmJGPsTL-UwroU9OpOy1sYb43q460",
+    "userId": 549,
+    "email": "blr.applicant.docfix.1788342668629@gmail.com",
+    "role": "applicant",
+    "fullName": "BLR Doc Fix Applicant",
+    "expiresAt": "2026-09-02T17:51:08.637Z"
+  },
+  {
+    "token": "gHtPLecj8dY84xpAq2yGqCZic4J_0450O_jllC7cXew",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T17:52:25.012Z"
+  },
+  {
+    "token": "PCDlUzN1UdJsjIRHtIMs9r7DBt6MkE5hDjHfuLwm9tM",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T17:52:25.032Z"
+  },
+  {
+    "token": "k72QQ3BKPkHQkA6AvNAr8sP50g4C9rJdnPy_IZqj320",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T17:52:25.041Z"
+  },
+  {
+    "token": "0WMhAdnLpxaM7KJsIMoICkKH6KXbevd8TTOZ-XIyVzk",
+    "userId": 554,
+    "email": "fo.hyd.flow@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Hyderabad Flow Officer",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T17:52:25.249Z"
+  },
+  {
+    "token": "JwQQWOG6razp1VpNqtJOXu3mdC37gKvq-33ASd2Ca4E",
+    "userId": 555,
+    "email": "fo.blr.flow@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Bangalore Flow Officer",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T17:52:25.274Z"
+  },
+  {
+    "token": "iXG5H6MyLMhewE3kKZ5q2Qx41CD9R1KDGm7nBn22Xl4",
+    "userId": 556,
+    "email": "saif.1788342744801@gmail.com",
+    "role": "applicant",
+    "fullName": "Saif",
+    "expiresAt": "2026-09-02T17:52:25.349Z"
+  },
+  {
+    "token": "A3WyPzlGVm41xEBbrfXWa5Xrs_scKRvxL7Xg-mH7s2A",
+    "userId": 557,
+    "email": "applicant.hyd.1788342745375@gmail.com",
+    "role": "applicant",
+    "fullName": "Hyd Citizen",
+    "expiresAt": "2026-09-02T17:52:25.387Z"
+  },
+  {
+    "token": "L8V8HyYZpzjPvUCiGKTyd9vZnIKSThbPaeeab5H5Cx8",
+    "userId": 558,
+    "email": "appu.1788342745408@gmail.com",
+    "role": "applicant",
+    "fullName": "Appu",
+    "expiresAt": "2026-09-02T17:52:25.418Z"
+  },
+  {
+    "token": "MTBOgKgKwn3wdJK9toGu0patOQ7WVBFjIgnJUkkmkNA",
+    "userId": 576,
+    "email": "fo.login.verify.1788342745632@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Login Verify Officer",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T17:52:25.641Z"
+  },
+  {
+    "token": "EHh2MMF270qL2zffzA6Mt54m0QVT-njvQn21sWo13oc",
+    "userId": 2,
+    "email": "ravi@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ravi",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T17:52:25.649Z"
+  },
+  {
+    "token": "QpUm1Kp9mK4oTBRp9pCYF_v-YS8lFdW4uWNee7jm_uY",
+    "userId": 5,
+    "email": "arjun@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Arjun",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T17:52:25.655Z"
+  },
+  {
+    "token": "g7LMGFsFUZYaQtgTrO0lyclo1oSEAB47Zg6OayVThTo",
+    "userId": 577,
+    "email": "do.hyd.1.1788342744802@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Hyderabad DO One",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T17:52:25.677Z"
+  },
+  {
+    "token": "z4AWQbPMF_bBfHv1zQrn2abEcD_hrw5Hu-GJHH2nGzM",
+    "userId": 578,
+    "email": "do.hyd.2.1788342744802@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Hyderabad DO Two (Replaced)",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T17:52:25.707Z"
+  },
+  {
+    "token": "FRlbMiBTZ5HPNNmK7ohD4KaCzjRs5ffCivyYvBuybAk",
+    "userId": 579,
+    "email": "do.blr.1.1788342744802@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Bangalore DO One",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T17:52:25.725Z"
+  },
+  {
+    "token": "QN6XLNE6jMzykvopmxhzUR9bo7XLRVCoNIcgmti5njw",
+    "userId": 580,
+    "email": "pune.head.1788342745739@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Pune Commissioner",
+    "municipalityId": "muni-pune",
+    "expiresAt": "2026-09-02T17:52:25.748Z"
+  },
+  {
+    "token": "ZHGDtd19jHMwk5x84BLW4ENNzMGIXz9pQelMxlvks68",
+    "userId": 581,
+    "email": "pune.do.1788342745752@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Pune Department Officer",
+    "municipalityId": "muni-pune",
+    "expiresAt": "2026-09-02T17:52:25.763Z"
+  },
+  {
+    "token": "ky56Al-4t7_MZf0P3mpIWe8PqiDTLy5pe3RXCAqxgt4",
+    "userId": 582,
+    "email": "hyd.applicant.docfix.1788342745772@gmail.com",
+    "role": "applicant",
+    "fullName": "HYD Doc Fix Applicant",
+    "expiresAt": "2026-09-02T17:52:25.783Z"
+  },
+  {
+    "token": "r4WnEUVm-cCTj70tjatm-Oa0rDitvuYYnt39iv1Frt8",
+    "userId": 583,
+    "email": "blr.applicant.docfix.1788342745786@gmail.com",
+    "role": "applicant",
+    "fullName": "BLR Doc Fix Applicant",
+    "expiresAt": "2026-09-02T17:52:25.795Z"
+  },
+  {
+    "token": "GJNyWpyOTU2YA-J8GraHk4rolql9CJZkNjgQgICUMR4",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T18:01:21.282Z"
+  },
+  {
+    "token": "-sF_oQBKwPmb-p79bRruWW21kB-M_Dbsqv3kmVmgLoM",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T18:01:37.502Z"
+  },
+  {
+    "token": "QWVFlVLfDAH2sglmKx18H_baLEOOxsXc2eRF23ZPBlc",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T18:04:27.744Z"
+  },
+  {
+    "token": "aN3U0SlLaeFughQXX4Zo2daIB1YLL6dNh9F_qK8jwsY",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T18:12:06.911Z"
+  },
+  {
+    "token": "AEoe8P28G3IROJnA-I15hiRKauFaHU3AyjrR_v6Jjkc",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T18:12:06.954Z"
+  },
+  {
+    "token": "EdIhaCTmUCgFUhQpeX_oBedjC9EACIHBbao7UNg0NoA",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T18:12:06.969Z"
+  },
+  {
+    "token": "DINNMmwthPudSibHPkb9kyIvS30yVlxLsAmUze9BzCI",
+    "userId": 588,
+    "email": "fo.hyd.flow@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Hyderabad Flow Officer",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T18:12:07.235Z"
+  },
+  {
+    "token": "iE0bUxmsYgsvivDek4pa9nn9wQJhLUvlyoJPew1udP4",
+    "userId": 589,
+    "email": "fo.blr.flow@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Bangalore Flow Officer",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T18:12:07.259Z"
+  },
+  {
+    "token": "vjpI9eOdhSbtTJNVrKi6-vGk9S6UM7PYWAX-jVpgHjE",
+    "userId": 590,
+    "email": "saif.1788343926567@gmail.com",
+    "role": "applicant",
+    "fullName": "Saif",
+    "expiresAt": "2026-09-02T18:12:07.314Z"
+  },
+  {
+    "token": "T3WLnUgNBAMFsSeMpdHSNydR4FRmmDUyPANicP5RkEU",
+    "userId": 591,
+    "email": "applicant.hyd.1788343927347@gmail.com",
+    "role": "applicant",
+    "fullName": "Hyd Citizen",
+    "expiresAt": "2026-09-02T18:12:07.361Z"
+  },
+  {
+    "token": "ALo96nWq73A7S5-ROEiOzSNNZn6gz140XSaAzU2ah7Y",
+    "userId": 592,
+    "email": "appu.1788343927390@gmail.com",
+    "role": "applicant",
+    "fullName": "Appu",
+    "expiresAt": "2026-09-02T18:12:07.403Z"
+  },
+  {
+    "token": "gb9SUzVjeUSiWG26YWGsv60vIP_3vxAe8ePNBn3oX3g",
+    "userId": 610,
+    "email": "fo.login.verify.1788343927701@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Login Verify Officer",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T18:12:07.714Z"
+  },
+  {
+    "token": "hzklADWhBJLRGjC7eIy0MjbR9lL9Q-EP1YlLxB2Sgvk",
+    "userId": 2,
+    "email": "ravi@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ravi",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T18:12:07.725Z"
+  },
+  {
+    "token": "P52Msk9dnoNlW4hBK9ujJfsX8-VFAu33Ww3v8A2TPfs",
+    "userId": 5,
+    "email": "arjun@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Arjun",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T18:12:07.735Z"
+  },
+  {
+    "token": "lp94ypOCAaP_oDEgSekvU5248VlreA2KDxpj03T6jFk",
+    "userId": 611,
+    "email": "do.hyd.1.1788343926571@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Hyderabad DO One",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T18:12:07.764Z"
+  },
+  {
+    "token": "JsxCq5IV5KzuhFZc-bQRxSpfU_Gl6awOUYkQCd4W5f8",
+    "userId": 612,
+    "email": "do.hyd.2.1788343926571@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Hyderabad DO Two (Replaced)",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T18:12:07.808Z"
+  },
+  {
+    "token": "Jg6jTS5cwPcIppZzZ62-0cnYXmdVO42SpuoCqe91SaQ",
+    "userId": 613,
+    "email": "do.blr.1.1788343926571@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Bangalore DO One",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T18:12:07.832Z"
+  },
+  {
+    "token": "A23P-8Iq_3vyvNyMQfP15KkLbj9BZvHU29JPWCBCYoo",
+    "userId": 614,
+    "email": "pune.head.1788343927853@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Pune Commissioner",
+    "municipalityId": "muni-pune",
+    "expiresAt": "2026-09-02T18:12:07.867Z"
+  },
+  {
+    "token": "xUZdEqKB13OKKsq_Zuwpcbm0WfACwQoqyEBZR_2SDsU",
+    "userId": 615,
+    "email": "pune.do.1788343927872@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Pune Department Officer",
+    "municipalityId": "muni-pune",
+    "expiresAt": "2026-09-02T18:12:07.885Z"
+  },
+  {
+    "token": "8O57RdKBmAkANZCYV2FGX6uGIh7X0CUEggtf_wQNwv8",
+    "userId": 616,
+    "email": "hyd.applicant.docfix.1788343927900@gmail.com",
+    "role": "applicant",
+    "fullName": "HYD Doc Fix Applicant",
+    "expiresAt": "2026-09-02T18:12:07.912Z"
+  },
+  {
+    "token": "T030OoJFRpU-Xp0s3Ws83-AF1ofe0NoOvyxL2ttiNbY",
+    "userId": 617,
+    "email": "blr.applicant.docfix.1788343927918@gmail.com",
+    "role": "applicant",
+    "fullName": "BLR Doc Fix Applicant",
+    "expiresAt": "2026-09-02T18:12:07.930Z"
+  },
+  {
+    "token": "9d6zgQarNiT6UzTAXy0dbPWNAPeKTmgvUKU_sWqRFys",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T18:13:59.542Z"
+  },
+  {
+    "token": "JsFL1H8rZjAOQ67BrBs9RXA9zrxeVBPNmywkS11z8bM",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T18:14:50.578Z"
+  },
+  {
+    "token": "nAr5Q03MYwC81h2hZ4yE9VK1i4VIBqbsMAoe1W-fZlo",
+    "userId": 70,
+    "email": "hasini@gmail.com",
+    "role": "applicant",
+    "fullName": "hasini",
+    "expiresAt": "2026-09-02T18:17:39.707Z"
+  },
+  {
+    "token": "0GYIJ08VvqwwlyIoIqczpylgV9a_PIsjmxZXi-UGPWQ",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T18:20:13.239Z"
+  },
+  {
+    "token": "_7vgPFEhJS28s8x1UpW2NG85b_1cnfhGTzKMtVE0dXU",
+    "userId": 5,
+    "email": "arjun@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Arjun",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T18:21:09.772Z"
+  },
+  {
+    "token": "hmFJrxPRJrvfVkwxn_f0otQWfMAZ4n93L6vNCPG5OIc",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T18:21:51.174Z"
+  },
+  {
+    "token": "f-F5wUWHWe3Q_xY0DygJxSZxC6a9bWEtD8QZhY59b28",
+    "userId": 5,
+    "email": "arjun@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Arjun",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T18:24:12.828Z"
+  },
+  {
+    "token": "u8b0NCTX64XhEyCx3J_yfmBiKs-KcWn44uj07sd3mZM",
+    "userId": 6,
+    "email": "naveen@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Naveen",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T18:50:54.325Z"
+  },
+  {
+    "token": "UfCK-97D4InP8fxPpIVG31cyZLY4anCquJviTS4sL74",
+    "userId": 2,
+    "email": "ravi@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ravi",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T18:52:08.046Z"
+  },
+  {
+    "token": "jpPuztdB90Us8hFgempV4wTMZJY6-cLG_x0cUti1Lz8",
+    "userId": 5,
+    "email": "arjun@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Arjun",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T18:52:19.799Z"
+  },
+  {
+    "token": "_0MYW73HytPcLcdnKPuNeqoDmcEMc0quVeCH-CQGVhY",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T18:52:37.316Z"
+  },
+  {
+    "token": "NDkFz37QsvbDRQItxyd2ZXM-Paf_9fI8Mwyq_Wk4_B0",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T18:53:19.934Z"
+  },
+  {
+    "token": "umtJqg1I6lxtr1o3XtwPRnv-gBpIdY9p1ZizZ8BmIsg",
+    "userId": 6,
+    "email": "naveen@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Naveen",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T18:59:06.759Z"
+  },
+  {
+    "token": "ov6uoCUg1ylLjB_lokJEP9snESkm-3ntgilVfaC6fto",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T19:05:13.093Z"
+  },
+  {
+    "token": "CaGI2tSFWSJoo9ex0gg-Wy1XAU4ZyeRfilfMApTOOAs",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T19:12:38.874Z"
+  },
+  {
+    "token": "XNJ4_cENdDQYTQhTWHAsSe4ppAE9-VlFz8rKZjjvZYg",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T19:15:45.381Z"
+  },
+  {
+    "token": "M63Opac4WKLEGnZy8Lw2MyS8eOuEY1RCzNMAiPHAECs",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T19:21:43.974Z"
+  },
+  {
+    "token": "zMGCMDh3kRhccOUNeKnqCG6lWjKYOdiKcooT_UaC5n0",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T19:41:43.933Z"
+  },
+  {
+    "token": "QgqH45JoqR6SYADXuxDqVOUgefU6GROyC_2y-ajEs9w",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T19:41:43.944Z"
+  },
+  {
+    "token": "zaMVH8Rcyty3WVPi11sMZGFoSR3HULrr3huGZZK7HGg",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T19:41:43.955Z"
+  },
+  {
+    "token": "70zRCDz4Zdp3B0pV0wn7bpTrZocFZuLMivO5w8saK-w",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T19:49:24.540Z"
+  },
+  {
+    "token": "uhBaACm9fZP_gEaljZWkwWoU4lRGvBDtIOMDzQfF2cQ",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T19:49:24.556Z"
+  },
+  {
+    "token": "R3CgLpLtedFYC6NyDlGIZcWAQYwV4JrXZn3EINoMBzs",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T19:49:24.566Z"
+  },
+  {
+    "token": "lGRSSRJKOJA-oJbyTk1-vSUE88V2UBocjcJVDzQZ268",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T19:49:24.573Z"
+  },
+  {
+    "token": "E1vOfUlAi5i3oDA3tFVlCY40QnhN0QAtR3GFeTH8COE",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T19:49:54.864Z"
+  },
+  {
+    "token": "5Bi6c-RVKVv-TwjxjVtlidhHFIKB1rXekN6LDeBtpeg",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T19:49:54.873Z"
+  },
+  {
+    "token": "E3rflMyprjpZeJnBZt_aoMJIAAiiDmSSenhnL4S5f_E",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T19:49:54.881Z"
+  },
+  {
+    "token": "AiSYyCSjUc83OJFZU8QnRkwZbyu-sEPOiyTAXUABP4I",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T19:49:54.889Z"
+  },
+  {
+    "token": "i-vAEVhLcJkoJlHwp2a76JQQANiBgTxL7etsdAuNF3c",
+    "userId": 72,
+    "email": "mumbai.fo1@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Mumbai Field Officer 1",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T19:49:54.908Z"
+  },
+  {
+    "token": "R0rfyjJlwxovhKNIEAUfmyjiP_Tr0B3VzTX4X1KtTvY",
+    "userId": 73,
+    "email": "mumbai.do1@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Mumbai Dept Officer 1",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T19:49:54.923Z"
+  },
+  {
+    "token": "kcxqsy2wug0o0XYO61EF3JL9xEPY2odhF86yHmxVe88",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T19:51:33.474Z"
+  },
+  {
+    "token": "Tlr0VFxtZzMYx7eKendEy7RfFAyj_OxvrEExGOS2NEw",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T19:51:33.485Z"
+  },
+  {
+    "token": "TB2GbGVY6z5nK1BMJFUyS8HjOOp4Merjp-ArMya2ZHU",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T19:51:33.492Z"
+  },
+  {
+    "token": "wiv-vGKDn1jYn1v68H_l8x9_yE-680u3h7oQlxvEUso",
+    "userId": 74,
+    "email": "mumbai.citizen.1788349893497@example.com",
+    "role": "applicant",
+    "fullName": "Mumbai Citizen User",
+    "expiresAt": "2026-09-02T19:51:33.507Z"
+  },
+  {
+    "token": "18WIS_0krgDVggJ-HXxoPFj06OWfzjYN76X61_kw_yg",
+    "userId": 6,
+    "email": "naveen@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Naveen",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T19:53:53.377Z"
+  },
+  {
+    "token": "6xiQleJYu_Z_gkCYCz-tBhykaYr7Z9e8bb1ebgTUi3U",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T19:54:42.994Z"
+  },
+  {
+    "token": "hqQdb2kpQS6kE_OP8EZLl5OtTheSZRAEcEKpYAMvSNY",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T19:56:23.677Z"
+  },
+  {
+    "token": "xPNz6d_s2VSe8b4N29Bm1hpQttlpJnKwRWECpbTR8Hg",
+    "userId": 68,
+    "email": "jioo@gmail.com",
+    "role": "applicant",
+    "fullName": "jiya",
+    "expiresAt": "2026-09-02T19:58:09.313Z"
+  },
+  {
+    "token": "zfPO91RqhPxzMPxF0-3CZEmpPtvbChWcg1FfpUZyzds",
+    "userId": 6,
+    "email": "naveen@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Naveen",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T19:59:26.183Z"
+  },
+  {
+    "token": "lGyhDwSVgel27eMAJFfz6tzXB5k42BcaNfcY8ZtTpp4",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T20:02:24.780Z"
+  },
+  {
+    "token": "_pkfQwfx8123tbB9LJvoxMBNwbHnNFne_gPoeZGyYnU",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T20:03:20.156Z"
+  },
+  {
+    "token": "Bbp0fiNCAAORhMdOt1NbIONcPmX4yi0_E1MUGu55g9Y",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T20:05:17.621Z"
+  },
+  {
+    "token": "NzuwIuVsjVbhMb5uPz-dStIG6Oeo5D5vZBPIwSayG4s",
+    "userId": 6,
+    "email": "naveen@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Naveen",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T20:08:52.576Z"
+  },
+  {
+    "token": "dU8BpX4_XSZPEYe-iPkfP8ug8TYSBOOZtfmWCo4XNHk",
+    "userId": 75,
+    "email": "janvi@gmail.com",
+    "role": "applicant",
+    "fullName": "janvi",
+    "expiresAt": "2026-09-02T20:14:44.826Z"
+  },
+  {
+    "token": "9rBqD4OpSiby0lD_0F6ekgCirkkfln3KvaXfwxDWV6c",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T20:16:34.477Z"
+  },
+  {
+    "token": "ZY37NiTD_XvZKuwFZ3hHexN3UFAjKiC2RL8jA7vUCd0",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T20:17:45.478Z"
+  },
+  {
+    "token": "bFmwVVM-R61Q4RgL-KPiA-LAID-v1HnpjCxPPAvxGaY",
+    "userId": 72,
+    "email": "mumbai.fo1@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Mumbai Field Officer 1",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T20:19:47.315Z"
+  },
+  {
+    "token": "AYwQE8M4cKEViOY7Yd5EUPCgtACL5LdMchHxKYqqd7o",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T20:26:30.297Z"
+  },
+  {
+    "token": "eQzRLoMRyhUz3iRiBOrRyXNGmovpLmCDkbx8zNFKgRQ",
+    "userId": 73,
+    "email": "mumbai.do1@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Mumbai Dept Officer 1",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T20:28:45.514Z"
+  },
+  {
+    "token": "EY0MG85CKdFCeSvLCyaBHZq_anLjbpVB8ae0ajJeUGw",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T20:32:59.285Z"
+  },
+  {
+    "token": "xtZIXVDnvZNTOQAuSbtswikYRQaN1vZ-L6CXlqb0Ji4",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T20:36:10.566Z"
+  },
+  {
+    "token": "GMdA8MDEpVZXFglCOTRUQGey3OR4NpN7vSJ2GtcZ7LM",
+    "userId": 76,
+    "email": "kumara@tradzo.gov.in",
+    "role": "department_officer",
+    "fullName": "kumara",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T20:38:14.950Z"
+  },
+  {
+    "token": "uE0V2F7ZbmJ08cTPSGrsSQGJr3gT4lXfwkiFOm23RBE",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T21:06:07.525Z"
+  },
+  {
+    "token": "Z5wseQnpqy6N8eh_cgXGii0LhCXJQ5WtfleXiJ4iac4",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T21:35:51.215Z"
+  },
+  {
+    "token": "uro0Ai8z06JNcRll5-4ROqrMoUDZ35QHkqWObwOS8WY",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T21:35:51.231Z"
+  },
+  {
+    "token": "UK3PjsVVu8NAb12VwO9IspIQpCK5TGuEyiTooAlusKY",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T21:35:51.240Z"
+  },
+  {
+    "token": "BWFxGW6ZBnES3qZORCbHO-b9RYB3Nq039_sJOo-DrRs",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T21:36:07.143Z"
+  },
+  {
+    "token": "j6DMbYwEFVhyr87Zv3CynbdUtPw68r7GJEJn5VsbXSA",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T21:36:07.159Z"
+  },
+  {
+    "token": "6ks8bf81blaAbJOwwAABuYJDdO3QTJ5FcyKwKzycZUI",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T21:36:07.169Z"
+  },
+  {
+    "token": "gLN1mBCFgnd6iTXNAeU00qnwVz68OHLyy6K1pZVWOwI",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T21:36:50.672Z"
+  },
+  {
+    "token": "8bP7q_nRr7N-FX0PrR9omcYm4YppZjWmSg1sEsuqmJ8",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T21:36:50.687Z"
+  },
+  {
+    "token": "upYFnMRk74sa0lYlcKu4-KmYOzI6viuIKztz0yFgtKo",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T21:36:50.697Z"
+  },
+  {
+    "token": "bGfI5GbCBE6PU--zGqpg6S8WVrf9gevPO29xgnMB-QE",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T21:37:25.022Z"
+  },
+  {
+    "token": "DSng2eHy2Mbjap4_Y4C20v0lpGshsl98zeelem2o8bk",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T21:37:25.033Z"
+  },
+  {
+    "token": "h0X6rLCt1uP_SEmcs0fWGAaY9YHYt1lupjJIRs3GORU",
+    "userId": 71,
+    "email": "mumbai.head@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "sharavani patil",
+    "municipalityId": "muni-mumbai",
+    "expiresAt": "2026-09-02T21:37:25.039Z"
+  },
+  {
+    "token": "S7TjL9-0b2otw-GpVLZxVyexFFhPTSnRCTtuxLV52eM",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T21:37:25.075Z"
+  },
+  {
+    "token": "wbNME46NYOtykQCAG7pV9D5yThuceCSsebRw4kggua4",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T21:39:17.386Z"
+  },
+  {
+    "token": "ATIhRR16I6jQ7GjO3fjpT5sGm55cnBujRKic-2ByMBY",
+    "userId": 2,
+    "email": "ravi@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ravi",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T21:43:17.904Z"
+  },
+  {
+    "token": "eTdW2yxhMWC1dj2ueZIlMPMnDBN2xmGO8TQozLL-Tac",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T21:45:46.046Z"
+  },
+  {
+    "token": "_FxgDZ3vnWAno15jEJr63syyaMEW0vXcLAJ84YALRiE",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T21:46:49.947Z"
+  },
+  {
+    "token": "8QDPYPKA7GLbgic17OWfp3JOmv3pZ1nmqVUaYhgetwA",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T21:46:49.958Z"
+  },
+  {
+    "token": "MHlftNUhz0TYIWYpqHpfIlwE97RJZ09rget3fv1TVOg",
+    "userId": 68,
+    "email": "jioo@gmail.com",
+    "role": "applicant",
+    "fullName": "jiya",
+    "expiresAt": "2026-09-02T21:48:37.610Z"
+  },
+  {
+    "token": "uTHc9KgFstCMhSW6HivUqQKwjrb80T2ebULDtdyeRM0",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T21:49:26.115Z"
+  },
+  {
+    "token": "X9tkwcVQefVmQQKurRT5JM5r3CeCdwijJFZCbCAj8hY",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:17:15.687Z"
+  },
+  {
+    "token": "AfB6cDND1vFl4T3Rumjj_66C35itl2dNH44s5hLPQok",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T22:17:15.712Z"
+  },
+  {
+    "token": "2zLOH5wIZ5qogwpNi89FdepBET9alsyvkzvAsK_CXl0",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:24:00.194Z"
+  },
+  {
+    "token": "ny4Vtt2bGMWgQSFPJlk_gmAzYpdBMx3O9IWepuiV444",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T22:24:00.214Z"
+  },
+  {
+    "token": "wuFzN-nlpLpWjyX2I2OcjOkQn_2z-U5_AP8Z5Vx8wCs",
+    "userId": 2,
+    "email": "ravi@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ravi",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:28:15.912Z"
+  },
+  {
+    "token": "OWrHDgycdi2VdGEHNuREsaMtiUTmmJSpaCUWbYD_sJA",
+    "userId": 2,
+    "email": "ravi@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ravi",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:29:02.944Z"
+  },
+  {
+    "token": "hrOOPSN4rwEFADMWl-pkMjqAF9uGeJzoen31mq_kkPU",
+    "userId": 5,
+    "email": "arjun@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Arjun",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T22:29:02.960Z"
+  },
+  {
+    "token": "53UKtRBjxM2anUJfE1UanBLm89-gk36lc_R0spFbrSE",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:29:02.982Z"
+  },
+  {
+    "token": "eERPK_cE76VwLW-3oG8ptprc1FpvmztasCPSQFyeC7I",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:30:45.201Z"
+  },
+  {
+    "token": "eVljWvn_WYT0d1xKRJAsPwOe69xYxQGoV-RQ17vOuA4",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T22:31:08.305Z"
+  },
+  {
+    "token": "IHUs7wVhYRrXWRnv03LKAjhIFPc9P0yn5O_KiyelXYY",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:31:39.247Z"
+  },
+  {
+    "token": "cLHWRLAQpDgwlXPqJWSBqwrMs8SKu0E7hQRaUI65eFY",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T22:32:05.386Z"
+  },
+  {
+    "token": "_uv33EH0E0JQqaHoqfVfdlGtf3k3WxPR2LAWivlvjFA",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:32:32.853Z"
+  },
+  {
+    "token": "jpXnqLX5ijfH_CtYHNLFARl9HjbLy7SQZAKtJTTv1GU",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T22:33:08.276Z"
+  },
+  {
+    "token": "JCHiSP0XPKM9w-NLjNfMFmCrntusd02l3Y6usoRa9w4",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:33:39.791Z"
+  },
+  {
+    "token": "kSI_yDWoqOt1tSbf1I6QRPfoitW2kJV_GU93disAeiU",
+    "userId": 77,
+    "email": "tishya123@gmail.com",
+    "role": "applicant",
+    "fullName": "tishya",
+    "expiresAt": "2026-09-02T22:35:39.101Z"
+  },
+  {
+    "token": "biJGlE9wxnHbZiQTjR_ndD4c2GZvS5YivNka2EUCmmI",
+    "userId": 4,
+    "email": "suraj@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Suraj",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T22:37:30.981Z"
+  },
+  {
+    "token": "Da_S6dQz75SzngAzieJB2NWW3NVfIXn4LfsWNtacugI",
+    "userId": 5,
+    "email": "arjun@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Arjun",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T22:38:39.665Z"
+  },
+  {
+    "token": "f6WcY5keDBaVhxCq3Mge2LsgYxDWl17eU_ls-i7dC_o",
+    "userId": 6,
+    "email": "naveen@tradezo.gov.in",
+    "role": "department_officer",
+    "fullName": "Naveen",
+    "municipalityId": "muni-blr",
+    "expiresAt": "2026-09-02T22:39:45.868Z"
+  },
+  {
+    "token": "syf4gLhoNbARwdIFKvWa0QHFwSvPl5E6CZUPA9341Yk",
+    "userId": 77,
+    "email": "tishya123@gmail.com",
+    "role": "applicant",
+    "fullName": "tishya",
+    "expiresAt": "2026-09-02T22:40:46.496Z"
+  },
+  {
+    "token": "oAuIvZUUlE57sXth-c_AJnDNs3VFy7c_iBgoUIk8O60",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T22:41:50.547Z"
+  },
+  {
+    "token": "CAIcOF_M-PQDyV3v__6hbQuLVqx6Df6UFXP5kIToskg",
+    "userId": 78,
+    "email": "jiyu@gmail.com",
+    "role": "applicant",
+    "fullName": "jiyu",
+    "expiresAt": "2026-09-02T22:45:38.261Z"
+  },
+  {
+    "token": "PgNrdMEG2awWI2kWXEUwBUGwFDoCLAo2YiWUFhNGN7E",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:46:54.218Z"
+  },
+  {
+    "token": "ozQV4mdyzjvv0j9PFl_KbL0axSYRBuQktjIxyoLql_Q",
+    "userId": 44,
+    "email": "ramm@tradzo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ramm Officer",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:51:09.283Z"
+  },
+  {
+    "token": "EwCknR7q8TyQa_AAC584f5xKRXfdUkhXswtuI_36hlg",
+    "userId": 44,
+    "email": "ramm@tradzo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ramm Officer",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:55:14.751Z"
+  },
+  {
+    "token": "MawOKkiThGgHnZppfni4gtoh-0UeR-Sek1e-NOHUvbg",
+    "userId": 44,
+    "email": "ramm@tradzo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ramm Officer",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T22:57:32.128Z"
+  },
+  {
+    "token": "JkkGoj6sv2FZlG2hQnJnXI-_KdG2kpP4MgMZb76ZJq4",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T23:01:19.796Z"
+  },
+  {
+    "token": "eJ515wHKAYQuMpfOPQjpqP0tcg_qRwEHyXkNubUewwg",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-02T23:03:32.721Z"
+  },
+  {
+    "token": "UW2zEjRTW9SUyylokwUnk-19Gxbj4PXxkCWkMGuOyaY",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T23:15:41.276Z"
+  },
+  {
+    "token": "reI_mSySatHE_zev8h6GgTOfpmMsOmm06nNMPVS-0h0",
+    "userId": 76,
+    "email": "kumara@tradzo.gov.in",
+    "role": "department_officer",
+    "fullName": "kumara",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T23:21:57.055Z"
+  },
+  {
+    "token": "XoM1sTT7BnMBu8TS2T5EUSCRP0JNo-BHQ0Egj8ji9kU",
+    "userId": 76,
+    "email": "kumara@tradzo.gov.in",
+    "role": "department_officer",
+    "fullName": "kumara",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T23:22:03.279Z"
+  },
+  {
+    "token": "saY8EIKpFpWjs1lub7QQZJrzP9vVlBQCIwFCNVsvw0Y",
+    "userId": 76,
+    "email": "kumara@tradzo.gov.in",
+    "role": "department_officer",
+    "fullName": "kumara",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T23:23:04.919Z"
+  },
+  {
+    "token": "gwsZytIQdXC3nEdVjmVBOCkWtaNYsvEx1E_vZYZKML8",
+    "userId": 76,
+    "email": "kumara@tradzo.gov.in",
+    "role": "department_officer",
+    "fullName": "kumara",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-02T23:23:18.801Z"
+  },
+  {
+    "token": "lpyEHkDuc6rXFFjCxvjy9_zpw1lsadHvUQdZB_hP9a4",
+    "userId": 79,
+    "email": "kusuma123@gmail.com",
+    "role": "applicant",
+    "fullName": "kusuma",
+    "expiresAt": "2026-09-03T00:48:51.417Z"
+  },
+  {
+    "token": "kbvm-6x28Ws4NlYVxFhUnrmWjZMyVKI60ntFcRAhV9U",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-03T00:58:11.195Z"
+  },
+  {
+    "token": "qVGecE6QloDbh2MuEeaZs2wQBg9ybQnabMq_XoLH33c",
+    "userId": 2,
+    "email": "ravi@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ravi",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-03T00:58:50.657Z"
+  },
+  {
+    "token": "L1otrwayZRR9kAiFgd7rt4fmrQF2QjxsQk2JWXGWWcs",
+    "userId": 76,
+    "email": "kumara@tradzo.gov.in",
+    "role": "department_officer",
+    "fullName": "kumara",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-03T01:00:21.310Z"
+  },
+  {
+    "token": "iTL9cVPJgW4nuMuzkaMhCNvePas8FNs7dQbnXO4jZoI",
+    "userId": 79,
+    "email": "kusuma123@gmail.com",
+    "role": "applicant",
+    "fullName": "kusuma",
+    "expiresAt": "2026-09-03T01:01:00.968Z"
+  },
+  {
+    "token": "zOopeAio_LKM0CNP0kbY-wHhvUOfJqW87oiKhQmRerE",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-03T01:01:23.635Z"
+  },
+  {
+    "token": "PcWgcaOFTsvFHvkMXCRU3iQlPlAES21ujsoo8GJ-OYo",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-03T01:36:56.889Z"
+  },
+  {
+    "token": "HssLUw9XfFOqgY32k8gceagnp5BVWMk_F6OSh7evN-U",
+    "userId": 80,
+    "email": "prachi@gmail.com",
+    "role": "applicant",
+    "fullName": "prachi",
+    "expiresAt": "2026-09-03T01:38:15.215Z"
+  },
+  {
+    "token": "LiAi2Ay7jMKJ4NFkTg3gh0shV2UZMEzuvnYNkZhUfP0",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-03T01:39:31.514Z"
+  },
+  {
+    "token": "_NnrC-dDErQMHpkvUhUevm0sDOafs4g3soRPLWJF0hE",
+    "userId": 2,
+    "email": "ravi@tradezo.gov.in",
+    "role": "field_officer",
+    "fullName": "Ravi",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-03T01:39:54.477Z"
+  },
+  {
+    "token": "4iVVrKgF4oLKgU_HXtuyyI5c8LRbK5coi4WkJsyItS0",
+    "userId": 76,
+    "email": "kumara@tradzo.gov.in",
+    "role": "department_officer",
+    "fullName": "kumara",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-03T01:42:04.532Z"
+  },
+  {
+    "token": "5yALagA3APD5EikmIalNZzI20-iBRqXadWc5P8Ss9VE",
+    "userId": 0,
+    "email": "superadmin@tradezo.gov.in",
+    "role": "platform_admin",
+    "fullName": "TradeZo Platform Admin",
+    "expiresAt": "2026-09-03T01:43:09.169Z"
+  },
+  {
+    "token": "zvf898aYPjmVO7W9MtRJyExl71tzho8-_TnpNm953gk",
+    "userId": 1,
+    "email": "ramesh@tradezo.gov.in",
+    "role": "municipal_commissioner",
+    "fullName": "Ramesh",
+    "municipalityId": "muni-hyd",
+    "expiresAt": "2026-09-03T01:48:03.916Z"
+  }
+]

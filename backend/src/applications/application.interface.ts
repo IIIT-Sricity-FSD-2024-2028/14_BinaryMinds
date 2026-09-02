@@ -3,6 +3,7 @@ import { ApplicationStatus } from '../common/enums/application-status.enum';
 export interface Application {
   application_id: number;
   application_ref: string;
+  municipality_id?: string;
   applicant_id: number;
 
   full_name: string;
@@ -12,6 +13,8 @@ export interface Application {
 
   aadhaar_number?: string;
   applicant_phone?: string;
+  email?: string;
+  applicant_email?: string;
 
   business_name: string;
   business_type?: string;

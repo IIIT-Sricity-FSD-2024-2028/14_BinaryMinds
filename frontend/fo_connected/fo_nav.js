@@ -34,18 +34,25 @@
   }
 
   function normalizeOfficer(user) {
+    var munis = (window.TRADEZO && typeof TRADEZO.getMunicipalities === 'function') ? TRADEZO.getMunicipalities() : [];
+    var muniId = user.municipality_id || user.municipalityId || '';
+    var muniObj = munis.find(function(m) { return String(m.municipality_id).toLowerCase() === String(muniId).toLowerCase(); });
+    var locationName = user.location || (muniObj ? (muniObj.name || muniObj.district) : 'Municipal Corporation');
+
     return {
-      id: user.id || user.user_id || user.empId || '',
-      empId: user.empId || user.id || user.user_id || '',
-      backendUserId: user.backendUserId || user.user_id || '',
-      name: user.name || user.full_name || 'Field Officer',
+      id: user.user_id || user.id || user.employee_id || user.empId || '',
+      empId: user.employee_id || user.empId || user.id || user.user_id || '',
+      employee_id: user.employee_id || user.empId || user.id || user.user_id || '',
+      backendUserId: user.backendUserId || user.user_id || user.id || '',
+      name: user.full_name || user.name || 'Field Officer',
       email: user.email || '',
       phone: user.phone || '',
       role: normalizeRole(user.role) || 'field officer',
       status: user.status || 'Active',
-      joinDate: user.joinDate || user.created_at || '',
+      municipality_id: muniId,
+      joinDate: user.joinDate || user.created_at || user.createdAt || '',
       department: user.department || 'Trade License Department',
-      location: user.location || 'Municipal Corporation'
+      location: locationName
     };
   }
 
@@ -53,17 +60,39 @@
     var loggedIn = {};
     try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}'); } catch(e) {}
 
-    if (!loggedIn.email && !loggedIn.name) return normalizeOfficer({});
+    var tradezoUsers = (window.TRADEZO && Array.isArray(TRADEZO.users)) ? TRADEZO.users : [];
+    var candidates = safeArray('users').concat(safeArray('registeredUsers')).concat(tradezoUsers);
     
     var email = (loggedIn.email || '').toLowerCase();
-    var candidates = safeArray('users').concat(safeArray('registeredUsers'));
-    var stored = candidates.find(function(user) {
-      return (user.email || '').toLowerCase() === email;
-    });
+    var stored = null;
+    if (email) {
+      stored = candidates.find(function(user) {
+        return (user.email || '').toLowerCase() === email;
+      });
+    }
+    if (!stored && loggedIn.user_id) {
+      stored = candidates.find(function(user) {
+        return user.user_id === loggedIn.user_id || user.id === loggedIn.user_id;
+      });
+    }
     return normalizeOfficer(Object.assign({}, stored || {}, loggedIn || {}));
   };
 
+  window.foBelongsToCurrentMunicipality = function(item) {
+    if (!item) return false;
+    var officer = window.foCurrentOfficer();
+    var officerMuni = String(officer.municipality_id || '').toLowerCase().trim();
+    if (!officerMuni) return true;
+    if (window.TRADEZO && typeof TRADEZO.isAllowedForTenant === 'function') {
+      return TRADEZO.isAllowedForTenant(item, officerMuni);
+    }
+    var itemMuni = String(item.municipality_id || item.municipalityId || '').toLowerCase().trim();
+    if (itemMuni) return itemMuni === officerMuni;
+    return true;
+  };
+
   window.foIsAssignedToCurrentOfficer = function(item) {
+    if (!window.foBelongsToCurrentMunicipality(item)) return false;
     var officer = window.foCurrentOfficer();
     var values = [
       item.assignedFO,
@@ -177,6 +206,18 @@
     document.querySelectorAll('.user-info b, .welcome-name, .user-name').forEach(function(el) {
       if (officer.name) el.textContent = officer.name;
     });
+
+    var muniId = (officer && officer.municipality_id) || 'muni-hyd';
+    var muni = (window.TRADEZO && typeof TRADEZO.getMunicipality === 'function')
+      ? TRADEZO.getMunicipality(muniId)
+      : { name: 'Greater Hyderabad Municipal Corporation (GHMC)' };
+
+    document.querySelectorAll('.logo h4, .subtitle, .top-text small').forEach(function(el) {
+      if (el.textContent && el.textContent.includes('Municipal Corporation')) {
+        el.textContent = muni.name + ' \u2013 Trade License Management System';
+      }
+    });
+
     addSidebarNavigation();
     addHomeNavigation();
     patchMissingImages();

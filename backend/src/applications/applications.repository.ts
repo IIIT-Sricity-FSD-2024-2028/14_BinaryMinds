@@ -46,7 +46,14 @@ export class ApplicationsRepository {
     );
     if (index === -1) return undefined;
 
-    applications[index] = { ...applications[index], ...updateData };
+    const cleanedUpdates: Partial<Application> = {};
+    for (const key of Object.keys(updateData) as (keyof Application)[]) {
+      if (updateData[key] !== undefined) {
+        (cleanedUpdates as any)[key] = updateData[key];
+      }
+    }
+
+    applications[index] = { ...applications[index], ...cleanedUpdates };
     this.store.save();
     return applications[index];
   }

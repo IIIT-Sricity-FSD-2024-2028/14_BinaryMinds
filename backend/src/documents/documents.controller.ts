@@ -11,7 +11,10 @@ import {
   Patch,
   UploadedFile,
   UseInterceptors,
+  Req,
+  ForbiddenException,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { randomUUID } from 'node:crypto';
@@ -28,6 +31,8 @@ import { VerificationStatus } from '../common/enums/verification-status.enum';
 import { ApiRoute } from '../common/swagger/api-route.decorator';
 import { documentUploadDirectory } from './document-storage';
 import { DocumentUploadCleanupInterceptor } from './document-upload-cleanup.interceptor';
+import { ApplicationsService } from '../applications/applications.service';
+import { AuthenticatedUser } from '../auth/auth-session.interface';
 
 const maximumFileSize = 5 * 1024 * 1024;
 const allowedFileTypes: Record<string, string> = {
@@ -43,7 +48,10 @@ mkdirSync(documentUploadDirectory, { recursive: true });
 @Controller('documents')
 @UseGuards(RolesGuard)
 export class DocumentsController {
-  constructor(private readonly documentsService: DocumentsService) {}
+  constructor(
+    private readonly documentsService: DocumentsService,
+    private readonly applicationsService: ApplicationsService,
+  ) {}
 
   @Post()
   @Roles(Role.APPLICANT, Role.DEPARTMENT_OFFICER)
@@ -110,40 +118,77 @@ export class DocumentsController {
   }
 
   @Get()
-  @Roles(Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER)
+  @Roles(Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER, Role.SUPER_USER, Role.PLATFORM_ADMIN)
   @ApiRoute({
     summary: 'List documents',
-    roles: [Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER],
+    roles: [Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER, Role.SUPER_USER, Role.PLATFORM_ADMIN],
     responseExample: [{ document_id: 1, application_id: 1 }],
   })
-  findAll() {
-    return this.documentsService.findAll();
+  findAll(@Req() request: Request & { user: AuthenticatedUser }) {
+    if (request.user.role === Role.PLATFORM_ADMIN) {
+      return this.documentsService.findAll();
+    }
+    const userMuni = request.user.municipalityId;
+    if (!userMuni) return [];
+    const appsInMuni = new Set(this.applicationsService.findAll(userMuni).map((a) => a.application_id));
+    return this.documentsService.findAll().filter((d) => appsInMuni.has(d.application_id));
   }
 
   @Get('application/:applicationId')
-  @Roles(Role.APPLICANT, Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER)
+  @Roles(Role.APPLICANT, Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER, Role.SUPER_USER, Role.PLATFORM_ADMIN)
   @ApiRoute({
     summary: 'List documents by application',
-    roles: [Role.APPLICANT, Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER],
+    roles: [Role.APPLICANT, Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER, Role.SUPER_USER, Role.PLATFORM_ADMIN],
     params: [{ name: 'applicationId', description: 'Application ID' }],
     responseExample: [{ document_id: 1, application_id: 1 }],
   })
   findByApplication(
     @Param('applicationId', ParseIntPipe) applicationId: number,
+    @Req() request: Request & { user: AuthenticatedUser },
   ) {
+    const app = this.applicationsService.findOne(applicationId);
+    if (request.user.role !== Role.PLATFORM_ADMIN) {
+      if (request.user.role === Role.APPLICANT) {
+        if (app.applicant_id !== request.user.userId) {
+          throw new ForbiddenException('Access denied to documents for this application');
+        }
+      } else {
+        const userMuni = request.user.municipalityId;
+        if (!userMuni || (app.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()) {
+          throw new ForbiddenException('Access denied to documents outside your municipality');
+        }
+      }
+    }
     return this.documentsService.findByApplication(applicationId);
   }
 
   @Get(':id')
-  @Roles(Role.APPLICANT, Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER)
+  @Roles(Role.APPLICANT, Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER, Role.SUPER_USER, Role.PLATFORM_ADMIN)
   @ApiRoute({
     summary: 'Get document by ID',
-    roles: [Role.APPLICANT, Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER],
+    roles: [Role.APPLICANT, Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER, Role.SUPER_USER, Role.PLATFORM_ADMIN],
     params: [{ name: 'id', description: 'Document ID' }],
     responseExample: { document_id: 1, verification_status: 'pending' },
   })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.documentsService.findOne(id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
+    const doc = this.documentsService.findOne(id);
+    if (request.user.role !== Role.PLATFORM_ADMIN) {
+      const app = this.applicationsService.findOne(doc.application_id);
+      if (request.user.role === Role.APPLICANT) {
+        if (app.applicant_id !== request.user.userId) {
+          throw new ForbiddenException('Access denied to document');
+        }
+      } else {
+        const userMuni = request.user.municipalityId;
+        if (!userMuni || (app.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()) {
+          throw new ForbiddenException('Access denied to document outside your municipality');
+        }
+      }
+    }
+    return doc;
   }
 
   @Patch(':id/status')

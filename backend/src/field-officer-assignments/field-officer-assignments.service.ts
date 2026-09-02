@@ -38,9 +38,22 @@ export class FieldOfficerAssignmentsService {
 
   create(data: CreateAssignmentDto): Assignment {
     // Validate relations
-    this.applicationsService.findOne(data.application_id);
-    this.usersService.findOne(data.field_officer_id);
-    this.usersService.findOne(data.assigned_by);
+    const app = this.applicationsService.findOne(data.application_id);
+    const officer = this.usersService.findOne(data.field_officer_id);
+    const assigner = this.usersService.findOne(data.assigned_by);
+
+    if (
+      (app.municipality_id || '').toLowerCase() !== (officer.municipality_id || '').toLowerCase()
+    ) {
+      throw new BadRequestException('Cannot assign an application to a field officer from a different municipality');
+    }
+
+    if (
+      assigner.role !== ('platform_admin' as any) &&
+      (assigner.municipality_id || '').toLowerCase() !== (app.municipality_id || '').toLowerCase()
+    ) {
+      throw new BadRequestException('Officer cannot assign applications outside their municipality');
+    }
 
     // Add SLA deadline logic
     const deadline = new Date();

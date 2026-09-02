@@ -5,10 +5,11 @@ import { ApplicationsService } from './applications.service';
 import { ApplicationsRepository } from './applications.repository';
 import { ApplicationsController } from './applications.controller';
 import { AuditLogsModule } from '../audit-logs/audit-logs.module';
+import { MunicipalitiesModule } from '../municipalities/municipalities.module';
 import { RouteAccessMiddleware } from '../common/middleware/route-access.middleware';
 
 @Module({
-  imports: [UsersModule, forwardRef(() => OfficersModule), AuditLogsModule],
+  imports: [UsersModule, forwardRef(() => OfficersModule), AuditLogsModule, MunicipalitiesModule],
   controllers: [ApplicationsController],
   providers: [ApplicationsService, ApplicationsRepository],
   exports: [ApplicationsService, ApplicationsRepository],
