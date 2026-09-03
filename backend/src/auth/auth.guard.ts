@@ -1,13 +1,23 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
 import { IS_PUBLIC_KEY } from '../common/decorators/public.decorator';
-import { AuthService } from './auth.service';
+import { Role } from '../common/enums/role.enum';
+import { AuthenticatedUser } from './auth-session.interface';
+
+interface JwtPayload {
+  sub: number;
+  role: Role;
+  email: string;
+  fullName: string;
+  municipalityId?: string;
+}
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
@@ -23,12 +33,23 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Bearer access token is required');
     }
 
-    const match = /^Bearer ([A-Za-z0-9_-]+)$/.exec(authorization);
+    const match = /^Bearer (.+)$/.exec(authorization);
     if (!match) {
       throw new UnauthorizedException('Bearer access token is required');
     }
 
-    request.user = this.authService.validateToken(match[1]);
+    try {
+      const payload = this.jwtService.verify<JwtPayload>(match[1]);
+      request.user = {
+        userId: payload.sub,
+        email: payload.email,
+        role: payload.role,
+        fullName: payload.fullName,
+        municipalityId: payload.municipalityId,
+      } satisfies AuthenticatedUser;
+    } catch {
+      throw new UnauthorizedException('Invalid or expired access token');
+    }
     return true;
   }
 }

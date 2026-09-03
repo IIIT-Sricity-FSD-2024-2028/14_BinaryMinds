@@ -1,27 +1,19 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { randomBytes, timingSafeEqual } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { JwtService } from '@nestjs/jwt';
+import { timingSafeEqual } from 'node:crypto';
 import { Role } from '../common/enums/role.enum';
 import { User } from '../users/user.interface';
 import { UsersService } from '../users/users.service';
-import { AuthenticatedUser, AuthSession } from './auth-session.interface';
 import { LoginDto } from './dto/login.dto';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
 
-const DEFAULT_SESSION_TTL_MS = 8 * 60 * 60 * 1000;
-
 @Injectable()
 export class AuthService {
-  private readonly sessions = new Map<string, AuthSession>();
-  private readonly sessionTtlMs = this.getSessionTtlMs();
-
   constructor(
     private readonly usersService: UsersService,
     private readonly auditLogsService: AuditLogsService,
-  ) {
-    this.loadSessionsFromDisk();
-  }
+    private readonly jwtService: JwtService,
+  ) {}
 
   login(credentials: LoginDto) {
     let user: User;
@@ -48,7 +40,13 @@ export class AuthService {
       }
     }
 
-    const session = this.createSession(user);
+    const accessToken = this.jwtService.sign({
+      sub: user.user_id,
+      role: user.role,
+      email: user.email,
+      fullName: user.full_name,
+      municipalityId: user.municipality_id,
+    });
     this.auditLogsService.log({
       user_name: user.full_name,
       role: user.role,
@@ -59,7 +57,7 @@ export class AuthService {
       source: 'backend',
     });
     return {
-      accessToken: session.token,
+      accessToken,
       user: {
         user_id: user.user_id,
         employee_id: user.employee_id,
@@ -70,78 +68,6 @@ export class AuthService {
         role: user.role,
       },
     };
-  }
-
-  validateToken(token: string): AuthenticatedUser {
-    const session = this.sessions.get(token);
-    if (!session || session.expiresAt.getTime() <= Date.now()) {
-      if (session) this.sessions.delete(token);
-      throw new UnauthorizedException('Invalid or expired access token');
-    }
-
-    return {
-      userId: session.userId,
-      email: session.email,
-      role: session.role,
-      fullName: session.fullName,
-      municipalityId: session.municipalityId,
-    };
-  }
-
-  private createSession(user: User): AuthSession {
-    const token = randomBytes(32).toString('base64url');
-    const session: AuthSession = {
-      token,
-      userId: user.user_id,
-      email: user.email,
-      role: user.role,
-      fullName: user.full_name,
-      municipalityId: user.municipality_id,
-      expiresAt: new Date(Date.now() + this.sessionTtlMs),
-    };
-    this.sessions.set(token, session);
-    this.saveSessionsToDisk();
-    return session;
-  }
-
-  private loadSessionsFromDisk() {
-    try {
-      const filePath = join(process.cwd(), 'data', 'sessions.json');
-      if (existsSync(filePath)) {
-        const raw = readFileSync(filePath, 'utf-8');
-        const list = JSON.parse(raw);
-        if (Array.isArray(list)) {
-          const now = Date.now();
-          list.forEach((item) => {
-            if (item && item.token && item.expiresAt) {
-              const exp = new Date(item.expiresAt);
-              if (exp.getTime() > now) {
-                this.sessions.set(item.token, {
-                  ...item,
-                  expiresAt: exp,
-                });
-              }
-            }
-          });
-        }
-      }
-    } catch {
-      // ignore
-    }
-  }
-
-  private saveSessionsToDisk() {
-    try {
-      const filePath = join(process.cwd(), 'data', 'sessions.json');
-      mkdirSync(dirname(filePath), { recursive: true });
-      const now = Date.now();
-      const valid = Array.from(this.sessions.values()).filter(
-        (s) => s.expiresAt.getTime() > now,
-      );
-      writeFileSync(filePath, JSON.stringify(valid, null, 2), 'utf-8');
-    } catch {
-      // ignore
-    }
   }
 
   private passwordMatches(password: string, storedPassword: string): boolean {
@@ -195,12 +121,5 @@ export class AuthService {
       password_hash: password,
       role: Role.PLATFORM_ADMIN,
     };
-  }
-
-  private getSessionTtlMs(): number {
-    const configuredValue = Number(process.env.AUTH_SESSION_TTL_MS);
-    return Number.isSafeInteger(configuredValue) && configuredValue > 0
-      ? configuredValue
-      : DEFAULT_SESSION_TTL_MS;
   }
 }

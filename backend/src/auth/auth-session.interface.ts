@@ -7,8 +7,3 @@ export interface AuthenticatedUser {
   fullName: string;
   municipalityId?: string;
 }
-
-export interface AuthSession extends AuthenticatedUser {
-  token: string;
-  expiresAt: Date;
-}

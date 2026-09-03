@@ -66,9 +66,11 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('TradeZo API')
     .setDescription(
-      'Backend API documentation for TradeZo. Protected endpoints require a role header matching one of the documented role values.',
+      'Backend API documentation for TradeZo. Protected endpoints require a JWT bearer access token.',
     )
     .setVersion('1.0')
+    .addBearerAuth()
+    .addSecurityRequirements('bearer')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, documentFactory);

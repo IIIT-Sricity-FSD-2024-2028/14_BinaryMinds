@@ -406,18 +406,6 @@
       "created_at": "2026-09-02T05:23:32.216Z"
     },
     {
-      "full_name": "Post-Fix FO Test",
-      "email": "fo.postfix.1788328364352@tradezo.gov.in",
-      "phone": "8800364353",
-      "employee_id": "FO-HYD-107",
-      "password_hash": "TradeZo@123",
-      "role": "field_officer",
-      "municipality_id": "muni-hyd",
-      "status": "Active",
-      "user_id": 65,
-      "created_at": "2026-09-02T05:52:44.356Z"
-    },
-    {
       "full_name": "riya",
       "email": "riya@gmail.com",
       "phone": "9876542345",
@@ -443,18 +431,6 @@
       "role": "applicant",
       "user_id": 68,
       "created_at": "2026-09-02T07:42:08.080Z"
-    },
-    {
-      "full_name": "Test FO To Delete",
-      "email": "test.fo.delete@tradezo.gov.in",
-      "phone": "9876543299",
-      "employee_id": "FO-HYD-108",
-      "password_hash": "TradeZo@123",
-      "role": "field_officer",
-      "municipality_id": "muni-hyd",
-      "status": "Active",
-      "user_id": 69,
-      "created_at": "2026-09-02T08:11:06.028Z"
     },
     {
       "full_name": "hasini",
@@ -566,6 +542,42 @@
       "role": "applicant",
       "user_id": 80,
       "created_at": "2026-09-02T17:37:50.954Z"
+    },
+    {
+      "full_name": "hasini.k",
+      "email": "hasini.k@gmail.com",
+      "phone": "7901423888",
+      "password_hash": "hasini.k@123",
+      "role": "applicant",
+      "user_id": 81,
+      "created_at": "2026-09-02T20:50:45.403Z"
+    },
+    {
+      "full_name": "mummy",
+      "email": "mummy@gmail.com",
+      "phone": "7901425888",
+      "password_hash": "mummy@143",
+      "role": "applicant",
+      "user_id": 82,
+      "created_at": "2026-09-02T21:10:47.355Z"
+    },
+    {
+      "full_name": "shriya",
+      "email": "shriya@gmail.com",
+      "phone": "9988776655",
+      "password_hash": "123456",
+      "role": "applicant",
+      "user_id": 83,
+      "created_at": "2026-09-03T04:48:18.300Z"
+    },
+    {
+      "full_name": "tanziya",
+      "email": "tanzi@gmail.com",
+      "phone": "8877665544",
+      "password_hash": "123456",
+      "role": "applicant",
+      "user_id": 84,
+      "created_at": "2026-09-03T04:57:15.684Z"
     }
   ],
   "applications": [
@@ -1000,9 +1012,9 @@
       "state": "Maharashtra",
       "pincode": "400021",
       "applicant_phone": "9820893497",
-      "application_status": "submitted",
+      "application_status": "assigned",
       "paymentDone": false,
-      "assignedOfficerId": null,
+      "assignedOfficerId": 72,
       "application_id": 39,
       "application_ref": "TL-2026-000039",
       "submitted_at": "2026-09-02T11:51:33.516Z"
@@ -1111,6 +1123,90 @@
       "application_id": 44,
       "application_ref": "TL-2026-000044",
       "submitted_at": "2026-09-02T17:39:08.949Z"
+    },
+    {
+      "applicant_id": 81,
+      "municipality_id": "muni-hyd",
+      "municipalityName": "Greater Hyderabad Municipal Corporation (GHMC)",
+      "full_name": "hasini.k",
+      "business_name": "Jiya Groceries",
+      "business_type": "Wholesale",
+      "trade_category": "Wholesale",
+      "shop_address": "BODDH GARDENN JAVAL BODHE NAGAR LATUR",
+      "city": "Hyderabad",
+      "district": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500072",
+      "applicant_phone": "7901423888",
+      "application_status": "assigned",
+      "paymentDone": true,
+      "assignedOfficerId": 2,
+      "application_id": 45,
+      "application_ref": "TL-2026-000045",
+      "submitted_at": "2026-09-02T20:52:29.044Z"
+    },
+    {
+      "applicant_id": 82,
+      "municipality_id": "muni-hyd",
+      "municipalityName": "Greater Hyderabad Municipal Corporation (GHMC)",
+      "full_name": "mummy",
+      "business_name": "mummy solutions",
+      "business_type": "Wholesale",
+      "trade_category": "Wholesale",
+      "shop_address": "BODDH GARDENN JAVAL BODHE NAGAR LATUR",
+      "city": "Hyderabad",
+      "district": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500072",
+      "applicant_phone": "7901425888",
+      "application_status": "verified",
+      "paymentDone": true,
+      "assignedOfficerId": 2,
+      "application_id": 46,
+      "application_ref": "TL-2026-000046",
+      "submitted_at": "2026-09-02T21:12:58.391Z"
+    },
+    {
+      "applicant_id": 83,
+      "municipality_id": "muni-mumbai",
+      "municipalityName": "Municipal Corporation of Greater Mumbai",
+      "full_name": "shriya",
+      "business_name": "Jiya Groceries",
+      "business_type": "Manufacturer",
+      "trade_category": "Manufacturer",
+      "shop_address": "BODDH GARDENN JAVAL BODHE NAGAR",
+      "city": "Mumbai",
+      "district": "Mumbai",
+      "state": "Maharashtra",
+      "pincode": "500072",
+      "applicant_phone": "9988776655",
+      "application_status": "assigned",
+      "paymentDone": true,
+      "assignedOfficerId": 72,
+      "application_id": 47,
+      "application_ref": "TL-2026-000047",
+      "submitted_at": "2026-09-03T04:50:17.845Z"
+    },
+    {
+      "applicant_id": 84,
+      "municipality_id": "muni-hyd",
+      "municipalityName": "Greater Hyderabad Municipal Corporation (GHMC)",
+      "full_name": "tanziya",
+      "business_name": "prachi Groceries",
+      "business_type": "Manufacturer",
+      "trade_category": "Manufacturer",
+      "shop_address": "hbjgbfjsfkvfmvnfjkfdfdf",
+      "city": "Hyderabad",
+      "district": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500072",
+      "applicant_phone": "8877665544",
+      "application_status": "assigned",
+      "paymentDone": true,
+      "assignedOfficerId": 2,
+      "application_id": 48,
+      "application_ref": "TL-2026-000048",
+      "submitted_at": "2026-09-03T04:58:21.537Z"
     }
   ],
   "payments": [
@@ -1245,6 +1341,54 @@
       "transaction_id": "TXN-a1d0e231-db3c-48f9-bfc0-195db522b954",
       "payment_id": 28,
       "payment_date": "2026-09-02T17:39:12.278Z"
+    },
+    {
+      "application_id": 45,
+      "municipality_id": "muni-hyd",
+      "amount": 1510,
+      "processing_fee": 1200,
+      "platform_fee": 250,
+      "service_tax": 60,
+      "payment_status": "COMPLETED",
+      "transaction_id": "TXN-9e35ef0e-1b63-4de9-9cec-e989d5047eb8",
+      "payment_id": 29,
+      "payment_date": "2026-09-02T20:52:33.573Z"
+    },
+    {
+      "application_id": 46,
+      "municipality_id": "muni-hyd",
+      "amount": 1510,
+      "processing_fee": 1200,
+      "platform_fee": 250,
+      "service_tax": 60,
+      "payment_status": "COMPLETED",
+      "transaction_id": "TXN-0e2a5df3-e89e-490d-950b-ed864dfa282f",
+      "payment_id": 30,
+      "payment_date": "2026-09-02T21:13:01.783Z"
+    },
+    {
+      "application_id": 47,
+      "municipality_id": "muni-mumbai",
+      "amount": 1510,
+      "processing_fee": 1200,
+      "platform_fee": 250,
+      "service_tax": 60,
+      "payment_status": "COMPLETED",
+      "transaction_id": "TXN-47c8f73d-1b27-4a1f-a84c-8cfb2041e075",
+      "payment_id": 31,
+      "payment_date": "2026-09-03T04:50:21.260Z"
+    },
+    {
+      "application_id": 48,
+      "municipality_id": "muni-hyd",
+      "amount": 1510,
+      "processing_fee": 1200,
+      "platform_fee": 250,
+      "service_tax": 60,
+      "payment_status": "COMPLETED",
+      "transaction_id": "TXN-b8d90d24-4c3a-4f7b-b7b4-65ed9a3c5e5c",
+      "payment_id": 32,
+      "payment_date": "2026-09-03T04:58:24.856Z"
     }
   ],
   "licenses": [],
@@ -1399,13 +1543,61 @@
         "payment_status": "COMPLETED",
         "created_at": "2026-09-02T17:39:12.278Z",
         "backfilled": false
+      },
+      {
+        "payment_id": 29,
+        "transaction_id": "TXN-9e35ef0e-1b63-4de9-9cec-e989d5047eb8",
+        "corporation_id": "muni-hyd",
+        "gross_amount": 1510,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 302,
+        "municipal_share": 1208,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-09-02T20:52:33.573Z",
+        "backfilled": false
+      },
+      {
+        "payment_id": 30,
+        "transaction_id": "TXN-0e2a5df3-e89e-490d-950b-ed864dfa282f",
+        "corporation_id": "muni-hyd",
+        "gross_amount": 1510,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 302,
+        "municipal_share": 1208,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-09-02T21:13:01.783Z",
+        "backfilled": false
+      },
+      {
+        "payment_id": 31,
+        "transaction_id": "TXN-47c8f73d-1b27-4a1f-a84c-8cfb2041e075",
+        "corporation_id": "muni-mumbai",
+        "gross_amount": 1510,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 302,
+        "municipal_share": 1208,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-09-03T04:50:21.260Z",
+        "backfilled": false
+      },
+      {
+        "payment_id": 32,
+        "transaction_id": "TXN-b8d90d24-4c3a-4f7b-b7b4-65ed9a3c5e5c",
+        "corporation_id": "muni-hyd",
+        "gross_amount": 1510,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 302,
+        "municipal_share": 1208,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-09-03T04:58:24.856Z",
+        "backfilled": false
       }
     ]
   },
   "counters": {
-    "users": 81,
-    "applications": 45,
-    "payments": 29,
+    "users": 85,
+    "applications": 49,
+    "payments": 33,
     "licenses": 1
   }
 }
