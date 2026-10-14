@@ -1,0 +1,157 @@
+.registration-page,
+.registration-page * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.registration-page {
+  background: #f0f4f8;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.registration-page .top-header {
+  min-height: 78px;
+  gap: 12px;
+  background: #fff;
+  color: #172033;
+  display: flex;
+  align-items: center;
+  padding: 12px clamp(16px, 4vw, 40px);
+  border-bottom: 1px solid #dde3f0;
+}
+
+.registration-page .top-header img.emblem {
+  width: 44px;
+  height: 50px;
+  margin-right: 0;
+  object-fit: contain;
+}
+
+.registration-page .top-header .gov-text {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.registration-page .top-header .brand-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1e3a8a;
+}
+
+.registration-page .main-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 40px 20px;
+}
+
+.registration-page .register-card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+}
+
+.registration-page .register-card h3 {
+  color: #1a237e;
+  margin-bottom: 25px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.registration-page .form-group {
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.registration-page .form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.registration-page .form-group input:focus {
+  border-color: #1a237e;
+}
+
+.registration-page .terms-group {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 25px;
+  font-size: 13px;
+  color: #555;
+  position: relative;
+}
+
+.registration-page .terms-group input {
+  margin-right: 8px;
+  margin-top: 2px;
+}
+
+.registration-page .terms-group a {
+  color: #1a237e;
+  text-decoration: none;
+}
+
+.registration-page .terms-group a:hover {
+  text-decoration: underline;
+}
+
+.registration-page .btn-register {
+  width: 100%;
+  padding: 14px;
+  background: #1a237e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.registration-page .btn-register:hover {
+  background: #283593;
+}
+
+.registration-page .btn-register:disabled {
+  cursor: wait;
+}
+
+.registration-page .login-text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #555;
+}
+
+.registration-page .login-text a {
+  color: #1a237e;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.registration-page .login-text a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 560px) {
+  .registration-page .main-content {
+    padding: 24px 14px;
+  }
+
+  .registration-page .register-card {
+    padding: 24px 20px;
+  }
+}

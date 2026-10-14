@@ -1,0 +1,68 @@
+.applicant-helpdesk-page { min-height: 100vh; background: #f4f6f9; color: #1a1a2e; font-family: Arial, sans-serif; }
+.applicant-helpdesk-page *, .applicant-helpdesk-page *::before, .applicant-helpdesk-page *::after { box-sizing: border-box; }
+.applicant-helpdesk-page .helpdesk-header { display: flex; align-items: center; gap: 12px; padding: 10px 24px; border-bottom: 1px solid #e0e4ec; background: #fff; }
+.applicant-helpdesk-page .helpdesk-header img { width: 45px; height: 45px; object-fit: contain; }
+.applicant-helpdesk-page .helpdesk-brand { display: flex; flex-direction: column; color: #666; font-size: 11px; }
+.applicant-helpdesk-page .helpdesk-brand span { color: #1e3a8a; font-size: 20px; font-weight: 700; line-height: 1.2; }
+.applicant-helpdesk-page .helpdesk-nav { display: flex; align-items: center; flex-wrap: wrap; min-height: 46px; padding: 0 16px; background: #1e3a8a; }
+.applicant-helpdesk-page .helpdesk-nav a { display: inline-block; padding: 12px 14px; color: #fff; font-size: 13px; text-decoration: none; white-space: nowrap; }
+.applicant-helpdesk-page .helpdesk-nav a:hover { background: rgba(255,255,255,.12); }
+.applicant-helpdesk-page .helpdesk-nav a.helpdesk-logout { color: #fca5a5; }
+.applicant-helpdesk-page .helpdesk-title { max-width: 1060px; margin: 28px auto 12px; padding: 0 24px; }
+.applicant-helpdesk-page .helpdesk-title h1 { margin-bottom: 4px; color: #1e3a8a; font-size: 24px; }
+.applicant-helpdesk-page .helpdesk-title p { color: #64748b; font-size: 14px; }
+.applicant-helpdesk-page .helpdesk-layout { display: grid; grid-template-columns: minmax(0,1fr) 300px; align-items: start; gap: 24px; max-width: 1060px; margin: 0 auto 40px; padding: 0 24px; }
+.applicant-helpdesk-page .helpdesk-left, .applicant-helpdesk-page .helpdesk-right { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.applicant-helpdesk-page .helpdesk-form-card, .applicant-helpdesk-page .helpdesk-tickets, .applicant-helpdesk-page .helpdesk-contact, .applicant-helpdesk-page .helpdesk-faq, .applicant-helpdesk-page .helpdesk-chat { border: 1px solid #e0e4ec; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+.applicant-helpdesk-page .helpdesk-form-card { padding: 24px; }
+.applicant-helpdesk-page .helpdesk-form-card h2 { margin: 0 0 18px; color: #1e3a8a; font-size: 17px; }
+.applicant-helpdesk-page .helpdesk-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.applicant-helpdesk-page .helpdesk-form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.applicant-helpdesk-page .helpdesk-form-group label { color: #374151; font-size: 13px; font-weight: 600; }
+.applicant-helpdesk-page .helpdesk-form-group input, .applicant-helpdesk-page .helpdesk-form-group select, .applicant-helpdesk-page .helpdesk-form-group textarea { width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 7px; background: #f8fafc; color: #1a1a2e; font: 14px Arial,sans-serif; }
+.applicant-helpdesk-page .helpdesk-form-group input:focus, .applicant-helpdesk-page .helpdesk-form-group select:focus, .applicant-helpdesk-page .helpdesk-form-group textarea:focus { outline: none; border-color: #1e3a8a; background: #fff; }
+.applicant-helpdesk-page .helpdesk-form-group textarea { min-height: 110px; resize: vertical; }
+.applicant-helpdesk-page .helpdesk-submit { padding: 11px 28px; border: 0; border-radius: 8px; background: #1e3a8a; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; }
+.applicant-helpdesk-page .helpdesk-submit:hover { background: #162e6e; }
+.applicant-helpdesk-page .helpdesk-local-notice, .applicant-helpdesk-page .helpdesk-form-notice, .applicant-helpdesk-page .helpdesk-form-error { margin: 0 0 12px; font-size: 13px; line-height: 1.45; }
+.applicant-helpdesk-page .helpdesk-local-notice { color: #64748b; }
+.applicant-helpdesk-page .helpdesk-form-notice { color: #166534; }
+.applicant-helpdesk-page .helpdesk-form-error { color: #b91c1c; }
+.applicant-helpdesk-page .helpdesk-tickets { padding: 20px 24px; }
+.applicant-helpdesk-page .helpdesk-tickets-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.applicant-helpdesk-page .helpdesk-tickets-head h2 { color: #1e3a8a; font-size: 15px; }
+.applicant-helpdesk-page .helpdesk-tickets-head button { border: 0; background: transparent; color: #1e3a8a; font-size: 13px; font-weight: 600; cursor: pointer; }
+.applicant-helpdesk-page .helpdesk-table-wrap { overflow-x: auto; }
+.applicant-helpdesk-page table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.applicant-helpdesk-page th { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; color: #64748b; font-size: 11px; text-align: left; }
+.applicant-helpdesk-page td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
+.applicant-helpdesk-page .helpdesk-empty { color: #64748b; text-align: center; }
+.applicant-helpdesk-page .helpdesk-status { display: inline-block; padding: 4px 10px; border-radius: 20px; background: #fef9c3; color: #92400e; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.applicant-helpdesk-page .helpdesk-status.resolved { background: #dcfce7; color: #15803d; }
+.applicant-helpdesk-page .helpdesk-status.closed { background: #f1f5f9; color: #64748b; }
+.applicant-helpdesk-page .helpdesk-cancel { align-self: flex-start; padding: 10px 22px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #fff; color: #374151; font-size: 14px; font-weight: 600; text-decoration: none; }
+.applicant-helpdesk-page .helpdesk-contact, .applicant-helpdesk-page .helpdesk-faq { padding: 20px; }
+.applicant-helpdesk-page .helpdesk-contact h2, .applicant-helpdesk-page .helpdesk-faq h2 { margin: 0 0 14px; color: #1e3a8a; font-size: 15px; }
+.applicant-helpdesk-page .helpdesk-contact p { margin: 0 0 4px; color: #334155; font-size: 13px; }
+.applicant-helpdesk-page .helpdesk-contact .helpdesk-highlight { margin-bottom: 12px; color: #1e3a8a; font-size: 16px; font-weight: 700; }
+.applicant-helpdesk-page .helpdesk-faq-item { border-bottom: 1px solid #f1f5f9; }
+.applicant-helpdesk-page .helpdesk-faq-item:last-child { border-bottom: 0; }
+.applicant-helpdesk-page .helpdesk-faq-item > button { display: flex; justify-content: space-between; width: 100%; padding: 10px 0; border: 0; background: transparent; color: #334155; font-size: 13px; text-align: left; cursor: pointer; }
+.applicant-helpdesk-page .helpdesk-faq-item > button:hover { color: #1e3a8a; }
+.applicant-helpdesk-page .helpdesk-faq-answer { padding: 0 0 10px; color: #334155; font-size: 13px; line-height: 1.5; }
+.applicant-helpdesk-page .helpdesk-chat { display: none; overflow: hidden; }
+.applicant-helpdesk-page .helpdesk-chat.is-open { display: block; }
+.applicant-helpdesk-page .helpdesk-chat-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #1e3a8a; color: #fff; font-size: 14px; font-weight: 600; }
+.applicant-helpdesk-page .helpdesk-chat-header button { border: 0; background: transparent; color: #fff; font-size: 20px; cursor: pointer; }
+.applicant-helpdesk-page .helpdesk-chat-body { display: flex; flex-direction: column; gap: 8px; min-height: 80px; max-height: 240px; overflow-y: auto; padding: 14px 16px; }
+.applicant-helpdesk-page .helpdesk-chat-bubble { align-self: flex-start; max-width: 90%; margin: 0; padding: 10px 14px; border: 1px solid #bfdbfe; border-radius: 8px; background: #eff6ff; color: #1d4ed8; font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.applicant-helpdesk-page .helpdesk-chat-bubble.user { align-self: flex-end; border-color: #1e3a8a; background: #1e3a8a; color: #fff; }
+.applicant-helpdesk-page .helpdesk-chat-input { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid #e2e8f0; }
+.applicant-helpdesk-page .helpdesk-chat-input input { flex: 1; min-width: 0; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 7px; font-size: 13px; }
+.applicant-helpdesk-page .helpdesk-chat-input button { padding: 8px 14px; border: 0; border-radius: 7px; background: #1e3a8a; color: #fff; cursor: pointer; }
+.applicant-helpdesk-page .helpdesk-chat-disclaimer { padding: 0 14px 12px; color: #64748b; font-size: 11px; }
+.applicant-helpdesk-page .helpdesk-chat-launch { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border: 1px solid #e0e4ec; border-radius: 12px; background: #fff; color: #334155; font-size: 14px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+.applicant-helpdesk-page .helpdesk-chat-launch small { display: block; margin-top: 3px; color: #64748b; font-size: 11px; font-weight: 400; }
+.applicant-helpdesk-page .helpdesk-chat-icon { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 50%; background: #1e3a8a; color: #fff; font-size: 16px; cursor: pointer; }
+@media (max-width: 820px) { .applicant-helpdesk-page .helpdesk-layout { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .applicant-helpdesk-page .helpdesk-form-row { grid-template-columns: 1fr; gap: 0; } .applicant-helpdesk-page .helpdesk-layout { padding: 0 16px; } .applicant-helpdesk-page .helpdesk-title { padding: 0 16px; } }
