@@ -1,0 +1,54 @@
+.applicant-pay-now-page { min-height: 100vh; font-family: Arial,sans-serif; background: #f4f6f9; color: #1a1a2e; }
+.applicant-pay-now-page * { box-sizing: border-box; }
+.applicant-pay-now-page .pay-topbar { display: flex; align-items: center; gap: 12px; padding: 10px 24px; background: #fff; border-bottom: 1px solid #e0e4ec; }
+.applicant-pay-now-page .pay-topbar img { width: 45px; height: 45px; object-fit: contain; }
+.applicant-pay-now-page .pay-gov { font-size: 11px; color: #666; margin: 0; }
+.applicant-pay-now-page .pay-brand { font-size: 20px; font-weight: 700; color: #1e3a8a; margin: 0; }
+.applicant-pay-now-page nav.pay-navbar { background: #1e3a8a; display: flex; align-items: center; padding: 0 24px; min-height: 46px; flex-wrap: wrap; }
+.applicant-pay-now-page nav.pay-navbar a { color: #fff; text-decoration: none; font-size: 14px; padding: 12px 16px; display: inline-block; transition: background .2s; }
+.applicant-pay-now-page nav.pay-navbar a:hover { background: rgba(255,255,255,.12); }
+.applicant-pay-now-page nav.pay-navbar a.pay-logout { color: #fca5a5; }
+.applicant-pay-now-page .pay-page { max-width: 1000px; margin: 32px auto; padding: 0 20px 40px; }
+.applicant-pay-now-page .pay-title { font-size: 22px; font-weight: 700; color: #1e3a8a; margin: 0 0 24px; }
+.applicant-pay-now-page .steps-bar { display: flex; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 8px; }
+.applicant-pay-now-page .step { display: flex; align-items: center; gap: 10px; }
+.applicant-pay-now-page .dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+.applicant-pay-now-page .dot.green { background: #dcfce7; color: #15803d; }
+.applicant-pay-now-page .dot.blue { background: #dbeafe; color: #1e3a8a; }
+.applicant-pay-now-page .dot.grey { background: #e5e7eb; color: #9ca3af; }
+.applicant-pay-now-page .step-text { display: flex; flex-direction: column; }
+.applicant-pay-now-page .step-num { font-size: 11px; color: #64748b; font-weight: 600; }
+.applicant-pay-now-page .step-name { font-size: 13px; font-weight: 700; color: #1a1a2e; }
+.applicant-pay-now-page .step-line { flex: 1; min-width: 32px; height: 2px; background: #e2e8f0; margin: 0 6px; }
+.applicant-pay-now-page .columns { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+.applicant-pay-now-page .card { background: #fff; border: 1px solid #e0e4ec; border-radius: 10px; padding: 20px 24px; margin-bottom: 18px; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+.applicant-pay-now-page .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+.applicant-pay-now-page .card-title { font-size: 15px; font-weight: 700; color: #1e3a8a; display: block; margin: 0 0 14px; }
+.applicant-pay-now-page .card-head .card-title { margin-bottom: 0; }
+.applicant-pay-now-page .ref-no { font-size: 12px; color: #64748b; background: #f1f5f9; padding: 4px 10px; border-radius: 12px; font-weight: 600; }
+.applicant-pay-now-page .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; margin-bottom: 16px; }
+.applicant-pay-now-page .lbl { font-size: 11px; color: #64748b; margin: 0 0 2px; font-weight: 600; text-transform: uppercase; }
+.applicant-pay-now-page .val { font-size: 14px; font-weight: 600; color: #1a1a2e; margin: 0; overflow-wrap: anywhere; }
+.applicant-pay-now-page .divider { border: 0; border-top: 1px solid #e0e4ec; margin: 16px 0; }
+.applicant-pay-now-page .fee-row { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; color: #334155; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+.applicant-pay-now-page .fee-row.total { font-weight: 700; font-size: 16px; color: #1e3a8a; border-bottom: 0; padding-top: 10px; }
+.applicant-pay-now-page .pay-opt { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 1.5px solid #e0e4ec; border-radius: 8px; margin-bottom: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all .2s; }
+.applicant-pay-now-page .pay-opt.active { border-color: #1e3a8a; background: #eff6ff; color: #1e3a8a; }
+.applicant-pay-now-page .pay-opt input[type="radio"] { accent-color: #1e3a8a; }
+.applicant-pay-now-page .pay-btn { width: 100%; padding: 13px; background: #1e3a8a; color: #fff; border: 0; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: background .2s; }
+.applicant-pay-now-page .pay-btn:hover:not(:disabled) { background: #162e6e; }
+.applicant-pay-now-page .pay-btn:disabled { opacity: .7; cursor: not-allowed; }
+.applicant-pay-now-page .small-note { font-size: 11px; color: #64748b; margin: 10px 0 0; text-align: center; line-height: 1.5; }
+.applicant-pay-now-page .pay-result { margin: 10px 0 0; padding: 10px; border-radius: 7px; color: #1e3a8a; background: #eff6ff; font-size: 12px; line-height: 1.45; text-align: center; }
+.applicant-pay-now-page .pay-result.pay-error, .applicant-pay-now-page .pay-message.pay-error { color: #b91c1c; background: #fef2f2; }
+.applicant-pay-now-page .pay-result.pay-completed { border: 1px solid #fbbf24; background: #fffbeb; color: #92400e; }
+.applicant-pay-now-page .assist-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #f1f5f9; }
+.applicant-pay-now-page .assist-item:last-child { border-bottom: 0; }
+.applicant-pay-now-page .assist-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.applicant-pay-now-page .assist-head { font-size: 14px; font-weight: 700; color: #1a1a2e; margin: 0 0 4px; }
+.applicant-pay-now-page .assist-body { font-size: 13px; color: #64748b; line-height: 1.5; margin: 0; }
+.applicant-pay-now-page .pay-message { padding: 22px; background: #fff; border: 1px solid #e0e4ec; border-radius: 10px; color: #475569; }
+.applicant-pay-now-page .pay-hint { color: #64748b; font-size: 13px; }
+.applicant-pay-now-page .pay-label { display: block; margin-bottom: 8px; color: #334155; font-size: 13px; font-weight: 700; }
+.applicant-pay-now-page select { width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 7px; font: inherit; background: #fff; }
+@media (max-width: 780px) { .applicant-pay-now-page .columns { grid-template-columns: 1fr; } }

@@ -102,7 +102,7 @@ const EMPTY_DATA: PersistentData = {
     {
       user_id: 3,
       full_name: 'Kumar',
-      email: 'kumar@tradezo.gov.in',
+      email: 'kumara@tradezo.gov.in',
       phone: '9876500003',
       password_hash: 'TradeZo@123',
       role: Role.DEPARTMENT_OFFICER,

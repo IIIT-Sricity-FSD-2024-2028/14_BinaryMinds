@@ -99,6 +99,13 @@ export class LicensesController {
     @Param('applicationId', ParseIntPipe) applicationId: number,
     @Req() request: Request & { user: AuthenticatedUser },
   ) {
+    const application = this.applicationsService.findOne(applicationId);
+    if (
+      request.user.role === Role.APPLICANT &&
+      application.applicant_id !== request.user.userId
+    ) {
+      throw new ForbiddenException('Applicants can only view licenses for their own applications');
+    }
     const license = this.service.findByApplication(applicationId);
     if (request.user.role !== Role.PLATFORM_ADMIN) {
       const userMuni = request.user.municipalityId;
@@ -120,8 +127,13 @@ export class LicensesController {
     params: [{ name: 'licenseNumber', description: 'License number', type: 'string' }],
     responseExample: { license_id: 1, license_number: 'LIC-20260505-1234' },
   })
-  findByLicenseNumber(@Param('licenseNumber') licenseNumber: string) {
-    return this.service.findByLicenseNumber(licenseNumber);
+  findByLicenseNumber(
+    @Param('licenseNumber') licenseNumber: string,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
+    const license = this.service.findByLicenseNumber(licenseNumber);
+    this.assertApplicantOwnsLicense(license.application_id, request.user);
+    return license;
   }
 
   @Get(':id')
@@ -137,6 +149,7 @@ export class LicensesController {
     @Req() request: Request & { user: AuthenticatedUser },
   ) {
     const license = this.service.findOne(id);
+    this.assertApplicantOwnsLicense(license.application_id, request.user);
     if (request.user.role !== Role.PLATFORM_ADMIN && request.user.role !== Role.APPLICANT) {
       const userMuni = request.user.municipalityId;
       if (!userMuni || (license.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()) {
@@ -144,6 +157,14 @@ export class LicensesController {
       }
     }
     return license;
+  }
+
+  private assertApplicantOwnsLicense(applicationId: number, user: AuthenticatedUser) {
+    if (user.role !== Role.APPLICANT) return;
+    const application = this.applicationsService.findOne(applicationId);
+    if (application.applicant_id !== user.userId) {
+      throw new ForbiddenException('Applicants can only view licenses for their own applications');
+    }
   }
 
   @Patch(':id')

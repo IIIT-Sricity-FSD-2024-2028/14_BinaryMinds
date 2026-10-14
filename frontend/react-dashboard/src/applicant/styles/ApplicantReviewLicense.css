@@ -1,0 +1,61 @@
+.applicant-review-license-page { min-height: 100vh; font-family: Arial,sans-serif; background: #f1f5f9; color: #1e293b; }
+.applicant-review-license-page * { box-sizing: border-box; }
+.applicant-review-license-page .review-top-bar { display: flex; align-items: center; gap: 12px; padding: 12px 32px; background: #fff; border-bottom: 1px solid #e2e8f0; }
+.applicant-review-license-page .review-top-bar img { width: auto; height: 45px; object-fit: contain; filter: none; }
+.applicant-review-license-page .review-brand-gov, .applicant-review-license-page .review-brand-name { display: block; }
+.applicant-review-license-page .review-brand-gov { font-size: 11px; color: #666; }
+.applicant-review-license-page .review-brand-name { font-size: 18px; font-weight: 700; color: #1e3a8a; }
+.applicant-review-license-page nav.review-navbar { background: #1e3a8a; padding: 14px 32px; display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+.applicant-review-license-page nav.review-navbar a { color: #fff; text-decoration: none; font-size: 14px; font-weight: 500; transition: opacity .2s; }
+.applicant-review-license-page nav.review-navbar a:hover { opacity: .8; }
+.applicant-review-license-page .review-page { max-width: 1200px; margin: 0 auto; padding: 28px 32px 60px; }
+.applicant-review-license-page h1 { font-size: 24px; font-weight: 700; color: #1e40af; margin: 0 0 4px; }
+.applicant-review-license-page .review-subtitle { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+.applicant-review-license-page .review-card { background: #fff; border-radius: 10px; border: 1px solid #e2e8f0; padding: 22px; margin-bottom: 18px; }
+.applicant-review-license-page .review-card h2 { font-size: 16px; font-weight: 600; color: #1e40af; margin: 0 0 16px; }
+.applicant-review-license-page .review-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.applicant-review-license-page .review-card-top h2 { margin-bottom: 0; }
+.applicant-review-license-page hr { border: 0; border-top: 1px solid #e2e8f0; margin: 16px 0; }
+.applicant-review-license-page .review-row3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.applicant-review-license-page .review-row5 { display: grid; grid-template-columns: repeat(5,1fr); gap: 16px; margin-bottom: 24px; }
+.applicant-review-license-page .review-field label { display: block; font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.applicant-review-license-page .review-field p { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.applicant-review-license-page .blue { color: #2563eb; }
+.applicant-review-license-page .green { color: #16a34a; }
+.applicant-review-license-page .big { font-size: 18px !important; }
+.applicant-review-license-page .review-badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+.applicant-review-license-page .review-badge.green { background: #dcfce7; color: #16a34a; }
+.applicant-review-license-page .review-badge.orange { background: #fef3c7; color: #d97706; }
+.applicant-review-license-page .review-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+.applicant-review-license-page .review-form-group { margin-bottom: 14px; }
+.applicant-review-license-page .review-form-group label { display: block; font-size: 13px; color: #475569; margin-bottom: 5px; }
+.applicant-review-license-page .review-form-group input, .applicant-review-license-page .review-form-group select { width: 100%; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 7px; font-size: 14px; font-family: Arial,sans-serif; outline: none; background: #fff; color: #1e293b; }
+.applicant-review-license-page .review-form-group input:focus, .applicant-review-license-page .review-form-group select:focus { border-color: #2563eb; }
+.applicant-review-license-page .review-form-group input[readonly] { background: #f8fafc; color: #64748b; }
+.applicant-review-license-page .review-error-text { display: none; color: #dc2626; font-size: 12px; margin-top: 3px; }
+.applicant-review-license-page .review-error-text.show { display: block; }
+.applicant-review-license-page .invalid-field { border-color: #dc2626 !important; }
+.applicant-review-license-page .review-doc-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 500; gap: 10px; }
+.applicant-review-license-page .review-doc-row > div { display: flex; align-items: center; gap: 10px; }
+.applicant-review-license-page .review-filename { font-size: 12px; color: #64748b; }
+.applicant-review-license-page .review-file-input { display: none; }
+.applicant-review-license-page .review-upload-btn { padding: 6px 16px; font-size: 12px; font-weight: 700; color: #1e3a8a; background: #fff; border: 2px solid #1e3a8a; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+.applicant-review-license-page .review-upload-btn:hover { background: #eff6ff; }
+.applicant-review-license-page .review-steps { display: flex; align-items: center; justify-content: center; margin-top: 8px; }
+.applicant-review-license-page .review-step { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.applicant-review-license-page .review-circle { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #cbd5e1; background: #fff; color: #94a3b8; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.applicant-review-license-page .review-circle.done { background: #2563eb; border-color: #2563eb; color: #fff; }
+.applicant-review-license-page .review-step p { font-size: 11px; color: #64748b; text-align: center; max-width: 80px; }
+.applicant-review-license-page .review-step.active p { color: #1e40af; font-weight: 700; }
+.applicant-review-license-page .review-line { flex: 1; height: 2px; background: #e2e8f0; margin-bottom: 22px; }
+.applicant-review-license-page .review-buttons { display: flex; justify-content: space-between; margin-top: 6px; }
+.applicant-review-license-page .review-cancel-btn { display: inline-flex; align-items: center; padding: 10px 22px; border: 1.5px solid #cbd5e1; background: #fff; border-radius: 8px; font-size: 14px; cursor: pointer; color: #1e293b; text-decoration: none; }
+.applicant-review-license-page .review-cancel-btn:hover { background: #f1f5f9; }
+.applicant-review-license-page .review-renew-btn { padding: 11px 28px; background: #1e3a8a; color: #fff; border: 0; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.applicant-review-license-page .review-renew-btn:hover { background: #1e4976; }
+.applicant-review-license-page .review-submit-message { margin-top: 14px; padding: 14px; background: #eff6ff; color: #1e3a8a; border: 1px solid #bfdbfe; border-radius: 8px; font-size: 14px; text-align: center; }
+.applicant-review-license-page .review-state { margin-top: 20px; padding: 40px 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; text-align: center; color: #64748b; }
+.applicant-review-license-page .review-state h3 { margin-bottom: 8px; color: #1e3a8a; }
+.applicant-review-license-page .review-state p { margin-bottom: 20px; }
+.applicant-review-license-page .review-state.review-error { color: #b91c1c; }
+.applicant-review-license-page .review-state .review-renew-btn { display: inline-flex; text-decoration: none; }

@@ -58,7 +58,7 @@ describe('Full Multi-Tenant Workflow (e2e)', () => {
 
     const hydDo = await request(app.getHttpServer())
       .post('/api/auth/login')
-      .send({ email: 'kumar@tradezo.gov.in', password: 'TradeZo@123', role: 'department_officer' })
+      .send({ email: 'kumara@tradezo.gov.in', password: 'TradeZo@123', role: 'department_officer' })
       .expect(201);
     hydDoToken = hydDo.body.accessToken;
 

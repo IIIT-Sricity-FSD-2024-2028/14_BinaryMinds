@@ -1,0 +1,49 @@
+.applicant-payment-history-page { min-height: 100vh; background: #f4f6f9; color: #1a1a2e; font-family: Arial, sans-serif; }
+.applicant-payment-history-page *, .applicant-payment-history-page *::before, .applicant-payment-history-page *::after { box-sizing: border-box; }
+.applicant-payment-history-page .history-topbar { display: flex; align-items: center; gap: 12px; padding: 10px 24px; background: #fff; border-bottom: 1px solid #e0e4ec; }
+.applicant-payment-history-page .history-topbar img { width: 45px; height: 45px; object-fit: contain; }
+.applicant-payment-history-page .history-brand span { display: block; color: #666; font-size: 11px; }
+.applicant-payment-history-page .history-brand strong { display: block; color: #1e3a8a; font-size: 20px; line-height: 1.2; }
+.applicant-payment-history-page .history-nav { display: flex; align-items: center; flex-wrap: wrap; min-height: 46px; padding: 0 16px; background: #1e3a8a; }
+.applicant-payment-history-page .history-nav a { display: inline-block; padding: 12px 14px; color: #fff; font-size: 13px; text-decoration: none; white-space: nowrap; }
+.applicant-payment-history-page .history-nav a:hover { background: rgba(255,255,255,.12); }
+.applicant-payment-history-page .history-nav a.active { background: rgba(255,255,255,.2); font-weight: 600; }
+.applicant-payment-history-page .history-nav a.history-logout { color: #fca5a5; }
+.applicant-payment-history-page .history-main { max-width: 1100px; margin: 32px auto; padding: 0 20px 40px; }
+.applicant-payment-history-page .history-main > h1 { margin: 0 0 6px; color: #1e3a8a; font-size: 24px; }
+.applicant-payment-history-page .history-sub { margin: 0 0 24px; color: #64748b; font-size: 14px; }
+.applicant-payment-history-page .history-message { margin: 0 0 14px; color: #334155; font-size: 14px; }
+.applicant-payment-history-page .history-error { color: #b91c1c; }
+.applicant-payment-history-page .history-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 16px; margin-bottom: 28px; }
+.applicant-payment-history-page .history-card, .applicant-payment-history-page .history-panel { border: 1px solid #e0e4ec; border-radius: 10px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+.applicant-payment-history-page .summary-card { display: flex; align-items: center; gap: 16px; padding: 20px 24px; }
+.applicant-payment-history-page .history-icon { color: #1e3a8a; font-size: 28px; }
+.applicant-payment-history-page .summary-card small { display: block; margin-bottom: 4px; color: #64748b; font-size: 11px; font-weight: 600; }
+.applicant-payment-history-page .summary-card h2 { color: #1a1a2e; font-size: 21px; overflow-wrap: anywhere; }
+.applicant-payment-history-page .history-bottom { display: grid; grid-template-columns: minmax(0,1fr) 320px; align-items: start; gap: 24px; margin-bottom: 32px; }
+.applicant-payment-history-page .history-panel { min-width: 0; padding: 20px 24px; }
+.applicant-payment-history-page .history-panel h3 { margin: 0 0 16px; color: #1e3a8a; font-size: 16px; }
+.applicant-payment-history-page .history-table-wrap { overflow-x: auto; }
+.applicant-payment-history-page table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.applicant-payment-history-page th { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; color: #64748b; font-size: 12px; text-align: left; }
+.applicant-payment-history-page td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
+.applicant-payment-history-page tr:last-child td { border-bottom: 0; }
+.applicant-payment-history-page .history-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: capitalize; }
+.applicant-payment-history-page .history-badge.is-complete { background: #dcfce7; color: #15803d; }
+.applicant-payment-history-page .history-badge.is-other { background: #f1f5f9; color: #475569; }
+.applicant-payment-history-page .history-text-action { padding: 0; border: 0; background: none; color: #1e3a8a; font: 600 13px Arial,sans-serif; cursor: pointer; }
+.applicant-payment-history-page .history-text-action:hover { text-decoration: underline; }
+.applicant-payment-history-page .history-empty { text-align: center; color: #64748b; }
+.applicant-payment-history-page .history-side { min-width: 0; }
+.applicant-payment-history-page .history-summary ul { display: flex; flex-direction: column; gap: 10px; margin: 0 0 20px; padding: 0; list-style: none; }
+.applicant-payment-history-page .history-summary li { color: #334155; font-size: 14px; line-height: 1.45; }
+.applicant-payment-history-page .history-print { width: 100%; margin-bottom: 16px; padding: 10px; border: 0; border-radius: 8px; background: #1e3a8a; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+.applicant-payment-history-page .history-assist { padding: 14px 16px; border: 1px solid #bfdbfe; border-radius: 8px; background: #eff6ff; color: #1d4ed8; font-size: 13px; line-height: 1.6; }
+.applicant-payment-history-page .history-assist p { margin: 0 0 4px; }
+.applicant-payment-history-page .history-assist a { color: #1e40af; font-weight: 700; }
+.applicant-payment-history-page .history-assist h3 { margin: 6px 0 0; font-size: 18px; }
+.applicant-payment-history-page .receipts-panel { margin-bottom: 24px; }
+.applicant-payment-history-page .history-dot { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: #16a34a; }
+.applicant-payment-history-page .history-back { display: inline-block; padding: 10px 22px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #fff; color: #374151; font-size: 14px; font-weight: 600; text-decoration: none; }
+@media (max-width: 860px) { .applicant-payment-history-page .history-bottom { grid-template-columns: 1fr; } }
+@media print { .applicant-payment-history-page .history-nav, .applicant-payment-history-page .history-print, .applicant-payment-history-page .history-back, .applicant-payment-history-page .history-text-action { display: none; } .applicant-payment-history-page { background: #fff; } }
