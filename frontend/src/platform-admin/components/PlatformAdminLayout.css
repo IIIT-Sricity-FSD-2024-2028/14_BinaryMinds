@@ -1,0 +1,44 @@
+.platform-admin-root {
+  --pa-navy: #102a72;
+  --pa-navy-2: #1f3f96;
+  --pa-bg: #f4f6fb;
+  --pa-text: #172033;
+  --pa-muted: #667085;
+  --pa-line: #e6eaf2;
+  min-height: 100vh;
+  background: var(--pa-bg);
+  color: var(--pa-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+.platform-admin-root *, .platform-admin-root *::before, .platform-admin-root *::after { box-sizing: border-box; }
+.platform-admin-root button, .platform-admin-root input, .platform-admin-root select { font: inherit; }
+.platform-admin-root button { cursor: pointer; }
+.platform-admin-root .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 20; display: flex; width: 260px; flex-direction: column; background: var(--pa-navy); color: #fff; box-shadow: 4px 0 18px rgba(16,42,114,.16); }
+.platform-admin-root .sidebar-logo { display: flex; align-items: center; gap: 12px; min-height: 86px; padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,.14); }
+.platform-admin-root .emblem { width: 42px; height: 42px; object-fit: contain; flex: 0 0 auto; }
+.platform-admin-root .logo-gov, .platform-admin-root .logo-sub { color: rgba(255,255,255,.76); font-size: 12px; line-height: 1.35; }
+.platform-admin-root .logo-title { margin-top: 2px; color: #fff; font-size: 21px; font-weight: 800; line-height: 1.1; }
+.platform-admin-root .sidebar-nav { display: flex; flex: 1; flex-direction: column; gap: 6px; padding: 18px 12px; }
+.platform-admin-root .nav-link { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 11px 14px; border: 0; border-radius: 8px; color: rgba(255,255,255,.88); background: transparent; font-size: 14px; font-weight: 600; text-decoration: none; transition: background .18s ease,color .18s ease; }
+.platform-admin-root .nav-link:hover, .platform-admin-root .nav-link.active { background: rgba(255,255,255,.15); color: #fff; }
+.platform-admin-root .nav-icon { display: inline-flex; width: 22px; justify-content: center; font-size: 17px; }
+.platform-admin-root .sidebar-footer { padding: 16px 18px; border-top: 1px solid rgba(255,255,255,.14); color: rgba(255,255,255,.65); font-size: 11px; }
+.platform-admin-root .main-wrapper { display: flex; min-height: 100vh; margin-left: 260px; flex-direction: column; }
+.platform-admin-root .topbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 70px; padding: 12px 30px; border-bottom: 1px solid var(--pa-line); background: #fff; }
+.platform-admin-root .topbar-left, .platform-admin-root .topbar-right, .platform-admin-root .user-info { display: flex; align-items: center; }
+.platform-admin-root .topbar-left { gap: 12px; }
+.platform-admin-root .gov-title { color: var(--pa-navy); font-size: 15px; font-weight: 700; }
+.platform-admin-root .gov-sub { color: var(--pa-muted); font-size: 12px; }
+.platform-admin-root .topbar-right { gap: 12px; }
+.platform-admin-root .user-info { gap: 10px; padding-right: 12px; border-right: 1px solid var(--pa-line); }
+.platform-admin-root .user-avatar { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 50%; background: var(--pa-navy); color: #fff; font-size: 13px; font-weight: 700; }
+.platform-admin-root .user-name { color: var(--pa-text); font-size: 13px; font-weight: 700; }
+.platform-admin-root .user-role { color: var(--pa-muted); font-size: 11px; }
+.platform-admin-root .topbar-btn { padding: 8px 14px; border: 1px solid var(--pa-line); border-radius: 6px; background: #fff; color: var(--pa-text); font-size: 13px; font-weight: 600; text-decoration: none; }
+.platform-admin-root .topbar-btn:hover { background: #f8fafc; }
+.platform-admin-root .logout-btn { border-color: #fecaca; background: #fef2f2; color: #b91c1c; }
+.platform-admin-root .content-area { flex: 1; width: 100%; max-width: 1380px; padding: 28px 32px 40px; }
+.platform-admin-alert { margin: 0 0 16px; padding: 11px 14px; border: 1px solid #fecaca; border-radius: 7px; background: #fef2f2; color: #b91c1c; font-size: 13px; }
+.platform-admin-loading { padding: 30px; color: var(--pa-muted); text-align: center; }
+@media (max-width: 860px) { .platform-admin-root .sidebar { width: 220px; } .platform-admin-root .main-wrapper { margin-left: 220px; } .platform-admin-root .content-area { padding: 22px; } }
+@media (max-width: 680px) { .platform-admin-root .sidebar { position: static; width: 100%; } .platform-admin-root .sidebar-nav { flex-direction: row; flex-wrap: wrap; } .platform-admin-root .nav-link { flex: 1 1 145px; } .platform-admin-root .main-wrapper { margin-left: 0; } .platform-admin-root .topbar { position: static; align-items: flex-start; flex-direction: column; } .platform-admin-root .topbar-right { flex-wrap: wrap; } .platform-admin-root .content-area { padding: 18px 14px 30px; } }

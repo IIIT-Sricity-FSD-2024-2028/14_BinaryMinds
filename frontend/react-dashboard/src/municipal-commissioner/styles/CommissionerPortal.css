@@ -1,0 +1,981 @@
+.commissioner-root * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.commissioner-root {
+  --navy: #102a72;
+  --navy-2: #1f3f96;
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --text: #172033;
+  --muted: #667085;
+  --line: #e6eaf2;
+  --soft: #f8fafc;
+  --green: #15803d;
+  --red: #dc2626;
+  --orange: #d97706;
+  --blue: #2563eb;
+  --purple: #7c3aed;
+}
+
+.commissioner-root {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.commissioner-root button, .commissioner-root input, .commissioner-root select {
+  font: inherit;
+}
+
+.commissioner-root button {
+  cursor: pointer;
+}
+
+.commissioner-root .sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 20;
+  display: flex;
+  width: 260px;
+  flex-direction: column;
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 4px 0 18px rgba(16, 42, 114, 0.16);
+}
+
+.commissioner-root .sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 86px;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.commissioner-root .emblem {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.commissioner-root .logo-gov, .commissioner-root .gov-sub, .commissioner-root .user-email, .commissioner-root .logo-sub {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.commissioner-root .logo-title {
+  margin-top: 2px;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.commissioner-root .sidebar-nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 12px;
+}
+
+.commissioner-root .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.commissioner-root .nav-link:hover, .commissioner-root .nav-link.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.commissioner-root .nav-icon {
+  display: inline-flex;
+  width: 22px;
+  justify-content: center;
+  font-size: 17px;
+}
+
+.commissioner-root .sidebar-footer {
+  padding: 16px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 12px;
+}
+
+.commissioner-root .main-wrapper {
+  min-height: 100vh;
+  margin-left: 260px;
+}
+
+.commissioner-root .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 72px;
+  padding: 12px 28px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.commissioner-root .topbar-left, .commissioner-root .topbar-right, .commissioner-root .user-info, .commissioner-root .page-top-bar, .commissioner-root .card-top-bar, .commissioner-root .um-filter-bar, .commissioner-root .filter-bar, .commissioner-root .form-actions, .commissioner-root .modal-footer, .commissioner-root .fee-summary-row-2, .commissioner-root .sys-info-row, .commissioner-root .cat-right, .commissioner-root .action-btns {
+  display: flex;
+  align-items: center;
+}
+
+.commissioner-root .topbar-left {
+  gap: 12px;
+}
+
+.commissioner-root .gov-title {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.commissioner-root .gov-sub {
+  color: var(--muted);
+}
+
+.commissioner-root .topbar-right {
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.commissioner-root .hierarchy-card {
+  margin: 22px 0;
+  padding: 22px;
+  border: 1px solid #cfd8f3;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f8faff, #ffffff);
+  text-align: center;
+}
+
+.commissioner-root .hierarchy-eyebrow, .commissioner-root .hierarchy-card h3 {
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.commissioner-root .hierarchy-card h2 {
+  margin-top: 8px;
+  font-size: 22px;
+}
+
+.commissioner-root .hierarchy-card h2 span {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.commissioner-root .hierarchy-arrow {
+  margin: 8px 0;
+  color: var(--navy);
+  font-size: 24px;
+}
+
+.commissioner-root .hierarchy-roles {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 14px 0;
+}
+
+.commissioner-root .hierarchy-roles div, .commissioner-root .hierarchy-applicants {
+  min-width: 180px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #eaf0ff;
+  color: var(--navy);
+}
+
+.commissioner-root .hierarchy-roles strong, .commissioner-root .hierarchy-roles span {
+  display: block;
+}
+
+.commissioner-root .hierarchy-roles span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.commissioner-root .hierarchy-applicants {
+  margin: 0 auto;
+  background: #f3f4f6;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.commissioner-root .user-info {
+  gap: 10px;
+}
+
+.commissioner-root .user-avatar, .commissioner-root .avatar-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.commissioner-root .user-avatar {
+  width: 40px;
+  height: 40px;
+  background: #eef2ff;
+  color: var(--navy);
+  font-size: 13px;
+}
+
+.commissioner-root .user-name {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.commissioner-root .user-email {
+  color: var(--muted);
+}
+
+.commissioner-root .btn-signout, .commissioner-root .btn-primary, .commissioner-root .btn-outline, .commissioner-root .btn-sm, .commissioner-root .btn-activate, .commissioner-root .btn-deactivate, .commissioner-root .page-btn {
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.commissioner-root .btn-signout {
+  padding: 10px 13px;
+  background: #fff1f2;
+  color: #be123c;
+}
+
+.commissioner-root .btn-primary {
+  padding: 11px 16px;
+  background: var(--navy);
+  color: #fff;
+}
+
+.commissioner-root .btn-primary:hover {
+  background: var(--navy-2);
+}
+
+.commissioner-root .btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.commissioner-root .btn-outline {
+  padding: 10px 15px;
+  background: #fff;
+  border-color: #cfd6e4;
+  color: #344054;
+}
+
+.commissioner-root .btn-sm, .commissioner-root .btn-activate, .commissioner-root .btn-deactivate {
+  padding: 8px 11px;
+  font-size: 12px;
+}
+
+.commissioner-root .btn-edit {
+  background: #eef2ff;
+  color: var(--blue);
+}
+
+.commissioner-root .btn-delete, .commissioner-root .btn-revoke {
+  background: #fef2f2;
+  color: var(--red);
+}
+
+.commissioner-root .btn-activate {
+  background: #f0fdf4;
+  color: var(--green);
+}
+
+.commissioner-root .btn-deactivate {
+  background: #fff7ed;
+  color: var(--orange);
+}
+
+.commissioner-root .page {
+  display: none;
+}
+
+.commissioner-root .page.active {
+  display: block;
+}
+
+.commissioner-root .content {
+  width: min(100%, 1240px);
+  margin: 0 auto;
+  padding: 28px;
+}
+
+.commissioner-root .page-heading {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.commissioner-root .page-sub, .commissioner-root .card-sub, .commissioner-root .form-hint, .commissioner-root .cat-desc {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.commissioner-root .page-sub {
+  margin-top: 6px;
+  margin-bottom: 22px;
+}
+
+.commissioner-root .page-top-bar, .commissioner-root .card-top-bar {
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.commissioner-root .stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.commissioner-root #page-dashboard .stat-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.commissioner-root .stat-card, .commissioner-root .card, .commissioner-root .settings-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(16, 42, 114, 0.06);
+}
+
+.commissioner-root .stat-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 132px;
+  padding: 20px;
+}
+
+.commissioner-root .stat-label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.commissioner-root .stat-value {
+  margin-top: 8px;
+  font-size: 31px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.commissioner-root .stat-change {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.commissioner-root .stat-icon {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #eef2ff;
+  color: var(--navy);
+  font-size: 25px;
+}
+
+.commissioner-root .card {
+  margin-bottom: 22px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.commissioner-root .card-title, .commissioner-root .modal-title, .commissioner-root .fee-summary-title {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.commissioner-root .card-title {
+  margin-bottom: 14px;
+}
+
+.commissioner-root .data-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.commissioner-root .data-table th, .commissioner-root .data-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #edf0f6;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 13px;
+}
+
+.commissioner-root .data-table th {
+  background: var(--soft);
+  color: #596579;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.commissioner-root .data-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.commissioner-root .data-table tbody tr:hover {
+  background: #fafcff;
+}
+
+.commissioner-root .name-cell, .commissioner-root .data-table td:first-child {
+  align-items: center;
+  gap: 9px;
+}
+
+.commissioner-root .name-cell {
+  display: flex;
+}
+
+.commissioner-root .avatar-circle {
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+  background: #eef2ff;
+  color: var(--navy);
+  font-size: 12px;
+}
+
+.commissioner-root .badge, .commissioner-root .action-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.commissioner-root .badge-green, .commissioner-root .action-approve, .commissioner-root .action-login {
+  background: #dcfce7;
+  color: var(--green);
+}
+
+.commissioner-root .badge-red, .commissioner-root .action-delete, .commissioner-root .action-reject {
+  background: #fee2e2;
+  color: var(--red);
+}
+
+.commissioner-root .badge-orange {
+  background: #ffedd5;
+  color: var(--orange);
+}
+
+.commissioner-root .badge-blue, .commissioner-root .action-update {
+  background: #dbeafe;
+  color: var(--blue);
+}
+
+.commissioner-root .badge-purple, .commissioner-root .action-create {
+  background: #ede9fe;
+  color: var(--purple);
+}
+
+.commissioner-root .badge-grey {
+  background: #eef2f7;
+  color: #475467;
+}
+
+.commissioner-root .green {
+  color: var(--green);
+}
+
+.commissioner-root .red {
+  color: var(--red);
+}
+
+.commissioner-root .orange {
+  color: var(--orange);
+}
+
+.commissioner-root .blue {
+  color: var(--blue);
+}
+
+.commissioner-root .filter-bar, .commissioner-root .um-filter-bar {
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.commissioner-root .um-stats {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.commissioner-root .search-input, .commissioner-root .filter-select, .commissioner-root .form-input, .commissioner-root .assign-select {
+  min-height: 42px;
+  border: 1px solid #cfd6e4;
+  border-radius: 7px;
+  background: #fff;
+  color: var(--text);
+  outline: none;
+}
+
+.commissioner-root .search-input {
+  width: min(100%, 390px);
+  padding: 0 13px;
+}
+
+.commissioner-root .filter-select {
+  min-width: 168px;
+  padding: 0 12px;
+}
+
+.commissioner-root .form-input {
+  width: 100%;
+  padding: 0 12px;
+}
+
+.commissioner-root .assign-select {
+  min-width: 210px;
+  width: 100%;
+  padding: 0 12px;
+}
+
+.commissioner-root .form-input:focus, .commissioner-root .search-input:focus, .commissioner-root .filter-select:focus, .commissioner-root .assign-select:focus {
+  border-color: var(--navy-2);
+  box-shadow: 0 0 0 3px rgba(31, 63, 150, 0.12);
+}
+
+.commissioner-root .pagination {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.commissioner-root .page-btn {
+  min-width: 38px;
+  padding: 9px 11px;
+  background: #fff;
+  border-color: #d6dce8;
+  color: #344054;
+}
+
+.commissioner-root .page-btn.active-page {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+.commissioner-root .page-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.commissioner-root .settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.commissioner-root .settings-card {
+  padding: 20px;
+  cursor: pointer;
+}
+
+.commissioner-root .settings-card-title {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.commissioner-root .settings-card-sub {
+  margin: 8px 0 13px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.commissioner-root .settings-link {
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.commissioner-root .alert-banner, .commissioner-root .info-note {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.commissioner-root .blue-banner {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
+.commissioner-root .info-note {
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  color: #475467;
+}
+
+.commissioner-root .form-grid-2, .commissioner-root .detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.commissioner-root .form-group {
+  margin-bottom: 16px;
+}
+
+.commissioner-root .form-group label, .commissioner-root .detail-item label {
+  display: block;
+  margin-bottom: 7px;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.commissioner-root .disabled-input {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.commissioner-root .input-error {
+  border-color: var(--red);
+}
+
+.commissioner-root .error-msg {
+  min-height: 16px;
+  margin-top: 5px;
+  color: var(--red);
+  font-size: 12px;
+}
+
+.commissioner-root .form-actions, .commissioner-root .modal-footer {
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.commissioner-root .fee-summary-box {
+  margin: 18px 0;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+}
+
+.commissioner-root .fee-summary-row-2, .commissioner-root .sys-info-row {
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.commissioner-root .fee-summary-row-2 {
+  margin-top: 12px;
+}
+
+.commissioner-root .fee-label, .commissioner-root .sys-info-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.commissioner-root .fee-val, .commissioner-root .sys-info-val {
+  margin-top: 4px;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.commissioner-root .sys-info-item {
+  flex: 1 1 190px;
+  padding: 14px;
+  border-radius: 8px;
+  background: var(--soft);
+}
+
+.commissioner-root .green-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.commissioner-root .category-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.commissioner-root .category-row:last-child {
+  border-bottom: 0;
+}
+
+.commissioner-root .cat-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-weight: 800;
+}
+
+.commissioner-root .cat-right, .commissioner-root .action-btns {
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.commissioner-root .empty-row td {
+  padding: 28px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.commissioner-root .detail-item {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+}
+
+.commissioner-root .detail-item p {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.commissioner-root .modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.48);
+}
+
+.commissioner-root .modal-overlay.show {
+  display: flex;
+}
+
+.commissioner-root .modal {
+  width: min(100%, 720px);
+  max-height: min(88vh, 840px);
+  overflow: hidden;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+}
+
+.commissioner-root .modal-small {
+  width: min(100%, 520px);
+}
+
+.commissioner-root .modal-header, .commissioner-root .modal-footer {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.commissioner-root .modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.commissioner-root .modal-footer {
+  border-top: 1px solid var(--line);
+  border-bottom: 0;
+}
+
+.commissioner-root .modal-sub {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.commissioner-root .modal-close {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 7px;
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.commissioner-root .modal-body {
+  max-height: calc(88vh - 152px);
+  overflow-y: auto;
+  padding: 22px;
+}
+
+.commissioner-root .toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 80;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 13px 16px;
+  border-radius: 8px;
+  background: #111827;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.commissioner-root .toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 1100px) {
+  .commissioner-root .stat-row, .commissioner-root #page-dashboard .stat-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .commissioner-root .sidebar {
+    position: static;
+    width: 100%;
+  }
+
+  .commissioner-root .sidebar-logo {
+    min-height: 74px;
+  }
+
+  .commissioner-root .sidebar-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 12px;
+  }
+
+  .commissioner-root .sidebar-footer {
+    display: none;
+  }
+
+  .commissioner-root .main-wrapper {
+    margin-left: 0;
+  }
+
+  .commissioner-root .topbar {
+    position: static;
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .commissioner-root .content {
+    padding: 18px 14px;
+  }
+
+  .commissioner-root .page-heading {
+    font-size: 24px;
+  }
+
+  .commissioner-root .settings-grid, .commissioner-root .form-grid-2, .commissioner-root .detail-grid, .commissioner-root .stat-row, .commissioner-root #page-dashboard .stat-row {
+    grid-template-columns: 1fr;
+  }
+
+  .commissioner-root .page-top-bar, .commissioner-root .card-top-bar, .commissioner-root .category-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .commissioner-root .btn-primary, .commissioner-root .btn-outline, .commissioner-root .search-input, .commissioner-root .filter-select {
+    width: 100%;
+  }
+
+  .commissioner-root .filter-bar, .commissioner-root .um-filter-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 560px) {
+  .commissioner-root .topbar {
+    flex-direction: column;
+  }
+
+  .commissioner-root .topbar-right, .commissioner-root .user-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .commissioner-root .sidebar-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .commissioner-root .card, .commissioner-root .stat-card, .commissioner-root .settings-card {
+    padding: 16px;
+  }
+
+  .commissioner-root .modal-overlay {
+    padding: 12px;
+  }
+
+  .commissioner-root .modal-header, .commissioner-root .modal-footer, .commissioner-root .modal-body {
+    padding: 16px;
+  }
+}
+.commissioner-root,
+.commissioner-root * {
+  box-sizing: border-box;
+}
+.commissioner-root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}

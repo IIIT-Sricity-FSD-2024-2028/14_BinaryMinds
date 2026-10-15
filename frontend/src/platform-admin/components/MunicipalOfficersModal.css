@@ -1,0 +1,16 @@
+.pa-officer-overlay { position: fixed; inset: 0; z-index: 1100; display: grid; place-items: center; padding: 20px; background: rgba(15,23,42,.55); backdrop-filter: blur(4px); }
+.pa-officer-modal { width: min(540px,100%); max-height: 88vh; overflow: auto; padding: 24px 28px; border: 1px solid #e6eaf2; border-radius: 12px; background: #fff; box-shadow: 0 20px 45px rgba(15,23,42,.2); }
+.pa-officer-modal > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #e6eaf2; }
+.pa-officer-modal h2 { color: #102a72; font-size: 18px; }
+.pa-officer-modal header p, .pa-modal-status { margin-top: 4px; color: #667085; font-size: 13px; }
+.pa-close { border: 0; background: transparent; color: #475569; font-size: 24px; line-height: 1; }
+.pa-officer-groups { display: grid; gap: 12px; }
+.pa-officer-group { padding: 12px 14px; border: 1px solid; border-radius: 8px; }
+.pa-officer-group h3 { margin-bottom: 8px; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; }
+.pa-officer-group > p { color: #64748b; font-size: 13px; }
+.pa-officer-group.head { border-color: #e9d5ff; background: #faf5ff; color: #6b21a8; }
+.pa-officer-group.department { border-color: #bbf7d0; background: #f0fdf4; color: #15803d; }
+.pa-officer-group.field { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+.pa-person { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 12px; margin-top: 8px; color: #475569; font-size: 13px; }
+.pa-person strong { grid-column: 1/-1; color: #172033; font-size: 14px; }
+.pa-modal-error { color: #b91c1c; font-size: 13px; }
