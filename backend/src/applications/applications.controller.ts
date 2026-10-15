@@ -72,6 +72,8 @@ export class ApplicationsController {
     const app = this.applicationsService.createSimple(
       {
         applicantName,
+        aadhaar_number: body.aadhaar_number,
+        gender: body.gender,
         businessName: bizName,
         businessType: body.businessType || body.business_type,
         tradeCategory: cat,
@@ -345,10 +347,11 @@ export class ApplicationsController {
     @Req() request: Request & { user: AuthenticatedUser },
   ) {
     const existing = this.applicationsService.findOne(id);
-    if (request.user.role !== Role.PLATFORM_ADMIN) {
-      if (request.user.role === Role.APPLICANT && existing.applicant_id !== request.user.userId) {
+    if (request.user.role === Role.APPLICANT) {
+      if (existing.applicant_id !== request.user.userId) {
         throw new ForbiddenException('You can only update your own applications');
       }
+    } else if (request.user.role !== Role.PLATFORM_ADMIN) {
       const userMuni = request.user.municipalityId;
       if (!userMuni || (existing.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()) {
         throw new ForbiddenException('Access denied to modify applications outside your municipality');

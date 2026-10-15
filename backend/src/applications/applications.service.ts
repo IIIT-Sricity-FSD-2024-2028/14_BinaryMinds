@@ -165,6 +165,8 @@ export class ApplicationsService {
       municipality_id: resolvedMuni.municipality_id,
       municipalityName: resolvedMuni.name,
       full_name: data.applicantName,
+      aadhaar_number: data.aadhaar_number,
+      gender: data.gender,
       business_name: data.businessName || 'N/A',
       business_type: data.businessType || data.tradeCategory || 'General',
       trade_category: data.tradeCategory || 'General',

@@ -105,7 +105,12 @@ export class PaymentsController {
     @Req() request: Request & { user: AuthenticatedUser },
   ) {
     const payment = this.paymentsService.findOne(id);
-    if (request.user.role !== Role.PLATFORM_ADMIN && request.user.role !== Role.APPLICANT) {
+    const application = this.applicationsService.findOne(payment.application_id);
+    if (request.user.role === Role.APPLICANT) {
+      if (application.applicant_id !== request.user.userId) {
+        throw new ForbiddenException('Applicants can only view payments for their own applications');
+      }
+    } else if (request.user.role !== Role.PLATFORM_ADMIN) {
       const userMuni = request.user.municipalityId;
       if (!userMuni || (payment.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()) {
         throw new ForbiddenException('Access denied to payments outside your municipality');
@@ -129,7 +134,12 @@ export class PaymentsController {
     @Req() request: Request & { user: AuthenticatedUser },
   ) {
     const existing = this.paymentsService.findOne(id);
-    if (request.user.role !== Role.PLATFORM_ADMIN) {
+    if (request.user.role === Role.APPLICANT) {
+      const application = this.applicationsService.findOne(existing.application_id);
+      if (application.applicant_id !== request.user.userId) {
+        throw new ForbiddenException('Applicants can only update payments for their own applications');
+      }
+    } else if (request.user.role !== Role.PLATFORM_ADMIN) {
       const userMuni = request.user.municipalityId;
       if (!userMuni || (existing.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()) {
         throw new ForbiddenException('Access denied to update payments outside your municipality');

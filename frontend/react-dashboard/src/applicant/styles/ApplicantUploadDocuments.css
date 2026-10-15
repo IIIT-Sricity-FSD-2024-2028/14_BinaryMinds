@@ -1,0 +1,41 @@
+.applicant-upload-documents-page { min-height: 100vh; font-family: Arial, sans-serif; background: #f4f6f9; color: #1a1a2e; }
+.applicant-upload-documents-page * { margin: 0; padding: 0; box-sizing: border-box; }
+.applicant-upload-documents-page .topbar { display: flex; align-items: center; gap: 12px; padding: 10px 24px; background: #fff; border-bottom: 1px solid #e0e4ec; }
+.applicant-upload-documents-page .brand { display: flex; align-items: center; gap: 10px; }
+.applicant-upload-documents-page .brand small { display: block; font-size: 11px; color: #666; }
+.applicant-upload-documents-page .brand strong { display: block; font-size: 20px; font-weight: 700; color: #1e3a8a; line-height: 1.2; }
+.applicant-upload-documents-page .emblem { width: auto; height: 45px; object-fit: contain; filter: none; }
+.applicant-upload-documents-page nav { background: #1e3a8a; display: flex; align-items: center; padding: 0 24px; min-height: 46px; flex-wrap: wrap; }
+.applicant-upload-documents-page nav a { color: #fff; text-decoration: none; font-size: 14px; padding: 12px 16px; display: inline-block; transition: background .2s; }
+.applicant-upload-documents-page nav a:hover { background: rgba(255,255,255,.12); }
+.applicant-upload-documents-page nav a.active { background: rgba(255,255,255,.2); font-weight: 600; }
+.applicant-upload-documents-page .container { display: block; height: auto; max-width: 860px; margin: 32px auto; padding: 0 20px; }
+.applicant-upload-documents-page .page-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 16px; }
+.applicant-upload-documents-page .page-top h2 { font-size: 22px; font-weight: 700; color: #1e3a8a; margin-bottom: 4px; }
+.applicant-upload-documents-page .page-top p { font-size: 14px; color: #64748b; }
+.applicant-upload-documents-page .progress-box { min-width: 180px; text-align: right; }
+.applicant-upload-documents-page .progress-box span { display: block; font-size: 13px; font-weight: 600; color: #1e3a8a; margin-bottom: 6px; }
+.applicant-upload-documents-page .progress-bg { background: #e2e8f0; border-radius: 999px; height: 8px; overflow: hidden; }
+.applicant-upload-documents-page .progress-fill { width: 75%; height: 100%; background: linear-gradient(90deg,#1e3a8a,#2d5be3); border-radius: 999px; }
+.applicant-upload-documents-page .info-note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #1d4ed8; margin-bottom: 20px; }
+.applicant-upload-documents-page .doc-card { background: #fff; border: 1px solid #e0e4ec; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+.applicant-upload-documents-page .doc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+.applicant-upload-documents-page .doc-header strong { font-size: 15px; font-weight: 700; color: #1a1a2e; }
+.applicant-upload-documents-page .doc-header span { font-size: 13px; color: #64748b; }
+.applicant-upload-documents-page .upload-area { display: flex; align-items: center; gap: 14px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; padding: 16px 20px; transition: border-color .2s; flex-wrap: wrap; }
+.applicant-upload-documents-page .upload-area:hover { border-color: #1e3a8a; }
+.applicant-upload-documents-page .upload-area button { background: #1e3a8a; color: #fff; border: none; padding: 9px 20px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .2s; }
+.applicant-upload-documents-page .upload-area button:hover { background: #162e6e; }
+.applicant-upload-documents-page .upload-area button:disabled { opacity: .65; cursor: not-allowed; }
+.applicant-upload-documents-page .upload-area span { font-size: 13px; color: #64748b; }
+.applicant-upload-documents-page .upload-area input[type="file"] { display: none; }
+.applicant-upload-documents-page .browse { color: #1e3a8a; font-weight: 600; cursor: pointer; text-decoration: underline; }
+.applicant-upload-documents-page .file-status { margin-top: 10px; font-size: 13px; color: #15803d; font-weight: 600; min-height: 18px; }
+.applicant-upload-documents-page .error { font-size: 12px; color: #dc2626; margin-top: 4px; min-height: 16px; }
+.applicant-upload-documents-page .bottom-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; padding-bottom: 40px; gap: 12px; }
+.applicant-upload-documents-page .btn-back { padding: 11px 28px; background: #fff; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; color: #374151; transition: background .2s; }
+.applicant-upload-documents-page .btn-back:hover { background: #f1f5f9; }
+.applicant-upload-documents-page .btn-preview { padding: 11px 32px; background: #1e3a8a; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background .2s; }
+.applicant-upload-documents-page .btn-preview:hover { background: #162e6e; }
+.applicant-upload-documents-page .btn-preview:disabled { opacity: .7; cursor: wait; }
+.applicant-upload-documents-page .upload-page-message { color: #b91c1c; font-size: 13px; margin-top: 12px; }

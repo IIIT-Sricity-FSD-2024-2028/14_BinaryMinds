@@ -21,6 +21,16 @@ export class CreateSimpleApplicationDto {
   @MaxLength(120)
   applicantName!: string;
 
+  @IsString()
+  @IsOptional()
+  @MaxLength(20)
+  aadhaar_number?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(20)
+  gender?: string;
+
   @ApiProperty({ description: 'Business name', example: 'Registered Business Name', required: false })
   @IsString()
   @IsOptional()
