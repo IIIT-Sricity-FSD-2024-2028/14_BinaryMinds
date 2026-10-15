@@ -1,0 +1,170 @@
+@import "./CommissionerPortal.css";
+
+.commissioner-root .commissioner-dashboard {
+  width: 100%;
+  max-width: none;
+  padding: 32px clamp(22px, 3vw, 48px);
+}
+
+.commissioner-dashboard .page-heading {
+  color: #142b67;
+  font-size: clamp(25px, 2vw, 32px);
+}
+
+.commissioner-dashboard .page-sub {
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.commissioner-dashboard .hierarchy-card {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.7fr) minmax(0, 2fr);
+  align-items: center;
+  gap: 28px;
+  margin: 0 0 22px;
+  padding: 24px 28px;
+  border-color: #dce4f5;
+  box-shadow: 0 8px 24px rgba(16, 42, 114, 0.05);
+  text-align: left;
+}
+
+.commissioner-dashboard .hierarchy-eyebrow {
+  margin-bottom: 8px;
+}
+
+.commissioner-dashboard .hierarchy-card h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 21px;
+  line-height: 1.35;
+}
+
+.commissioner-dashboard .hierarchy-card h2 span {
+  display: block;
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.commissioner-dashboard .hierarchy-flow {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) 28px minmax(260px, 1.5fr) 28px minmax(150px, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.commissioner-dashboard .hierarchy-node {
+  display: flex;
+  min-height: 68px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 14px;
+  border: 1px solid #dce5fb;
+  border-radius: 10px;
+  background: #f2f6ff;
+  color: var(--navy);
+  text-align: center;
+}
+
+.commissioner-dashboard .hierarchy-node span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.commissioner-dashboard .hierarchy-lead {
+  background: #e9efff;
+  font-weight: 800;
+}
+
+.commissioner-dashboard .hierarchy-team {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.commissioner-dashboard .hierarchy-applicants {
+  min-width: 0;
+  margin: 0;
+  background: #f8fafc;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.commissioner-dashboard .hierarchy-connector {
+  color: #7487bb;
+  font-size: 23px;
+  text-align: center;
+}
+
+.commissioner-dashboard .dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.commissioner-dashboard .stat-card {
+  min-height: 126px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(16, 42, 114, 0.05);
+}
+
+.commissioner-dashboard .stat-value {
+  font-size: 34px;
+}
+
+.commissioner-dashboard .dashboard-activity {
+  margin-bottom: 0;
+  padding: 24px;
+}
+
+.commissioner-dashboard .dashboard-activity .data-table {
+  min-width: 540px;
+}
+
+.commissioner-dashboard .dashboard-activity .data-table th,
+.commissioner-dashboard .dashboard-activity .data-table td {
+  padding: 15px 16px;
+}
+
+@media (max-width: 1100px) {
+  .commissioner-root .commissioner-dashboard {
+    padding: 26px 22px;
+  }
+
+  .commissioner-dashboard .hierarchy-card {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 820px) {
+  .commissioner-dashboard .hierarchy-flow {
+    grid-template-columns: 1fr;
+  }
+
+  .commissioner-dashboard .hierarchy-connector {
+    transform: rotate(90deg);
+  }
+
+  .commissioner-dashboard .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .commissioner-root .commissioner-dashboard {
+    padding: 22px 14px;
+  }
+
+  .commissioner-dashboard .hierarchy-card,
+  .commissioner-dashboard .dashboard-activity {
+    padding: 18px;
+  }
+
+  .commissioner-dashboard .hierarchy-team {
+    grid-template-columns: 1fr;
+  }
+}

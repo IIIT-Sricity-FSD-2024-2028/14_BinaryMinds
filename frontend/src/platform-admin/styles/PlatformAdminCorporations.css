@@ -1,0 +1,33 @@
+.pa-corporations { color: #172033; font-family: Arial,Helvetica,sans-serif; }
+.pa-corporations-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.pa-corporations-header h1 { color: #102a72; font-size: 22px; }
+.pa-corporations-header p { margin-top: 4px; color: #667085; font-size: 13px; }
+.pa-corp-primary, .pa-corp-secondary { display: inline-flex; align-items: center; justify-content: center; padding: 9px 16px; border: 0; border-radius: 6px; font-size: 13px; font-weight: 600; }
+.pa-corp-primary { background: #102a72; color: #fff; }
+.pa-corp-primary:hover { background: #1f3f96; }
+.pa-corp-primary:disabled, .pa-corp-secondary:disabled { opacity: .65; cursor: wait; }
+.pa-corp-secondary { background: #e2e8f0; color: #334155; }
+.pa-corp-table-wrap { overflow-x: auto; border: 1px solid #e6eaf2; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.pa-corporations table { width: 100%; border-collapse: collapse; }
+.pa-corporations th, .pa-corporations td { padding: 13px 15px; border-bottom: 1px solid #e6eaf2; font-size: 13px; text-align: left; white-space: nowrap; }
+.pa-corporations th { background: #f1f5f9; color: #102a72; font-weight: 700; }
+.pa-corporations tbody tr:hover { background: #f8fafc; }
+.pa-corp-name, .pa-corp-inline { padding: 0; border: 0; background: transparent; color: #102a72; font-size: 13px; font-weight: 700; text-align: left; text-decoration: underline; }
+.pa-corp-name small { color: #667085; font-weight: 400; text-decoration: none; }
+.pa-corp-inline { text-decoration: none; }
+.pa-corp-state, .pa-corp-empty { padding: 28px; color: #667085; text-align: center; }
+.pa-corp-notice, .pa-corp-error { margin-bottom: 14px; padding: 11px 14px; border-radius: 7px; font-size: 13px; }
+.pa-corp-notice { border: 1px solid #a7f3d0; background: #ecfdf5; color: #065f46; }
+.pa-corp-error { border: 1px solid #fecaca; background: #fef2f2; color: #b91c1c; }
+.pa-corp-overlay { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 18px; background: rgba(15,23,42,.55); backdrop-filter: blur(4px); }
+.pa-corp-modal { width: min(560px,100%); max-height: 92vh; overflow-y: auto; padding: 26px; border-radius: 12px; background: #fff; box-shadow: 0 20px 35px rgba(15,23,42,.2); }
+.pa-corp-modal h2 { color: #102a72; font-size: 19px; }
+.pa-corp-modal > p { margin: 7px 0 16px; color: #6b7280; font-size: 13px; }
+.pa-corp-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.pa-corp-form-grid label { display: grid; align-content: start; gap: 5px; color: #374151; font-size: 13px; font-weight: 600; }
+.pa-corp-form-grid .full { grid-column: 1/-1; }
+.pa-corp-form-grid input { width: 100%; min-width: 0; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #172033; font-size: 14px; }
+.pa-corp-form-grid input:disabled { background: #f1f5f9; }
+.pa-corp-form-grid small { color: #6b7280; font-size: 11px; font-weight: 400; }
+.pa-corp-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+@media (max-width: 600px) { .pa-corporations-header { align-items: flex-start; flex-direction: column; } .pa-corp-form-grid { grid-template-columns: 1fr; } .pa-corp-form-grid .full { grid-column: auto; } }

@@ -1,0 +1,23 @@
+.pa-revenue { color: #172033; font-family: Arial,Helvetica,sans-serif; }
+.pa-revenue-header { margin-bottom: 22px; }
+.pa-revenue-header h1 { color: #102a72; font-size: 24px; }
+.pa-revenue-header p { margin-top: 5px; color: #667085; font-size: 14px; }
+.pa-revenue-metrics { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 16px; margin-bottom: 22px; }
+.pa-revenue-metrics article { min-height: 132px; padding: 19px 20px; border: 1px solid #e6eaf2; border-left: 4px solid #102a72; border-radius: 10px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.pa-revenue-metrics article:nth-child(2) { border-left-color: #2563eb; }
+.pa-revenue-metrics article:nth-child(3) { border-left-color: #15803d; }
+.pa-revenue-metrics span { display: block; color: #102a72; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.pa-revenue-metrics strong { display: block; margin: 9px 0 4px; color: #102a72; font-size: 23px; }
+.pa-revenue-metrics article:nth-child(3) strong { color: #15803d; }
+.pa-revenue-metrics small { color: #64748b; font-size: 12px; }
+.pa-revenue-chart { margin-bottom: 24px; padding: 20px; overflow: hidden; border: 1px solid #e6eaf2; border-radius: 10px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.pa-revenue-chart-scroll { overflow-x: auto; }
+.pa-revenue-chart-empty { padding: 24px; color: #667085; text-align: center; }
+.pa-revenue-table-heading { margin: 22px 0 14px; }
+.pa-revenue-table-heading h2 { color: #102a72; font-size: 19px; }
+.pa-revenue-table-scroll { overflow-x: auto; border: 1px solid #e6eaf2; border-radius: 8px; background: #fff; }
+.pa-revenue table { width: 100%; border-collapse: collapse; }
+.pa-revenue th, .pa-revenue td { padding: 13px 15px; border-bottom: 1px solid #e6eaf2; font-size: 13px; text-align: left; white-space: nowrap; }
+.pa-revenue th { background: #f1f5f9; color: #102a72; font-weight: 700; }
+.pa-revenue-state { padding: 28px; color: #667085; text-align: center; }
+.pa-revenue-error { padding: 14px; border-radius: 7px; background: #fef2f2; color: #b91c1c; }
