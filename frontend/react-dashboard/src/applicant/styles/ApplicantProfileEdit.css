@@ -1,0 +1,35 @@
+.applicant-profile-edit-page { min-height: 100vh; margin: 0; background: #f1f5f9; color: #1e293b; font-family: Arial, sans-serif; }
+.applicant-profile-edit-page *, .applicant-profile-edit-page *::before, .applicant-profile-edit-page *::after { box-sizing: border-box; }
+.applicant-profile-edit-page .profile-edit-topbar { display: flex; align-items: center; gap: 12px; padding: 12px 32px; border-bottom: 1px solid #e2e8f0; background: #fff; }
+.applicant-profile-edit-page .profile-edit-topbar img { height: 45px; }
+.applicant-profile-edit-page .profile-edit-brand span { display: block; color: #666; font-size: 11px; }
+.applicant-profile-edit-page .profile-edit-brand strong { color: #1f3a8a; font-size: 18px; }
+.applicant-profile-edit-page .profile-edit-nav { display: flex; align-items: center; gap: 24px; padding: 14px 32px; background: #1f3a8a; }
+.applicant-profile-edit-page .profile-edit-nav a { color: #fff; font-size: 14px; font-weight: 500; opacity: .8; text-decoration: none; white-space: nowrap; }
+.applicant-profile-edit-page .profile-edit-nav a:hover, .applicant-profile-edit-page .profile-edit-nav a.active { opacity: 1; font-weight: 700; }
+.applicant-profile-edit-page .profile-edit-nav .profile-edit-logout { color: #fca5a5; }
+.applicant-profile-edit-page .profile-edit-main { max-width: 1200px; margin: 0 auto; padding: 32px; }
+.applicant-profile-edit-page .profile-edit-main > h1 { margin: 0 0 5px; color: #1e3a8a; font-size: 26px; }
+.applicant-profile-edit-page .profile-edit-sub { margin: 0 0 24px; color: #64748b; font-size: 14px; }
+.applicant-profile-edit-page .profile-edit-layout { display: flex; gap: 24px; align-items: flex-start; }
+.applicant-profile-edit-page .profile-edit-card { flex: 1; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; }
+.applicant-profile-edit-page .profile-edit-card h2 { margin: 0 0 16px; padding-bottom: 6px; border-bottom: 1px solid #e2e8f0; color: #1f3a8a; font-size: 16px; }
+.applicant-profile-edit-page .profile-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.applicant-profile-edit-page .profile-edit-group { margin-bottom: 16px; }
+.applicant-profile-edit-page .profile-edit-group label { display: block; margin-bottom: 6px; color: #64748b; font-size: 13px; font-weight: 600; }
+.applicant-profile-edit-page .profile-edit-group input, .applicant-profile-edit-page .profile-edit-group textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; font: 14px Arial,sans-serif; }
+.applicant-profile-edit-page .profile-edit-group input:focus, .applicant-profile-edit-page .profile-edit-group textarea:focus { border-color: #2563eb; }
+.applicant-profile-edit-page .profile-edit-group .profile-edit-readonly { background: #f1f5f9; color: #64748b; cursor: not-allowed; }
+.applicant-profile-edit-page .profile-edit-group textarea { height: 60px; resize: vertical; }
+.applicant-profile-edit-page .profile-edit-group small { color: #64748b; font-size: 12px; }
+.applicant-profile-edit-page .profile-edit-card .profile-edit-address-heading { margin-top: 20px; }
+.applicant-profile-edit-page .profile-edit-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+.applicant-profile-edit-page .profile-edit-actions button { padding: 12px 24px; border: 0; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.applicant-profile-edit-page .profile-edit-cancel { border: 1.5px solid #cbd5e1 !important; background: #fff; color: #475569; }
+.applicant-profile-edit-page .profile-edit-save { background: #2563eb; color: #fff; }
+.applicant-profile-edit-page .profile-edit-save:hover { background: #1d4ed8; }
+.applicant-profile-edit-page .profile-edit-save:disabled { opacity: .65; cursor: wait; }
+.applicant-profile-edit-page .profile-edit-message { margin: 12px 0 0; font-size: 13px; line-height: 1.45; }
+.applicant-profile-edit-page .profile-edit-error { color: #b91c1c; }
+@media (max-width: 760px) { .applicant-profile-edit-page .profile-edit-nav { flex-wrap: wrap; gap: 12px; padding: 14px 20px; } .applicant-profile-edit-page .profile-edit-main { padding: 24px 20px; } }
+@media (max-width: 600px) { .applicant-profile-edit-page .profile-edit-grid { grid-template-columns: 1fr; gap: 0; } .applicant-profile-edit-page .profile-edit-actions { flex-wrap: wrap; } }

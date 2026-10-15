@@ -1,0 +1,11 @@
+import { useNavigate } from 'react-router-dom';
+import FieldOfficerPageShell from '../components/FieldOfficerPageShell';
+import { dateLabel } from '../components/fieldOfficerUtils';
+import { useFieldOfficerData } from '../components/useFieldOfficerData';
+import '../styles/VerificationHistory.css';
+
+export default function VerificationHistory() {
+  const d = useFieldOfficerData(); const navigate = useNavigate();
+  const rows = d.applications.filter((a) => ['verified', 'approved', 'rejected'].includes(String(a.application_status).toLowerCase())).sort((a, b) => new Date(b.updated_at || b.submitted_at || 0) - new Date(a.updated_at || a.submitted_at || 0));
+  return <FieldOfficerPageShell activeSection="verificationhistory" title="Verification History" {...d}><section className="fo-react-card fo-verification-history-page"><div className="fo-history-heading"><h2>Verification History</h2><div><span className="fo-history-count approved">{rows.filter((x) => ['verified', 'approved'].includes(String(x.application_status).toLowerCase())).length} Approved</span><span className="fo-history-count rejected">{rows.filter((x) => x.application_status === 'rejected').length} Rejected</span></div></div>{rows.length ? <div className="fo-history-cards">{rows.map((app) => <article className="fo-history-card" key={app.application_id}><h3>{app.business_name || 'Business name unavailable'}</h3><p>{app.full_name || 'Applicant name unavailable'}</p><div className="fo-history-meta"><span><small>Application ID</small>{app.application_ref || `#${app.application_id}`}</span><span><small>Submitted Date</small>{dateLabel(app.submitted_at)}</span><span><small>Decision Date</small>{dateLabel(app.updated_at || app.submitted_at)}</span></div><div className={`fo-history-decision ${app.application_status === 'rejected' ? 'rejected' : 'approved'}`}><span><strong>Decision:</strong> {app.application_status}</span><button className="fo-react-button secondary" onClick={() => { sessionStorage.setItem('selectedApp', String(app.application_id)); navigate(`/officer/${d.officerId}/detail/${app.application_id}?readonly=true`); }}>View Details</button></div></article>)}</div> : <div className="fo-react-empty-card"><span aria-hidden="true">▤</span><p>No verification history is available from the backend.</p></div>}</section></FieldOfficerPageShell>;
+}

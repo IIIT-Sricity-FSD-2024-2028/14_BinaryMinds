@@ -1,0 +1,3 @@
+@import "./CommissionerPortal.css";
+.commissioner-root button.settings-card { width: 100%; color: inherit; font: inherit; text-align: left; }
+.commissioner-root .notice-close { float: right; border: 0; background: transparent; font-size: 18px; }

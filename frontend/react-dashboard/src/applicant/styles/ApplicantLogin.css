@@ -1,0 +1,68 @@
+.applicant-login-page {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.applicant-login-page .top-header {
+  display: flex;
+  min-height: 78px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 12px clamp(16px, 4vw, 40px);
+  border-bottom: 1px solid #dde3f0;
+  background: #fff;
+}
+
+.applicant-login-page .top-header .emblem {
+  width: 44px;
+  height: 50px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  filter: none;
+}
+
+.applicant-login-page .top-header .gov-text {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 1;
+}
+
+.applicant-login-page .top-header .brand-name {
+  color: #1e3a8a;
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.applicant-login-page .main-content {
+  min-height: calc(100vh - 126px);
+  flex: 1;
+}
+
+@media (max-width: 760px) {
+  .applicant-login-page .main-content {
+    min-height: 0;
+    flex-direction: column;
+    padding: 24px 16px;
+  }
+
+  .applicant-login-page .left-card,
+  .applicant-login-page .login-card {
+    width: 100%;
+  }
+
+  .applicant-login-page .left-card {
+    padding: 24px 16px;
+  }
+
+  .applicant-login-page .left-card img {
+    width: min(70%, 280px);
+  }
+
+  .applicant-login-page .login-card {
+    padding: 24px 16px;
+  }
+}
