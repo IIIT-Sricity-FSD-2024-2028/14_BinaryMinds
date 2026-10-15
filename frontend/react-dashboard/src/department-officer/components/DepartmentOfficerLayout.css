@@ -1,0 +1,12 @@
+.do-page-root { min-height: 100vh; background: #f4f6fb; color: #172033; font-family: Arial, Helvetica, sans-serif; }
+.do-page-root .header-text small { display: block; margin-top: 3px; font-size: 11px; font-weight: 500; }
+.do-page-root .sidebar .nav-item { display: block; color: inherit; text-decoration: none; }
+.do-page-root .main { min-width: 0; flex: 1; }
+.do-page-root .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.do-page-root .do-table-scroll { width: 100%; overflow-x: auto; }
+.do-page-root .do-error { margin: 12px 0; padding: 12px 14px; border: 1px solid #fecaca; border-radius: 7px; background: #fef2f2; color: #b91c1c; }
+.do-page-root .do-notice,.do-page-root .do-hint { margin: 12px 0; padding: 11px 13px; border: 1px solid #bfdbfe; border-radius: 7px; background: #eff6ff; color: #1e40af; font-size: 13px; line-height: 1.5; }
+.do-page-root .do-action-link { display: inline-block; padding: 8px 12px; border-radius: 6px; background: #1e3a8a; color: #fff; text-decoration: none; font-weight: 700; }
+.do-page-root .do-status { display: inline-block; padding: 4px 10px; border-radius: 20px; background: #e0f2fe; color: #0369a1; font-size: 12px; font-weight: 700; }
+.do-page-root .table tr[onclick] { cursor: pointer; }
+@media(max-width: 760px) { .do-page-root .container { flex-direction: column; } .do-page-root .sidebar { display: flex; flex-wrap: wrap; flex-basis: auto; gap: 4px; } .do-page-root .sidebar .nav-item { flex: 1 1 auto; } .do-page-root .top-header { padding: 10px 14px; } }
