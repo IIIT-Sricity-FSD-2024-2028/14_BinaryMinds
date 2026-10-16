@@ -708,6 +708,21 @@ button {
   color: #1e40af;
 }
 
+.backend-load-status {
+  margin: 14px 28px 0;
+  padding: 12px 16px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #991b1b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.backend-load-status[hidden] {
+  display: none;
+}
+
 .info-note {
   background: #f8fafc;
   border: 1px solid var(--line);
@@ -1020,6 +1035,10 @@ button {
 }
 
 @media (max-width: 560px) {
+  .backend-load-status {
+    margin: 12px;
+  }
+
   .topbar {
     flex-direction: column;
   }

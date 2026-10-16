@@ -102,7 +102,9 @@ TRADEZO.getMunicipalities = function() {
     }
   } catch (e) {}
 
-  if (typeof window !== 'undefined' && window.XMLHttpRequest && typeof TRADEZO.backendRequest === 'function') {
+  var isSuperuserDashboard = typeof window !== 'undefined' && window.location &&
+    /\/superuser\/index\.html$/i.test(window.location.pathname || '');
+  if (!isSuperuserDashboard && typeof window !== 'undefined' && window.XMLHttpRequest && typeof TRADEZO.backendRequest === 'function') {
     try {
       var munis = TRADEZO.backendRequest('GET', '/municipalities', null, null, true);
       if (munis) {
@@ -425,7 +427,7 @@ TRADEZO.roleFor = function(role) {
   return map[normalized] || 'department_officer';
 };
 
-TRADEZO.backendRequest = function(method, path, body, role, sync) {
+TRADEZO.backendRequest = function(method, path, body, role, sync, timeoutMs) {
   var url = TRADEZO.API_BASE + path;
   var accessToken = sessionStorage.getItem('accessToken') || '';
   if (sync) {
@@ -450,12 +452,32 @@ TRADEZO.backendRequest = function(method, path, body, role, sync) {
     options.headers['Content-Type'] = 'application/json';
     options.body = JSON.stringify(body);
   }
-  return fetch(url, options).then(function(res) {
+  var controller = timeoutMs && typeof AbortController !== 'undefined' ? new AbortController() : null;
+  if (controller) options.signal = controller.signal;
+  var request = fetch(url, options).then(function(res) {
     return res.text().then(function(text) {
-      var parsed = text ? JSON.parse(text) : null;
-      if (!res.ok) throw new Error(parsed && parsed.message ? parsed.message : ('Request failed: ' + res.status));
+      var parsed;
+      try { parsed = text ? JSON.parse(text) : null; }
+      catch(e) { throw new Error('The server returned an invalid response for ' + path + '.'); }
+      if (!res.ok) {
+        var message = parsed && parsed.message;
+        if (Array.isArray(message)) message = message.join(' ');
+        throw new Error(message || ('Request failed: ' + res.status));
+      }
       return parsed;
     });
+  });
+  if (!timeoutMs) return request;
+
+  var timeoutId;
+  var timeout = new Promise(function(resolve, reject) {
+    timeoutId = setTimeout(function() {
+      if (controller) controller.abort();
+      reject(new Error('The request to ' + path + ' timed out after ' + Math.round(timeoutMs / 1000) + ' seconds.'));
+    }, timeoutMs);
+  });
+  return Promise.race([request, timeout]).finally(function() {
+    clearTimeout(timeoutId);
   });
 };
 
@@ -593,23 +615,52 @@ TRADEZO.normalizeStoredApplicationIds = function() {
   });
 };
 
+TRADEZO.hydrationPromise = null;
 TRADEZO.hydrateFromBackend = function() {
-  var munis = TRADEZO.backendRequest('GET', '/municipalities', null, null, true);
-  if (munis) {
-    var unwrappedMunis = TRADEZO.unwrap(munis);
-    if (Array.isArray(unwrappedMunis) && unwrappedMunis.length) {
-      TRADEZO.municipalities = unwrappedMunis;
-      try { localStorage.setItem('tz_municipalities', JSON.stringify(unwrappedMunis)); } catch(e){}
-    }
+  if (TRADEZO.hydrationPromise) return TRADEZO.hydrationPromise;
+
+  var paths = ['/municipalities', '/applications', '/licenses', '/inspections', '/users'];
+  var isSuperuserDashboard = typeof window !== 'undefined' && window.location &&
+    /\/superuser\/index\.html$/i.test(window.location.pathname || '');
+  // The admin dashboard has its own render-aware loaders for these three sets.
+  // Leave those requests to the dashboard and hydrate them into TRADEZO there.
+  if (isSuperuserDashboard) {
+    paths = paths.filter(function(path) {
+      return path !== '/applications' && path !== '/licenses' && path !== '/users';
+    });
   }
+  TRADEZO.hydrationPromise = Promise.all(paths.map(function(path) {
+    return TRADEZO.backendRequest('GET', path, null, null, false, 12000)
+      .then(function(data) { return { path: path, data: data }; })
+      .catch(function(error) {
+        console.warn('TradeZo data hydration failed for ' + path + ':', error.message);
+        return { path: path, error: error };
+      });
+  })).then(function(results) {
+    var byPath = {};
+    results.forEach(function(result) { byPath[result.path] = result; });
 
-  var apps = TRADEZO.backendRequest('GET', '/applications', null, 'department_officer', true);
-  if (!apps) return false;
-  TRADEZO.applications = TRADEZO.unwrap(apps).map(TRADEZO.toUiApplication);
+    if (byPath['/municipalities'] && !byPath['/municipalities'].error) {
+      var municipalities = TRADEZO.unwrap(byPath['/municipalities'].data);
+      if (municipalities.length) {
+        TRADEZO.municipalities = municipalities;
+        try { localStorage.setItem('tz_municipalities', JSON.stringify(municipalities)); } catch(e) {}
+      }
+    }
+    if (byPath['/applications'] && !byPath['/applications'].error) {
+      TRADEZO.applications = TRADEZO.unwrap(byPath['/applications'].data).map(TRADEZO.toUiApplication);
+      TRADEZO.backendLoaded = true;
+    }
+    if (byPath['/licenses'] && !byPath['/licenses'].error) {
+      TRADEZO.licenses = TRADEZO.unwrap(byPath['/licenses'].data).map(TRADEZO.toUiLicense);
+    }
+    if (byPath['/inspections'] && !byPath['/inspections'].error) {
+      TRADEZO.inspections = TRADEZO.unwrap(byPath['/inspections'].data).map(TRADEZO.toUiInspection);
+    }
+    if (byPath['/users'] && !byPath['/users'].error) {
+      TRADEZO.users = TRADEZO.unwrap(byPath['/users'].data).map(TRADEZO.toUiUser);
+    }
 
-  var licenses = TRADEZO.backendRequest('GET', '/licenses', null, 'department_officer', true);
-  if (licenses) {
-    TRADEZO.licenses = TRADEZO.unwrap(licenses).map(TRADEZO.toUiLicense);
     TRADEZO.licenses.forEach(function(lic) {
       var app = TRADEZO.applications.find(function(item) { return String(item.id) === String(lic.appId); });
       if (app) {
@@ -618,16 +669,32 @@ TRADEZO.hydrateFromBackend = function() {
         lic.ownerName = lic.ownerName || app.applicantName;
       }
     });
-  }
 
-  var inspections = TRADEZO.backendRequest('GET', '/inspections', null, 'department_officer', true);
-  if (inspections) TRADEZO.inspections = TRADEZO.unwrap(inspections).map(TRADEZO.toUiInspection);
+    var loggedIn = TRADEZO.getLoggedInUser();
+    var loggedMuni = loggedIn.municipality_id || loggedIn.municipalityId || '';
+    var platformAdmin = String(loggedIn.role || '').toLowerCase().includes('platform_admin') ||
+      String(loggedIn.role || '').toLowerCase().includes('superadmin');
+    if (TRADEZO.backendLoaded && !platformAdmin && loggedMuni) {
+      TRADEZO.applications = TRADEZO.applications.filter(function(item) { return TRADEZO.isAllowedForTenant(item, loggedMuni); });
+      TRADEZO.licenses = TRADEZO.licenses.filter(function(item) { return TRADEZO.isAllowedForTenant(item, loggedMuni); });
+      TRADEZO.inspections = TRADEZO.inspections.filter(function(item) { return TRADEZO.isAllowedForTenant(item, loggedMuni); });
+    }
 
-  var users = TRADEZO.backendRequest('GET', '/users', null, 'department_officer', true);
-  if (users) TRADEZO.users = TRADEZO.unwrap(users).map(TRADEZO.toUiUser);
+    TRADEZO.sortFreshFirst(TRADEZO.applications);
+    TRADEZO.sortFreshFirst(TRADEZO.licenses);
+    TRADEZO.sortFreshFirst(TRADEZO.inspections);
+    TRADEZO.stats.superUser.totalUsers = TRADEZO.users.length;
+    TRADEZO.stats.superUser.pendingApplications = TRADEZO.applications.filter(function(app) {
+      var status = String(app.status || '').toLowerCase();
+      return status === 'pending' || status === 'submitted' || status === 'pending review' || status === 'under verification';
+    }).length;
+    TRADEZO.stats.superUser.issuedLicenses = TRADEZO.licenses.length;
+    return results;
+  }).finally(function() {
+    TRADEZO.hydrationPromise = null;
+  });
 
-  TRADEZO.backendLoaded = true;
-  return true;
+  return TRADEZO.hydrationPromise;
 };
 
 TRADEZO.syncApplicationToBackend = function(app, role) {
@@ -690,7 +757,9 @@ TRADEZO.isAllowedForTenant = function(record, userMuniId) {
   return false;
 };
 
-TRADEZO.hydrateFromBackend();
+TRADEZO.hydrateFromBackend().catch(function(error) {
+  console.warn('TradeZo backend hydration could not complete:', error.message);
+});
 TRADEZO.normalizeStoredApplicationIds();
 
 // So all pages find dynamically-added apps after page refresh

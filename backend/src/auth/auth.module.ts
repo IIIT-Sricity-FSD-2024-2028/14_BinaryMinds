@@ -19,7 +19,9 @@ import { AuditLogsModule } from '../audit-logs/audit-logs.module';
       useFactory: (configService: ConfigService) => {
         const secret = configService.get<string>('JWT_SECRET')?.trim();
         if (!secret) {
-          throw new Error('JWT_SECRET must be configured');
+          throw new Error(
+            'JWT_SECRET must be configured in backend/.env or the process environment',
+          );
         }
 
         const configuredExpiration = Number(

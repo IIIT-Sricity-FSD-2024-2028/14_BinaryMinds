@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { join } from 'node:path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -21,7 +22,12 @@ import { MunicipalitiesModule } from './municipalities/municipalities.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      // Resolve from this module so `backend/.env` is found even when Nest is
+      // started with a different current working directory.
+      envFilePath: join(__dirname, '..', '.env'),
+    }),
     PersistenceModule,
     PlatformAdminModule,
     MunicipalitiesModule,

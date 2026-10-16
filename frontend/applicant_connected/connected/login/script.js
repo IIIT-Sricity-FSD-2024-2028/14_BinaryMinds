@@ -77,23 +77,9 @@ function writeAuditLog(entry) {
   var existing = safeJsonArray('tradezo_audit_logs');
   existing.unshift(entry);
   localStorage.setItem('tradezo_audit_logs', JSON.stringify(existing.slice(0, 200)));
-
-  if (!window.fetch) return Promise.resolve();
-  return fetch('http://localhost:3000/api/audit-logs', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      user_name: entry.user,
-      role: entry.role,
-      action: entry.action,
-      module: entry.module,
-      description: entry.desc,
-      ip_address: entry.ip,
-      source: 'frontend',
-    }),
-  }).catch(function() {
-    return null;
-  });
+  // Successful backend logins are recorded by AuthService. The audit API is
+  // read-only, so keep the offline/demo entry local instead of POSTing to it.
+  return Promise.resolve();
 }
 
 function clearApplicantDraftIfNeeded(nextEmail) {
@@ -147,11 +133,14 @@ async function handleLogin() {
   }
 
   // 1. Try Backend Authentication First
+  var loginController = new AbortController();
+  var loginTimeoutId = window.setTimeout(function() { loginController.abort(); }, 12000);
   try {
     var loginResponse = await fetch('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, password: password, role: backendRole })
+      body: JSON.stringify({ email: email, password: password, role: backendRole }),
+      signal: loginController.signal
     });
     var loginPayload = await loginResponse.json().catch(function() { return {}; });
     
@@ -213,7 +202,14 @@ async function handleLogin() {
       return;
     }
   } catch (netErr) {
+    if (netErr && netErr.name === 'AbortError') {
+      if (btn) { btn.textContent = 'Login'; btn.disabled = false; }
+      showError(passEl || passwordInput, 'The authentication service did not respond within 12 seconds. Please try again.');
+      return;
+    }
     console.warn('Backend unavailable, trying offline demo authentication...', netErr);
+  } finally {
+    window.clearTimeout(loginTimeoutId);
   }
 
   // 2. Offline / Standalone Mock Authentication Fallback

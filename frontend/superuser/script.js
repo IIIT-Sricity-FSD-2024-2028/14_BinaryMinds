@@ -38,19 +38,112 @@ var activityLog = [];
 var defaultFees = { new: 1200, renewal: 1000 };
 var FIELD_OFFICER_DEFAULT_PASSWORD = 'TradeZo@123';
 var API_BASE_URL = 'http://localhost:3000/api';
+var API_REQUEST_TIMEOUT_MS = 12000;
+var pendingBackendReads = Object.create(null);
+var dashboardBackendErrors = Object.create(null);
 var backendApplications = [];
 var backendApplicationsLoaded = false;
 var backendApplicationsError = '';
+
+function dashboardDiagnosticsEnabled() {
+  return /(?:\?|&)diagnostics=1(?:&|$)/.test((window.location && window.location.search) || '');
+}
+
+function logDashboardRequest(state, method, path, details) {
+  if (!dashboardDiagnosticsEnabled()) return;
+  var entry = Object.assign({ state: state, method: method, path: path }, details || {});
+  if (state === 'failed') console.warn('[TradeZo dashboard request]', entry);
+  else console.info('[TradeZo dashboard request]', entry);
+}
 
 function authenticatedHeaders(extra) {
   var token = sessionStorage.getItem('accessToken') || '';
   return Object.assign({}, extra || {}, token ? { Authorization: 'Bearer ' + token } : {});
 }
 
+function fetchBackend(url, options) {
+  var requestOptions = Object.assign({}, options || {});
+  var method = String(requestOptions.method || 'GET').toUpperCase();
+  var token = sessionStorage.getItem('accessToken') || '';
+  var requestKey = method === 'GET' ? url + '|' + token : '';
+  if (requestKey && pendingBackendReads[requestKey]) return pendingBackendReads[requestKey];
+  var requestPath = url;
+  try { requestPath = new URL(url, window.location.href).pathname; } catch(e) {}
+  var startedAt = Date.now();
+  logDashboardRequest('started', method, requestPath);
+
+  var controller = new AbortController();
+  var timeoutId = window.setTimeout(function() { controller.abort(); }, API_REQUEST_TIMEOUT_MS);
+  requestOptions.signal = controller.signal;
+
+  var request = fetch(url, requestOptions)
+    .then(function(response) {
+      // Read the body under the same timeout so a stalled response body also settles.
+      return response.text().then(function(text) {
+        var payload = null;
+        if (text) {
+          try { payload = JSON.parse(text); }
+          catch(e) { payload = { message: text }; }
+        }
+        return {
+          ok: response.ok,
+          status: response.status,
+          json: function() { return Promise.resolve(payload); }
+        };
+      }).then(function(result) {
+        logDashboardRequest(result.ok ? 'completed' : 'failed', method, requestPath, {
+          status: result.status,
+          durationMs: Date.now() - startedAt
+        });
+        return result;
+      });
+    })
+    .catch(function(error) {
+      logDashboardRequest('failed', method, requestPath, {
+        error: error && error.message ? error.message : 'Request failed',
+        durationMs: Date.now() - startedAt
+      });
+      if (error && (error.name === 'AbortError' || error.name === 'TimeoutError')) {
+        throw new Error('The backend request timed out after 12 seconds. Check that the backend is running at ' + API_BASE_URL + '.');
+      }
+      if (error instanceof TypeError) {
+        throw new Error('Could not connect to the backend at ' + API_BASE_URL + '. Start the backend and check its CORS settings.');
+      }
+      throw error;
+    })
+    .finally(function() {
+      window.clearTimeout(timeoutId);
+      if (requestKey && pendingBackendReads[requestKey] === request) delete pendingBackendReads[requestKey];
+    });
+
+  if (requestKey) pendingBackendReads[requestKey] = request;
+  return request;
+}
+
+function setDashboardBackendError(section, message) {
+  if (message) dashboardBackendErrors[section] = message;
+  else delete dashboardBackendErrors[section];
+
+  var status = document.getElementById('dashboard-load-status');
+  if (!status) return;
+  var messages = Object.keys(dashboardBackendErrors).map(function(key) {
+    return key + ': ' + dashboardBackendErrors[key];
+  });
+  status.textContent = messages.length
+    ? 'Some dashboard data could not be loaded. ' + messages.join(' ')
+    : '';
+  status.hidden = messages.length === 0;
+}
+
+function isDashboardPageActive(pageName) {
+  var page = document.getElementById('page-' + pageName);
+  return !!(page && page.classList.contains('active'));
+}
+
 function fetchBackendApplications() {
   if (!window.fetch) return Promise.resolve();
 
-  return fetch(API_BASE_URL + '/applications', { headers: authenticatedHeaders() })
+  return fetchBackend(API_BASE_URL + '/applications', { headers: authenticatedHeaders() })
     .then(function(response) {
       return response.json().catch(function() { return null; }).then(function(payload) {
         if (!response.ok) {
@@ -66,12 +159,16 @@ function fetchBackendApplications() {
       backendApplications = payload.data;
       backendApplicationsLoaded = true;
       backendApplicationsError = '';
-      refreshDynamicData();
+      if (window.TRADEZO && typeof TRADEZO.toUiApplication === 'function') {
+        TRADEZO.applications = payload.data.map(TRADEZO.toUiApplication);
+      }
+      setDashboardBackendError('Applications', '');
 
-      if (document.getElementById('page-dashboard') && document.getElementById('page-dashboard').classList.contains('active')) {
+      if (isDashboardPageActive('dashboard')) {
         renderDashboard();
       }
-      if (document.getElementById('page-applications') && document.getElementById('page-applications').classList.contains('active')) {
+      if (isDashboardPageActive('applications')) {
+        refreshDynamicData();
         renderApplicationStats();
         renderApplications();
       }
@@ -79,6 +176,7 @@ function fetchBackendApplications() {
     .catch(function(error) {
       backendApplicationsLoaded = false;
       backendApplicationsError = error && error.message ? error.message : 'Unable to load applications.';
+      setDashboardBackendError('Applications', backendApplicationsError);
       if (document.getElementById('page-applications') && document.getElementById('page-applications').classList.contains('active')) {
         renderApplicationStats();
         renderApplications();
@@ -89,13 +187,21 @@ function fetchBackendApplications() {
 function fetchBackendUsers() {
   if (!window.fetch) return Promise.resolve();
 
-  return fetch(API_BASE_URL + '/users', { headers: authenticatedHeaders() })
+  return fetchBackend(API_BASE_URL + '/users', { headers: authenticatedHeaders() })
     .then(function(response) {
-      if (!response.ok) throw new Error('Failed to load users');
-      return response.json();
+      return response.json().then(function(payload) {
+        if (!response.ok) {
+          var message = payload && payload.message;
+          throw new Error((Array.isArray(message) ? message.join(' ') : message) || ('Failed to load users (' + response.status + ')'));
+        }
+        return payload;
+      });
     })
     .then(function(payload) {
       var list = Array.isArray(payload) ? payload : (payload && payload.data) || [];
+      if (window.TRADEZO && typeof TRADEZO.toUiUser === 'function') {
+        TRADEZO.users = list.map(TRADEZO.toUiUser);
+      }
       var deletedEmails = getLocalJson('tz_deleted_officer_emails', []);
       users = list
         .filter(function(u) {
@@ -138,25 +244,36 @@ function fetchBackendUsers() {
         });
 
       filteredUsers = users.slice();
-      renderUsers();
-      renderDepartmentOfficers();
-      renderDashboard();
+      if (isDashboardPageActive('user-management')) renderUsers();
+      if (isDashboardPageActive('department-officers')) renderDepartmentOfficers();
+      if (isDashboardPageActive('dashboard')) renderDashboard();
+      setDashboardBackendError('Users', '');
     })
     .catch(function(err) {
-      console.warn('Backend users load:', err);
+      var message = err && err.message ? err.message : 'Unable to load users.';
+      console.warn('Backend users load:', message);
+      setDashboardBackendError('Users', message);
     });
 }
 
 function fetchBackendLicenses() {
   if (!window.fetch) return Promise.resolve();
 
-  return fetch(API_BASE_URL + '/licenses', { headers: authenticatedHeaders() })
+  return fetchBackend(API_BASE_URL + '/licenses', { headers: authenticatedHeaders() })
     .then(function(response) {
-      if (!response.ok) throw new Error('Failed to load licenses');
-      return response.json();
+      return response.json().then(function(payload) {
+        if (!response.ok) {
+          var message = payload && payload.message;
+          throw new Error((Array.isArray(message) ? message.join(' ') : message) || ('Failed to load licenses (' + response.status + ')'));
+        }
+        return payload;
+      });
     })
     .then(function(payload) {
       var list = Array.isArray(payload) ? payload : (payload && payload.data) || [];
+      if (window.TRADEZO && typeof TRADEZO.toUiLicense === 'function') {
+        TRADEZO.licenses = list.map(TRADEZO.toUiLicense);
+      }
       licenses = list.map(function(l) {
         return {
           id: l.license_number,
@@ -168,11 +285,15 @@ function fetchBackendLicenses() {
           status: l.status || 'Active'
         };
       });
-      renderLicenses();
-      renderDashboard();
+      // Licenses are displayed in the dashboard's Issued Licenses statistic;
+      // this page has no separate license table renderer.
+      if (isDashboardPageActive('dashboard')) renderDashboard();
+      setDashboardBackendError('Licenses', '');
     })
     .catch(function(err) {
-      console.warn('Backend licenses load:', err);
+      var message = err && err.message ? err.message : 'Unable to load licenses.';
+      console.warn('Backend licenses load:', message);
+      setDashboardBackendError('Licenses', message);
     });
 }
 
@@ -235,10 +356,15 @@ function loadPersistedAuditLogs() {
 
 function fetchBackendAuditLogs() {
   if (!window.fetch) return Promise.resolve();
-  return fetch(API_BASE_URL + '/audit-logs', { headers: authenticatedHeaders() })
+  return fetchBackend(API_BASE_URL + '/audit-logs', { headers: authenticatedHeaders() })
     .then(function(response) {
-      if (!response.ok) throw new Error('Failed to load backend audit logs');
-      return response.json();
+      return response.json().then(function(payload) {
+        if (!response.ok) {
+          var message = payload && payload.message;
+          throw new Error((Array.isArray(message) ? message.join(' ') : message) || ('Failed to load audit logs (' + response.status + ')'));
+        }
+        return payload;
+      });
     })
     .then(function(payload) {
       var data = Array.isArray(payload) ? payload : (payload && payload.data) || [];
@@ -264,7 +390,12 @@ function fetchBackendAuditLogs() {
         filterAudit();
       }
     })
-    .catch(function() {
+    .then(function() {
+      setDashboardBackendError('Audit logs', '');
+    })
+    .catch(function(error) {
+      var message = error && error.message ? error.message : 'Unable to load audit logs.';
+      setDashboardBackendError('Audit logs', message);
       return null;
     });
 }
@@ -378,7 +509,7 @@ function syncFieldOfficerToBackend(user) {
   var password = user.password || user.password_hash || FIELD_OFFICER_DEFAULT_PASSWORD;
   var digits = String(user.phone || '').replace(/\D/g, '');
 
-  return fetch(API_BASE_URL + '/users', {
+  return fetchBackend(API_BASE_URL + '/users', {
     method: 'POST',
     headers: authenticatedHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({
@@ -1146,7 +1277,7 @@ function saveDepartmentOfficer() {
     saveBtn.textContent = 'Saving...';
   }
 
-  fetch(API_BASE_URL + '/users/department-officer' + (isReplacing ? '/replace' : ''), {
+  fetchBackend(API_BASE_URL + '/users/department-officer' + (isReplacing ? '/replace' : ''), {
     method: 'POST',
     headers: authenticatedHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({
@@ -1637,7 +1768,7 @@ async function addOfficer() {
   }
 
   try {
-    var response = await fetch(API_BASE_URL + '/users', {
+    var response = await fetchBackend(API_BASE_URL + '/users', {
       method: 'POST',
       headers: authenticatedHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
@@ -1853,7 +1984,7 @@ function deleteUser(userId) {
                   document.querySelector('button[onclick*="' + encodeURIComponent(userId) + '"]');
   if (deleteBtn) { deleteBtn.disabled = true; deleteBtn.textContent = 'Deleting...'; }
 
-  fetch(API_BASE_URL + '/users/' + backendId, {
+  fetchBackend(API_BASE_URL + '/users/' + backendId, {
     method: 'DELETE',
     headers: authenticatedHeaders()
   })
@@ -2029,15 +2160,24 @@ function assignApplication(appId, officerEmail) {
     if (/^\d+$/.test(rawDigits)) numericId = parseInt(rawDigits, 10);
   }
 
-  if (numericId && window.TRADEZO && typeof TRADEZO.backendRequest === 'function') {
+  if (numericId) {
     var officerIdParam = officer ? (officer.backendUserId || officer.user_id || officer.id) : null;
     if (officerIdParam && !isNaN(Number(officerIdParam))) {
       officerIdParam = Number(officerIdParam);
     }
-    TRADEZO.backendRequest('PATCH', '/applications/' + numericId + '/assign', {
-      officerId: officerIdParam
-    }, 'super_user').catch(function(err) {
-      console.warn('Backend assign error:', err.message);
+    fetchBackend(API_BASE_URL + '/applications/' + numericId + '/assign', {
+      method: 'PATCH',
+      headers: authenticatedHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ officerId: officerIdParam })
+    }).then(function(response) {
+      return response.json().then(function(payload) {
+        if (!response.ok) throw new Error((payload && payload.message) || ('Assignment failed (' + response.status + ')'));
+        return payload;
+      });
+    }).catch(function(err) {
+      var message = err && err.message ? err.message : 'Unable to save the assignment.';
+      console.warn('Backend assign error:', message);
+      showToast('Assignment was updated on screen but not saved to the backend: ' + message);
     });
   }
 
@@ -2638,9 +2778,21 @@ function applyTenantBranding() {
   var user = null;
   try { user = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
   var muniId = (user && (user.municipality_id || user.municipalityId)) || 'muni-hyd';
-  var muni = (window.TRADEZO && typeof TRADEZO.getMunicipality === 'function')
-    ? TRADEZO.getMunicipality(muniId)
-    : { name: 'Greater Hyderabad Municipal Corporation (GHMC)' };
+  // TRADEZO.getMunicipality() may issue a synchronous XHR when there is no
+  // cached list. Keep page initialization non-blocking and use the hub's
+  // already-loaded/cached municipality list instead.
+  var municipalities = window.TRADEZO && Array.isArray(TRADEZO.municipalities)
+    ? TRADEZO.municipalities
+    : [];
+  try {
+    var cachedMunicipalities = JSON.parse(localStorage.getItem('tz_municipalities') || '[]');
+    if (Array.isArray(cachedMunicipalities) && cachedMunicipalities.length) {
+      municipalities = cachedMunicipalities;
+    }
+  } catch(e) {}
+  var muni = municipalities.find(function(item) {
+    return String(item.municipality_id || '').toLowerCase() === String(muniId).toLowerCase();
+  }) || municipalities[0] || { name: 'Greater Hyderabad Municipal Corporation (GHMC)' };
 
   var subTitles = document.querySelectorAll('.logo-sub, .gov-sub, .page-sub, .hierarchy-eyebrow');
   subTitles.forEach(function(el) {
@@ -2671,11 +2823,24 @@ function applyTenantBranding() {
 // RUN ON PAGE LOAD
 // ============================================================
  
-window.onload = function() {
-  applyTenantBranding();
-  renderDashboard();
-  fetchBackendUsers();
-  fetchBackendApplications();
-  fetchBackendLicenses();
-  fetchBackendAuditLogs();
-};
+function initializeSuperuserDashboard() {
+  try {
+    applyTenantBranding();
+    renderDashboard();
+    fetchBackendUsers();
+    fetchBackendApplications();
+    fetchBackendLicenses();
+    fetchBackendAuditLogs();
+  } catch (error) {
+    console.error('Admin dashboard initialization failed:', error);
+    setDashboardBackendError('Dashboard', error && error.message ? error.message : 'Unable to initialize the dashboard.');
+  }
+}
+
+// The page includes third-party emblem images. Do not make dashboard startup
+// wait for those image requests to complete before starting its data loaders.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeSuperuserDashboard, { once: true });
+} else {
+  initializeSuperuserDashboard();
+}
