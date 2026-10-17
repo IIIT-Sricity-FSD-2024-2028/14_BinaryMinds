@@ -23,6 +23,7 @@ import { AssignOfficerDto } from './dto/assign-officer.dto';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Role } from '../common/enums/role.enum';
+import { ApplicationStatus } from '../common/enums/application-status.enum';
 import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { ApiRoute } from '../common/swagger/api-route.decorator';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
@@ -241,7 +242,7 @@ export class ApplicationsController {
       }
     }
 
-    const app = this.applicationsService.verify(id);
+    const app = this.applicationsService.verify(id, request.user.userId);
     this.auditLogsService.log({
       user_name: request.user.fullName || 'Field Officer',
       role: 'field_officer',
@@ -374,7 +375,16 @@ export class ApplicationsController {
       }
     }
 
-    const app = this.applicationsService.update(id, updateApplicationDto);
+    const isFieldOfficerDecision = request.user.role === Role.FIELD_OFFICER &&
+      updateApplicationDto.application_status === ApplicationStatus.REJECTED;
+    const app = this.applicationsService.update(id, isFieldOfficerDecision
+      ? {
+          ...updateApplicationDto,
+          verification_decision: ApplicationStatus.REJECTED,
+          verification_decision_at: new Date(),
+          verification_officer_id: request.user.userId,
+        }
+      : updateApplicationDto);
     this.auditLogsService.log({
       user_name: request.user.fullName || 'System User',
       role: String(request.user.role),

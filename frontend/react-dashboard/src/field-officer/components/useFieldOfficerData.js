@@ -20,9 +20,10 @@ export function useFieldOfficerData(loadDocuments = false) {
   const [message, setMessage] = useState('');
 
   async function request(path, options = {}) {
+    const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
     const response = await fetch(`${API}${path}`, {
       ...options,
-      headers: { Authorization: `Bearer ${token}`, ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) },
+      headers: { Authorization: `Bearer ${token}`, ...(options.body && !isFormData ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) },
     });
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(messageOf(payload, `Request failed (${response.status}).`));

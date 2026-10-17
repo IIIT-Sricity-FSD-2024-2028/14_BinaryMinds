@@ -32,6 +32,9 @@ export interface Application {
 
   application_status: ApplicationStatus;
   submitted_at?: Date;
+  verification_decision?: ApplicationStatus;
+  verification_decision_at?: Date | string;
+  verification_officer_id?: number;
 
   // New workflow fields
   paymentDone?: boolean;

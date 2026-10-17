@@ -35,12 +35,50 @@ export default function DepartmentOfficerInspectionReport() {
   const [fileError, setFileError] = useState('');
   const [fo, setFo] = useState(null);
   const [detailError, setDetailError] = useState('');
+  const [inspectionEvidence, setInspectionEvidence] = useState([]);
+  const [evidenceLoading, setEvidenceLoading] = useState(false);
   const app = data.applications.find((row) => Number(row.application_id) === Number(applicationId));
   const { assignment, inspection } = getApplicationInspection(
     data.assignments,
     data.inspections,
     applicationId,
   );
+  useEffect(() => {
+    let active = true;
+    const assignmentIds = new Set(data.assignments
+      .filter((row) => Number(row.application_id) === Number(applicationId))
+      .map((row) => Number(row.assignment_id)));
+    const reports = data.inspections
+      .filter((row) => assignmentIds.has(Number(row.assignment_id)) && row.evidence_files?.length)
+      .sort((left, right) => new Date(right.completed_date || right.scheduled_date || 0) - new Date(left.completed_date || left.scheduled_date || 0));
+    if (!reports.length) {
+      setInspectionEvidence([]);
+      setEvidenceLoading(false);
+      return undefined;
+    }
+    setEvidenceLoading(true);
+    const objectUrls = [];
+    Promise.all(reports.flatMap((report) => report.evidence_files.map(async (file) => {
+      try {
+        const response = await fetch(`${apiBase}/inspections/${encodeURIComponent(report.inspection_id)}/evidence/${encodeURIComponent(file.filename)}`, {
+          headers: { Authorization: `Bearer ${data.token}` },
+        });
+        if (!response.ok) throw new Error('Evidence is unavailable.');
+        const url = URL.createObjectURL(await response.blob());
+        if (!active) { URL.revokeObjectURL(url); return null; }
+        objectUrls.push(url);
+        return { inspectionId: report.inspection_id, inspectionDate: report.completed_date || report.scheduled_date, file, url };
+      } catch {
+        return { inspectionId: report.inspection_id, inspectionDate: report.completed_date || report.scheduled_date, file, error: true };
+      }
+    }))).then((items) => {
+      if (active) setInspectionEvidence(items.filter(Boolean));
+    }).finally(() => { if (active) setEvidenceLoading(false); });
+    return () => {
+      active = false;
+      objectUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [applicationId, data.assignments, data.inspections, data.token]);
 
   async function loadDocuments(id) {
     setDocumentsLoading(true);
@@ -186,6 +224,27 @@ export default function DepartmentOfficerInspectionReport() {
         <section className="card notes-card">
           <h3>Field Officer Report Notes</h3>
           <div className="notes-content">{inspection?.notes || 'No inspection report available yet.'}</div>
+        </section>
+        <section className="card docs-card">
+          <h3>Field Officer Inspection Evidence</h3>
+          {evidenceLoading ? <p>Loading field inspection evidence…</p> : inspectionEvidence.length ? (
+            <div className="docs-list">
+              {inspectionEvidence.map((item, index) => (
+                <div className="doc-item" key={`${item.inspectionId}-${item.file.filename}`} style={{ alignItems: 'center' }}>
+                  <div style={{ display: 'grid', gap: 6, flex: '1 1 200px' }}>
+                    <strong>Inspection #{item.inspectionId}</strong>
+                    <span>{item.inspectionDate ? new Date(item.inspectionDate).toLocaleString('en-IN') : 'Date unavailable'}</span>
+                    <span>{item.file.original_filename || `Evidence photo ${index + 1}`}</span>
+                  </div>
+                  {item.error ? <span className="do-document-error">Evidence unavailable</span> : item.file.mime_type?.startsWith('image/') ? (
+                    <a href={item.url} target="_blank" rel="noreferrer" aria-label={`Open evidence for inspection ${item.inspectionId}`}>
+                      <img src={item.url} alt={`Inspection ${item.inspectionId} evidence: ${item.file.original_filename || 'photo'}`} style={{ width: 120, height: 90, objectFit: 'cover', borderRadius: 6 }} />
+                    </a>
+                  ) : <a href={item.url} target="_blank" rel="noreferrer">Open file</a>}
+                </div>
+              ))}
+            </div>
+          ) : <p>No field inspection evidence uploaded.</p>}
         </section>
         <section className="card docs-card">
           <h3>Supporting Documents</h3>

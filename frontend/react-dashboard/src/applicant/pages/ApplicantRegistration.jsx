@@ -34,8 +34,17 @@ export default function ApplicantRegistration() {
     event.preventDefault();
     setIsSuccess(false);
 
-    if (form.fullName.trim().length < 3 || form.fullName.trim().length > 120) {
-      setMessage('Full Name must be between 3 and 120 characters.');
+    const normalizedFullName = form.fullName.trim().replace(/ +/g, ' ');
+    if (!normalizedFullName) {
+      setMessage('Full Name is required. Enter at least two name parts using English letters and spaces.');
+      return;
+    }
+    if (
+      normalizedFullName.length > 100 ||
+      !/^[A-Za-z]+(?: [A-Za-z]+)+$/.test(normalizedFullName) ||
+      normalizedFullName.replace(/ /g, '').length < 3
+    ) {
+      setMessage('Enter at least two name parts using English letters and spaces, with at least 3 letters and no more than 100 characters.');
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()) || form.email.trim().length > 120) {
@@ -70,7 +79,7 @@ export default function ApplicantRegistration() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          full_name: form.fullName.trim(),
+          full_name: normalizedFullName,
           email: form.email.trim(),
           phone: form.phone.trim(),
           password: form.password,
@@ -124,7 +133,7 @@ export default function ApplicantRegistration() {
           <h3>Create an Account</h3>
 
           <div className="form-group">
-            <input type="text" name="fullName" placeholder="Full Name" autoComplete="name" minLength={3} maxLength={120} required value={form.fullName} onChange={updateField} />
+            <input type="text" name="fullName" placeholder="Full Name" autoComplete="name" minLength={3} maxLength={100} required value={form.fullName} onChange={updateField} />
           </div>
 
           <div className="form-group">

@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InspectionsRepository } from './inspections.repository';
-import { Inspection } from './inspection.interface';
+import { Inspection, InspectionEvidenceFile } from './inspection.interface';
 import { CreateInspectionDto } from './dto/create-inspection.dto';
 import { SubmitInspectionReportDto } from './dto/submit-inspection-report.dto';
 import { InspectionStatus } from '../common/enums/inspection-status.enum';
@@ -65,7 +65,11 @@ export class InspectionsService {
     return updated;
   }
 
-  submitReport(id: number, reportData: SubmitInspectionReportDto): Inspection {
+  submitReport(
+    id: number,
+    reportData: SubmitInspectionReportDto,
+    evidenceFiles: InspectionEvidenceFile[] = [],
+  ): Inspection {
     const existing = this.findOne(id);
     if (existing.status === InspectionStatus.COMPLETED) {
       throw new BadRequestException('Inspection is already completed');
@@ -82,6 +86,7 @@ export class InspectionsService {
       report_url: reportData.report_url,
       status: reportData.status,
       completed_date: new Date(),
+      evidence_files: [...(existing.evidence_files || []), ...evidenceFiles],
     });
 
     if (!updated) {

@@ -3,7 +3,11 @@ import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'cl
 export class RegisterApplicantDto {
   @IsString()
   @IsNotEmpty()
-  @MaxLength(120)
+  @MaxLength(100)
+  @MinLength(3)
+  @Matches(/^[A-Za-z]+(?: +[A-Za-z]+)+$/, {
+    message: 'Full name must contain at least two name parts using English letters and spaces only',
+  })
   full_name!: string;
 
   @IsEmail()

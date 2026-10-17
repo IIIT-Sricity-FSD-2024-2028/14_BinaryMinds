@@ -66,7 +66,8 @@ export class ApplicationsRepository {
 
   findByOfficer(officerId: number): Application[] {
     return this.find().filter(
-      (app) => app.assignedOfficerId === officerId,
+      (app) => Number(app.assignedOfficerId) === Number(officerId) ||
+        Number(app.verification_officer_id) === Number(officerId),
     );
   }
 

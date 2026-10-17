@@ -6,6 +6,7 @@ import { FieldOfficerAssignmentsModule } from '../field-officer-assignments/fiel
 import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 import { ApplicationsModule } from '../applications/applications.module';
 import { UsersModule } from '../users/users.module';
+import { InspectionEvidenceCleanupInterceptor } from './inspection-evidence-cleanup.interceptor';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { UsersModule } from '../users/users.module';
     forwardRef(() => UsersModule),
   ],
   controllers: [InspectionsController],
-  providers: [InspectionsRepository, InspectionsService],
+  providers: [InspectionsRepository, InspectionsService, InspectionEvidenceCleanupInterceptor],
   exports: [InspectionsRepository, InspectionsService],
 })
 export class InspectionsModule {}

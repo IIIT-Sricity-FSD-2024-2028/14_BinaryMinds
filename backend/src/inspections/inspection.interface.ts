@@ -1,5 +1,12 @@
 import { InspectionStatus } from '../common/enums/inspection-status.enum';
 
+export interface InspectionEvidenceFile {
+  filename: string;
+  original_filename: string;
+  mime_type: string;
+  uploaded_at: Date | string;
+}
+
 export interface Inspection {
   inspection_id: number;
   assignment_id: number;
@@ -9,4 +16,5 @@ export interface Inspection {
   status: InspectionStatus;
   notes?: string;
   report_url?: string;
+  evidence_files?: InspectionEvidenceFile[];
 }

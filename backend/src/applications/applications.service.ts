@@ -255,7 +255,7 @@ export class ApplicationsService {
   /**
    * Mark an application as verified (officer action).
    */
-  verify(id: number): Application {
+  verify(id: number, officerId: number): Application {
     const application = this.findOne(id);
 
     if (application.application_status !== ApplicationStatus.ASSIGNED) {
@@ -266,6 +266,9 @@ export class ApplicationsService {
 
     const updated = this.applicationsRepository.update(id, {
       application_status: ApplicationStatus.VERIFIED,
+      verification_decision: ApplicationStatus.VERIFIED,
+      verification_decision_at: new Date(),
+      verification_officer_id: officerId,
     });
 
     if (!updated) {

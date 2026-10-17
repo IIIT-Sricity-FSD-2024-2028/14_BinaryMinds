@@ -51,7 +51,7 @@ export class UsersController {
   })
   register(@Body() registerDto: RegisterApplicantDto) {
     const user = this.usersService.create({
-      full_name: registerDto.full_name.trim(),
+      full_name: registerDto.full_name.trim().replace(/ +/g, ' '),
       email: registerDto.email.trim().toLowerCase(),
       phone: registerDto.phone.trim(),
       password_hash: registerDto.password.trim(),

@@ -6,8 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  ConflictException,
   ForbiddenException,
   BadRequestException,
+  NotFoundException,
+  StreamableFile,
+  Header,
+  UploadedFiles,
+  UseInterceptors,
   ParseIntPipe,
   Req,
   UseGuards,
@@ -29,6 +35,19 @@ import { InspectionStatus } from '../common/enums/inspection-status.enum';
 import { ApplicationsService } from '../applications/applications.service';
 import { UsersService } from '../users/users.service';
 import { ApplicationStatus } from '../common/enums/application-status.enum';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { randomUUID } from 'crypto';
+import { createReadStream, existsSync, mkdirSync, statSync } from 'fs';
+import { basename, extname } from 'path';
+import { ApiConsumes } from '@nestjs/swagger';
+import { documentUploadDirectory, assertValidDocumentSignature, resolveStoredDocumentPath } from '../documents/document-storage';
+import { InspectionEvidenceCleanupInterceptor } from './inspection-evidence-cleanup.interceptor';
+import { InspectionEvidenceFile } from './inspection.interface';
+
+mkdirSync(documentUploadDirectory, { recursive: true });
+const evidenceMimeByExtension: Record<string, string> = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png' };
+const safeEvidenceName = (name: string) => basename(name).replace(/[\r\n"\\]/g, '_');
 
 @ApiTags('Inspections')
 @Controller('inspections')
@@ -82,6 +101,19 @@ export class InspectionsController {
     if (request.user.role === Role.FIELD_OFFICER) {
       if (Number(assignment.field_officer_id) !== Number(request.user.userId)) {
         throw new ForbiddenException('You cannot schedule an inspection for another Field Officer');
+      }
+    }
+
+    if (createDto.scheduled_date) {
+      const requestedTime = new Date(createDto.scheduled_date).getTime();
+      const duplicate = Number.isFinite(requestedTime) && this.service
+        .findByApplication(application.application_id)
+        .some((existing) =>
+          existing.scheduled_date &&
+          new Date(existing.scheduled_date).getTime() === requestedTime,
+        );
+      if (duplicate) {
+        throw new ConflictException('An inspection is already recorded for this application at that date and time.');
       }
     }
 
@@ -221,6 +253,38 @@ export class InspectionsController {
     return inspection;
   }
 
+  @Get(':id/evidence/:filename')
+  @Roles(Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER, Role.SUPER_USER, Role.PLATFORM_ADMIN)
+  @Header('Cache-Control', 'private, no-store')
+  @Header('X-Content-Type-Options', 'nosniff')
+  async getEvidence(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('filename') filename: string,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ): Promise<StreamableFile> {
+    const inspection = this.service.findOne(id);
+    const assignment = this.service.findAssignment(inspection.assignment_id);
+    const application = this.applicationsService.findOne(assignment.application_id);
+    if (request.user.role !== Role.PLATFORM_ADMIN) {
+      if (!request.user.municipalityId || (application.municipality_id || '').toLowerCase() !== request.user.municipalityId.toLowerCase()) {
+        throw new ForbiddenException('You cannot view inspection evidence outside your municipality');
+      }
+    }
+    if (request.user.role === Role.FIELD_OFFICER && Number(assignment.field_officer_id) !== Number(request.user.userId)) {
+      throw new ForbiddenException('Field Officers can only view evidence for their own assignments');
+    }
+    const evidence = (inspection.evidence_files || []).find((file) => file.filename === filename);
+    if (!evidence) throw new NotFoundException('Inspection evidence was not found');
+    const filePath = resolveStoredDocumentPath(evidence.filename);
+    if (!existsSync(filePath) || !statSync(filePath).isFile()) throw new NotFoundException('Inspection evidence file is unavailable');
+    const mime = evidenceMimeByExtension[extname(evidence.filename).toLowerCase()];
+    if (!mime || evidence.mime_type !== mime) throw new NotFoundException('Inspection evidence file is unavailable');
+    return new StreamableFile(createReadStream(filePath), {
+      type: mime,
+      disposition: `inline; filename="${safeEvidenceName(evidence.original_filename)}"`,
+    });
+  }
+
   @Patch(':id')
   @Roles(Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER, Role.SUPER_USER, Role.PLATFORM_ADMIN)
   @ApiRoute({
@@ -249,6 +313,22 @@ export class InspectionsController {
   }
 
   @Post(':id/report')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(InspectionEvidenceCleanupInterceptor)
+  @UseInterceptors(FilesInterceptor('evidence', 10, {
+    storage: diskStorage({
+      destination: documentUploadDirectory,
+      filename: (_request, file, callback) => callback(null, `${randomUUID()}${extname(file.originalname).toLowerCase()}`),
+    }),
+    limits: { fileSize: 5 * 1024 * 1024, files: 10 },
+    fileFilter: (_request, file, callback) => {
+      const extension = extname(file.originalname).toLowerCase();
+      if (!evidenceMimeByExtension[extension] || file.mimetype !== evidenceMimeByExtension[extension]) {
+        return callback(new BadRequestException('Only JPG and PNG evidence files are allowed.'), false);
+      }
+      callback(null, true);
+    },
+  }))
   @Roles(Role.FIELD_OFFICER, Role.DEPARTMENT_OFFICER, Role.SUPER_USER, Role.PLATFORM_ADMIN)
   @ApiRoute({
     summary: 'Submit inspection report',
@@ -261,6 +341,7 @@ export class InspectionsController {
   submitReport(
     @Param('id', ParseIntPipe) id: number,
     @Body() reportDto: SubmitInspectionReportDto,
+    @UploadedFiles() files: Express.Multer.File[],
     @Req() request: Request & { user: AuthenticatedUser },
   ) {
     const existing = this.service.findOne(id);
@@ -282,7 +363,16 @@ export class InspectionsController {
       throw new ForbiddenException('Field Officers can submit reports only for their own assignments');
     }
 
-    const inspection = this.service.submitReport(id, reportDto);
+    const uploadedFiles = files || [];
+    const evidenceFiles: InspectionEvidenceFile[] = uploadedFiles.map((file) => ({
+      filename: file.filename,
+      original_filename: safeEvidenceName(file.originalname),
+      mime_type: file.mimetype,
+      uploaded_at: new Date(),
+    }));
+    for (const file of uploadedFiles) assertValidDocumentSignature(file);
+    const inspection = this.service.submitReport(id, reportDto, evidenceFiles);
+    (request as Request & { inspectionEvidencePersisted?: boolean }).inspectionEvidencePersisted = true;
     if (
       reportDto.status === InspectionStatus.COMPLETED ||
       reportDto.status === InspectionStatus.FAILED

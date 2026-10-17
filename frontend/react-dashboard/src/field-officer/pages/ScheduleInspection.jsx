@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import FieldOfficerPageShell from '../components/FieldOfficerPageShell';
 import { dateInputValue } from '../components/fieldOfficerUtils';
@@ -13,6 +13,7 @@ function formatSchedule(value) {
 
 export default function ScheduleInspection() {
   const d = useFieldOfficerData();
+  const submitting = useRef(false);
   const [form, setForm] = useState({
     applicationId: sessionStorage.getItem('selectedApp') || '',
     date: '',
@@ -60,6 +61,8 @@ export default function ScheduleInspection() {
 
   async function submit(event) {
     event.preventDefault();
+    if (submitting.current) return;
+    submitting.current = true;
     d.setSaving(true);
     d.setError('');
     d.setMessage('');
@@ -87,25 +90,18 @@ export default function ScheduleInspection() {
           status: 'SCHEDULED',
         }),
       });
-      const persistedRows = await d.request(
-        `/inspections/assignment/${encodeURIComponent(assignment.assignment_id)}`,
-      );
-      const persisted = Array.isArray(persistedRows)
-        ? persistedRows.find((row) => Number(row.inspection_id) === Number(created.inspection_id))
-        : null;
-      if (!persisted || new Date(persisted.scheduled_date).getTime() !== new Date(scheduledDate).getTime()) {
-        throw new Error('The schedule request was accepted, but the saved date and time could not be confirmed. Refresh before trying again.');
-      }
-
       d.setInspections((rows) => [
-        ...rows.filter((row) => Number(row.inspection_id) !== Number(persisted.inspection_id)),
-        persisted,
+        ...rows.filter((row) => Number(row.inspection_id) !== Number(created.inspection_id)),
+        created,
       ]);
-      sessionStorage.setItem('selectedInspection', String(persisted.inspection_id));
-      d.setMessage(`Inspection scheduled and verified for ${formatSchedule(persisted.scheduled_date)}.`);
+      sessionStorage.setItem('selectedInspection', String(created.inspection_id));
+      d.navigate(`/officer/${d.officerId}/recordinspection`, {
+        state: { scheduleMessage: `Inspection scheduled successfully for ${formatSchedule(created.scheduled_date)}.` },
+      });
     } catch (error) {
       d.setError(error.message || 'Unable to schedule inspection.');
     } finally {
+      submitting.current = false;
       d.setSaving(false);
     }
   }
