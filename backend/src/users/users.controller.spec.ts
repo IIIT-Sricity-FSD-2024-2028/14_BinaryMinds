@@ -154,6 +154,55 @@ describe('UsersController Field Officer profile', () => {
     expect(usersService.update).not.toHaveBeenCalled();
   });
 
+  it('rejects role, municipality, and status changes from an applicant updating their own profile', () => {
+    const applicantRequest = {
+      user: { userId: 17, role: Role.APPLICANT, fullName: 'Applicant' },
+    } as Request & { user: AuthenticatedUser };
+
+    expect(() => controller.update(17, { role: Role.PLATFORM_ADMIN } as never, applicantRequest)).toThrow(
+      ForbiddenException,
+    );
+    expect(() => controller.update(17, { municipality_id: 'muni-other' }, applicantRequest)).toThrow(
+      ForbiddenException,
+    );
+    expect(() => controller.update(17, { status: 'Inactive' }, applicantRequest)).toThrow(
+      ForbiddenException,
+    );
+    expect(usersService.update).not.toHaveBeenCalled();
+  });
+
+  it('allows a Municipal Commissioner to update Field Officer status but not role or municipality', () => {
+    const commissionerRequest = {
+      user: { userId: 21, role: Role.SUPER_USER, municipalityId: 'muni-1', fullName: 'Commissioner' },
+    } as Request & { user: AuthenticatedUser };
+
+    controller.update(17, { status: 'Inactive' }, commissionerRequest);
+    expect(usersService.update).toHaveBeenCalledWith(17, { status: 'Inactive' });
+
+    usersService.update.mockClear();
+    expect(() => controller.update(17, { role: Role.DEPARTMENT_OFFICER }, commissionerRequest)).toThrow(
+      ForbiddenException,
+    );
+    expect(() => controller.update(17, { municipality_id: 'muni-other' }, commissionerRequest)).toThrow(
+      ForbiddenException,
+    );
+    expect(usersService.update).not.toHaveBeenCalled();
+  });
+
+  it('preserves Platform Admin account privilege updates', () => {
+    const platformAdminRequest = {
+      user: { userId: 1, role: Role.PLATFORM_ADMIN, fullName: 'Platform Admin' },
+    } as Request & { user: AuthenticatedUser };
+
+    controller.update(17, { role: Role.DEPARTMENT_OFFICER, municipality_id: 'muni-2', status: 'Inactive' }, platformAdminRequest);
+
+    expect(usersService.update).toHaveBeenCalledWith(17, {
+      role: Role.DEPARTMENT_OFFICER,
+      municipality_id: 'muni-2',
+      status: 'Inactive',
+    });
+  });
+
   it('does not include password hashes in the current-user profile response', () => {
     const request = { user: authenticatedUser } as Request & { user: AuthenticatedUser };
 

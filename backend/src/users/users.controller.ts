@@ -364,6 +364,20 @@ export class UsersController {
         ...(updateUserDto.phone !== undefined ? { phone: updateUserDto.phone } : {}),
       };
     }
+    if (request.user.role !== Role.PLATFORM_ADMIN && request.user.role !== Role.FIELD_OFFICER) {
+      if (updateUserDto.role !== undefined || updateUserDto.municipality_id !== undefined) {
+        throw new ForbiddenException('Only Platform Admin can change a user role or municipality');
+      }
+      if (updateUserDto.status !== undefined) {
+        const canManageFieldOfficerStatus =
+          request.user.role === Role.SUPER_USER &&
+          request.user.userId !== id &&
+          existing.role === Role.FIELD_OFFICER;
+        if (!canManageFieldOfficerStatus) {
+          throw new ForbiddenException('Only the Municipal Commissioner can change Field Officer status');
+        }
+      }
+    }
     if (request.user.role !== Role.PLATFORM_ADMIN && request.user.userId !== id) {
       const userMuni = request.user.municipalityId;
       if (!userMuni || (existing.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()) {

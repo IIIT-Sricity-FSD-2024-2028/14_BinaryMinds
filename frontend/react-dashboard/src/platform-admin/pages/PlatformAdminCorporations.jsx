@@ -10,6 +10,7 @@ const emptyCorporation = { name: '', municipality_id: '', state: '', district: '
 export default function PlatformAdminCorporations() {
   const navigate = useNavigate();
   const [corporations, setCorporations] = useState([]);
+  const [officers, setOfficers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -22,7 +23,14 @@ export default function PlatformAdminCorporations() {
 
   const load = useCallback(async () => {
     setLoading(true); setError('');
-    try { setCorporations(rowsFrom(await platformAdminRequest('platform-admin/corporations'))); }
+    try {
+      const [corporationPayload, officerPayload] = await Promise.all([
+        platformAdminRequest('platform-admin/corporations'),
+        platformAdminRequest('users'),
+      ]);
+      setCorporations(rowsFrom(corporationPayload));
+      setOfficers(rowsFrom(officerPayload));
+    }
     catch (requestError) { setError(requestError.message || 'Unable to load municipal corporations.'); }
     finally { setLoading(false); }
   }, []);
@@ -57,9 +65,12 @@ export default function PlatformAdminCorporations() {
 
   return <section className="pa-corporations"><header className="pa-corporations-header"><div><h1>Municipal Corporations</h1><p>Configured cities, municipal heads, and officer strength</p></div><button className="pa-corp-primary" type="button" onClick={() => { setError(''); setForm(emptyCorporation); setModal('corporation'); }}>+ Add Municipality</button></header>
     {notice && <p className="pa-corp-notice" role="status">{notice}</p>}{error && <p className="pa-corp-error" role="alert">{error}</p>}
-    {loading ? <p className="pa-corp-state" role="status">Loading municipal corporations…</p> : corporations.length ? <div className="pa-corp-table-wrap"><table><thead><tr><th>Municipality / Corporation</th><th>State / District</th><th>Municipal Head</th><th>FO / DO Counts</th><th>Applications</th></tr></thead><tbody>{corporations.map((row) => {
+    {loading ? <p className="pa-corp-state" role="status">Loading municipal corporations…</p> : corporations.length ? <div className="pa-corp-table-wrap"><table><thead><tr><th>Municipality / Corporation</th><th>State / District</th><th>Municipal Head</th><th>Active FO / DO Counts</th><th>Applications</th></tr></thead><tbody>{corporations.map((row) => {
       const id = row.corporation_id || row.municipality_id;
-      return <tr key={id}><td><button className="pa-corp-name" type="button" onClick={() => setSelected({ id, name: row.name || id })}>{row.name || 'Unnamed'} <small>({id})</small></button></td><td>{row.state || '—'} / {row.district || '—'}</td><td>{row.municipal_head ? `${row.municipal_head.name}${row.municipal_head.email ? ` (${row.municipal_head.email})` : ''}` : <button className="pa-corp-inline" type="button" onClick={() => openHead({ id, name: row.name || id })}>+ Add Head</button>}</td><td>{row.field_officers_count ?? 0} FO / {row.department_officers_count ?? 0} DO</td><td><button className="pa-corp-inline" type="button" onClick={() => navigate(`/platform-admin/corporations/${encodeURIComponent(id)}/applications`, { state: { municipalityName: row.name || id, returnTo: '/platform-admin/corporations' } })}>View ({row.applications ?? 0})</button></td></tr>;
+      const municipalityOfficers = officers.filter((officer) => String(officer.municipality_id || '').toLowerCase() === String(id).toLowerCase() && String(officer.status || 'Active').toLowerCase() !== 'inactive');
+      const fieldOfficersCount = municipalityOfficers.filter((officer) => officer.role === 'field_officer').length;
+      const departmentOfficersCount = municipalityOfficers.filter((officer) => officer.role === 'department_officer').length;
+      return <tr key={id}><td><button className="pa-corp-name" type="button" onClick={() => setSelected({ id, name: row.name || id })}>{row.name || 'Unnamed'} <small>({id})</small></button></td><td>{row.state || '—'} / {row.district || '—'}</td><td>{row.municipal_head ? `${row.municipal_head.name}${row.municipal_head.email ? ` (${row.municipal_head.email})` : ''}` : <button className="pa-corp-inline" type="button" onClick={() => openHead({ id, name: row.name || id })}>+ Add Head</button>}</td><td>{fieldOfficersCount} FO / {departmentOfficersCount} DO</td><td><button className="pa-corp-inline" type="button" onClick={() => navigate(`/platform-admin/corporations/${encodeURIComponent(id)}/applications`, { state: { municipalityName: row.name || id, returnTo: '/platform-admin/corporations' } })}>View ({row.applications ?? 0})</button></td></tr>;
     })}</tbody></table></div> : <p className="pa-corp-empty">No municipal corporations are available.</p>}
 
     {modal && <div className="pa-corp-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !saving) setModal(''); }}><section className="pa-corp-modal" role="dialog" aria-modal="true" aria-labelledby="pa-corp-modal-title"><h2 id="pa-corp-modal-title">{modal === 'corporation' ? 'Add New Municipal Corporation' : 'Create Municipal Head (Commissioner)'}</h2><p>{modal === 'corporation' ? 'Add a new municipality tenant with localized processing fees and administrative scope.' : 'Create an account with administrative authority over this corporation.'}</p>
