@@ -7,6 +7,7 @@ import { JsonStore } from '../common/persistence/json-store';
 export class UsersRepository {
   constructor(private readonly store: JsonStore) {
     const data = this.store.snapshot();
+    let changed = this.assignMissingEmployeeIds(data.users);
     const hasAdmin = data.users.some(
       (user) =>
         user.email.trim().toLowerCase() === 'superadmin@tradezo.gov.in' ||
@@ -22,8 +23,65 @@ export class UsersRepository {
         role: Role.PLATFORM_ADMIN,
         created_at: new Date('2026-01-01T00:00:00.000Z'),
       });
+      changed = true;
+    }
+    if (changed) {
       this.store.save();
     }
+  }
+
+  private assignMissingEmployeeIds(users: User[]): boolean {
+    const rolePrefix = (role: Role) =>
+      role === Role.FIELD_OFFICER ? 'FO' : 'DO';
+    const scopes = new Map<string, { prefix: string; nextSequence: number }>();
+    const usedIds = new Set(
+      users.map((user) => (user.employee_id || '').trim().toLowerCase()).filter(Boolean),
+    );
+
+    for (const user of users) {
+      if (user.role !== Role.FIELD_OFFICER && user.role !== Role.DEPARTMENT_OFFICER) continue;
+      const municipalityId = (user.municipality_id || '').trim();
+      const municipalityCode = municipalityId.replace(/^muni-?/i, '').toUpperCase() || 'MUNI';
+      const prefix = `${rolePrefix(user.role)}-${municipalityCode}-`;
+      const scopeKey = `${user.role}:${municipalityId.toLowerCase()}`;
+      if (scopes.has(scopeKey)) continue;
+
+      const sequenceNumbers = users
+        .filter((candidate) =>
+          candidate.role === user.role &&
+          (candidate.municipality_id || '').trim().toLowerCase() === municipalityId.toLowerCase() &&
+          candidate.employee_id?.toUpperCase().startsWith(prefix),
+        )
+        .map((candidate) => Number(candidate.employee_id!.slice(prefix.length)))
+        .filter(Number.isSafeInteger);
+      scopes.set(scopeKey, {
+        prefix,
+        nextSequence: Math.max(0, ...sequenceNumbers) + 1,
+      });
+    }
+
+    let changed = false;
+    for (const user of users) {
+      if (
+        (user.role !== Role.FIELD_OFFICER && user.role !== Role.DEPARTMENT_OFFICER) ||
+        user.employee_id?.trim()
+      ) continue;
+
+      const municipalityId = (user.municipality_id || '').trim();
+      const scopeKey = `${user.role}:${municipalityId.toLowerCase()}`;
+      const scope = scopes.get(scopeKey)!;
+      let candidate = `${scope.prefix}${String(scope.nextSequence).padStart(3, '0')}`;
+      while (usedIds.has(candidate.toLowerCase())) {
+        scope.nextSequence += 1;
+        candidate = `${scope.prefix}${String(scope.nextSequence).padStart(3, '0')}`;
+      }
+      user.employee_id = candidate;
+      usedIds.add(candidate.toLowerCase());
+      scope.nextSequence += 1;
+      changed = true;
+    }
+
+    return changed;
   }
 
   find(): User[] {

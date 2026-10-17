@@ -96,7 +96,6 @@ export default function ApplicantDownloadLicense() {
 
   return (
     <div className="applicant-download-license-page">
-      <div className="download-topbar"><img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Emblem" /><div className="download-topbar-text"><span className="download-gov-text">Government of India</span><span className="download-brand-name">TradeZo</span></div></div>
       <ApplicantNavigation onLogout={logout} />
       <header className="download-page-title"><h2>Trade License</h2><p>View your approved trade license details. Use print to save a copy as PDF.</p></header>
       {isLoading ? <p className="download-state">Loading your license details...</p> : error ? <p className="download-state download-error" role="alert">{error}</p> : !license ? (
@@ -109,14 +108,12 @@ export default function ApplicantDownloadLicense() {
               <div className="details-grid">
                 <LicenseDetail label="License Number" value={license.license_number} /><LicenseDetail label="Applicant Name" value={application?.full_name || user.full_name || user.name} /><LicenseDetail label="Trade Category" value={application?.trade_category || application?.business_type} /><LicenseDetail label="Issue Date" value={formatDate(license.issued_date)} /><LicenseDetail label="Expiry Date" value={formatDate(license.expiry_date)} /><LicenseDetail label="Status" value={license.status || 'Unavailable'} active={String(license.status).toLowerCase() === 'active'} />
               </div>
-              <div className="card-footer"><p>Licensing Authority<br /><strong>{municipality || 'Authority information unavailable'}</strong><br /><span>Issuing officer ID: {license.issued_by || 'Unavailable'}</span></p><div className="qr-box" aria-label="QR placeholder; no verification QR is available">QR<br /><small>Placeholder</small></div></div>
-              <p className="verified-text">License metadata shown from the TradeZo backend. A digital verification QR is not available.</p>
+              <div className="card-footer"><p>Licensing Authority<br /><strong>{municipality || 'Authority information unavailable'}</strong></p></div>
             </article>
             <Link className="download-cancel-btn" to="/dashboard">← Back to Dashboard</Link>
           </section>
           <aside className="right-section">
-            <section className="preview-card"><h4>License Preview</h4><div className="license-preview-box"><h5>{municipality || 'Trade License'}</h5><div className="preview-official">Preview only — not a PDF certificate</div><p><b>License Number:</b> {license.license_number || 'Unavailable'}</p><p><b>Applicant:</b> {application?.full_name || user.full_name || user.name || 'Unavailable'}</p><p><b>Status:</b> {license.status || 'Unavailable'}</p><p><b>Expiry:</b> {formatDate(license.expiry_date)}</p><div className="fake-line" /><div className="fake-line short" /><div className="fake-line" /></div><button type="button" className="btn-download" onClick={() => window.print()}>Print / Save as PDF</button><button type="button" className="btn-print" onClick={() => window.print()}>Print License</button><p className="download-note">The backend does not provide a downloadable PDF.</p></section>
-            <section className="help-box"><h4>❓ Need Help?</h4><p>Having issues with your license details or need to report a discrepancy?</p><p>✉ <a href="mailto:support@tradezco.gov.in">support@tradezco.gov.in</a></p><p>☎ <a href="tel:18001112344">1800-111-2344 (Toll Free)</a></p></section>
+            <section className="preview-card"><h4>License Preview</h4><div className="license-preview-box"><h5>{municipality || 'Trade License'}</h5><div className="preview-official">Preview only — not a PDF certificate</div><p><b>License Number:</b> {license.license_number || 'Unavailable'}</p><p><b>Applicant:</b> {application?.full_name || user.full_name || user.name || 'Unavailable'}</p><p><b>Status:</b> {license.status || 'Unavailable'}</p><p><b>Expiry:</b> {formatDate(license.expiry_date)}</p><div className="fake-line" /><div className="fake-line short" /><div className="fake-line" /></div><button type="button" className="btn-download" onClick={() => window.print()}>Print / Save as PDF</button><button type="button" className="btn-print" onClick={() => window.print()}>Print License</button></section>
           </aside>
         </div>
       )}

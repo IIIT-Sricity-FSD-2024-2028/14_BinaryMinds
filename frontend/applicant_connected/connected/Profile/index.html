@@ -151,6 +151,8 @@
       var ownerKey = (stored.ownerEmail || stored.email || '').toLowerCase();
       var loginKey = (loggedIn.email || '').toLowerCase();
       if (!ownerKey || !loginKey || ownerKey !== loginKey) stored = {};
+      // The profile API and authenticated session are authoritative; ignore stale browser-only profile edits.
+      stored = {};
 
       var sessionApp = {};
       try { sessionApp = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch(e) {}
@@ -239,16 +241,15 @@
       // Priority: edited profile name → application form name → session name
       // Application's applicantName/fullName is the real person's name (filled during apply)
       // loggedIn.name could be a username (e.g. 'echo') — use only as last resort
-      var name    = stored.name
-                 || appData.applicantName || appData.fullName
-                 || loggedIn.name
+      var name    = appData.applicantName || appData.fullName
+                 || loggedIn.full_name || loggedIn.name
                  || '—';
       // Email: always from session (identity anchor, never override)
       var email   = loggedIn.email || appData.email || '—';
       // Phone: edited profile → session → application form
-      var phone   = stored.phone || loggedIn.phone || registeredUser.phone || localUser.phone || appData.phone || '—';
-      // Address: edited profile → application shop address
-      var address = stored.address || appAddress || '—';
+      var phone   = loggedIn.phone || registeredUser.phone || localUser.phone || appData.phone || '—';
+      // Residential address is sourced from the application because users have no address field in the profile API.
+      var address = appAddress || '—';
 
       var aadhaarRaw = (userApp && userApp.aadhaar) || (sessionApp && sessionApp.aadhaar) || appData.aadhaar;
       var aadhaar = aadhaarRaw ? 'XXXX-XXXX-' + String(aadhaarRaw).slice(-4) : '—';

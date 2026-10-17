@@ -42,6 +42,7 @@ export class OfficersService {
 
       return {
         id: officer.user_id,
+        employee_id: officer.employee_id,
         name: officer.full_name,
         municipality_id: officer.municipality_id,
         email: officer.email,
@@ -74,6 +75,7 @@ export class OfficersService {
 
     return {
       id: user.user_id,
+      employee_id: user.employee_id,
       name: user.full_name,
       municipality_id: user.municipality_id,
       email: user.email,
@@ -106,4 +108,3 @@ export class OfficersService {
     return leastLoaded;
   }
 }
-

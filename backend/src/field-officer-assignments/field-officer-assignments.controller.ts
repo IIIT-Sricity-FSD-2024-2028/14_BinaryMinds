@@ -44,7 +44,13 @@ export class FieldOfficerAssignmentsController {
     status: 201,
     responseExample: { assignment_id: 1, application_id: 1, field_officer_id: 2 },
   })
-  create(@Body() createDto: CreateAssignmentDto) {
+  create(
+    @Body() createDto: CreateAssignmentDto,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
+    if (Number(createDto.assigned_by) !== Number(request.user.userId)) {
+      throw new ForbiddenException('The assigning officer must match the authenticated user');
+    }
     return this.service.create(createDto);
   }
 
@@ -84,7 +90,28 @@ export class FieldOfficerAssignmentsController {
         throw new ForbiddenException('Access denied to assignment outside your municipality');
       }
     }
+    if (
+      request.user.role === Role.FIELD_OFFICER &&
+      Number(app.assignedOfficerId) !== Number(request.user.userId)
+    ) {
+      throw new ForbiddenException('Field Officers can only view their own application assignments');
+    }
     return this.service.findByApplication(applicationId);
+  }
+
+  @Post('application/:applicationId/recover')
+  @Roles(Role.FIELD_OFFICER)
+  @ApiRoute({
+    summary: 'Recover an assignment from the saved application officer link',
+    roles: [Role.FIELD_OFFICER],
+    params: [{ name: 'applicationId', description: 'Application ID' }],
+    responseExample: { assignment_id: 1, application_id: 1, recovered_from_application_assignment: true },
+  })
+  recoverForFieldOfficer(
+    @Param('applicationId', ParseIntPipe) applicationId: number,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
+    return this.service.recoverForFieldOfficer(applicationId, request.user.userId);
   }
 
   @Get('field-officer/:fieldOfficerId')
@@ -125,6 +152,12 @@ export class FieldOfficerAssignmentsController {
     @Req() request: Request & { user: AuthenticatedUser },
   ) {
     const assignment = this.service.findOne(id);
+    if (
+      request.user.role === Role.FIELD_OFFICER &&
+      Number(assignment.field_officer_id) !== Number(request.user.userId)
+    ) {
+      throw new ForbiddenException('Field Officers can only view their own assignments');
+    }
     if (request.user.role !== Role.PLATFORM_ADMIN) {
       const app = this.applicationsService.findOne(assignment.application_id);
       const userMuni = request.user.municipalityId;

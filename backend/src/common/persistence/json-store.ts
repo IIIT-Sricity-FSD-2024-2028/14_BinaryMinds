@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { Application } from '../../applications/application.interface';
+import { Document } from '../../documents/document.interface';
 import { License } from '../../licenses/license.interface';
 import { Payment } from '../../payments/payment.interface';
 import { User } from '../../users/user.interface';
 import { Municipality } from '../../municipalities/municipality.interface';
+import { Assignment } from '../../field-officer-assignments/assignment.interface';
+import { Inspection } from '../../inspections/inspection.interface';
+import { DepartmentReview } from '../../department-reviews/review.interface';
 import { Role } from '../enums/role.enum';
 
 export interface RevenueRecord {
@@ -36,10 +40,23 @@ export interface PersistentData {
   municipalities: Municipality[];
   users: User[];
   applications: Application[];
+  assignments: Assignment[];
+  inspections: Inspection[];
+  reviews: DepartmentReview[];
+  documents: Document[];
   payments: Payment[];
   licenses: License[];
   platform: PlatformData;
-  counters: { users: number; applications: number; payments: number; licenses: number };
+  counters: {
+    users: number;
+    applications: number;
+    assignments: number;
+    inspections: number;
+    reviews: number;
+    documents: number;
+    payments: number;
+    licenses: number;
+  };
 }
 
 const DEFAULT_MUNICIPALITIES: Municipality[] = [
@@ -141,6 +158,10 @@ const EMPTY_DATA: PersistentData = {
     },
   ],
   applications: [],
+  assignments: [],
+  inspections: [],
+  reviews: [],
+  documents: [],
   payments: [],
   licenses: [],
   platform: {
@@ -156,7 +177,7 @@ const EMPTY_DATA: PersistentData = {
     },
     revenue_records: [],
   },
-  counters: { users: 7, applications: 1, payments: 1, licenses: 1 },
+  counters: { users: 7, applications: 1, assignments: 1, inspections: 1, reviews: 1, documents: 1, payments: 1, licenses: 1 },
 };
 
 @Injectable()
@@ -198,6 +219,10 @@ export class JsonStore {
           ...app,
           municipality_id: app.municipality_id,
         })) : [],
+        assignments: Array.isArray(parsed.assignments) ? parsed.assignments : [],
+        inspections: Array.isArray(parsed.inspections) ? parsed.inspections : [],
+        reviews: Array.isArray(parsed.reviews) ? parsed.reviews : [],
+        documents: Array.isArray(parsed.documents) ? parsed.documents : [],
         payments: Array.isArray(parsed.payments) ? parsed.payments.map((p: Payment) => ({
           ...p,
           municipality_id: p.municipality_id,
@@ -212,7 +237,22 @@ export class JsonStore {
           revenue_settings: { ...EMPTY_DATA.platform.revenue_settings, ...(parsed.platform?.revenue_settings || {}) },
           revenue_records: Array.isArray(parsed.platform?.revenue_records) ? parsed.platform.revenue_records : [],
         },
-        counters: { ...EMPTY_DATA.counters, ...(parsed.counters || {}) },
+        counters: {
+          ...EMPTY_DATA.counters,
+          ...(parsed.counters || {}),
+          assignments: Math.max(
+            parsed.counters?.assignments || EMPTY_DATA.counters.assignments,
+            ...((Array.isArray(parsed.assignments) ? parsed.assignments : []).map((item: Assignment) => item.assignment_id + 1)),
+          ),
+          inspections: Math.max(
+            parsed.counters?.inspections || EMPTY_DATA.counters.inspections,
+            ...((Array.isArray(parsed.inspections) ? parsed.inspections : []).map((item: Inspection) => item.inspection_id + 1)),
+          ),
+          reviews: Math.max(
+            parsed.counters?.reviews || EMPTY_DATA.counters.reviews,
+            ...((Array.isArray(parsed.reviews) ? parsed.reviews : []).map((item: DepartmentReview) => item.review_id + 1)),
+          ),
+        },
       };
     } catch {
       throw new Error(`Unable to read persistent data store: ${this.filePath}`);

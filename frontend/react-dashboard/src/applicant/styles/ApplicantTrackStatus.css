@@ -11,9 +11,9 @@
 .applicant-track-status-page nav.track-navbar a.track-logout { color: #fca5a5; }
 .applicant-track-status-page .track-main { padding: 30px 16px 48px; }
 .applicant-track-status-page h1 { margin: 0; font-size: clamp(26px,4vw,38px); line-height: 1.15; }
-.applicant-track-status-page .track-content { width: min(1180px,100%); margin: 0 auto; display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: 24px; align-items: start; }
+.applicant-track-status-page .track-content { width: min(1080px,100%); margin: 0 auto; }
 .applicant-track-status-page .track-sub { margin: 10px 0 24px; color: #64748b; font-size: 15px; }
-.applicant-track-status-page .app-card, .applicant-track-status-page .notif-card, .applicant-track-status-page .assist-card { background: #fff; border: 1px solid #e4e9f2; border-radius: 8px; box-shadow: 0 12px 28px rgba(15,23,42,.06); }
+.applicant-track-status-page .app-card { background: #fff; border: 1px solid #e4e9f2; border-radius: 12px; box-shadow: 0 12px 28px rgba(15,23,42,.06); }
 .applicant-track-status-page .app-card { padding: clamp(18px,3vw,26px); }
 .applicant-track-status-page .app-info { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; margin-bottom: 28px; }
 .applicant-track-status-page .app-info > div { min-height: 86px; padding: 16px; display: grid; align-content: center; gap: 6px; background: #f8fafc; border: 1px solid #e4e9f2; border-radius: 8px; }
@@ -29,34 +29,24 @@
 .applicant-track-status-page .step small { color: #94a3b8; text-transform: none; font-weight: 600; }
 .applicant-track-status-page .line { height: 3px; margin-top: 17px; background: #e2e8f0; border-radius: 999px; }
 .applicant-track-status-page .line.line-done { background: #1e3a8a; }
-.applicant-track-status-page .detail-row { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); gap: 18px; padding-top: 22px; border-top: 1px solid #e4e9f2; }
-.applicant-track-status-page .detail-left, .applicant-track-status-page .detail-right { min-height: 170px; padding: 18px; background: #f8fafc; border: 1px solid #e4e9f2; border-radius: 8px; }
+.applicant-track-status-page .detail-row { padding-top: 22px; border-top: 1px solid #e4e9f2; }
+.applicant-track-status-page .detail-left { padding: 18px; background: #f8fafc; border: 1px solid #e4e9f2; border-radius: 8px; }
 .applicant-track-status-page .detail-title { margin: 0 0 14px; display: flex; align-items: center; gap: 8px; color: #1e3a8a; font-weight: 800; }
-.applicant-track-status-page .detail-left p, .applicant-track-status-page .detail-right p { margin: 7px 0 16px; line-height: 1.5; overflow-wrap: anywhere; }
+.applicant-track-status-page .detail-status-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.applicant-track-status-page .detail-status-grid > div { padding: 14px; background: #fff; border: 1px solid #e4e9f2; border-radius: 7px; }
+.applicant-track-status-page .detail-status-grid p { margin: 7px 0 0; line-height: 1.5; overflow-wrap: anywhere; }
 .applicant-track-status-page .track-status-value { color: #2563eb; font-size: 16px; font-weight: 700; }
 .applicant-track-status-page .track-status-value.approved { color: #16a34a; }
 .applicant-track-status-page .track-status-value.rejected { color: #dc2626; }
-.applicant-track-status-page .officer { color: #64748b; font-size: 14px; }
 .applicant-track-status-page .view-btn-row { margin-top: 22px; display: flex; justify-content: flex-end; }
 .applicant-track-status-page .track-button { min-height: 44px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 8px; font: inherit; font-weight: 800; text-decoration: none; cursor: pointer; }
-.applicant-track-status-page .btn-view, .applicant-track-status-page .btn-support, .applicant-track-status-page .track-action { color: #fff; background: #1e3a8a; box-shadow: 0 10px 20px rgba(30,58,138,.18); }
+.applicant-track-status-page .btn-view, .applicant-track-status-page .track-action { color: #fff; background: #1e3a8a; box-shadow: 0 10px 20px rgba(30,58,138,.18); }
 .applicant-track-status-page .btn-cancel { margin-top: 18px; color: #334155; background: #e8edf5; }
-.applicant-track-status-page .track-right .notif-card, .applicant-track-status-page .assist-card { padding: 20px; }
-.applicant-track-status-page .notif-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
-.applicant-track-status-page .notif-header h3, .applicant-track-status-page .assist-card h3 { margin: 0; font-size: 18px; color: #172033; }
-.applicant-track-status-page .badge-num { min-width: 28px; height: 28px; padding: 0 8px; display: inline-grid; place-items: center; border-radius: 999px; color: #fff; background: #1e3a8a; font-size: 11px; font-weight: 800; }
-.applicant-track-status-page .notif-item { padding: 15px 0; border-top: 1px solid #e4e9f2; }
-.applicant-track-status-page .notif-item strong { display: block; color: #172033; }
-.applicant-track-status-page .notif-item p, .applicant-track-status-page .assist-card p { margin: 7px 0; color: #526176; line-height: 1.45; font-size: 14px; }
-.applicant-track-status-page .notif-disclaimer, .applicant-track-status-page .track-muted { color: #64748b; font-size: 12px; line-height: 1.5; }
-.applicant-track-status-page .assist-card { margin-top: 18px; text-align: center; }
-.applicant-track-status-page .assist-icon { display: inline-grid; width: 34px; height: 34px; margin-bottom: 12px; place-items: center; border: 2px solid #1e3a8a; border-radius: 50%; color: #1e3a8a; font-size: 22px; font-weight: 700; }
 .applicant-track-status-page .track-state { padding: 40px 20px; text-align: center; background: #fff; border: 1px solid #e4e9f2; border-radius: 8px; }
 .applicant-track-status-page .track-state h3 { margin-bottom: 8px; color: #1e3a8a; }
 .applicant-track-status-page .track-state p { margin-bottom: 20px; color: #64748b; }
 .applicant-track-status-page .track-error h3 { color: #b91c1c; }
 .applicant-track-status-page .track-error button { padding: 12px 28px; color: #fff; background: #1e3a8a; border: 0; border-radius: 8px; font-weight: 600; cursor: pointer; }
 .applicant-track-status-page .track-empty .track-action { padding: 12px 28px; border-radius: 8px; }
-@media (max-width: 980px) { .applicant-track-status-page .track-content { grid-template-columns: 1fr; } .applicant-track-status-page .track-right { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; } .applicant-track-status-page .assist-card { margin-top: 0; } }
-@media (max-width: 820px) { .applicant-track-status-page nav.track-navbar { gap: 0; } .applicant-track-status-page nav.track-navbar a { flex: 1 1 50%; justify-content: center; } .applicant-track-status-page .app-info, .applicant-track-status-page .detail-row, .applicant-track-status-page .track-right { grid-template-columns: 1fr; } .applicant-track-status-page .stepper { grid-template-columns: 1fr; justify-items: stretch; } .applicant-track-status-page .step { min-width: 0; } .applicant-track-status-page .step span { max-width: none; } .applicant-track-status-page .line { width: 3px; height: 18px; margin: 0; justify-self: center; } }
-@media (max-width: 520px) { .applicant-track-status-page .track-main { padding: 20px 11px 36px; } .applicant-track-status-page .view-btn-row, .applicant-track-status-page .btn-view, .applicant-track-status-page .btn-cancel, .applicant-track-status-page .btn-support { width: 100%; } }
+@media (max-width: 820px) { .applicant-track-status-page nav.track-navbar { gap: 0; } .applicant-track-status-page nav.track-navbar a { flex: 1 1 50%; justify-content: center; } .applicant-track-status-page .app-info { grid-template-columns: 1fr; } .applicant-track-status-page .detail-status-grid { grid-template-columns: 1fr; } .applicant-track-status-page .stepper { grid-template-columns: 1fr; justify-items: stretch; } .applicant-track-status-page .step { min-width: 0; } .applicant-track-status-page .step span { max-width: none; } .applicant-track-status-page .line { width: 3px; height: 18px; margin: 0; justify-self: center; } }
+@media (max-width: 520px) { .applicant-track-status-page .track-main { padding: 20px 11px 36px; } .applicant-track-status-page .view-btn-row, .applicant-track-status-page .btn-view, .applicant-track-status-page .btn-cancel { width: 100%; } }

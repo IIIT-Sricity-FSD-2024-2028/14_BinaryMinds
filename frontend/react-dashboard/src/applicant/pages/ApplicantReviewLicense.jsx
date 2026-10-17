@@ -127,7 +127,6 @@ export default function ApplicantReviewLicense() {
 
   return (
     <div className="applicant-review-license-page">
-      <div className="review-top-bar"><img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem" height="45" /><div><span className="review-brand-gov">Government of India</span><span className="review-brand-name">TradeZo</span></div></div>
       <ApplicantNavigation />
       <main className="review-page">
         <h1>Renew Trade License</h1>

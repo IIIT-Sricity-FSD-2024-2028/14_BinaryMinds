@@ -69,27 +69,27 @@
 
   <!-- MAIN CONTENT -->
   <div class="main-content">
-    <div class="register-card">
+    <form class="register-card" id="registrationForm" novalidate>
       <h3>Create an Account</h3>
 
       <div class="form-group">
-        <input type="text" placeholder="Full Name" />
+        <input type="text" id="fullName" placeholder="Full Name" autocomplete="name" minlength="3" maxlength="120" required />
       </div>
 
       <div class="form-group">
-        <input type="email" placeholder="Email Address" />
+        <input type="email" id="email" placeholder="Email Address" autocomplete="email" maxlength="120" required />
       </div>
 
       <div class="form-group">
-        <input type="tel" placeholder="Phone Number (10 digits)" />
+        <input type="tel" id="phone" placeholder="Phone Number (10 digits)" autocomplete="tel" pattern="[0-9]{10}" maxlength="10" required />
       </div>
 
       <div class="form-group">
-        <input type="password" placeholder="Password (Min. 6 chars)" />
+        <input type="password" id="password" placeholder="Password (Min. 6 chars)" autocomplete="new-password" minlength="6" maxlength="255" required />
       </div>
 
       <div class="form-group">
-        <input type="password" placeholder="Confirm Password" />
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" autocomplete="new-password" minlength="6" maxlength="255" required />
       </div>
 
       <label class="terms-group">
@@ -97,12 +97,13 @@
         <span>I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>.</span>
       </label>
 
-      <button class="btn-register">Register</button>
+      <p id="registrationMessage" role="status" aria-live="polite" style="margin:0 0 12px;color:#b91c1c;font-size:13px;"></p>
+      <button class="btn-register" type="submit">Register</button>
 
       <p class="login-text">
         Already have an account? <a href="../login/index.html">Login Here</a>
       </p>
-    </div>
+    </form>
   </div>
 
   <script src="script.js"></script>

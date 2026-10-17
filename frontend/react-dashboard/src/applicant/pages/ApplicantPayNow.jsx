@@ -238,7 +238,6 @@ export default function ApplicantPayNow() {
 
   return (
     <div className="applicant-pay-now-page">
-      <div className="pay-topbar"><img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Indian Emblem" /><div><p className="pay-gov">Government of India</p><p className="pay-brand">TradeZo</p></div></div>
       <ApplicantNavigation onLogout={logout} />
       <main className="pay-page">
         <h1 className="pay-title">Complete Your Payment</h1>
@@ -258,12 +257,10 @@ export default function ApplicantPayNow() {
                 <p className="card-title">▤ Select Payment Method</p>
                 {[['upi', '▣ UPI / QR Code'], ['card', '▰ Debit / Credit Card'], ['net', '▤ Net Banking']].map(([value, label]) => <label className={`pay-opt ${paymentMethod === value ? 'active' : ''}`} key={value}><input type="radio" name="method" value={value} checked={paymentMethod === value} onChange={() => setPaymentMethod(value)} />{label}</label>)}
                 <button type="button" className="pay-btn" id="payBtn" onClick={submitPayment} disabled={isPaying || isLoading || !paymentsReady || !application || completedPayment || alreadyMarkedPaid}>{isPaying ? 'Recording simulated payment…' : `Pay Now · ${formatMoney(fees.total)}`}</button>
-                <p className="small-note">This project does not connect to a payment gateway. Continuing creates or updates a simulated backend payment record only; no money is collected.</p>
                 {error && application && <p className="pay-result pay-error" role="alert">{error}</p>}{message && <p className="pay-result" role="status">{message}</p>}
                 {(completedPayment || alreadyMarkedPaid) && <p className="pay-result pay-completed">Existing application payment state is complete. This is a simulation only.</p>}
               </section>
             </div>
-            <aside className="col-right"><section className="card"><p className="card-title">⬟ Payment Assistance</p><AssistItem icon="◆" heading="Secure Transaction" text="Payment records are managed by the TradeZo backend. No external gateway is connected in this project." /><AssistItem icon="▣" heading="Instant Receipt" text="This screen does not generate a real transaction receipt." /><AssistItem icon="☎" heading="24/7 Support" text="In case of any payment questions, please contact the support team." /></section></aside>
           </div>
         )}
       </main>
@@ -275,8 +272,4 @@ function formatMoney(value) { return `₹${Number(value || 0).toFixed(2)}`; }
 
 function PayStep({ number, name, state, icon }) {
   return <div className="step"><div className={`dot ${state}`}>{icon}</div><div className="step-text"><span className="step-num">STEP {number}</span><span className="step-name">{name}</span></div></div>;
-}
-
-function AssistItem({ icon, heading, text }) {
-  return <div className="assist-item"><span className="assist-icon">{icon}</span><div><p className="assist-head">{heading}</p><p className="assist-body">{text}</p></div></div>;
 }

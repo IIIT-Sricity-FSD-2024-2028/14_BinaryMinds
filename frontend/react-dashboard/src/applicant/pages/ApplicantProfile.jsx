@@ -92,11 +92,6 @@ export default function ApplicantProfile() {
 
   return (
     <div className="applicant-profile-page">
-      <div className="top-bar">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo" style={{ filter: 'none' }} />
-        <div className="brand"><span>Government of India</span><strong>TradeZo</strong></div>
-      </div>
-
       <ApplicantNavigation onLogout={handleLogout} />
 
       <main>
@@ -124,7 +119,7 @@ export default function ApplicantProfile() {
               <div className="detail-grid">
                 <div><small>AADHAAR NUMBER</small><p>{latestApplication?.aadhaar || '—'}</p></div>
                 <div><small>GENDER</small><p>{latestApplication?.gender || '—'}</p></div>
-                <div><small>NATIONALITY</small><p>Not provided</p></div>
+                <div><small>NATIONALITY</small><p>Indian</p></div>
               </div>
               <div className="address-block"><small>ADDRESS</small><p>{latestApplication?.address || '—'}</p></div>
             </section>

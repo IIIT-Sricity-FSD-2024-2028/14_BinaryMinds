@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PublicNavigation from '../../common-components/PublicNavigation';
 import '../styles/ApplicantRegistration.css';
 
@@ -15,6 +15,11 @@ export default function ApplicantRegistration() {
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [visiblePasswords, setVisiblePasswords] = useState({ password: false, confirmPassword: false });
+
+  const togglePasswordVisibility = (field) => {
+    setVisiblePasswords((current) => ({ ...current, [field]: !current[field] }));
+  };
 
   const updateField = (event) => {
     const { name, value } = event.target;
@@ -43,6 +48,10 @@ export default function ApplicantRegistration() {
     }
     if (form.password.length < 6 || form.password.length > 255) {
       setMessage('Password must be between 6 and 255 characters.');
+      return;
+    }
+    if (!/[A-Za-z]/.test(form.password) || !/\d/.test(form.password) || !/[^A-Za-z0-9]/.test(form.password)) {
+      setMessage('Password must include at least one letter, one number, and one special character.');
       return;
     }
     if (form.confirmPassword.length < 6 || form.confirmPassword.length > 255) {
@@ -127,11 +136,18 @@ export default function ApplicantRegistration() {
           </div>
 
           <div className="form-group">
-            <input type="password" name="password" placeholder="Password (Min. 6 chars)" autoComplete="new-password" minLength={6} maxLength={255} required value={form.password} onChange={updateField} />
+            <div className="registration-page-password-field">
+              <input type={visiblePasswords.password ? 'text' : 'password'} name="password" placeholder="Password (letter, number, special character)" autoComplete="new-password" minLength={6} maxLength={255} required value={form.password} onChange={updateField} aria-describedby="registration-password-help" />
+              <PasswordVisibilityButton visible={visiblePasswords.password} onClick={() => togglePasswordVisibility('password')} label="password" />
+            </div>
+            <small id="registration-password-help">Use at least one letter, one number, and one special character.</small>
           </div>
 
           <div className="form-group">
-            <input type="password" name="confirmPassword" placeholder="Confirm Password" autoComplete="new-password" minLength={6} maxLength={255} required value={form.confirmPassword} onChange={updateField} />
+            <div className="registration-page-password-field">
+              <input type={visiblePasswords.confirmPassword ? 'text' : 'password'} name="confirmPassword" placeholder="Confirm Password" autoComplete="new-password" minLength={6} maxLength={255} required value={form.confirmPassword} onChange={updateField} />
+              <PasswordVisibilityButton visible={visiblePasswords.confirmPassword} onClick={() => togglePasswordVisibility('confirmPassword')} label="confirm password" />
+            </div>
           </div>
 
           <p
@@ -147,10 +163,37 @@ export default function ApplicantRegistration() {
           </button>
 
           <p className="login-text">
-            Already have an account? <Link to="/login">Login Here</Link>
+            Already have an account? <a href="/login">Login Here</a>
           </p>
         </form>
       </div>
     </div>
+  );
+}
+
+function PasswordVisibilityButton({ visible, onClick, label }) {
+  return (
+    <button
+      className="password-visibility-toggle"
+      type="button"
+      onClick={onClick}
+      aria-label={`${visible ? 'Hide' : 'Show'} ${label}`}
+      aria-pressed={visible}
+      title={`${visible ? 'Hide' : 'Show'} ${label}`}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        {visible ? (
+          <>
+            <path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8" />
+            <path d="M9.9 5.2A10.9 10.9 0 0112 5c5 0 9 4.5 10 7-.4 1-1.4 2.4-2.8 3.7M6.2 6.2C3.9 7.7 2.4 10 2 12c1 2.5 5 7 10 7 1.3 0 2.5-.3 3.6-.8" />
+          </>
+        ) : (
+          <>
+            <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+            <circle cx="12" cy="12" r="3" />
+          </>
+        )}
+      </svg>
+    </button>
   );
 }

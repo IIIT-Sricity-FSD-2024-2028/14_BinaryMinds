@@ -70,10 +70,6 @@ export default function ApplicantPaymentFailure() {
 
   return (
     <div className="applicant-payment-failure-page">
-      <header className="failure-header">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo" />
-        <div className="failure-brand"><span>Government of India</span><strong>TradeZo</strong></div>
-      </header>
       <ApplicantNavigation onLogout={logout} />
       <main className="failure-main">
         {loading ? <p className="failure-message" role="status">Verifying payment status with TradeZo...</p> : error ? (

@@ -6,6 +6,9 @@ export interface Document {
   application_id: number;
   document_type: DocumentType;
   file_path: string;
+  original_filename?: string;
+  mime_type?: string;
   verification_status: VerificationStatus;
+  rejection_reason?: string;
   uploaded_at?: Date;
 }

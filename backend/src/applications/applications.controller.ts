@@ -11,6 +11,8 @@ import {
   ParseIntPipe,
   Req,
   UseGuards,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ApplicationsService } from './applications.service';
@@ -26,6 +28,7 @@ import { ApiRoute } from '../common/swagger/api-route.decorator';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
 import { AuthenticatedUser } from '../auth/auth-session.interface';
 import { UsersService } from '../users/users.service';
+import { FieldOfficerAssignmentsService } from '../field-officer-assignments/field-officer-assignments.service';
 
 @ApiTags('Applications')
 @ApiExtraModels(CreateApplicationDto, CreateSimpleApplicationDto, AssignOfficerDto)
@@ -36,6 +39,8 @@ export class ApplicationsController {
     private readonly applicationsService: ApplicationsService,
     private readonly auditLogsService: AuditLogsService,
     private readonly usersService: UsersService,
+    @Inject(forwardRef(() => FieldOfficerAssignmentsService))
+    private readonly fieldOfficerAssignmentsService: FieldOfficerAssignmentsService,
   ) {}
 
   // ── NEW WORKFLOW ENDPOINTS ───────────────────────────────────────────
@@ -74,6 +79,9 @@ export class ApplicationsController {
         applicantName,
         aadhaar_number: body.aadhaar_number,
         gender: body.gender,
+        father_name: body.father_name,
+        mother_name: body.mother_name,
+        shop_area: body.shop_area,
         businessName: bizName,
         businessType: body.businessType || body.business_type,
         tradeCategory: cat,
@@ -154,6 +162,9 @@ export class ApplicationsController {
 
     if (officerId) {
       const targetOfficer = this.usersService.findOne(Number(officerId));
+      if (targetOfficer.role !== Role.FIELD_OFFICER) {
+        throw new BadRequestException('Applications can only be assigned to a Field Officer');
+      }
       if (
         (targetOfficer.municipality_id || '').toLowerCase() !==
         (existing.municipality_id || '').toLowerCase()
@@ -163,6 +174,11 @@ export class ApplicationsController {
     }
 
     const app = this.applicationsService.assignToOfficer(id, officerId ? Number(officerId) : undefined);
+    this.fieldOfficerAssignmentsService.createForAssignedApplication(
+      id,
+      Number(app.assignedOfficerId),
+      request.user.userId,
+    );
     this.auditLogsService.log({
       user_name: request?.user?.fullName || 'Super User',
       role: 'superuser',
@@ -405,4 +421,3 @@ export class ApplicationsController {
     return { success: true, data: null };
   }
 }
-

@@ -26,6 +26,21 @@ export default function ApplicantProfileEdit() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordNotice, setPasswordNotice] = useState('');
+  const [visiblePasswords, setVisiblePasswords] = useState({
+    currentPassword: false,
+    newPassword: false,
+    confirmPassword: false,
+  });
+
+  function togglePasswordVisibility(field) {
+    setVisiblePasswords((current) => ({ ...current, [field]: !current[field] }));
+  }
 
   useEffect(() => {
     let active = true;
@@ -75,6 +90,57 @@ export default function ApplicantProfileEdit() {
   function updateField(field, value) {
     setProfile((current) => ({ ...current, [field]: value }));
     setNotice('');
+  }
+
+  async function handlePasswordSubmit(event) {
+    event.preventDefault();
+    setPasswordError('');
+    setPasswordNotice('');
+    if (!currentPassword || !newPassword) {
+      setPasswordError('Enter your current password and a new password.');
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPasswordError('New password must be at least 6 characters long.');
+      return;
+    }
+    if (!/[A-Za-z]/.test(newPassword) || !/\d/.test(newPassword) || !/[^A-Za-z0-9]/.test(newPassword)) {
+      setPasswordError('New password must include at least one letter, one number, and one special character.');
+      return;
+    }
+    if (currentPassword === newPassword) {
+      setPasswordError('New password must be different from your current password.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError('New password and confirmation do not match.');
+      return;
+    }
+
+    const token = sessionStorage.getItem('accessToken');
+    if (!token) {
+      setPasswordError('Your session has expired. Please sign in again.');
+      return;
+    }
+
+    setPasswordSaving(true);
+    try {
+      const response = await fetch(`${apiBase}/users/me/password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(apiError(payload, 'Unable to change your password.'));
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setPasswordNotice('Password changed successfully. Use the new password the next time you sign in.');
+    } catch (requestError) {
+      setPasswordError(requestError.message || 'Unable to change your password. Please try again.');
+    } finally {
+      setPasswordSaving(false);
+    }
   }
 
   async function handleSubmit(event) {
@@ -133,7 +199,6 @@ export default function ApplicantProfileEdit() {
 
   return (
     <div className="applicant-profile-edit-page">
-      <header className="profile-edit-topbar"><img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo" /><div className="profile-edit-brand"><span>Government of India</span><strong>TradeZo</strong></div></header>
       <ApplicantNavigation onLogout={logout} />
       <main className="profile-edit-main">
         <h1>Edit Applicant Profile</h1>
@@ -158,7 +223,48 @@ export default function ApplicantProfileEdit() {
             </form>
           </section>
         </div>
+        <section className="profile-edit-card profile-password-card">
+          <form onSubmit={handlePasswordSubmit}>
+            <h2>Password &amp; Security</h2>
+            <p className="profile-password-help">Change your sign-in password. Your current password is required to confirm this change.</p>
+            <div className="profile-edit-grid">
+              <div className="profile-edit-group"><label htmlFor="current-password">Current Password</label><div className="profile-password-field"><input id="current-password" type={visiblePasswords.currentPassword ? 'text' : 'password'} autoComplete="current-password" required value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} disabled={loading || Boolean(error) || passwordSaving} /><PasswordVisibilityButton visible={visiblePasswords.currentPassword} onClick={() => togglePasswordVisibility('currentPassword')} label="current password" /></div></div>
+              <div className="profile-edit-group"><label htmlFor="new-password">New Password</label><div className="profile-password-field"><input id="new-password" type={visiblePasswords.newPassword ? 'text' : 'password'} autoComplete="new-password" minLength={6} required value={newPassword} onChange={(event) => setNewPassword(event.target.value)} disabled={loading || Boolean(error) || passwordSaving} aria-describedby="new-password-help" /><PasswordVisibilityButton visible={visiblePasswords.newPassword} onClick={() => togglePasswordVisibility('newPassword')} label="new password" /></div><small id="new-password-help">Must be at least 6 characters, include a letter, number, and special character, and differ from your current password.</small></div>
+              <div className="profile-edit-group"><label htmlFor="confirm-password">Confirm New Password</label><div className="profile-password-field"><input id="confirm-password" type={visiblePasswords.confirmPassword ? 'text' : 'password'} autoComplete="new-password" minLength={6} required value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} disabled={loading || Boolean(error) || passwordSaving} /><PasswordVisibilityButton visible={visiblePasswords.confirmPassword} onClick={() => togglePasswordVisibility('confirmPassword')} label="confirm new password" /></div></div>
+            </div>
+            {passwordError && <p className="profile-edit-message profile-edit-error" role="alert">{passwordError}</p>}
+            {passwordNotice && <p className="profile-edit-message" role="status">{passwordNotice}</p>}
+            <div className="profile-edit-actions"><button type="submit" className="profile-edit-save" disabled={loading || passwordSaving || Boolean(error)}>{passwordSaving ? 'Changing Password...' : 'Change Password'}</button></div>
+          </form>
+        </section>
       </main>
     </div>
+  );
+}
+
+function PasswordVisibilityButton({ visible, onClick, label }) {
+  return (
+    <button
+      className="password-visibility-toggle"
+      type="button"
+      onClick={onClick}
+      aria-label={`${visible ? 'Hide' : 'Show'} ${label}`}
+      aria-pressed={visible}
+      title={`${visible ? 'Hide' : 'Show'} ${label}`}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        {visible ? (
+          <>
+            <path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8" />
+            <path d="M9.9 5.2A10.9 10.9 0 0112 5c5 0 9 4.5 10 7-.4 1-1.4 2.4-2.8 3.7M6.2 6.2C3.9 7.7 2.4 10 2 12c1 2.5 5 7 10 7 1.3 0 2.5-.3 3.6-.8" />
+          </>
+        ) : (
+          <>
+            <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+            <circle cx="12" cy="12" r="3" />
+          </>
+        )}
+      </svg>
+    </button>
   );
 }

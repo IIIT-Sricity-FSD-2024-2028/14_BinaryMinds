@@ -8,6 +8,7 @@ export interface Application {
 
   full_name: string;
   father_name?: string;
+  mother_name?: string;
   date_of_birth?: Date | string;
   gender?: string;
 
@@ -19,6 +20,7 @@ export interface Application {
   business_name: string;
   business_type?: string;
   trade_category?: string;
+  shop_area?: string;
 
   shop_address?: string;
   city?: string;

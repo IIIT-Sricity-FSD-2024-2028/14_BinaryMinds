@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { DocumentsRepository } from './documents.repository';
 import { ApplicationsService } from '../applications/applications.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
@@ -31,30 +31,49 @@ export class DocumentsService {
     return this.documentsRepository.findByApplication(applicationId);
   }
 
-  create(createDocumentDto: CreateDocumentDto, filePath: string): Document {
+  create(
+    createDocumentDto: CreateDocumentDto,
+    filePath: string,
+    originalFilename: string,
+    mimeType: string,
+  ): Document {
     // Validate application exists before assigning document
     this.applicationsService.findOne(createDocumentDto.application_id);
 
     const newDoc = {
       ...createDocumentDto,
       file_path: filePath,
+      original_filename: originalFilename,
+      mime_type: mimeType,
       verification_status: VerificationStatus.PENDING,
     };
 
     return this.documentsRepository.create(newDoc);
   }
 
-  updateVerificationStatus(id: number, status: VerificationStatus): Document {
-    this.findOne(id); // Validate existence
+  updateVerificationStatus(id: number, status: VerificationStatus, rejectionReason?: string): Document {
+    const existing = this.findOne(id);
+    if (status === VerificationStatus.REJECTED && !rejectionReason?.trim()) {
+      throw new BadRequestException('A rejection reason is required when rejecting a document');
+    }
+    if (status !== VerificationStatus.PENDING &&
+        status !== VerificationStatus.VERIFIED &&
+        status !== VerificationStatus.REJECTED) {
+      throw new BadRequestException('Invalid document verification status');
+    }
+    const reason = rejectionReason?.trim();
     const updated = this.documentsRepository.update(id, {
       verification_status: status,
+      rejection_reason: status === VerificationStatus.REJECTED
+        ? reason
+        : undefined,
     });
     if (!updated) {
       throw new NotFoundException(
         `Document with ID ${id} not found during update`,
       );
     }
-    return updated;
+    return { ...existing, ...updated };
   }
 
   remove(id: number): void {

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Forgot Password | TradeZo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top-header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem of India">
+    <div><span>Government of India</span><strong>TradeZo</strong></div>
+  </header>
+  <nav class="navbar" aria-label="Main navigation">
+    <a href="../Applicant%20dashboard/index.html">Dashboard</a>
+    <a href="../landing%20page/index.html">Home</a>
+    <a href="../apply_license/apply_license.html">Apply License</a>
+    <a href="../Track%20Application%20Status/index.html">Track Application</a>
+    <a href="../login/index.html">Login</a>
+    <a href="../Register/index.html">Register</a>
+  </nav>
+  <main class="content">
+    <section class="intro">
+      <h1>Forgot Your Password?</h1>
+      <p>Reset your password to continue accessing TradeZo trade license services.</p>
+    </section>
+    <section class="card" aria-labelledby="resetTitle">
+      <h2 id="resetTitle">Reset Password</h2>
+      <p class="help">Enter your registered email to view password recovery options.</p>
+      <form id="forgotPasswordForm">
+        <label for="resetEmail">Email Address</label>
+        <input id="resetEmail" name="email" type="email" autocomplete="email" maxlength="120" placeholder="Enter registered email" required>
+        <button type="submit">Check Recovery Options</button>
+      </form>
+      <p id="resetMessage" class="message" role="status" aria-live="polite"></p>
+      <a class="back" href="../login/index.html">Back to Login</a>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

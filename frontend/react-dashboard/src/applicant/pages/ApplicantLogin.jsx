@@ -164,7 +164,7 @@ export default function ApplicantLogin() {
       } else if (user.role === 'applicant') {
         navigate('/dashboard');
       } else if (user.role === 'department_officer') {
-        navigate('/department-officer');
+        window.location.assign('../../../do_connected/dashboard/index.html');
       }
     } catch (error) {
       setErrors({ email: error.message || 'Unable to sign in. Check the server connection and try again.' });
@@ -268,7 +268,7 @@ export default function ApplicantLogin() {
           </div>
 
           <p className="register-text" style={{ marginBottom: '8px' }}>
-            New Applicant? <Link to="/register">Register Here</Link>
+            New Applicant? <a href="/register">Register Here</a>
           </p>
 
           <div className="demo-box" style={{ width: '100%', marginTop: '14px' }}>

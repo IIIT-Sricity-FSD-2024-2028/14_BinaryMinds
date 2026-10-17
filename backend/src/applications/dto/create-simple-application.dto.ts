@@ -31,6 +31,21 @@ export class CreateSimpleApplicationDto {
   @MaxLength(20)
   gender?: string;
 
+  @IsString()
+  @IsOptional()
+  @MaxLength(120)
+  father_name?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(120)
+  mother_name?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(20)
+  shop_area?: string;
+
   @ApiProperty({ description: 'Business name', example: 'Registered Business Name', required: false })
   @IsString()
   @IsOptional()
@@ -85,4 +100,3 @@ export class CreateSimpleApplicationDto {
   @MaxLength(20)
   phone?: string;
 }
-

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { getOfficerApplications } from '../../api';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getOfficerApplications, verifyApplication } from '../../services/api';
 import FieldOfficerLayout from '../components/FieldOfficerLayout';
 import '../styles/FieldOfficerDashboard.css';
 
@@ -26,10 +26,13 @@ async function getProtectedData(path, token) {
 
 export default function FieldOfficerDashboard() {
   const { officerId } = useParams();
+  const navigate = useNavigate();
   const [apps, setApps] = useState([]);
   const [inspectionCount, setInspectionCount] = useState(null);
   const [loading, setLoading] = useState(true);
   const [summaryLoading, setSummaryLoading] = useState(true);
+  const [verifying, setVerifying] = useState(null);
+  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [summaryError, setSummaryError] = useState('');
   const [search, setSearch] = useState('');
@@ -78,6 +81,17 @@ export default function FieldOfficerDashboard() {
     return () => { active = false; };
   }, [officerId]);
 
+  const handleVerify = async (application) => {
+    setVerifying(application.application_id); setError(''); setMessage('');
+    try {
+      await verifyApplication(application.application_id);
+      setMessage(`Application ${application.application_ref || `#${application.application_id}`} marked verified in the backend.`);
+      setApps(await fetchData());
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || requestError.message || 'Could not verify this application.');
+    } finally { setVerifying(null); }
+  };
+
   const verifiedCount = apps.filter((item) => item.application_status === 'verified').length;
   const filteredApps = apps.filter((item) => [
     item.application_ref,
@@ -90,6 +104,7 @@ export default function FieldOfficerDashboard() {
   return (
     <FieldOfficerLayout>
       <main className="fo-dashboard-page">
+        {message && <p className="fo-dashboard-message" role="status">{message}</p>}
         {error && <p className="fo-dashboard-message error" role="alert">{error}</p>}
 
         <h1 className="fo-dashboard-title">Field Officer – Admin Team</h1>

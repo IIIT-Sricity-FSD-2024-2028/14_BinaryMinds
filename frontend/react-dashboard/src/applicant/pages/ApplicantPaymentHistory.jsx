@@ -115,7 +115,6 @@ export default function ApplicantPaymentHistory() {
 
   return (
     <div className="applicant-payment-history-page">
-      <header className="history-topbar"><img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo" /><div className="history-brand"><span>Government of India</span><strong>TradeZo</strong></div></header>
       <ApplicantNavigation onLogout={logout} />
       <main className="history-main">
         <h1>Payment History</h1>
@@ -152,7 +151,7 @@ export default function ApplicantPaymentHistory() {
               <li>{latestSuccessful ? 'Print the completed payment record from the transaction table.' : 'Receipt actions are available for completed payment records.'}</li>
             </ul>
             <button type="button" className="history-print" onClick={() => window.print()}>▣ Print Full Statement</button>
-            <div className="history-assist"><p><strong>Need Assistance?</strong></p><p>If you face issues with payment records or receipt printing, contact the Help Desk.</p><Link to="/helpdesk">Contact Support</Link><h3>1800-123-4567</h3></div>
+            <div className="history-assist"><p><strong>Need Assistance?</strong></p><p>If you face issues with payment records or receipt printing, call support.</p><h3>1800-123-4567</h3></div>
           </section></aside>
         </div>
 

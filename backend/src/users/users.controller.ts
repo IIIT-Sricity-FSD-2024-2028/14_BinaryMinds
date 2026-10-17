@@ -9,6 +9,7 @@ import {
   Delete,
   BadRequestException,
   ForbiddenException,
+  UnauthorizedException,
   ParseIntPipe,
   Req,
   UseGuards,
@@ -26,6 +27,8 @@ import { AuditLogsService } from '../audit-logs/audit-logs.service';
 import { Public } from '../common/decorators/public.decorator';
 import { RegisterApplicantDto } from './dto/register-applicant.dto';
 import { AuthenticatedUser } from '../auth/auth-session.interface';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { hashPassword, verifyPassword } from '../auth/password.util';
 
 @ApiTags('Users')
 @Controller('users')
@@ -271,13 +274,45 @@ export class UsersController {
         role: Role.PLATFORM_ADMIN,
       };
     }
-    return this.usersService.findOne(request.user.userId);
+    return this.profileResponse(this.usersService.findOne(request.user.userId));
   }
 
   @Get('me')
   @Roles(Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER, Role.APPLICANT, Role.SUPER_USER, Role.PLATFORM_ADMIN)
   getMe(@Req() request: Request & { user: AuthenticatedUser }) {
     return this.getProfile(request);
+  }
+
+  @Put('me/password')
+  @Roles(Role.APPLICANT)
+  changeOwnPassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
+    const user = this.usersService.findOne(request.user.userId);
+    if (
+      user.role !== Role.APPLICANT ||
+      !verifyPassword(changePasswordDto.currentPassword, user.password_hash)
+    ) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+    if (verifyPassword(changePasswordDto.newPassword, user.password_hash)) {
+      throw new BadRequestException('New password must be different from your current password');
+    }
+
+    this.usersService.update(user.user_id, {
+      password_hash: hashPassword(changePasswordDto.newPassword),
+    });
+    this.auditLogsService.log({
+      user_name: request.user.fullName || user.full_name,
+      role: Role.APPLICANT,
+      action: 'Update',
+      module: 'Authentication',
+      description: 'Applicant changed their password',
+      ip_address: 'server',
+      source: 'backend',
+    });
+    return { success: true, message: 'Password updated successfully.' };
   }
 
   @Get(':id')
@@ -294,7 +329,7 @@ export class UsersController {
   ) {
     const user = this.usersService.findOne(id);
     if (request.user.role === Role.PLATFORM_ADMIN || request.user.userId === id) {
-      return user;
+      return this.profileResponse(user);
     }
     const userMuni = request.user.municipalityId;
     if (!userMuni || (user.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()) {
@@ -304,10 +339,10 @@ export class UsersController {
   }
 
   @Put(':id')
-  @Roles(Role.DEPARTMENT_OFFICER, Role.APPLICANT, Role.SUPER_USER, Role.PLATFORM_ADMIN)
+  @Roles(Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER, Role.APPLICANT, Role.SUPER_USER, Role.PLATFORM_ADMIN)
   @ApiRoute({
     summary: 'Update user by ID',
-    roles: [Role.DEPARTMENT_OFFICER, Role.APPLICANT, Role.SUPER_USER, Role.PLATFORM_ADMIN],
+    roles: [Role.DEPARTMENT_OFFICER, Role.FIELD_OFFICER, Role.APPLICANT, Role.SUPER_USER, Role.PLATFORM_ADMIN],
     params: [{ name: 'id', description: 'User ID' }],
     bodyType: UpdateUserDto,
     responseExample: { user_id: 1, full_name: 'Updated Name', role: 'applicant' },
@@ -318,6 +353,17 @@ export class UsersController {
     @Req() request: Request & { user: AuthenticatedUser },
   ) {
     const existing = this.usersService.findOne(id);
+    let update: UpdateUserDto = updateUserDto;
+    if (request.user.role === Role.FIELD_OFFICER) {
+      if (request.user.userId !== id || existing.role !== Role.FIELD_OFFICER) {
+        throw new ForbiddenException('Field Officers can only update their own contact details');
+      }
+      update = {
+        ...(updateUserDto.full_name !== undefined ? { full_name: updateUserDto.full_name } : {}),
+        ...(updateUserDto.email !== undefined ? { email: updateUserDto.email } : {}),
+        ...(updateUserDto.phone !== undefined ? { phone: updateUserDto.phone } : {}),
+      };
+    }
     if (request.user.role !== Role.PLATFORM_ADMIN && request.user.userId !== id) {
       const userMuni = request.user.municipalityId;
       if (!userMuni || (existing.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()) {
@@ -325,7 +371,7 @@ export class UsersController {
       }
     }
 
-    const user = this.usersService.update(id, updateUserDto);
+    const user = this.usersService.update(id, update);
     this.auditLogsService.log({
       user_name: request.user.fullName || user.full_name,
       role: String(user.role),
@@ -335,7 +381,7 @@ export class UsersController {
       ip_address: '127.0.0.1',
       source: 'backend',
     });
-    return user;
+    return this.profileResponse(user);
   }
 
   @Delete(':id')
@@ -370,5 +416,9 @@ export class UsersController {
     });
     return { success: true, message: `User ${id} removed` };
   }
-}
 
+  private profileResponse<T extends { password_hash?: string }>(user: T): Omit<T, 'password_hash'> {
+    const { password_hash: _passwordHash, ...profile } = user;
+    return profile;
+  }
+}

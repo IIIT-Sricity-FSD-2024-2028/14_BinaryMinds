@@ -3,7 +3,7 @@ import '../../../../applicant_connected/connected/landing page/style.css';
 
 export default function ApplicantLandingPage() {
   return (
-    <div className="applicant-landing-page">
+    <>
       <a className="skip-link" href="#main-content">
         Skip to Main Content
       </a>
@@ -68,20 +68,20 @@ export default function ApplicantLandingPage() {
 
         <section className="section notices">
           <h2><span aria-hidden="true">&#128276;</span> Important Notices</h2>
-          <p className="section-intro">Examples only. Check with your municipal corporation for current deadlines and requirements.</p>
-          <ul><li>Renewal deadlines vary by municipality.</li><li>Review local business registration guidelines before applying.</li><li>Upload current identity and business documents with your application.</li></ul>
+          <p className="section-intro">Latest information for TradeZo applicants.</p>
+          <ul><li>Trade license renewal deadline extended to 30 June.</li><li>New guidelines for business registration issued.</li><li>Applicants must upload valid identity documents.</li></ul>
         </section>
       </main>
 
       <footer className="site-footer">
         <div className="footer-grid">
-          <section><h2>About the Portal</h2><Link to="/">About TradeZo</Link><Link to="/helpdesk">Help Desk</Link></section>
+          <section><h2>About the Portal</h2><a href="/">About TradeZo</a><p>Privacy Policy</p><p>Terms &amp; Conditions</p></section>
           <section><h2>Important Links</h2><Link to="/apply-license">Apply License</Link><Link to="/track-status">Track Application</Link><Link to="/download-license">Download License</Link></section>
           <section><h2>Contact Us</h2><p>Trade License Department</p><p>Municipal Corporation</p><p>+91 7422 588991</p></section>
           <section><h2>Platform Access</h2><Link to="/platform-admin/login">TradeZo Platform Admin</Link><p>Internal platform management</p></section>
         </div>
         <p className="copyright">&copy; 2026 TradeZo Trade License Management System. All Rights Reserved.</p>
       </footer>
-    </div>
+    </>
   );
 }

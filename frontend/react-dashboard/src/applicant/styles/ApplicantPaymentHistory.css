@@ -40,7 +40,6 @@
 .applicant-payment-history-page .history-print { width: 100%; margin-bottom: 16px; padding: 10px; border: 0; border-radius: 8px; background: #1e3a8a; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
 .applicant-payment-history-page .history-assist { padding: 14px 16px; border: 1px solid #bfdbfe; border-radius: 8px; background: #eff6ff; color: #1d4ed8; font-size: 13px; line-height: 1.6; }
 .applicant-payment-history-page .history-assist p { margin: 0 0 4px; }
-.applicant-payment-history-page .history-assist a { color: #1e40af; font-weight: 700; }
 .applicant-payment-history-page .history-assist h3 { margin: 6px 0 0; font-size: 18px; }
 .applicant-payment-history-page .receipts-panel { margin-bottom: 24px; }
 .applicant-payment-history-page .history-dot { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: #16a34a; }

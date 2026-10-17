@@ -1,4 +1,5 @@
 (function() {
+  document.documentElement.style.visibility = 'hidden';
   function safeParse(value) {
     try { return JSON.parse(value); } catch (error) { return null; }
   }
@@ -15,12 +16,28 @@
   };
 
   var user = safeParse(sessionStorage.getItem('loggedInUser') || 'null');
-  if (!user || typeof user.name !== 'string' || !user.name.trim() || typeof user.email !== 'string' || !user.email.trim() || typeof user.role !== 'string' || !user.role.trim() || typeof user.accessToken !== 'string' || !user.accessToken.trim() || user.role.toLowerCase() !== 'applicant') {
+  var token = sessionStorage.getItem('accessToken') || '';
+  if (!user || !user.email || user.role !== 'applicant' || !token) {
     sessionStorage.removeItem('loggedInUser');
     sessionStorage.removeItem('accessToken');
     window.location.href = '../login/index.html';
     return;
   }
+
+  fetch('http://localhost:3000/api/users/me', { headers: { Authorization: 'Bearer ' + token } })
+    .then(function(response) {
+      if (!response.ok) throw new Error('Session expired');
+      return response.json();
+    })
+    .then(function(profile) {
+      if (!profile || profile.role !== 'applicant') throw new Error('Invalid role');
+      document.documentElement.style.visibility = '';
+    })
+    .catch(function() {
+      sessionStorage.removeItem('loggedInUser');
+      sessionStorage.removeItem('accessToken');
+      window.location.href = '../login/index.html';
+    });
 })();
 
 document.addEventListener('DOMContentLoaded', function() {

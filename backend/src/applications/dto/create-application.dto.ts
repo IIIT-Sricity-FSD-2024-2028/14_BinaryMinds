@@ -38,6 +38,16 @@ export class CreateApplicationDto {
   @MaxLength(120)
   father_name?: string;
 
+  @IsString()
+  @IsOptional()
+  @MaxLength(120)
+  mother_name?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(20)
+  shop_area?: string;
+
   @IsDateString()
   @IsOptional()
   date_of_birth?: string;

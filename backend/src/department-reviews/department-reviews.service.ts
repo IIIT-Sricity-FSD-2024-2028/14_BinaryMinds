@@ -5,6 +5,8 @@ import { CreateDepartmentReviewDto } from './dto/create-department-review.dto';
 import { ReviewStatus } from '../common/enums/review-status.enum';
 import { ApplicationsService } from '../applications/applications.service';
 import { UsersService } from '../users/users.service';
+import { ApplicationStatus } from '../common/enums/application-status.enum';
+import { Role } from '../common/enums/role.enum';
 
 @Injectable()
 export class DepartmentReviewsService {
@@ -43,6 +45,84 @@ export class DepartmentReviewsService {
       status: data.status || ReviewStatus.PENDING,
       reviewed_at: new Date(),
     });
+  }
+
+  decide(
+    applicationId: number,
+    reviewerId: number,
+    status: ReviewStatus,
+    comments: string,
+  ): { review: DepartmentReview; application: ReturnType<ApplicationsService['findOne']> } {
+    if (
+      ![ReviewStatus.APPROVED, ReviewStatus.REJECTED, ReviewStatus.CLARIFICATION_REQUESTED].includes(status)
+    ) {
+      throw new BadRequestException('Choose an approval, rejection, or clarification decision');
+    }
+    if (!comments.trim()) {
+      throw new BadRequestException('A formal justification is required');
+    }
+    const application = this.applicationsService.findOne(applicationId);
+    const reviewer = this.usersService.findOne(reviewerId);
+    if (reviewer.role !== Role.DEPARTMENT_OFFICER) {
+      throw new BadRequestException('Only a Department Officer can decide this review');
+    }
+    if (
+      ![
+        ApplicationStatus.INSPECTION_SCHEDULED,
+        ApplicationStatus.INSPECTION_COMPLETED,
+        ApplicationStatus.DEPARTMENT_REVIEW,
+      ].includes(application.application_status)
+    ) {
+      throw new BadRequestException(
+        `Application ${applicationId} is not eligible for final review (current: ${application.application_status})`,
+      );
+    }
+
+    let review = this.repository.findByApplication(applicationId)[0];
+    if (review?.digital_signature) {
+      throw new BadRequestException('Cannot modify a signed review');
+    }
+
+    if (application.application_status === ApplicationStatus.INSPECTION_SCHEDULED) {
+      this.applicationsService.update(applicationId, {
+        application_status: ApplicationStatus.INSPECTION_COMPLETED,
+      });
+    }
+    if (
+      application.application_status === ApplicationStatus.INSPECTION_SCHEDULED ||
+      application.application_status === ApplicationStatus.INSPECTION_COMPLETED
+    ) {
+      this.applicationsService.update(applicationId, {
+        application_status: ApplicationStatus.DEPARTMENT_REVIEW,
+      });
+    }
+
+    const reviewedAt = new Date();
+    if (review) {
+      review = this.repository.update(review.review_id, {
+        reviewer_id: reviewerId,
+        status,
+        comments: comments.trim(),
+        reviewed_at: reviewedAt,
+      })!;
+    } else {
+      review = this.repository.create({
+        application_id: applicationId,
+        reviewer_id: reviewerId,
+        status,
+        comments: comments.trim(),
+        reviewed_at: reviewedAt,
+      });
+    }
+
+    if (status === ReviewStatus.APPROVED || status === ReviewStatus.REJECTED) {
+      const finalStatus = status === ReviewStatus.APPROVED
+        ? ApplicationStatus.APPROVED
+        : ApplicationStatus.REJECTED;
+      this.applicationsService.update(applicationId, { application_status: finalStatus });
+    }
+
+    return { review, application: this.applicationsService.findOne(applicationId) };
   }
 
   update(id: number, updateData: Partial<DepartmentReview>): DepartmentReview {

@@ -33,6 +33,15 @@ export class InspectionsService {
     return this.repository.findByAssignment(assignmentId);
   }
 
+  findByApplication(applicationId: number): Inspection[] {
+    return this.assignmentsService.findByApplication(applicationId)
+      .flatMap((assignment) => this.repository.findByAssignment(assignment.assignment_id));
+  }
+
+  findAssignment(assignmentId: number) {
+    return this.assignmentsService.findOne(assignmentId);
+  }
+
   findByFieldOfficer(fieldOfficerId: number): Inspection[] {
     return this.repository.findByFieldOfficer(fieldOfficerId);
   }

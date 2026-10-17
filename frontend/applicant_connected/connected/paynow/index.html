@@ -134,8 +134,8 @@
             <input type="radio" name="method" value="net"> &#127981; Net Banking
           </label>
 
-          <button class="pay-btn" id="payBtn" onclick="doPayment()">&#128274; Pay Now &nbsp;<span id="btnFee">&#8377;0.00</span></button>
-          <p class="small-note">By clicking "Pay Now" you agree to our Terms of Service and Privacy Policy.</p>
+          <button type="button" class="pay-btn" id="payBtn" onclick="doPayment()">&#128274; Pay Now &nbsp;<span id="btnFee">&#8377;0.00</span></button>
+          <p id="paymentMessage" class="small-note" role="status" aria-live="polite">By clicking "Pay Now" you agree to our Terms of Service and Privacy Policy.</p>
         </div>
 
       </div>
@@ -177,6 +177,6 @@
   </div>
 
   <script src="../../../mockdata.js?v=application-dedupe-20260505"></script>
-  <script src="scriot.js?v=application-dedupe-20260505"></script>
+  <script src="scriot.js?v=payment-flow-recovery-20261007"></script>
 </body>
 </html>

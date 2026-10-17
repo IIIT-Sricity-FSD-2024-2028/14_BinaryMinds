@@ -3,9 +3,11 @@ echo "==================================================="
 echo "Starting Digital Governance License System"
 echo "==================================================="
 
+PROJECT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
+
 echo ""
 echo "[1/2] Starting Backend Server..."
-cd backend && npm run start:dev &
+(cd "$PROJECT_DIR/backend" && npm run start:dev) &
 BACKEND_PID=$!
 
 echo ""
@@ -26,10 +28,8 @@ else
     OPEN_CMD="xdg-open"
 fi
 
-$OPEN_CMD ../frontend/applicant_connected/index.html
-$OPEN_CMD ../frontend/fo_connected/login.html
-$OPEN_CMD ../frontend/do_connected/login.html
-$OPEN_CMD ../frontend/superuser/login.html
+$OPEN_CMD "$PROJECT_DIR/frontend/applicant_connected/connected/login/index.html"
+$OPEN_CMD "$PROJECT_DIR/frontend/platform_admin/login/index.html"
 $OPEN_CMD http://localhost:3000/api/docs
 
 echo ""

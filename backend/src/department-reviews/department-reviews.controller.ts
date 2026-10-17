@@ -10,6 +10,7 @@ import {
   Req,
   UseGuards,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { DepartmentReviewsService } from './department-reviews.service';
@@ -22,6 +23,9 @@ import { Role } from '../common/enums/role.enum';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRoute } from '../common/swagger/api-route.decorator';
 import { AuthenticatedUser } from '../auth/auth-session.interface';
+import { DecideDepartmentReviewDto } from './dto/decide-department-review.dto';
+import { InspectionsService } from '../inspections/inspections.service';
+import { InspectionStatus } from '../common/enums/inspection-status.enum';
 
 import { ApplicationsService } from '../applications/applications.service';
 
@@ -32,7 +36,41 @@ export class DepartmentReviewsController {
   constructor(
     private readonly service: DepartmentReviewsService,
     private readonly applicationsService: ApplicationsService,
+    private readonly inspectionsService: InspectionsService,
   ) {}
+
+  @Post('application/:applicationId/decision')
+  @Roles(Role.DEPARTMENT_OFFICER)
+  @ApiRoute({
+    summary: 'Record an authorized Department Officer application decision',
+    roles: [Role.DEPARTMENT_OFFICER],
+    params: [{ name: 'applicationId', description: 'Application ID' }],
+    bodyType: DecideDepartmentReviewDto,
+    status: 201,
+    responseExample: { review: { review_id: 1, status: 'APPROVED' }, application: { application_status: 'approved' } },
+  })
+  decide(
+    @Param('applicationId', ParseIntPipe) applicationId: number,
+    @Body() decision: DecideDepartmentReviewDto,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
+    const application = this.applicationsService.findOne(applicationId);
+    this.assertMunicipalityAccess(application.municipality_id, request.user);
+    const hasCompletedInspection = this.inspectionsService.findByApplication(applicationId)
+      .some((inspection) =>
+        inspection.status === InspectionStatus.COMPLETED ||
+        inspection.status === InspectionStatus.FAILED,
+      );
+    if (!hasCompletedInspection) {
+      throw new BadRequestException('A completed Field Officer inspection report is required before final review');
+    }
+    return this.service.decide(
+      applicationId,
+      request.user.userId,
+      decision.status,
+      decision.comments,
+    );
+  }
 
   @Post()
   @Roles(Role.DEPARTMENT_OFFICER, Role.SUPER_USER, Role.PLATFORM_ADMIN)
@@ -43,7 +81,15 @@ export class DepartmentReviewsController {
     status: 201,
     responseExample: { review_id: 1, review_status: 'pending' },
   })
-  create(@Body() createDto: CreateDepartmentReviewDto) {
+  create(
+    @Body() createDto: CreateDepartmentReviewDto,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
+    const application = this.applicationsService.findOne(createDto.application_id);
+    if (request.user.role === Role.DEPARTMENT_OFFICER) {
+      this.assertMunicipalityAccess(application.municipality_id, request.user);
+      return this.service.create({ ...createDto, reviewer_id: request.user.userId });
+    }
     return this.service.create(createDto);
   }
 
@@ -145,8 +191,34 @@ export class DepartmentReviewsController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateDto: UpdateDepartmentReviewDto,
+    @Req() request: Request & { user: AuthenticatedUser },
   ) {
-    return this.service.update(id, updateDto);
+    const existing = this.service.findOne(id);
+    const application = this.applicationsService.findOne(existing.application_id);
+    if (request.user.role === Role.DEPARTMENT_OFFICER) {
+      this.assertMunicipalityAccess(application.municipality_id, request.user);
+    }
+    const update = request.user.role === Role.DEPARTMENT_OFFICER
+      ? {
+        status: updateDto.status,
+        comments: updateDto.comments,
+        reviewer_id: request.user.userId,
+      }
+      : updateDto;
+    return this.service.update(id, update);
+  }
+
+  private assertMunicipalityAccess(
+    municipalityId: string | undefined,
+    user: AuthenticatedUser,
+  ): void {
+    const userMuni = user.municipalityId;
+    if (
+      !userMuni ||
+      (municipalityId || '').toLowerCase() !== userMuni.toLowerCase()
+    ) {
+      throw new ForbiddenException('Access denied to applications outside your municipality');
+    }
   }
 
   @Post(':id/sign')

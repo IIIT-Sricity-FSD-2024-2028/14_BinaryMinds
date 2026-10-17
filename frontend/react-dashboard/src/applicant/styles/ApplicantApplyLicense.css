@@ -33,10 +33,6 @@
 .applicant-apply-license-page button { min-height: 44px; padding: 0 20px; border: 0; border-radius: 8px; font: inherit; font-weight: 800; cursor: pointer; }
 .applicant-apply-license-page .cancel-btn { color: #334155; background: #e8edf5; }
 .applicant-apply-license-page .next-btn { color: #fff; background: #1e3a8a; box-shadow: 0 10px 20px rgba(30,58,138,.2); }
-.applicant-apply-license-page .info-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.applicant-apply-license-page .info-box { min-height: 112px; padding: 18px; background: #eef5ff; border: 1px solid #cfe0ff; border-radius: 8px; }
-.applicant-apply-license-page .info-box strong { display: block; margin-bottom: 8px; color: #1e3a8a; }
-.applicant-apply-license-page .info-box p { margin: 0; color: #526176; line-height: 1.5; font-size: 14px; }
 .applicant-apply-license-page .apply-page-error { padding: 10px 12px; color: #b91c1c; background: #fef2f2; border-radius: 6px; }
-@media (max-width: 820px) { .applicant-apply-license-page nav { gap: 0; } .applicant-apply-license-page nav a { flex: 1 1 50%; justify-content: center; } .applicant-apply-license-page .steps { grid-template-columns: 1fr; justify-items: stretch; } .applicant-apply-license-page .line { width: 2px; height: 18px; justify-self: center; } .applicant-apply-license-page .grid, .applicant-apply-license-page .info-row { grid-template-columns: 1fr; } }
+@media (max-width: 820px) { .applicant-apply-license-page nav { gap: 0; } .applicant-apply-license-page nav a { flex: 1 1 50%; justify-content: center; } .applicant-apply-license-page .steps { grid-template-columns: 1fr; justify-items: stretch; } .applicant-apply-license-page .line { width: 2px; height: 18px; justify-self: center; } .applicant-apply-license-page .grid { grid-template-columns: 1fr; } }
 @media (max-width: 520px) { .applicant-apply-license-page .page { width: min(100% - 22px, 1120px); margin-top: 20px; } .applicant-apply-license-page .buttons { flex-direction: column-reverse; } .applicant-apply-license-page .buttons button { width: 100%; } }

@@ -1,0 +1,47 @@
+.fo-react-shell { min-height: 100vh; background: #f4f6fb; color: #172033; font-family: Arial, Helvetica, sans-serif; }
+.fo-react-header { min-height: 72px; padding: 12px 24px; background: #fff; border-bottom: 1px solid #e5e7eb; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.fo-react-brand { display:flex; align-items:center; gap:12px; }
+.fo-react-brand img { width:42px; height:48px; object-fit:contain; }
+.fo-react-brand div { display:grid; gap:2px; }
+.fo-react-brand span,.fo-react-brand small { color:#64748b; font-size:11px; }
+.fo-react-brand strong { color:#102a72; font-size:21px; }
+.fo-react-user { display:flex; align-items:center; gap:18px; color:#334155; font-size:14px; }
+.fo-react-user button { border:1px solid #fecaca; background:#fef2f2; color:#b91c1c; border-radius:7px; padding:8px 13px; font-weight:700; cursor:pointer; }
+.fo-react-layout { min-height:calc(100vh - 73px); display:flex; }
+.fo-react-sidebar { width:240px; flex:0 0 240px; padding:22px 12px; background:#f8f9fc; border-right:1px solid #e5e7eb; }
+.fo-react-sidebar h2 { margin:0 10px 18px; color:#102a72; font-size:15px; }
+.fo-react-sidebar nav { display:grid; gap:5px; }
+.fo-react-sidebar a { padding:12px 14px; border-radius:9px; color:#475569; text-decoration:none; font-size:14px; }
+.fo-react-sidebar a:hover { background:#eef2ff; }
+.fo-react-sidebar a.active { background:linear-gradient(90deg,#2f5bea,#4a90e2); color:#fff; font-weight:700; }
+.fo-react-main { flex:1; min-width:0; padding:26px clamp(18px,3vw,34px); }
+.fo-react-page-title { margin:0 0 5px; color:#172033; font-size:24px; }
+.fo-react-subtitle { margin:0 0 22px; color:#64748b; font-size:14px; }
+.fo-react-grid { display:grid; gap:16px; }
+.fo-react-grid.stats { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.fo-react-card { min-width:0; margin:0 0 18px; padding:20px 22px; background:#fff; border:1px solid #e2e8f0; border-radius:9px; box-shadow:0 2px 7px rgba(15,23,42,.04); }
+.fo-react-card h2,.fo-react-card h3 { margin:0 0 15px; color:#1e3a8a; font-size:16px; }
+.fo-react-stat { padding:18px; background:#fff; border:1px solid #e2e8f0; border-left:4px solid #2f5bea; border-radius:8px; }
+.fo-react-stat span { display:block; color:#64748b; font-size:13px; }
+.fo-react-stat strong { display:block; margin-top:8px; color:#102a72; font-size:27px; }
+.fo-react-table-wrap { overflow:auto; }
+.fo-react-table { width:100%; border-collapse:collapse; font-size:13px; }
+.fo-react-table th,.fo-react-table td { padding:11px 10px; border-bottom:1px solid #e8edf4; text-align:left; vertical-align:middle; }
+.fo-react-table th { color:#475569; background:#f8fafc; font-weight:700; white-space:nowrap; }
+.fo-react-table td { color:#334155; }
+.fo-react-button,.fo-react-link-button { display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:6px; padding:9px 13px; background:#2f5bea; color:#fff; font:inherit; text-decoration:none; cursor:pointer; }
+.fo-react-button:disabled { opacity:.6; cursor:wait; }
+.fo-react-button.secondary { background:#e8eefc; color:#1e3a8a; }
+.fo-react-button.danger { background:#dc2626; }
+.fo-react-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.fo-react-field { display:grid; gap:6px; color:#475569; font-size:13px; }
+.fo-react-field input,.fo-react-field select,.fo-react-field textarea,.fo-react-search { width:100%; padding:10px 11px; border:1px solid #cbd5e1; border-radius:6px; background:#fff; color:#172033; font:inherit; }
+.fo-react-field textarea { min-height:120px; resize:vertical; }
+.fo-react-message { padding:11px 14px; margin:0 0 16px; border:1px solid #bfdbfe; border-radius:7px; background:#eff6ff; color:#1e3a8a; }
+.fo-react-message.error { border-color:#fecaca; background:#fef2f2; color:#b91c1c; }
+.fo-react-message.warning { border-color:#fde68a; background:#fffbeb; color:#92400e; }
+.fo-react-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+.fo-react-muted { color:#64748b; }
+.fo-react-status { display:inline-block; padding:4px 9px; border-radius:999px; background:#eff6ff; color:#1d4ed8; font-size:12px; font-weight:700; }
+@media(max-width:900px){.fo-react-grid.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.fo-react-sidebar{width:205px;flex-basis:205px}}
+@media(max-width:680px){.fo-react-header{align-items:flex-start;flex-direction:column}.fo-react-layout{display:block}.fo-react-sidebar{width:auto;padding:10px;border-right:0;border-bottom:1px solid #e5e7eb}.fo-react-sidebar h2{display:none}.fo-react-sidebar nav{display:flex;overflow:auto}.fo-react-sidebar a{white-space:nowrap}.fo-react-main{padding:20px 14px}.fo-react-form-grid{grid-template-columns:1fr}}

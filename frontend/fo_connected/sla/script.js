@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // We only care about applications that are "pending review" or "scheduled" or "pending inspection" 
+    // We only care about applications that are "pending review" or "scheduled" or "pending inspection"
     // Usually FO SLA tracking is for pending tasks
     var pendingApps = data.filter(function(a) {
         var s = (a.status || '').toLowerCase();

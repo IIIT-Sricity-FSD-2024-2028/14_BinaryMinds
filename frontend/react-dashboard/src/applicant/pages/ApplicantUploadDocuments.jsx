@@ -31,7 +31,7 @@ function clearUploadState() {
 export default function ApplicantUploadDocuments() {
   const navigate = useNavigate();
   const [files, setFiles] = useState({});
-  const [uploadedDocs, setUploadedDocs] = useState(() => readObject(sessionStorage, 'uploadedDocs'));
+  const [uploadedDocs, setUploadedDocs] = useState({});
   const [errors, setErrors] = useState({});
   const [isUploading, setIsUploading] = useState(false);
   const [pageMessage, setPageMessage] = useState('');
@@ -50,6 +50,32 @@ export default function ApplicantUploadDocuments() {
       navigate('/apply-license', { replace: true });
     }
   }, [navigate]);
+
+  useEffect(() => {
+    let active = true;
+    const user = readObject(sessionStorage, 'loggedInUser');
+    const token = sessionStorage.getItem('accessToken');
+    const applicationId = Number(sessionStorage.getItem('backendApplicationId'));
+    if (!token || user.role !== 'applicant' || !applicationId) {
+      setUploadedDocs({});
+      sessionStorage.setItem('uploadedDocs', '{}');
+      return () => { active = false; };
+    }
+
+    loadPersistedDocuments(applicationId, token)
+      .then((confirmed) => {
+        if (!active) return;
+        setUploadedDocs(confirmed);
+        sessionStorage.setItem('uploadedDocs', JSON.stringify(confirmed));
+      })
+      .catch((error) => {
+        if (!active) return;
+        setUploadedDocs({});
+        sessionStorage.setItem('uploadedDocs', '{}');
+        setPageMessage(error.message || 'Could not verify previously uploaded documents.');
+      });
+    return () => { active = false; };
+  }, []);
 
   function handleFileChange(event, item) {
     const file = event.target.files?.[0];
@@ -89,7 +115,29 @@ export default function ApplicantUploadDocuments() {
       const { payload } = await readResponse(check);
       const application = payload.data || payload;
       const applicantId = user.user_id || user.id;
-      if (check.ok && applicantId && String(application.applicant_id) === String(applicantId)) return applicationId;
+      if (check.ok && applicantId && String(application.applicant_id) === String(applicantId)) {
+        const submittedDetails = {
+          father_name: draft.fatherName || draft.father_name,
+          mother_name: draft.motherName || draft.mother_name,
+          shop_area: draft.shopArea ?? draft.shop_area,
+        };
+        const missingDetails = Object.fromEntries(
+          Object.entries(submittedDetails).filter(([field, value]) =>
+            (application[field] === undefined || application[field] === null || String(application[field]).trim() === '') &&
+            value !== undefined && value !== null && String(value).trim() !== '',
+          ),
+        );
+        if (Object.keys(missingDetails).length) {
+          const updated = await fetch(`${apiBase}/applications/${applicationId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify(missingDetails),
+          });
+          const { payload: updatePayload } = await readResponse(updated);
+          if (!updated.ok) throw new Error(messageFrom(updatePayload, 'Could not save the applicant details. Please try again.'));
+        }
+        return applicationId;
+      }
       if (!check.ok && ![403, 404].includes(check.status)) {
         throw new Error(messageFrom(payload, 'Could not verify the saved application. Please try again.'));
       }
@@ -102,6 +150,9 @@ export default function ApplicantUploadDocuments() {
       applicantName: draft.fullName || 'Applicant',
       aadhaar_number: draft.aadhaar || draft.aadhaar_number || undefined,
       gender: draft.gender || undefined,
+      father_name: draft.fatherName || undefined,
+      mother_name: draft.motherName || undefined,
+      shop_area: draft.shopArea || undefined,
       businessName: draft.businessName || '',
       businessType: draft.businessType || draft.tradeCategory || 'General',
       tradeCategory: draft.tradeCategory || draft.businessType || 'General',
@@ -140,28 +191,53 @@ export default function ApplicantUploadDocuments() {
     return payload;
   }
 
+  async function loadPersistedDocuments(applicationId, token) {
+    const response = await fetch(`${apiBase}/documents/application/${encodeURIComponent(applicationId)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const { payload } = await readResponse(response);
+    if (!response.ok) throw new Error(messageFrom(payload, 'Could not verify previously uploaded documents.'));
+    const documents = Array.isArray(payload) ? payload : payload.data;
+    if (!Array.isArray(documents)) throw new Error('The server returned an invalid document list.');
+
+    const confirmed = {};
+    for (const item of documentItems) {
+      const record = documents.find((document) => document.document_type === item.type);
+      if (record) confirmed[item.statusId] = String(record.document_id);
+    }
+    return confirmed;
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     setPageMessage('');
-    const missing = documentItems.filter((item) => !uploadedDocs[item.statusId] && !files[item.statusId]);
-    if (missing.length) {
-      setPageMessage('Please upload all 3 required documents before proceeding.');
-      return;
-    }
     setIsUploading(true);
     const user = readObject(sessionStorage, 'loggedInUser');
     const draft = readObject(sessionStorage, 'applicationForm');
     const token = sessionStorage.getItem('accessToken');
     try {
-      const applicationId = await ensureApplication(user, draft, token);
-      const nextUploaded = readObject(sessionStorage, 'uploadedDocs');
-      setUploadedDocs(nextUploaded);
+      let applicationId = Number(sessionStorage.getItem('backendApplicationId'));
+      let nextUploaded = {};
+      if (applicationId) {
+        applicationId = await ensureApplication(user, draft, token);
+        nextUploaded = await loadPersistedDocuments(applicationId, token);
+      } else {
+        saveUploadedDocuments(nextUploaded);
+      }
+
+      const missing = documentItems.filter((item) => !nextUploaded[item.statusId] && !files[item.statusId]);
+      if (missing.length) {
+        setPageMessage('Please select every document not confirmed by the server, then submit again.');
+        return;
+      }
+
+      if (!applicationId) applicationId = await ensureApplication(user, draft, token);
       const failures = {};
       for (const item of documentItems) {
         if (nextUploaded[item.statusId]) continue;
         try {
           const result = await uploadOne(applicationId, item, files[item.statusId], token);
-          nextUploaded[item.statusId] = result.file_path;
+          nextUploaded[item.statusId] = String(result.document_id);
           saveUploadedDocuments(nextUploaded);
           setErrors((current) => ({ ...current, [item.errorId]: '' }));
         } catch (error) {
@@ -194,7 +270,6 @@ export default function ApplicantUploadDocuments() {
 
   return (
     <div className="applicant-upload-documents-page">
-      <div className="topbar"><div className="brand"><div className="logo"><img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="emblem" className="emblem" height="45" /></div><div><small>Government of India</small><strong>TradeZo</strong></div></div></div>
       <ApplicantNavigation onLogout={logout} />
       <main className="container">
         <div className="page-top"><div><h2>Upload Required Documents</h2><p>Step 3 of 4. Please upload the required documents for verification.</p></div><div className="progress-box"><span>75% Completed</span><div className="progress-bg"><div className="progress-fill" /></div></div></div>

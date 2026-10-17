@@ -1,240 +1,260 @@
-// paynow/scriot.js
-
+// TradeZo's existing local payment flow is simulated by its Payments API.
 function getFeeBreakdown() {
   var form = {};
-  try { form = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch(e){}
-
-  var processingFee = 1200; // default base fee
-  try {
-    var storedFees = JSON.parse(localStorage.getItem('tradezo_fees'));
-    if (storedFees && storedFees.new) processingFee = Number(storedFees.new) || 1200;
-  } catch(e) {}
-
-  var platformFee = 250;
-  var tax = processingFee * 0.05;
-  var total = processingFee + tax + platformFee;
-
-  return {
-    processingFee: processingFee,
-    platformFee: platformFee,
-    tax: tax,
-    total: total,
-    form: form
-  };
+  try { form = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch (error) {}
+  var municipalityId = form.municipalityId || form.municipality_id || '';
+  var municipality = window.TRADEZO && municipalityId && typeof TRADEZO.getMunicipality === 'function'
+    ? TRADEZO.getMunicipality(municipalityId)
+    : null;
+  var processingFee = Number(municipality && municipality.base_processing_fee) || 1200;
+  var platformFee = Number(municipality && municipality.platform_fee) || 250;
+  var taxPercent = Number(municipality && municipality.service_tax_percentage);
+  if (!Number.isFinite(taxPercent)) taxPercent = 5;
+  var tax = Math.round(processingFee * taxPercent / 100);
+  return { processingFee: processingFee, platformFee: platformFee, tax: tax, total: processingFee + platformFee + tax, form: form };
 }
 
-// Highlight selected payment option on click & populate summary
-document.addEventListener('DOMContentLoaded', function() {
+function paymentRequest(path, options) {
+  var token = sessionStorage.getItem('accessToken') || '';
+  return fetch(TRADEZO.API_BASE + path, Object.assign({
+    cache: 'no-store',
+    headers: { Authorization: 'Bearer ' + token }
+  }, options || {})).then(function(response) {
+    return response.text().then(function(text) {
+      var payload = null;
+      try { payload = text ? JSON.parse(text) : null; } catch (error) {}
+      if (!response.ok) {
+        var errorMessage = payload && payload.message;
+        if (Array.isArray(errorMessage)) errorMessage = errorMessage.join(' ');
+        throw new Error(errorMessage || ('Payment request failed (' + response.status + ').'));
+      }
+      return payload;
+    });
+  });
+}
+
+function readPaymentApplicationContext() {
+  var form = {};
+  var current = {};
+  try { form = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch (error) {}
+  try { current = JSON.parse(sessionStorage.getItem('currentApplication') || '{}'); } catch (error) {}
+  if (!form || typeof form !== 'object') form = {};
+  if (!current || typeof current !== 'object') current = {};
+  return { form: form, current: current };
+}
+
+function resolvePaymentApplication() {
+  var context = readPaymentApplicationContext();
+  var storedId = Number(sessionStorage.getItem('backendApplicationId')) || Number(context.current.application_id || context.current.backendId || context.current.id);
+  var storedRef = String(sessionStorage.getItem('applicationRef') || context.current.application_ref || context.current.appRef || '');
+  return paymentRequest('/applications/mine').then(function (result) {
+    var applications = Array.isArray(result) ? result : (result && Array.isArray(result.data) ? result.data : []);
+    if (!applications.length) throw new Error('No saved application was found for this Applicant account.');
+
+    var application = storedId && applications.find(function (item) { return Number(item.application_id) === storedId; });
+    if (!application && storedRef) {
+      application = applications.find(function (item) {
+        return String(item.application_ref || '').toLowerCase() === storedRef.toLowerCase() || String(item.application_id) === storedRef;
+      });
+    }
+    if (!application && (context.form.businessName || context.form.municipalityId || context.form.municipality_id)) {
+      application = applications.find(function (item) {
+        var sameBusiness = !context.form.businessName || String(item.business_name || item.businessName || '').trim().toLowerCase() === String(context.form.businessName).trim().toLowerCase();
+        var formMunicipality = context.form.municipalityId || context.form.municipality_id;
+        var sameMunicipality = !formMunicipality || String(item.municipality_id || item.municipalityId || '').toLowerCase() === String(formMunicipality).toLowerCase();
+        return sameBusiness && sameMunicipality;
+      });
+    }
+
+    if (!application) {
+      var unpaid = applications.filter(function (item) { return item.paymentDone !== true && item.payment_done !== true; });
+      var candidates = unpaid.length ? unpaid : applications;
+      candidates.sort(function (left, right) {
+        return new Date(right.submitted_at || right.created_at || 0) - new Date(left.submitted_at || left.created_at || 0);
+      });
+      application = candidates[0];
+    }
+    var id = Number(application && application.application_id);
+    if (!id) throw new Error('The saved application did not include a valid TradeZo application ID.');
+
+    sessionStorage.setItem('backendApplicationId', String(id));
+    if (application.application_ref) sessionStorage.setItem('applicationRef', application.application_ref);
+    sessionStorage.setItem('currentApplication', JSON.stringify(application));
+    var form = Object.assign({}, context.form, {
+      businessName: application.business_name || application.businessName || context.form.businessName || '',
+      businessType: application.business_type || application.businessType || context.form.businessType || '',
+      tradeCategory: application.trade_category || application.tradeCategory || context.form.tradeCategory || '',
+      municipalityId: application.municipality_id || application.municipalityId || context.form.municipalityId || context.form.municipality_id || ''
+    });
+    sessionStorage.setItem('applicationForm', JSON.stringify(form));
+    return application;
+  });
+}
+
+function followPaymentStatus(payment) {
+  var status = String(payment.payment_status || '').toUpperCase();
+  if (status === 'COMPLETED') {
+    sessionStorage.setItem('confirmedPaymentId', String(payment.payment_id));
+    sessionStorage.removeItem('failedPaymentId');
+    window.location.href = '../payment%20success/index.html';
+    return true;
+  }
+  if (status === 'FAILED') {
+    sessionStorage.setItem('failedPaymentId', String(payment.payment_id));
+    sessionStorage.removeItem('confirmedPaymentId');
+    window.location.href = '../payment%20failure/index.html';
+    return true;
+  }
+  if (status === 'PENDING') {
+    sessionStorage.setItem('pendingPaymentId', String(payment.payment_id));
+    sessionStorage.setItem('pendingPaymentApplicationId', String(payment.application_id));
+    sessionStorage.setItem('confirmedPaymentId', '');
+    return false;
+  }
+  throw new Error('The payment service returned an unrecognized status. No success was recorded.');
+}
+
+function renderPaymentSummary() {
   var feeData = getFeeBreakdown();
   var form = feeData.form;
-  var processingFee = feeData.processingFee;
-  var platformFee = feeData.platformFee;
-  var tax = feeData.tax;
-  var total = feeData.total;
+  sessionStorage.setItem('calculatedFeeString', '₹' + feeData.total.toFixed(2));
 
-  sessionStorage.setItem('calculatedFeeString', '₹' + total.toFixed(2));
+  var amounts = {
+    baseFee: feeData.processingFee,
+    taxFee: feeData.tax,
+    platformFee: feeData.platformFee,
+    totalFee: feeData.total,
+    btnFee: feeData.total
+  };
+  Object.keys(amounts).forEach(function (id) {
+    var element = document.getElementById(id);
+    if (element) element.textContent = '₹' + amounts[id].toFixed(2);
+  });
 
-  var baseEl = document.getElementById('baseFee');
-  if(baseEl) baseEl.innerHTML = '&#8377;' + processingFee.toFixed(2);
-  var taxEl = document.getElementById('taxFee');
-  if(taxEl) taxEl.innerHTML = '&#8377;' + tax.toFixed(2);
-  var platformEl = document.getElementById('platformFee');
-  if(platformEl) platformEl.innerHTML = '&#8377;' + platformFee.toFixed(2);
-  var totalEl = document.getElementById('totalFee');
-  if(totalEl) totalEl.innerHTML = '&#8377;' + total.toFixed(2);
-  var btnEl = document.getElementById('btnFee');
-  if(btnEl) btnEl.innerHTML = '&#8377;' + total.toFixed(2);
+  var tradeName = document.getElementById('tradeName');
+  var category = document.getElementById('licCat');
+  var establishment = document.getElementById('estType');
+  if (tradeName && form.businessName) tradeName.textContent = form.businessName;
+  if (category && form.tradeCategory) category.textContent = form.tradeCategory;
+  if (establishment && form.businessType) establishment.textContent = form.businessType;
 
-  // Fill Trade Name
-  var tradeNameEl = document.getElementById('tradeName');
-  if (tradeNameEl && form.businessName) tradeNameEl.textContent = form.businessName;
-
-  // Fill License Category
-  var licCatEl = document.getElementById('licCat');
-  if (licCatEl && form.tradeCategory) licCatEl.textContent = form.tradeCategory;
-
-  // Fill Establishment Type
-  var estTypeEl = document.getElementById('estType');
-  if (estTypeEl && form.businessType) estTypeEl.textContent = form.businessType;
-
-  // Fill REF number from applicationRef
-  var refEl = document.getElementById('refNo');
+  var reference = document.getElementById('refNo');
   var appRef = sessionStorage.getItem('applicationRef');
-  if (!appRef || /^\d+$/.test(String(appRef).trim()) || /^APP-/i.test(String(appRef).trim())) {
-    appRef = (window.TRADEZO && typeof TRADEZO.generateApplicationId === 'function')
-      ? TRADEZO.generateApplicationId()
-      : ('TL-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6));
-    sessionStorage.setItem('applicationRef', appRef);
-  }
-  if (refEl) refEl.textContent = 'REF: ' + appRef;
+  if (reference) reference.textContent = appRef ? 'REF: ' + appRef : 'Application reference pending';
 
-  // Make Validity Period dynamic
-  var validityEl = document.querySelector('.val:nth-of-type(3)') || Array.from(document.querySelectorAll('.lbl')).find(function(el) { return el.textContent.includes('Validity Period'); })?.nextElementSibling;
-  if (validityEl) {
-      var currentYear = new Date().getFullYear();
-      validityEl.textContent = '1 Year (' + currentYear + '-' + (currentYear + 1) + ')';
+  var validity = Array.from(document.querySelectorAll('.lbl')).find(function (element) {
+    return element.textContent.includes('Validity Period');
+  });
+  if (validity && validity.nextElementSibling) {
+    var currentYear = new Date().getFullYear();
+    validity.nextElementSibling.textContent = '1 Year (' + currentYear + '-' + (currentYear + 1) + ')';
   }
 
-  // Wire radio highlights
-  var labels = document.querySelectorAll('.pay-opt');
-  labels.forEach(function(label) {
-    label.addEventListener('click', function() {
-      labels.forEach(function(l) { l.classList.remove('active'); });
+  document.querySelectorAll('.pay-opt').forEach(function (label) {
+    label.addEventListener('click', function () {
+      document.querySelectorAll('.pay-opt').forEach(function (option) { option.classList.remove('active'); });
       label.classList.add('active');
     });
   });
+
+  var paymentMessage = document.getElementById('paymentMessage');
+  var notice = sessionStorage.getItem('paymentFlowNotice');
+  if (notice && paymentMessage) {
+    paymentMessage.textContent = notice;
+    sessionStorage.removeItem('paymentFlowNotice');
+  }
+}
+
+var paymentApplicationPromise = null;
+document.addEventListener('DOMContentLoaded', function () {
+  paymentApplicationPromise = resolvePaymentApplication().then(function (application) {
+    renderPaymentSummary();
+    return application;
+  }).catch(function (error) {
+    renderPaymentSummary();
+    var message = document.getElementById('paymentMessage');
+    if (message) message.textContent = error.message || 'Unable to load your saved application.';
+    throw error;
+  });
+  // The click handler also awaits this promise; this catch prevents an
+  // unhandled rejection when the page is opened without an Applicant session.
+  paymentApplicationPromise.catch(function () {});
 });
 
-async function doPayment() {
-  var selected = document.querySelector('input[name="method"]:checked');
-  if (!selected) {
-    alert('Please select a payment method.');
+var paymentInProgress = false;
+window.doPayment = async function () {
+  var message = document.getElementById('paymentMessage');
+  var button = document.getElementById('payBtn');
+  var token = sessionStorage.getItem('accessToken') || '';
+  var selectedMethod = document.querySelector('input[name="method"]:checked');
+  if (paymentInProgress) return;
+  if (!selectedMethod) {
+    if (message) message.textContent = 'Please select a payment method.';
+    return;
+  }
+  if (!token) {
+    if (message) message.textContent = 'Your session has expired. Please sign in again.';
     return;
   }
 
-  var btn = document.querySelector('.pay-btn');
-  if (btn) { btn.textContent = 'Processing Payment...'; btn.disabled = true; }
+  paymentInProgress = true;
+  var originalButtonHtml = button ? button.innerHTML : '';
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Checking payment status...';
+  }
+  if (message) message.textContent = '';
 
-  setTimeout(async function() {
+  try {
+    var application = await (paymentApplicationPromise || resolvePaymentApplication());
+    var applicationId = Number(application.application_id);
+    var existing = await paymentRequest('/payments/application/' + applicationId);
+    var payments = Array.isArray(existing) ? existing : (existing && Array.isArray(existing.data) ? existing.data : []);
+    var completed = payments.find(function (item) { return String(item.payment_status || '').toUpperCase() === 'COMPLETED'; });
+    if (completed) {
+      followPaymentStatus(completed);
+      return;
+    }
+
+    var pending = payments.filter(function (item) { return String(item.payment_status || '').toUpperCase() === 'PENDING'; })
+      .sort(function (left, right) { return new Date(right.payment_date || 0) - new Date(left.payment_date || 0); })[0];
+
     var feeData = getFeeBreakdown();
-    var processingFee = feeData.processingFee;
-    var platformFee = feeData.platformFee;
-    var tax = feeData.tax;
-    var total = feeData.total;
-
-    // --- SAVE APPLICATION TO TRADEZO on success ---
-    var form = {};
-    var docs = {};
-    try { form = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch(e){}
-    try { docs = JSON.parse(sessionStorage.getItem('uploadedDocs')   || '{}'); } catch(e){}
-
-    var user = null;
-    try { user = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null'); } catch(e){}
-
-    var appRef = sessionStorage.getItem('applicationRef');
-    if (!appRef) {
-      appRef = (window.TRADEZO && typeof TRADEZO.generateApplicationId === 'function')
-        ? TRADEZO.generateApplicationId()
-        : ('TL-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6));
-      sessionStorage.setItem('applicationRef', appRef);
-    }
-
-    var backendApplicationId = Number(sessionStorage.getItem('backendApplicationId')) || null;
-
-    var muniId = form.municipalityId || form.municipality_id || '';
-    if (!muniId && (form.state || form.city)) {
-      var st = (form.state || '').toLowerCase();
-      var ct = (form.city || '').toLowerCase();
-      if (st === 'karnataka' || ct.includes('bangalore') || ct.includes('bengaluru')) muniId = 'muni-blr';
-      else if (st === 'telangana' || ct.includes('hyderabad')) muniId = 'muni-hyd';
-    }
-    var muniName = form.municipalityName || (window.TRADEZO && typeof TRADEZO.getMunicipality === 'function' && muniId ? TRADEZO.getMunicipality(muniId).name : (muniId === 'muni-blr' ? 'Bruhat Bengaluru Mahanagara Palike (BBMP)' : (muniId === 'muni-hyd' ? 'Greater Hyderabad Municipal Corporation (GHMC)' : '')));
-
-    // Sync payment with backend API if backend is running and application ID exists
-    if (backendApplicationId) {
-      try {
-        var paymentResponse = await fetch('http://localhost:3000/api/payments', {
+    var municipalityId = feeData.form.municipalityId || feeData.form.municipality_id || '';
+    var paymentData = {
+      application_id: applicationId,
+      municipality_id: municipalityId,
+      amount: feeData.total,
+      processing_fee: feeData.processingFee,
+      platform_fee: feeData.platformFee,
+      service_tax: feeData.tax,
+      payment_status: 'COMPLETED'
+    };
+    if (button) button.textContent = 'Processing Payment...';
+    // Reuse an existing pending record; create one only when this application
+    // has no pending payment, so repeat clicks do not create duplicate records.
+    var payment = pending
+      ? await paymentRequest('/payments/' + encodeURIComponent(pending.payment_id), {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ payment_status: 'COMPLETED' })
+        })
+      : await paymentRequest('/payments', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (sessionStorage.getItem('accessToken') || '') },
-          body: JSON.stringify({
-            application_id: backendApplicationId,
-            municipality_id: muniId,
-            amount: Number(String(sessionStorage.getItem('calculatedFeeString') || '').replace(/[^0-9.]/g, '')) || total,
-            processing_fee: processingFee,
-            platform_fee: platformFee,
-            service_tax: tax,
-            payment_status: 'COMPLETED'
-          })
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify(paymentData)
         });
-        if (!paymentResponse.ok) {
-          console.warn('Backend payment status:', paymentResponse.status);
-        }
-      } catch (error) {
-        console.warn('Backend payment API unavailable, saving locally:', error);
-      }
+    if (!payment || !payment.payment_id) throw new Error('The backend did not return a payment record.');
+
+    if (followPaymentStatus(payment)) return;
+    if (message) message.textContent = 'Payment request ' + payment.payment_id + ' is pending. This server has no payment gateway, so no money was collected and the application has not been marked paid.';
+  } catch (error) {
+    if (message) message.textContent = error.message || 'Unable to connect to the payment service. Please try again.';
+  } finally {
+    paymentInProgress = false;
+    if (button) {
+      button.disabled = false;
+      button.innerHTML = originalButtonHtml;
     }
-
-    // Build new application object
-    var nowIso = new Date().toISOString();
-    var newApp = {
-      id:            appRef,
-      appRef:        appRef,
-      backendId:     backendApplicationId,
-      municipalityId: muniId,
-      municipality_id: muniId,
-      municipalityName: muniName,
-      applicantId:   user ? (user.email || '') : '',
-      applicantName: form.fullName     || (user ? user.name : ''),
-      email:         form.email        || (user ? user.email : ''),
-      phone:         form.phone        || '',
-      businessName:  form.businessName || '',
-      businessType:  form.businessType || '',
-      tradeCategory: form.tradeCategory|| '',
-      shopAddress:   form.shopAddress  || '',
-      city:          form.city         || '',
-      district:      form.district     || '',
-      state:         form.state        || '',
-      pincode:       form.pincode      || '',
-      shopArea:      form.shopArea     || '',
-      fatherName:    form.fatherName   || '',
-      motherName:    form.motherName   || '',
-      gender:        form.gender       || '',
-      aadhaar:       form.aadhaar      || '',
-      submittedDate: new Date().toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'}),
-      createdAt: nowIso,
-      updatedAt: nowIso,
-      status:        'Submitted',
-      paymentStatus: 'Paid',
-      paymentDate: nowIso,
-      paymentAmount: sessionStorage.getItem('calculatedFeeString') || ('₹' + total.toFixed(2)),
-      paymentRef:    'PAY-' + String(Date.now()).slice(-8),
-      assignedFO:    '',
-      foName:        '',
-      inspectionDate:'', inspectionTime:'', inspectionResult:'',
-      doReview:      'Pending',
-      licenseId:     null,
-      rejectionReason:'',
-      docs:          docs,
-      docsVerifiedDate:'', reviewDate:'', approvedDate:''
-    };
-
-    // Add to TRADEZO.applications in memory
-    if (window.TRADEZO && TRADEZO.applications) {
-      TRADEZO.applications = TRADEZO.applications.filter(function(a){ return a.appRef !== appRef; });
-      TRADEZO.applications.unshift(newApp);
-      if (!backendApplicationId && typeof TRADEZO.syncApplicationToBackend === 'function') {
-        TRADEZO.syncApplicationToBackend(newApp, 'applicant');
-      }
-    }
-
-    // Persist to localStorage so track page and dashboard can find it
-    var saved = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]');
-    saved = saved.filter(function(a){ return a.appRef !== appRef; });
-    saved.unshift(newApp);
-    localStorage.setItem('tz_submitted_apps', JSON.stringify(saved));
-
-    // Persist to verification queue for Field Officer
-    var queue = [];
-    try { queue = JSON.parse(localStorage.getItem('tz_verification_queue') || '[]'); } catch(e){ queue = []; }
-    if (!Array.isArray(queue)) queue = [];
-    var verifyItem = {
-      appId: newApp.id,
-      businessName: newApp.businessName,
-      applicant: newApp.applicantName,
-      category: newApp.tradeCategory || newApp.businessType,
-      address: (newApp.shopAddress ? newApp.shopAddress + (newApp.city ? ', ' + newApp.city : '') : ''),
-      submitted: newApp.submittedDate,
-      createdAt: nowIso,
-      status: 'Pending Review'
-    };
-    queue = queue.filter(function(item){ return item.appId !== newApp.id; });
-    queue.unshift(verifyItem);
-    localStorage.setItem('tz_verification_queue', JSON.stringify(queue));
-
-    // Store reference and mark applied
-    sessionStorage.setItem('applicationRef', appRef);
-    localStorage.setItem('hasApplied', 'true');
-
-    window.location.href = '../payment success/index.html';
-  }, 1000);
-}
+  }
+};

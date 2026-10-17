@@ -1,12 +1,73 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import FieldOfficerPageShell from '../components/FieldOfficerPageShell';
-import { dateLabel, localProfile } from '../components/fieldOfficerUtils';
+import { dateLabel } from '../components/fieldOfficerUtils';
 import { useFieldOfficerData } from '../components/useFieldOfficerData';
 import '../styles/FieldOfficerProfile.css';
 
 export default function FieldOfficerProfile() {
-  const d = useFieldOfficerData(); const local = localProfile(); const completed = d.inspections.filter((x) => x.status === 'COMPLETED').length; const pending = d.inspections.filter((x) => !['COMPLETED', 'FAILED'].includes(String(x.status).toUpperCase())).length;
-  const activity = [...d.applications.filter((x) => ['verified', 'rejected'].includes(String(x.application_status).toLowerCase())).map((x) => ({ key: `app-${x.application_id}`, date: x.updated_at || x.submitted_at, text: `Application ${x.application_ref || `#${x.application_id}`} ${x.application_status}.` })), ...d.inspections.map((x) => ({ key: `inspection-${x.inspection_id}`, date: x.completed_date || x.scheduled_date, text: `Inspection #${x.inspection_id} ${String(x.status || '').toLowerCase()}.` }))].sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0)).slice(0,5);
-  const name = local.name || d.profile?.full_name || 'Field Officer'; const role = (local.role || d.profile?.role || 'Field Officer').replace(/_/g, ' ');
-  return <FieldOfficerPageShell activeSection="profile" title="Field Officer Profile" {...d}><div className="fo-profile-container fo-profile-page"><section className="fo-profile-card"><div className="fo-profile-avatar">{name.charAt(0).toUpperCase()}</div><h2>{name}</h2><p>{d.profile?.employee_id || 'Employee ID unavailable'}</p><span className="fo-profile-role">{role}</span><hr /><p><strong>Department:</strong> {local.dept || d.profile?.department || '—'}</p><p><strong>Email:</strong> {local.email || d.profile?.email || '—'}</p><p><strong>Phone:</strong> {local.phone || d.profile?.phone || '—'}</p><p><strong>Location:</strong> {local.location || d.profile?.municipality_id || '—'}</p><p><strong>Join Date:</strong> {dateLabel(d.profile?.created_at)}</p><p className="fo-profile-local-note">Contact fields from profile editing are browser-local; server profile remains unchanged.</p><Link className="fo-react-button" to={`/officer/${d.officerId}/profile_edit`}>Edit Profile</Link></section><div className="fo-profile-right"><div className="fo-profile-stats"><article className="blue"><p>Total Inspections</p><strong>{d.inspections.length}</strong></article><article className="green"><p>Completed Inspections</p><strong>{completed}</strong></article><article className="orange"><p>Pending Inspections</p><strong>{pending}</strong></article><article className="purple"><p>Warnings Received</p><strong>—</strong><small>Not available from the backend.</small></article></div><section className="fo-react-card fo-profile-activity"><h2>Recent Activity</h2>{activity.length ? activity.map((x) => <div className="fo-profile-activity-item" key={x.key}><span>{x.text}</span><small>{dateLabel(x.date)}</small></div>) : <p className="fo-react-muted">No recent backend activity found.</p>}</section><section className="fo-react-card fo-profile-performance">Performance rating is not provided by the backend.</section></div></div></FieldOfficerPageShell>;
+  const data = useFieldOfficerData();
+  const location = useLocation();
+  const profile = data.profile;
+  const completed = data.inspections.filter((inspection) => String(inspection.status).toUpperCase() === 'COMPLETED').length;
+  const pending = data.inspections.filter((inspection) =>
+    !['COMPLETED', 'FAILED'].includes(String(inspection.status).toUpperCase()),
+  ).length;
+  const activity = [
+    ...data.applications
+      .filter((application) => ['verified', 'rejected'].includes(String(application.application_status).toLowerCase()))
+      .map((application) => ({
+        key: `app-${application.application_id}`,
+        date: application.updated_at || application.submitted_at,
+        text: `Application ${application.application_ref || `#${application.application_id}`} ${application.application_status}.`,
+      })),
+    ...data.inspections.map((inspection) => ({
+      key: `inspection-${inspection.inspection_id}`,
+      date: inspection.completed_date || inspection.scheduled_date,
+      text: `Inspection #${inspection.inspection_id} ${String(inspection.status || '').toLowerCase()}.`,
+    })),
+  ].sort((left, right) => new Date(right.date || 0) - new Date(left.date || 0)).slice(0, 5);
+  const name = profile?.full_name || 'Field Officer';
+  const role = (profile?.role || 'Field Officer').replace(/_/g, ' ');
+
+  return (
+    <FieldOfficerPageShell activeSection="profile" title="Field Officer Profile" {...data}>
+      {location.state?.profileUpdated && <p className="fo-react-message" role="status">Profile updated successfully.</p>}
+      {data.loading ? <section className="fo-react-card"><p>Loading your profile…</p></section> : profile ? (
+        <div className="fo-profile-container fo-profile-page">
+          <section className="fo-profile-card">
+            <div className="fo-profile-avatar">{name.charAt(0).toUpperCase()}</div>
+            <h2>{name}</h2>
+            <p>{profile.employee_id || 'Employee ID unavailable'}</p>
+            <span className="fo-profile-role">{role}</span>
+            <hr />
+            <p><strong>Email:</strong> {profile.email || '—'}</p>
+            <p><strong>Phone:</strong> {profile.phone || '—'}</p>
+            <p><strong>Location:</strong> {profile.municipalityName || profile.municipality_id || '—'}</p>
+            <p><strong>Join Date:</strong> {dateLabel(profile.created_at)}</p>
+            <Link className="fo-react-button" to={`/officer/${data.officerId}/profile_edit`}>Edit Profile</Link>
+          </section>
+          <div className="fo-profile-right">
+            <div className="fo-profile-stats">
+              <article className="blue"><p>Total Inspections</p><strong>{data.inspections.length}</strong></article>
+              <article className="green"><p>Completed Inspections</p><strong>{completed}</strong></article>
+              <article className="orange"><p>Pending Inspections</p><strong>{pending}</strong></article>
+            </div>
+            <section className="fo-react-card fo-profile-activity">
+              <h2>Recent Activity</h2>
+              {activity.length ? activity.map((item) => (
+                <div className="fo-profile-activity-item" key={item.key}>
+                  <span>{item.text}</span><small>{dateLabel(item.date)}</small>
+                </div>
+              )) : <p className="fo-react-muted">No recent backend activity found.</p>}
+            </section>
+            <section className="fo-react-card fo-profile-performance">
+              Performance rating is not provided by the backend.
+            </section>
+          </div>
+        </div>
+      ) : (
+        <section className="fo-react-card"><p role="alert">{data.error || 'Your profile could not be loaded.'}</p></section>
+      )}
+    </FieldOfficerPageShell>
+  );
 }

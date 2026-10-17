@@ -46,7 +46,7 @@
               </div>
               <div class="form-group">
                 <label>Phone Number</label>
-                <input type="text" id="profPhone" value="" required>
+                <input type="text" id="profPhone" value="" maxlength="15" required>
               </div>
               <div class="form-group">
                 <label>Aadhaar Number</label>
@@ -61,13 +61,15 @@
             <h3 style="margin-top:20px;">Residential Address</h3>
             <div class="form-group">
               <label>Address Line</label>
-              <textarea id="profAddress" required style="width:100%; height:60px; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font-family:Arial;"></textarea>
+              <textarea id="profAddress" readonly aria-describedby="addressHelp" style="width:100%; height:60px; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font-family:Arial; background:#f1f5f9; color:#64748b;"></textarea>
+              <small id="addressHelp">Address comes from your application record and cannot be changed here.</small>
             </div>
 
             <div class="actions">
               <button type="button" class="btn-cancel" onclick="window.history.back()">Cancel</button>
               <button type="submit" class="btn-save">Save Changes</button>
             </div>
+            <p id="profileEditMessage" role="status" aria-live="polite"></p>
           </form>
         </div>
 

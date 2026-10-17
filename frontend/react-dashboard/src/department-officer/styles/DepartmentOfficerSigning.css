@@ -170,3 +170,13 @@ body{background:#f4f6fb}
 
 .confirm-license-btn{background:#102a72;color:#fff}
 .confirm-license-btn:hover{background:#0d1b4b}
+
+.do-page-signing .sign-card .card-title{margin-bottom:18px}
+.do-page-signing .signature-input,
+.do-page-signing .expiry-input{display:block;margin-bottom:16px;font-size:13px;font-weight:600;color:#0f172a}
+.do-page-signing .signature-input input,
+.do-page-signing .expiry-input input{display:block;width:100%;margin-top:7px;border:1px solid #cbd5e1;border-radius:8px;padding:11px 12px;font:inherit;font-weight:400;color:#0f172a}
+.do-page-signing .signature-input input:focus,
+.do-page-signing .expiry-input input:focus{outline:2px solid rgba(16,42,114,.2);border-color:#102a72}
+.do-page-signing .sign-btn{margin-top:4px;margin-bottom:0}
+.do-page-signing .sign-btn:disabled{opacity:.65;cursor:not-allowed}

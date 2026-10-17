@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ForbiddenException,
+  BadRequestException,
   ParseIntPipe,
   Req,
   UseGuards,
@@ -23,9 +24,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiRoute } from '../common/swagger/api-route.decorator';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
 import { AuthenticatedUser } from '../auth/auth-session.interface';
+import { InspectionStatus } from '../common/enums/inspection-status.enum';
 
 import { ApplicationsService } from '../applications/applications.service';
 import { UsersService } from '../users/users.service';
+import { ApplicationStatus } from '../common/enums/application-status.enum';
 
 @ApiTags('Inspections')
 @Controller('inspections')
@@ -51,7 +54,43 @@ export class InspectionsController {
     @Body() createDto: CreateInspectionDto,
     @Req() request: Request & { user: AuthenticatedUser },
   ) {
+    const assignment = this.service.findAssignment(createDto.assignment_id);
+    const application = this.applicationsService.findOne(assignment.application_id);
+    if (Number(createDto.field_officer_id) !== Number(assignment.field_officer_id)) {
+      throw new ForbiddenException('Inspection officer must match the application assignment');
+    }
+    if (
+      application.assignedOfficerId === null ||
+      application.assignedOfficerId === undefined ||
+      Number(application.assignedOfficerId) !== Number(assignment.field_officer_id)
+    ) {
+      throw new ForbiddenException('The application is no longer assigned to this Field Officer');
+    }
+    if (
+      application.application_status !== ApplicationStatus.VERIFIED &&
+      application.application_status !== ApplicationStatus.DOCUMENTS_UPLOADED &&
+      application.application_status !== ApplicationStatus.INSPECTION_SCHEDULED
+    ) {
+      throw new BadRequestException('The application must be verified before an inspection can be scheduled');
+    }
+    if (request.user.role !== Role.PLATFORM_ADMIN) {
+      const userMuni = request.user.municipalityId;
+      if (!userMuni || (application.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()) {
+        throw new ForbiddenException('You cannot schedule inspections outside your municipality');
+      }
+    }
+    if (request.user.role === Role.FIELD_OFFICER) {
+      if (Number(assignment.field_officer_id) !== Number(request.user.userId)) {
+        throw new ForbiddenException('You cannot schedule an inspection for another Field Officer');
+      }
+    }
+
     const inspection = this.service.create(createDto);
+    if (application.application_status !== ApplicationStatus.INSPECTION_SCHEDULED) {
+      this.applicationsService.update(application.application_id, {
+        application_status: ApplicationStatus.INSPECTION_SCHEDULED,
+      });
+    }
     this.auditLogsService.log({
       user_name: request.user.fullName || 'Officer',
       role: 'officer',
@@ -99,7 +138,23 @@ export class InspectionsController {
     params: [{ name: 'assignmentId', description: 'Assignment ID' }],
     responseExample: [{ inspection_id: 1, assignment_id: 1 }],
   })
-  findByAssignment(@Param('assignmentId', ParseIntPipe) assignmentId: number) {
+  findByAssignment(
+    @Param('assignmentId', ParseIntPipe) assignmentId: number,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
+    const assignment = this.service.findAssignment(assignmentId);
+    const application = this.applicationsService.findOne(assignment.application_id);
+    if (request.user.role !== Role.PLATFORM_ADMIN) {
+      const userMuni = request.user.municipalityId;
+      if (!userMuni || (application.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()) {
+        throw new ForbiddenException('Access denied to inspections outside your municipality');
+      }
+    }
+    if (request.user.role === Role.FIELD_OFFICER) {
+      if (Number(assignment.field_officer_id) !== Number(request.user.userId)) {
+        throw new ForbiddenException('Field Officers can only view inspections for their own assignments');
+      }
+    }
     return this.service.findByAssignment(assignmentId);
   }
 
@@ -206,8 +261,46 @@ export class InspectionsController {
   submitReport(
     @Param('id', ParseIntPipe) id: number,
     @Body() reportDto: SubmitInspectionReportDto,
+    @Req() request: Request & { user: AuthenticatedUser },
   ) {
-    return this.service.submitReport(id, reportDto);
+    const existing = this.service.findOne(id);
+    const assignment = this.service.findAssignment(existing.assignment_id);
+    const application = this.applicationsService.findOne(assignment.application_id);
+
+    if (request.user.role !== Role.PLATFORM_ADMIN) {
+      if (
+        !request.user.municipalityId ||
+        (application.municipality_id || '').toLowerCase() !== request.user.municipalityId.toLowerCase()
+      ) {
+        throw new ForbiddenException('You cannot submit inspection reports outside your municipality');
+      }
+    }
+    if (
+      request.user.role === Role.FIELD_OFFICER &&
+      Number(assignment.field_officer_id) !== Number(request.user.userId)
+    ) {
+      throw new ForbiddenException('Field Officers can submit reports only for their own assignments');
+    }
+
+    const inspection = this.service.submitReport(id, reportDto);
+    if (
+      reportDto.status === InspectionStatus.COMPLETED ||
+      reportDto.status === InspectionStatus.FAILED
+    ) {
+      this.applicationsService.update(application.application_id, {
+        application_status: ApplicationStatus.INSPECTION_COMPLETED,
+      });
+    }
+    this.auditLogsService.log({
+      user_name: request.user.fullName || 'Field Officer',
+      role: String(request.user.role),
+      action: 'Submit',
+      module: 'Inspections',
+      description: `Submitted inspection report ${inspection.inspection_id}`,
+      ip_address: '127.0.0.1',
+      source: 'backend',
+    });
+    return inspection;
   }
 
   @Delete(':id')

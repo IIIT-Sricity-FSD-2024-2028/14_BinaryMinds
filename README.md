@@ -84,4 +84,21 @@ It replaces fragmented paper-based processes with standardized, traceable, and a
 3. Inspection Report is recorded.  
 4. Department Officer records Approval Decision.  
 5. Approved licenses are digitally signed and issued.  
-6. Compliance Monitoring continues post-issuance.  
+6. Compliance Monitoring continues post-issuance.
+---
+
+## Individual Contribution - Hasini Katam
+
+**Area:** Applicant-facing application, document, status, review, payment, and license workflows.
+
+Files developed or modified in my contribution branch include:
+
+- `frontend/react-dashboard/src/applicant/pages/ApplicantApplyLicense.jsx`
+- `frontend/react-dashboard/src/applicant/pages/ApplicantUploadDocuments.jsx`
+- `frontend/react-dashboard/src/applicant/pages/ApplicantTrackStatus.jsx`
+- `frontend/react-dashboard/src/applicant/pages/ApplicantReviewLicense.jsx`
+- `frontend/react-dashboard/src/applicant/pages/ApplicantPayNow.jsx`
+- `frontend/react-dashboard/src/applicant/pages/ApplicantDownloadLicense.jsx`
+- `frontend/react-dashboard/src/applicant/pages/ApplicantPaymentSuccess.jsx`
+- `frontend/react-dashboard/src/applicant/pages/ApplicantPaymentFailure.jsx`
+- `frontend/react-dashboard/src/applicant/pages/ApplicantPaymentHistory.jsx`

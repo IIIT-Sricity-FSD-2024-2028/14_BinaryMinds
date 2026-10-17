@@ -13,12 +13,16 @@
 .applicant-profile-edit-page .profile-edit-sub { margin: 0 0 24px; color: #64748b; font-size: 14px; }
 .applicant-profile-edit-page .profile-edit-layout { display: flex; gap: 24px; align-items: flex-start; }
 .applicant-profile-edit-page .profile-edit-card { flex: 1; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; }
+.applicant-profile-edit-page .profile-password-card { margin-top: 24px; }
+.applicant-profile-edit-page .profile-password-help { margin: -4px 0 20px; color: #64748b; font-size: 13px; line-height: 1.5; }
 .applicant-profile-edit-page .profile-edit-card h2 { margin: 0 0 16px; padding-bottom: 6px; border-bottom: 1px solid #e2e8f0; color: #1f3a8a; font-size: 16px; }
 .applicant-profile-edit-page .profile-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .applicant-profile-edit-page .profile-edit-group { margin-bottom: 16px; }
 .applicant-profile-edit-page .profile-edit-group label { display: block; margin-bottom: 6px; color: #64748b; font-size: 13px; font-weight: 600; }
 .applicant-profile-edit-page .profile-edit-group input, .applicant-profile-edit-page .profile-edit-group textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; font: 14px Arial,sans-serif; }
 .applicant-profile-edit-page .profile-edit-group input:focus, .applicant-profile-edit-page .profile-edit-group textarea:focus { border-color: #2563eb; }
+.applicant-profile-edit-page .profile-password-field { position: relative; }
+.applicant-profile-edit-page .profile-password-field input { padding-right: 48px; }
 .applicant-profile-edit-page .profile-edit-group .profile-edit-readonly { background: #f1f5f9; color: #64748b; cursor: not-allowed; }
 .applicant-profile-edit-page .profile-edit-group textarea { height: 60px; resize: vertical; }
 .applicant-profile-edit-page .profile-edit-group small { color: #64748b; font-size: 12px; }

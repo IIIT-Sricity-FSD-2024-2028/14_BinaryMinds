@@ -7,7 +7,6 @@ export default function PublicNavigation() {
       <NavLink to="/" end>Home</NavLink>
       <NavLink to="/register" end>Register</NavLink>
       <NavLink to="/login" end>Login</NavLink>
-      <NavLink to="/forgot-password" end>Forgot Password</NavLink>
       <NavLink to="/platform-admin/login">Super Admin</NavLink>
     </nav>
   );

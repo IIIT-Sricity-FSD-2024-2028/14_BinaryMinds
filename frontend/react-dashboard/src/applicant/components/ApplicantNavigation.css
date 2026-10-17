@@ -1,3 +1,46 @@
+.applicant-portal-header {
+  min-height: 112px;
+  padding: 14px clamp(20px, 4vw, 60px);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #fff;
+  border-bottom: 1px solid #e4e9f2;
+  box-sizing: border-box;
+}
+
+.applicant-portal-header > img {
+  width: 48px;
+  height: 68px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.applicant-portal-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1.2;
+}
+
+.applicant-portal-brand span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.applicant-portal-brand strong {
+  color: #1e3a8a;
+  font-size: 25px;
+  font-weight: 750;
+}
+
+.applicant-portal-brand small {
+  margin-top: 3px;
+  color: #64748b;
+  font-size: 13px;
+}
+
 .applicant-shared-navigation.applicant-shared-navigation.applicant-shared-navigation {
   display: flex;
   align-items: center;
@@ -50,6 +93,25 @@
 }
 
 @media (max-width: 760px) {
+  .applicant-portal-header {
+    min-height: 96px;
+    padding: 12px 18px;
+    gap: 14px;
+  }
+
+  .applicant-portal-header > img {
+    width: 40px;
+    height: 58px;
+  }
+
+  .applicant-portal-brand strong {
+    font-size: 22px;
+  }
+
+  .applicant-portal-brand small {
+    font-size: 11px;
+  }
+
   .applicant-shared-navigation.applicant-shared-navigation.applicant-shared-navigation .applicant-nav-link {
     flex: 1 1 auto;
     padding: 0 10px;
@@ -57,6 +119,21 @@
 
   .applicant-shared-navigation.applicant-shared-navigation.applicant-shared-navigation .applicant-nav-logout {
     margin-left: auto;
+  }
+}
+
+@media (max-width: 420px) {
+  .applicant-shared-navigation.applicant-shared-navigation.applicant-shared-navigation .applicant-nav-link {
+    flex-basis: 50%;
+  }
+
+  .applicant-portal-brand small {
+    max-width: 270px;
+    line-height: 1.35;
+  }
+
+  .applicant-shared-navigation.applicant-shared-navigation.applicant-shared-navigation .applicant-nav-logout {
+    margin-left: 0;
   }
 }
 

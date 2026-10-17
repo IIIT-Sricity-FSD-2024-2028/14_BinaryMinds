@@ -1,11 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { timingSafeEqual } from 'node:crypto';
 import { Role } from '../common/enums/role.enum';
 import { User } from '../users/user.interface';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
+import { verifyPassword } from './password.util';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +31,7 @@ export class AuthService {
       }
       if (
         user.role !== requestedRole ||
-        !this.passwordMatches(credentials.password, user.password_hash)
+        !verifyPassword(credentials.password, user.password_hash)
       ) {
         throw new UnauthorizedException('Invalid email, password, or role');
       }
@@ -70,21 +70,6 @@ export class AuthService {
     };
   }
 
-  private passwordMatches(password: string, storedPassword: string): boolean {
-    if (!storedPassword) return false;
-    if (password === storedPassword) return true;
-    if (password.toLowerCase() === storedPassword.toLowerCase()) return true;
-    if (
-      (password === 'TradeZo@123' || password === 'TradZo@123' || password === 'super123') &&
-      (storedPassword === 'TradeZo@123' || storedPassword === 'TradZo@123' || storedPassword === 'super123')
-    ) {
-      return true;
-    }
-    const supplied = Buffer.from(password);
-    const stored = Buffer.from(storedPassword);
-    return supplied.length === stored.length && timingSafeEqual(supplied, stored);
-  }
-
   private normalizeRole(value: string): Role | null {
     const normalized = value.trim().toLowerCase().replace(/[\s-]+/g, '_');
     const aliases: Record<string, Role> = {
@@ -109,7 +94,7 @@ export class AuthService {
     const password = process.env.PLATFORM_ADMIN_PASSWORD || 'admin123';
     if (
       credentials.email.trim().toLowerCase() !== email ||
-      !this.passwordMatches(credentials.password, password)
+      !verifyPassword(credentials.password, password)
     ) {
       throw new UnauthorizedException('Invalid email, password, or role');
     }

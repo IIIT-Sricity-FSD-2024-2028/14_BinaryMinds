@@ -85,6 +85,62 @@
   border-color: #1a237e;
 }
 
+.registration-page .registration-page-password-field {
+  position: relative;
+}
+
+.registration-page .registration-page-password-field input {
+  padding-right: 48px;
+}
+
+.registration-page .password-visibility-toggle,
+.applicant-profile-edit-page .password-visibility-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  display: grid;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+}
+
+.registration-page .password-visibility-toggle:hover,
+.applicant-profile-edit-page .password-visibility-toggle:hover {
+  background: #eaf0f8;
+  color: #1e3a8a;
+}
+
+.registration-page .password-visibility-toggle:focus-visible,
+.applicant-profile-edit-page .password-visibility-toggle:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.registration-page .password-visibility-toggle svg,
+.applicant-profile-edit-page .password-visibility-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.registration-page .form-group small {
+  display: block;
+  margin: 6px 2px 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
 .registration-page .terms-group {
   display: flex;
   align-items: flex-start;

@@ -1,248 +1,112 @@
-// payments/script.js — dynamic last payment date
-
-(function() {
-  function safeParse(value, fallback) {
-    try { return JSON.parse(value); } catch (error) { return fallback; }
-  }
-
-  function normalize(value) {
-    return String(value || '').trim().toLowerCase();
-  }
-
-  function getDynamicFeeFallback() {
-    var feeString = '₹2100';
-    try {
-       var fees = JSON.parse(localStorage.getItem('tradezo_fees'));
-       if (fees && fees.new) {
-          var val = parseInt(fees.new, 10);
-          val = val + (val * 0.05);
-          feeString = '₹' + Math.floor(val); 
-       }
-    } catch(e) {}
-    return feeString;
-  }
-
-  function getUser() {
-    // Always prefer sessionStorage as the authoritative source
-    var sessionUser = safeParse(sessionStorage.getItem('loggedInUser') || 'null', null);
-    if (sessionUser && sessionUser.email) return sessionUser;
-    // Fall back to TRADEZO helper
-    if (window.TRADEZO && typeof TRADEZO.getLoggedInUser === 'function') {
-      var tzUser = TRADEZO.getLoggedInUser();
-      if (tzUser && tzUser.email) return tzUser;
-    }
-    return sessionUser || {};
-  }
-
-  function getAllApps() {
-    var apps = [];
-    // 1. tz_submitted_apps — primary (payment-confirmed apps)
-    var submitted = safeParse(localStorage.getItem('tz_submitted_apps') || '[]', []);
-    if (Array.isArray(submitted)) apps = apps.concat(submitted);
-
-    // 2. Legacy 'applications' key
-    var legacy = safeParse(localStorage.getItem('applications') || '[]', []);
-    if (Array.isArray(legacy)) {
-      legacy.forEach(function(app) {
-        var exists = apps.some(function(ex) { return ex.id === app.id || ex.appRef === app.appRef; });
-        if (!exists) apps.push(app);
-      });
-    }
-
-    // 3. TRADEZO in-memory apps
-    if (window.TRADEZO && Array.isArray(TRADEZO.applications)) {
-      TRADEZO.applications.forEach(function(app) {
-        var exists = apps.some(function(ex) { return ex.id === app.id || ex.appRef === app.appRef; });
-        if (!exists) apps.push(app);
-      });
-    }
-
-    if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
-      TRADEZO.sortFreshFirst(apps);
-    }
-
-    return apps;
-  }
-
-  function belongsToUser(app, user) {
-    if (!app) return false;
-    // Match by applicationRef in session (most reliable)
-    var appRef = sessionStorage.getItem('applicationRef') || '';
-    if (appRef && (app.id === appRef || app.appRef === appRef)) return true;
-    // Match by email
-    if (user.email && normalize(app.email) === normalize(user.email)) return true;
-    // Match by applicantId (stored as email in some records)
-    if (user.email && normalize(app.applicantId) === normalize(user.email)) return true;
-    // Match by name (case-insensitive)
-    if (user.name && normalize(app.applicantName) === normalize(user.name)) return true;
-    // Match by user id
-    if (user.id && (normalize(app.userId) === normalize(user.id) || normalize(app.applicantId) === normalize(user.id))) return true;
-    return false;
-  }
-
-  function parseDate(value) {
-    if (!value) return null;
-    var parsed = new Date(value);
-    if (!isNaN(parsed.getTime())) return parsed;
-
-    var parts = String(value).replace(',', '').split(' ');
-    if (parts.length >= 3) {
-      var day = parts[0];
-      var month = parts[1];
-      var year = parts[2];
-      var alt = new Date(month + ' ' + day + ' ' + year);
-      if (!isNaN(alt.getTime())) return alt;
-    }
-
-    return null;
-  }
-
-  function formatDate(date) {
-    if (!date) return '—';
-    return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
-  }
-
-  function findLatestPaymentDate(user) {
-    var apps = getAllApps().filter(function(app) {
-      return belongsToUser(app, user);
-    });
-    if (window.TRADEZO && typeof TRADEZO.sortFreshFirst === 'function') {
-      TRADEZO.sortFreshFirst(apps);
-    }
-
-    if (!apps.length) return '—';
-
-    var latest = null;
-    apps.forEach(function(app) {
-      var date = parseDate(app.submittedDate) || parseDate(app.paymentDate);
-      if (!date) return;
-      if (!latest || date > latest) latest = date;
-    });
-
-    return latest ? formatDate(latest) : '—';
-  }
-
-  function findLatestPaymentAmount(user) {
-    var apps = getAllApps().filter(function(app) {
-      return belongsToUser(app, user) && (normalize(app.paymentStatus) === 'paid' || normalize(app.paymentStatus) === 'success');
-    });
-
-    if (!apps.length) return getDynamicFeeFallback();
-
-    var latestApp = null;
-    var latestDate = null;
-    apps.forEach(function(app) {
-      var date = parseDate(app.submittedDate) || parseDate(app.paymentDate);
-      if (!date) return;
-      if (!latestDate || date > latestDate) {
-         latestDate = date;
-         latestApp = app;
-      }
-    });
-
-    return latestApp && latestApp.paymentAmount ? latestApp.paymentAmount : getDynamicFeeFallback();
-  }
-
-  function wireActions() {
-    var printBtn = document.querySelector('.btn-print');
-    if (printBtn) {
-      printBtn.addEventListener('click', function() {
-        window.print();
-      });
-    }
-
-    var downloadLinks = document.querySelectorAll('.left-panel tbody a[href="#"]');
-    downloadLinks.forEach(function(link) {
-      link.addEventListener('click', function(event) {
-        event.preventDefault();
-        window.print();
-      });
-    });
-
-    var receiptEyes = document.querySelectorAll('.receipts-section .fa-eye');
-    receiptEyes.forEach(function(icon) {
-      var row = icon.closest('tr');
-      if (row) {
-        row.style.cursor = 'pointer';
-        row.addEventListener('click', function() {
-          window.print();
-        });
-      }
+(function () {
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, function (character) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character];
     });
   }
 
-  function renderTransactions(apps) {
+  function formatMoney(value) {
+    return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(value) || 0);
+  }
+
+  function formatDate(value) {
+    if (!value) return '—';
+    var date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+  }
+
+  function renderTransactions(payments) {
     var tbody = document.getElementById('transactionsTbody');
     if (!tbody) return;
     tbody.innerHTML = '';
-
-    if (!apps || apps.length === 0) {
+    if (!payments.length) {
       tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No payment transactions found.</td></tr>';
       return;
     }
 
-    apps.forEach(function(app) {
-      var txnId = app.paymentRef || ('TXN-' + Math.floor(Math.random() * 100000000));
-      var pDate = normalize(app.status) === 'pending payment' ? 'Pending' : (app.paymentDate || app.submittedDate || new Date().toLocaleDateString('en-IN'));
-      var amount = app.paymentAmount || getDynamicFeeFallback();
-      var method = app.paymentMethod || 'UPI';
-      
-      var isSuccess = normalize(app.paymentStatus) === 'paid' || normalize(app.paymentStatus) === 'success';
-      var statusBadge = isSuccess ? '<span class="badge success">Success</span>' : '<span class="badge failed">Failed or Pending</span>';
-      
-      var actionHtml = isSuccess 
-          ? '<a href="#" class="print-receipt"><i class="fa-solid fa-download"></i> Download Receipt</a>' 
-          : '<a href="../paynow/index.html"><i class="fa-solid fa-rotate-right"></i> Retry Payment</a>';
-      
-      var tr = document.createElement('tr');
-      tr.innerHTML = '<td>' + txnId + '</td><td>' + pDate + '</td><td>' + amount + '</td><td>' + method + '</td><td>' + statusBadge + '</td><td>' + actionHtml + '</td>';
-      tbody.appendChild(tr);
+    payments.forEach(function (payment) {
+      var status = String(payment.payment_status || '').toUpperCase();
+      var successful = status === 'COMPLETED';
+      var statusBadge = successful
+        ? '<span class="badge success">Success</span>'
+        : '<span class="badge failed">' + escapeHtml(status || 'PENDING') + '</span>';
+      var action = successful
+        ? '<a href="#" class="print-receipt">Print Receipt</a>'
+        : '<a href="../paynow/index.html">Continue Payment</a>';
+      var row = document.createElement('tr');
+      row.innerHTML = '<td>' + escapeHtml(payment.transaction_id || payment.payment_id) + '</td>' +
+        '<td>' + escapeHtml(formatDate(payment.payment_date)) + '</td>' +
+        '<td>' + escapeHtml(formatMoney(payment.amount)) + '</td>' +
+        '<td>' + escapeHtml(payment.payment_method || '—') + '</td>' +
+        '<td>' + statusBadge + '</td><td>' + action + '</td>';
+      tbody.appendChild(row);
     });
   }
 
-  function renderReceipts(apps) {
+  function renderReceipts(payments) {
     var tbody = document.getElementById('receiptsTbody');
     if (!tbody) return;
     tbody.innerHTML = '';
-
-    var paidApps = apps.filter(function(app) {
-      return normalize(app.paymentStatus) === 'paid' || normalize(app.paymentStatus) === 'success';
-    });
-
-    if (paidApps.length === 0) {
+    var completed = payments.filter(function (payment) { return String(payment.payment_status || '').toUpperCase() === 'COMPLETED'; });
+    if (!completed.length) {
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No receipts available.</td></tr>';
       return;
     }
-
-    paidApps.forEach(function(app) {
-      var receiptId = 'RC-' + (app.paymentRef ? String(app.paymentRef).slice(-4) : Math.floor(Math.random() * 10000));
-      var pDate = app.paymentDate || app.submittedDate || new Date().toLocaleDateString('en-IN');
-      var tr = document.createElement('tr');
-      tr.innerHTML = '<td>' + receiptId + '</td><td>' + pDate + '</td><td><span class="dot green"></span> Generated</td><td><i class="fa-regular fa-eye receipt-view" style="cursor:pointer;"></i></td>';
-      tbody.appendChild(tr);
+    completed.forEach(function (payment) {
+      var row = document.createElement('tr');
+      row.innerHTML = '<td>RC-' + escapeHtml(payment.payment_id) + '</td>' +
+        '<td>' + escapeHtml(formatDate(payment.payment_date)) + '</td>' +
+        '<td><span class="dot green"></span> Generated</td>' +
+        '<td><button type="button" class="receipt-view" aria-label="Print receipt">Print</button></td>';
+      tbody.appendChild(row);
     });
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    var user = getUser();
-    var apps = getAllApps().filter(function(app) {
-      return belongsToUser(app, user);
+  async function loadPayments() {
+    var message = document.getElementById('paymentsMessage');
+    var token = sessionStorage.getItem('accessToken') || '';
+    var applications = window.TRADEZO && Array.isArray(TRADEZO.applications) ? TRADEZO.applications : [];
+    var applicationIds = applications.map(function (app) { return Number(app.application_id || app.backendId); }).filter(Boolean);
+    if (!token) throw new Error('Your session has expired. Please sign in again.');
+
+    var responses = await Promise.all(applicationIds.map(async function (id) {
+      var response = await fetch('http://localhost:3000/api/payments/application/' + id, {
+        headers: { Authorization: 'Bearer ' + token }
+      });
+      var payload = await response.json().catch(function () { return []; });
+      if (!response.ok) throw new Error(Array.isArray(payload.message) ? payload.message.join(' ') : (payload.message || 'Unable to load payment history.'));
+      return Array.isArray(payload) ? payload : (payload.data || []);
+    }));
+    var payments = responses.flat().sort(function (a, b) {
+      return new Date(b.payment_date || 0).getTime() - new Date(a.payment_date || 0).getTime();
     });
 
-    var el = document.getElementById('lastPaymentDate');
-    if (el) el.textContent = findLatestPaymentDate(user);
+    renderTransactions(payments);
+    renderReceipts(payments);
+    var latestCompleted = payments.find(function (payment) { return String(payment.payment_status || '').toUpperCase() === 'COMPLETED'; });
+    var dateEl = document.getElementById('lastPaymentDate');
+    var amountEl = document.getElementById('lastSuccessfulPayment');
+    if (dateEl) dateEl.textContent = latestCompleted ? formatDate(latestCompleted.payment_date) : '—';
+    if (amountEl) amountEl.textContent = latestCompleted ? formatMoney(latestCompleted.amount) : '—';
+    var statusSummary = document.getElementById('paymentSummaryStatus');
+    var methodSummary = document.getElementById('paymentSummaryMethod');
+    var receiptSummary = document.getElementById('paymentSummaryReceipt');
+    if (statusSummary) statusSummary.textContent = latestCompleted ? 'Latest payment was verified as successful.' : 'No completed payment is recorded.';
+    if (methodSummary) methodSummary.textContent = latestCompleted && latestCompleted.payment_method ? 'Method used: ' + latestCompleted.payment_method : 'Payment method is not recorded.';
+    if (receiptSummary) receiptSummary.textContent = latestCompleted ? 'A receipt is available to print.' : 'Receipts appear after a payment is verified.';
 
-    var elAmount = document.getElementById('lastSuccessfulPayment');
-    if (elAmount) elAmount.textContent = findLatestPaymentAmount(user);
+    document.querySelectorAll('.print-receipt, .receipt-view').forEach(function (button) {
+      button.addEventListener('click', function (event) { event.preventDefault(); window.print(); });
+    });
+    if (message) message.textContent = '';
+  }
 
-    renderTransactions(apps);
-    renderReceipts(apps);
-
-    wireActions();
-    
-    // Wire dynamic links that were just added
-    document.querySelectorAll('.print-receipt, .receipt-view').forEach(function(btn) {
-       btn.addEventListener('click', function(e) { e.preventDefault(); window.print(); });
+  document.addEventListener('DOMContentLoaded', function () {
+    var printButton = document.querySelector('.btn-print');
+    if (printButton) printButton.addEventListener('click', function () { window.print(); });
+    loadPayments().catch(function (error) {
+      var message = document.getElementById('paymentsMessage');
+      if (message) message.textContent = error.message || 'Unable to load payment history.';
     });
   });
 })();

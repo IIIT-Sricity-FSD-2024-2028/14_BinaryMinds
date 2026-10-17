@@ -101,15 +101,6 @@ export default function ApplicantDashboard() {
 
   return (
     <div className="applicant-dashboard-page">
-      <div className="top-bar">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Government of India emblem" style={{ filter: 'none' }} />
-        <div className="brand">
-          <span>Government of India</span>
-          <strong>TradeZo</strong>
-          <span>Municipal Corporation &ndash; Trade License Management System</span>
-        </div>
-      </div>
-
       <ApplicantNavigation onLogout={handleLogout} />
 
       <div className="main">

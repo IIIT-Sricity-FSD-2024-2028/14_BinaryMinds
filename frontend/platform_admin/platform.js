@@ -199,12 +199,25 @@
 
   let lastActiveView = 'overview';
 
+  function activateView(viewId) {
+    document.querySelectorAll('.view').forEach(function(view) {
+      view.classList.remove('active');
+    });
+
+    document.querySelectorAll('.sidebar-nav .nav-link').forEach(function(link) {
+      link.classList.remove('active');
+    });
+
+    const target = document.getElementById(viewId);
+    const nav = document.querySelector('.sidebar-nav .nav-link[data-view="' + viewId + '"]');
+
+    if (target) target.classList.add('active');
+    if (nav) nav.classList.add('active');
+  }
+
   window.showApplicationsForMuni = async (muniId, muniName, fromView = 'overview') => {
     lastActiveView = fromView;
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.sidebar-nav .nav-link').forEach(b => b.classList.remove('active'));
-    const appsSection = document.getElementById('applications');
-    if (appsSection) appsSection.classList.add('active');
+    activateView('applications');
 
     const titleEl = document.getElementById('appsMuniTitle');
     const subEl = document.getElementById('appsMuniSubtitle');
@@ -217,7 +230,7 @@
     }
 
     try {
-      const res = await api('applications').catch(() => ({ data: [] }));
+      const res = await api('applications');
       const allApps = Array.isArray(res) ? res : (res.data || []);
       const muniApps = allApps.filter(a => (a.municipality_id || '').toLowerCase() === muniId.toLowerCase());
 
@@ -269,7 +282,7 @@
     if (modal) modal.classList.add('show');
 
     try {
-      const allUsers = await api('users').catch(() => []);
+      const allUsers = await api('users');
       const muniUsers = allUsers.filter(u => (u.municipality_id || '').toLowerCase() === muniId.toLowerCase());
 
       const headList = muniUsers.filter(u => u.role === 'municipal_commissioner' || u.role === 'super_user');
@@ -366,13 +379,9 @@
 
   const backBtn = document.getElementById('backFromAppsBtn');
   if (backBtn) {
-    backBtn.onclick = () => {
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.sidebar-nav .nav-link').forEach(b => b.classList.remove('active'));
-      const targetSec = document.getElementById(lastActiveView) || document.getElementById('overview');
-      const targetNav = document.querySelector('[data-view="' + lastActiveView + '"]') || document.querySelector('[data-view="overview"]');
-      if (targetSec) targetSec.classList.add('active');
-      if (targetNav) targetNav.classList.add('active');
+    backBtn.onclick = event => {
+      event.preventDefault();
+      activateView(lastActiveView || 'overview');
     };
   }
 
@@ -389,7 +398,7 @@
         {
           label: 'Municipality / Corporation',
           html: true,
-          value: r => '<button type="button" style="background:none;border:none;padding:0;color:var(--navy);font-weight:700;font-size:13px;text-decoration:underline;cursor:pointer;text-align:left;" onclick="openMuniOfficersModal(\'' + escape(r.corporation_id || r.municipality_id) + '\', \'' + escape(r.name) + '\')">' + escape(r.name || '—') + ' <span style="font-weight:400;color:var(--muted);font-size:12px;">(' + escape(r.corporation_id || r.municipality_id) + ')</span></button>'
+          value: r => '<button type="button" class="js-muni-officers" data-muni-id="' + escape(r.corporation_id || r.municipality_id) + '" data-muni-name="' + escape(r.name) + '" style="background:none;border:none;padding:0;color:var(--navy);font-weight:700;font-size:13px;text-decoration:underline;cursor:pointer;text-align:left;">' + escape(r.name || '—') + ' <span style="font-weight:400;color:var(--muted);font-size:12px;">(' + escape(r.corporation_id || r.municipality_id) + ')</span></button>'
         },
         { label: 'State / District', value: r => (r.state || '—') + ' / ' + (r.district || '—') },
         {
@@ -397,12 +406,12 @@
           html: true,
           value: r => r.municipal_head
             ? escape(r.municipal_head.name + (r.municipal_head.email ? ' (' + r.municipal_head.email + ')' : ''))
-            : '<button class="btn-primary" style="padding:4px 10px;font-size:12px;cursor:pointer;" onclick="openAddHeadModal(\'' + escape(r.corporation_id || r.municipality_id) + '\', \'' + escape(r.name) + '\')">+ Add Head</button>'
+            : '<button type="button" class="btn-primary js-add-head" data-muni-id="' + escape(r.corporation_id || r.municipality_id) + '" data-muni-name="' + escape(r.name) + '" style="padding:4px 10px;font-size:12px;cursor:pointer;">+ Add Head</button>'
         },
         {
           label: 'Applications',
           html: true,
-          value: r => '<button class="btn-primary" style="padding:4px 12px;font-size:12px;cursor:pointer;border-radius:5px;" onclick="showApplicationsForMuni(\'' + escape(r.corporation_id || r.municipality_id) + '\', \'' + escape(r.name) + '\', \'overview\')">View</button>'
+          value: r => '<button type="button" class="btn-primary js-muni-applications" data-muni-id="' + escape(r.corporation_id || r.municipality_id) + '" data-muni-name="' + escape(r.name) + '" style="padding:4px 12px;font-size:12px;cursor:pointer;border-radius:5px;">View</button>'
         }
       ];
 
@@ -414,7 +423,7 @@
           html: true,
           value: r => r.municipal_head
             ? escape(r.municipal_head.name + (r.municipal_head.email ? ' (' + r.municipal_head.email + ')' : ''))
-            : '<button class="btn-primary" style="padding:4px 10px;font-size:12px;cursor:pointer;" onclick="openAddHeadModal(\'' + escape(r.corporation_id || r.municipality_id) + '\', \'' + escape(r.name) + '\')">+ Add Head</button>'
+            : '<button type="button" class="btn-primary js-add-head" data-muni-id="' + escape(r.corporation_id || r.municipality_id) + '" data-muni-name="' + escape(r.name) + '" style="padding:4px 10px;font-size:12px;cursor:pointer;">+ Add Head</button>'
         },
         { label: 'FO / DO Counts', value: r => (r.field_officers_count ?? 0) + ' FO / ' + (r.department_officers_count ?? 0) + ' DO' },
         { label: 'Applications', value: r => r.applications ?? 0 }
@@ -485,14 +494,41 @@
     }
   }
 
-  // Navigation view toggling
-  document.querySelectorAll('[data-view]').forEach(button => {
-    button.onclick = () => {
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.sidebar-nav .nav-link').forEach(b => b.classList.remove('active'));
-      button.classList.add('active');
-      document.getElementById(button.dataset.view).classList.add('active');
-    };
+  // Stable delegated handlers for actions rendered into table HTML.
+  document.addEventListener('click', function(event) {
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target) return;
+
+    const officersBtn = target.closest('.js-muni-officers');
+    if (officersBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      openMuniOfficersModal(officersBtn.dataset.muniId, officersBtn.dataset.muniName);
+      return;
+    }
+
+    const applicationsBtn = target.closest('.js-muni-applications');
+    if (applicationsBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      showApplicationsForMuni(applicationsBtn.dataset.muniId, applicationsBtn.dataset.muniName, 'overview');
+      return;
+    }
+
+    const addHeadBtn = target.closest('.js-add-head');
+    if (addHeadBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      openAddHeadModal(addHeadBtn.dataset.muniId, addHeadBtn.dataset.muniName);
+    }
+  });
+
+  document.querySelectorAll('.sidebar-nav .nav-link').forEach(function(button) {
+    button.addEventListener('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      activateView(button.dataset.view);
+    });
   });
 
   // Settings update
@@ -526,8 +562,8 @@
   const closeBtn = document.getElementById('closeAddCorpBtn');
   const addForm = document.getElementById('addCorpForm');
 
-  if (openBtn) openBtn.onclick = () => modal.classList.add('show');
-  if (closeBtn) closeBtn.onclick = () => modal.classList.remove('show');
+  if (openBtn) openBtn.onclick = event => { event.preventDefault(); modal.classList.add('show'); };
+  if (closeBtn) closeBtn.onclick = event => { event.preventDefault(); modal.classList.remove('show'); };
 
   if (addForm) {
     addForm.onsubmit = async e => {
@@ -593,7 +629,7 @@
             full_name: name,
             email: email,
             phone: phone,
-            role: 'super_user',
+            role: 'municipal_commissioner',
             municipality_id: muniId,
             password_hash: password
           })

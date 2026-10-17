@@ -160,10 +160,6 @@ export default function ApplicantApplyLicense() {
 
   return (
     <div className="applicant-apply-license-page">
-      <div className="top-bar">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo" height="45" />
-        <div><span className="brand-gov">Government of India</span><span className="brand-name">TradeZo</span></div>
-      </div>
       <ApplicantNavigation onLogout={logout} />
       <main className="page">
         <h1>Apply for Trade License</h1>
@@ -192,7 +188,6 @@ export default function ApplicantApplyLicense() {
           </div></section>
           <div className="buttons"><button type="button" className="cancel-btn" onClick={() => navigate(-1)}>Cancel</button><button type="submit" className="next-btn">Next &rarr;</button></div>
         </form>
-        <div className="info-row"><div className="info-box"><strong>E-KYC Ready</strong><p>Ensure your Aadhaar is linked with your mobile number for OTP.</p></div><div className="info-box"><strong>Data Privacy</strong><p>All information is processed per the National Data Security Policy.</p></div><div className="info-box"><strong>Need Help?</strong><p>Call 1800-GOV-HELP for any assistance with the application form.</p></div></div>
       </main>
     </div>
   );

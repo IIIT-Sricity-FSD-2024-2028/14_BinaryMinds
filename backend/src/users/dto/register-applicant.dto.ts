@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class RegisterApplicantDto {
   @IsString()
@@ -20,5 +20,8 @@ export class RegisterApplicantDto {
   @IsNotEmpty()
   @MinLength(6)
   @MaxLength(255)
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/, {
+    message: 'Password must include at least one letter, one number, and one special character',
+  })
   password!: string;
 }

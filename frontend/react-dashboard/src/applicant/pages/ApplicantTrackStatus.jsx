@@ -11,9 +11,9 @@ function readUser() {
 }
 
 function dateLabel(value) {
-  if (!value) return 'Date unavailable';
+  if (!value) return '';
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? 'Date unavailable' : date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 function currentStep(status) {
@@ -38,7 +38,6 @@ function statusLabel(status) {
 function Navigation({ onLogout }) {
   return (
     <>
-      <div className="track-top-bar"><img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo" /><div className="track-brand"><span>Government of India</span><strong>TradeZo</strong></div></div>
       <ApplicantNavigation onLogout={onLogout} />
     </>
   );
@@ -48,6 +47,8 @@ export default function ApplicantTrackStatus() {
   const navigate = useNavigate();
   const [user] = useState(readUser);
   const [application, setApplication] = useState(null);
+  const [licenseIssueDate, setLicenseIssueDate] = useState('');
+  const [licenseIssueDateError, setLicenseIssueDateError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -69,7 +70,24 @@ export default function ApplicantTrackStatus() {
         }
         if (!Array.isArray(result.data)) throw new Error('The server returned an invalid application list.');
         const newest = result.data.slice().sort((first, second) => new Date(second.submitted_at || 0) - new Date(first.submitted_at || 0))[0] || null;
-        if (active) setApplication(newest);
+        if (!active) return;
+        setApplication(newest);
+        if (String(newest?.application_status || '').toLowerCase() === 'approved') {
+          try {
+            const licenseResponse = await fetch(`http://localhost:3000/api/licenses/application/${encodeURIComponent(newest.application_id)}`, {
+              headers: { Authorization: 'Bearer ' + token },
+            });
+            const licensePayload = await licenseResponse.json().catch(() => ({}));
+            if (licenseResponse.ok) {
+              if (active) setLicenseIssueDate(licensePayload.data?.issued_date || licensePayload.issued_date || '');
+            } else if (licenseResponse.status !== 404) {
+              const message = Array.isArray(licensePayload.message) ? licensePayload.message.join(', ') : licensePayload.message;
+              if (active) setLicenseIssueDateError(message || 'Could not load the license issue date.');
+            }
+          } catch {
+            if (active) setLicenseIssueDateError('Could not load the license issue date. Please refresh to try again.');
+          }
+        }
       } catch (requestError) {
         if (active) setError(requestError.message || 'Please check your connection and try again.');
       } finally {
@@ -93,6 +111,9 @@ export default function ApplicantTrackStatus() {
   const stepIndex = currentStep(application?.application_status);
   const isRejected = application?.application_status === 'rejected';
   const paymentStatus = typeof application?.paymentDone === 'boolean' ? (application.paymentDone ? 'Paid' : 'Not paid') : 'Unavailable';
+  const approvedIssueLabel = licenseIssueDate
+    ? `Issue date: ${dateLabel(licenseIssueDate)}`
+    : licenseIssueDateError ? '' : 'Issue date pending';
 
   return (
     <div className="applicant-track-status-page">
@@ -117,36 +138,34 @@ export default function ApplicantTrackStatus() {
                 </div>
                 <div className="stepper" aria-label="Application progress">
                   {steps.map((step, index) => (
-                    <ReactStep key={step} title={isRejected && index === 4 ? 'Approved / Rejected' : step} index={index} currentIndex={stepIndex} isRejected={isRejected} submittedDate={index === 0 ? dateLabel(application.submitted_at) : ''} isLast={index === steps.length - 1} />
+                    <ReactStep key={step} title={isRejected && index === 4 ? 'Approved / Rejected' : step} index={index} currentIndex={stepIndex} isRejected={isRejected} date={index === 0 ? dateLabel(application.submitted_at) : index === 4 && !isRejected ? approvedIssueLabel : ''} dateError={index === 4 && !isRejected ? licenseIssueDateError : ''} isLast={index === steps.length - 1} />
                   ))}
                 </div>
-                <div className="detail-row">
-                  <div className="detail-left"><p className="detail-title"><span aria-hidden="true">ⓘ</span> Detailed Status</p><small>CURRENT STATUS</small><p className={`track-status-value ${isRejected ? 'rejected' : application.application_status === 'approved' ? 'approved' : ''}`}>{status}</p><small>EXPECTED UPDATE</small><p><strong>{application.application_status === 'approved' ? 'A license record is available if issued.' : application.application_status === 'rejected' ? 'Please contact support for details.' : 'No further update is available yet.'}</strong></p></div>
-                  <div className="detail-right"><small>OFFICER REMARK</small><p>{application.remarks || application.officer_remark || 'No officer remark is available from the application record.'}</p><p className="officer">Officer details unavailable</p></div>
-                </div>
+                <section className="detail-row" aria-label="Detailed application status">
+                  <div className="detail-left">
+                    <p className="detail-title"><span aria-hidden="true">ⓘ</span> Detailed Status</p>
+                    <div className="detail-status-grid">
+                      <div><small>CURRENT STATUS</small><p className={`track-status-value ${isRejected ? 'rejected' : application.application_status === 'approved' ? 'approved' : ''}`}>{status}</p></div>
+                      <div><small>EXPECTED UPDATE</small><p><strong>{application.application_status === 'approved' ? 'A license record is available if issued.' : application.application_status === 'rejected' ? 'Please contact support for details.' : 'No further update is available yet.'}</strong></p></div>
+                    </div>
+                  </div>
+                </section>
                 {application.application_status === 'approved' && <div className="view-btn-row"><Link className="track-button btn-view" to="/download-license">View License</Link></div>}
               </section>
             )}
             <Link className="track-button btn-cancel" to="/dashboard">← Back to Dashboard</Link>
           </div>
-          <aside className="track-right">
-            <section className="notif-card"><div className="notif-header"><h3>Recent Notifications</h3><span className="badge-num">Info</span></div>
-              {isLoading ? <p className="track-muted">Application updates will appear here.</p> : error ? <p className="track-muted">Application updates are unavailable.</p> : application ? <div className="notif-item"><strong>Application status (informational)</strong><p>The latest status in your application record is {status}.</p><small>{dateLabel(application.submitted_at)}</small></div> : <p className="track-muted">No application updates are available.</p>}
-              <p className="notif-disclaimer">These updates are derived from the application record, not a notifications service.</p>
-            </section>
-            <section className="assist-card"><span className="assist-icon" aria-hidden="true">?</span><h3>Need Assistance?</h3><p>Contact support for application queries or report technical issues.</p><Link className="track-button btn-support" to="/helpdesk">Contact Support</Link></section>
-          </aside>
         </div>
       </main>
     </div>
   );
 }
 
-function ReactStep({ title, index, currentIndex, isRejected, submittedDate, isLast }) {
+function ReactStep({ title, index, currentIndex, isRejected, date, dateError, isLast }) {
   const done = index < currentIndex || (index === currentIndex && !isRejected);
   const current = index === currentIndex;
   return <>
-    <div className={`step ${current ? 'current' : ''}`}><div className={`circle ${done ? 'done' : current ? 'current' : 'pending'} ${isRejected && current ? 'rejected' : ''}`}>{done ? '✓' : isRejected && current ? '×' : index + 1}</div><span>{title}</span><small>{submittedDate || 'Date unavailable'}</small></div>
+    <div className={`step ${current ? 'current' : ''}`}><div className={`circle ${done ? 'done' : current ? 'current' : 'pending'} ${isRejected && current ? 'rejected' : ''}`}>{done ? '✓' : isRejected && current ? '×' : index + 1}</div><span>{title}</span>{(date || dateError) && <small className={dateError ? 'step-error' : ''}>{dateError || date}</small>}</div>
     {!isLast && <div className={`line ${index < currentIndex && !isRejected ? 'line-done' : ''}`} />}
   </>;
 }

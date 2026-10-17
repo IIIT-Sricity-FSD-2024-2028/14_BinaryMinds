@@ -364,63 +364,47 @@ function confirmReject() {
 function confirmGenerateLicense() {
   if (!currentAppId) return;
   var app = findAuthorizationApp(currentAppId);
-  var licenseId = 'LIC-' + Date.now().toString().slice(-6);
-
-  var issueDate = new Date();
-  var expiryDate = new Date(issueDate);
-  expiryDate.setFullYear(issueDate.getFullYear() + 1);
-  var issueStr = issueDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-  var expiryStr = expiryDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-
   var loggedInDO = {};
   try { loggedInDO = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}'); } catch(e) {}
   var doName = loggedInDO.name || 'Department Officer';
-
-  setAppStatus(currentAppId, 'licensed', licenseId);
-  updateStoredApplications(currentAppId, {
-    status: 'License Issued',
-    doReview: 'Approved',
-    licenseNo: licenseId,
-    licenseId: licenseId,
-    licenseIssueDate: issueStr,
-    licenseExpiryDate: expiryStr,
-    issuedBy: doName,
-    updatedAt: new Date().toISOString()
-  });
-  syncBackendStatus(currentAppId, 'Approved');
-
   var backendId = Number(app && (app.backendId || app.application_id || app.id));
-  if (backendId && window.TRADEZO && typeof TRADEZO.createBackendLicense === 'function') {
-    TRADEZO.createBackendLicense(backendId, loggedInDO.backendUserId || loggedInDO.user_id || 4);
+  var issuerId = Number(loggedInDO.backendUserId || loggedInDO.user_id || loggedInDO.id);
+  if (!backendId || !issuerId || !window.TRADEZO || typeof TRADEZO.syncApplicationToBackend !== 'function' || typeof TRADEZO.createBackendLicense !== 'function') {
+    alert('License issuance is unavailable because the backend application or officer identity is missing.');
+    return;
   }
-
-  var generatedLicenses = safeArray('tz_generated_licenses');
-  generatedLicenses = generatedLicenses.filter(function(lic) {
-    return String(lic.appId || '') !== String(currentAppId) && String(lic.licenseNo || '') !== licenseId;
-  });
-  generatedLicenses.unshift({
-    id: licenseId,
-    appId: currentAppId,
-    licenseNo: licenseId,
-    businessName: app.businessName,
-    category: app.tradeCategory,
-    status: 'Active',
-    date: new Date().toISOString(),
-    licenseIssueDate: issueStr,
-    licenseExpiryDate: expiryStr,
-    issuedBy: doName
-  });
-  saveArray('tz_generated_licenses', generatedLicenses);
-  createApplicantLicenseNotification(app, currentAppId, licenseId);
-
-  closeModal('licenseModal');
-  document.getElementById('licenseSuccessInfo').innerHTML =
-    '<p><strong>License No:</strong> ' + escapeHtml(licenseId) + '</p>' +
-    '<p><strong>Business:</strong> ' + escapeHtml(app.businessName) + '</p>' +
-    '<p><strong>Category:</strong> ' + escapeHtml(app.tradeCategory) + '</p>';
-  openModal('licenseSuccessModal');
-
-  renderTable();
+  var confirmButton = document.getElementById('confirmLicenseBtn');
+  if (confirmButton) confirmButton.disabled = true;
+  var expiryDate = new Date();
+  expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+  TRADEZO.syncApplicationToBackend(Object.assign({}, app, { id: backendId, status: 'Approved' }), 'department_officer')
+    .then(function(updatedApp) {
+      if (!updatedApp) throw new Error('The application approval was not saved.');
+      return TRADEZO.createBackendLicense(backendId, issuerId);
+    })
+    .then(function(license) {
+      if (!license || !license.license_number) throw new Error('The server did not confirm license issuance.');
+      var licenseId = license.license_number;
+      var issueDate = license.issued_date ? new Date(license.issued_date) : new Date();
+      var issueStr = issueDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      var expiryStr = new Date(license.expiry_date || expiryDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      setAppStatus(currentAppId, 'licensed', licenseId);
+      updateStoredApplications(currentAppId, {
+        status: 'License Issued', doReview: 'Approved', licenseNo: licenseId,
+        licenseId: license.license_id, licenseIssueDate: issueStr,
+        licenseExpiryDate: expiryStr, issuedBy: doName, updatedAt: new Date().toISOString()
+      });
+      var generatedLicenses = safeArray('tz_generated_licenses').filter(function(item) { return String(item.appId || '') !== String(currentAppId); });
+      generatedLicenses.unshift({ id: license.license_id, appId: currentAppId, licenseNo: licenseId, businessName: app.businessName, category: app.tradeCategory, status: license.status || 'Active', date: issueDate.toISOString(), licenseIssueDate: issueStr, licenseExpiryDate: expiryStr, issuedBy: doName });
+      saveArray('tz_generated_licenses', generatedLicenses);
+      createApplicantLicenseNotification(app, currentAppId, licenseId);
+      closeModal('licenseModal');
+      document.getElementById('licenseSuccessInfo').innerHTML = '<p><strong>License No:</strong> ' + escapeHtml(licenseId) + '</p><p><strong>Business:</strong> ' + escapeHtml(app.businessName) + '</p><p><strong>Category:</strong> ' + escapeHtml(app.tradeCategory) + '</p>';
+      openModal('licenseSuccessModal');
+      renderTable();
+    })
+    .catch(function(error) { alert('License issuance failed: ' + (error.message || 'Please try again.')); })
+    .finally(function() { if (confirmButton) confirmButton.disabled = false; });
 }
 
 function statusBadgeHtml(state) {

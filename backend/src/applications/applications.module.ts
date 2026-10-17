@@ -7,9 +7,16 @@ import { ApplicationsController } from './applications.controller';
 import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 import { MunicipalitiesModule } from '../municipalities/municipalities.module';
 import { RouteAccessMiddleware } from '../common/middleware/route-access.middleware';
+import { FieldOfficerAssignmentsModule } from '../field-officer-assignments/field-officer-assignments.module';
 
 @Module({
-  imports: [UsersModule, forwardRef(() => OfficersModule), AuditLogsModule, MunicipalitiesModule],
+  imports: [
+    UsersModule,
+    forwardRef(() => OfficersModule),
+    AuditLogsModule,
+    MunicipalitiesModule,
+    forwardRef(() => FieldOfficerAssignmentsModule),
+  ],
   controllers: [ApplicationsController],
   providers: [ApplicationsService, ApplicationsRepository],
   exports: [ApplicationsService, ApplicationsRepository],

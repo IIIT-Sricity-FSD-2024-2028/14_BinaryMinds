@@ -1,95 +1,67 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var loggedIn = {};
-    try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser')) || {}; } catch(e) {}
-    
-    var stored = {};
-    try { stored = JSON.parse(localStorage.getItem('applicant_profile_data')) || {}; } catch(e) {}
-    if (stored.email && loggedIn.email && stored.email.toLowerCase() !== loggedIn.email.toLowerCase()) {
-        stored = {}; 
+document.addEventListener('DOMContentLoaded', function () {
+  var loggedIn = {};
+  try { loggedIn = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}'); } catch (error) {}
+  var applications = window.TRADEZO && Array.isArray(TRADEZO.applications) ? TRADEZO.applications : [];
+  var app = applications.find(function (item) {
+    return String(item.applicant_id || '') === String(loggedIn.user_id || loggedIn.id || '') ||
+      String(item.email || '').toLowerCase() === String(loggedIn.email || '').toLowerCase();
+  }) || {};
+  var address = app.shopAddress || app.address || '';
+  if (address && app.city) address += ', ' + app.city;
+  if (address && app.state) address += ', ' + app.state;
+  if (address && app.pincode) address += ' - ' + app.pincode;
+
+  document.getElementById('profName').value = loggedIn.full_name || loggedIn.name || app.applicantName || '';
+  document.getElementById('profEmail').value = loggedIn.email || '';
+  document.getElementById('profPhone').value = loggedIn.phone || app.phone || '';
+  document.getElementById('profAddress').value = address;
+  var aadhaar = app.aadhaar || '';
+  document.getElementById('profAadhaar').value = aadhaar ? 'XXXX-XXXX-' + String(aadhaar).slice(-4) : '';
+  document.getElementById('profGender').value = app.gender || '';
+
+  var form = document.getElementById('editProfileForm');
+  var button = form.querySelector('[type="submit"]');
+  var message = document.getElementById('profileEditMessage');
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    var userId = loggedIn.user_id || loggedIn.id;
+    var token = sessionStorage.getItem('accessToken') || '';
+    if (!userId || !token) {
+      message.textContent = 'Your session is incomplete. Please sign in again.';
+      return;
     }
 
-    var sessionApp = {};
-    try { sessionApp = JSON.parse(sessionStorage.getItem('applicationForm') || '{}'); } catch(e) {}
+    button.disabled = true;
+    message.textContent = 'Saving profile...';
+    try {
+      var response = await fetch('http://localhost:3000/api/users/' + encodeURIComponent(userId), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({
+          full_name: document.getElementById('profName').value.trim(),
+          email: document.getElementById('profEmail').value.trim(),
+          phone: document.getElementById('profPhone').value.trim()
+        })
+      });
+      var payload = await response.json().catch(function () { return {}; });
+      if (!response.ok) {
+        throw new Error(Array.isArray(payload.message) ? payload.message.join(' ') : (payload.message || 'Unable to update profile.'));
+      }
 
-    var apps = [];
-    try { apps = JSON.parse(localStorage.getItem('tz_submitted_apps') || '[]'); } catch(e){}
-    try { var legacy = JSON.parse(localStorage.getItem('applications') || '[]'); apps = apps.concat(legacy); } catch(e){}
-    if (typeof window !== 'undefined' && window.TRADEZO && TRADEZO.applications) {
-        apps = apps.concat(TRADEZO.applications);
+      loggedIn.user_id = payload.user_id;
+      loggedIn.id = payload.user_id;
+      loggedIn.full_name = payload.full_name;
+      loggedIn.name = payload.full_name;
+      loggedIn.email = payload.email;
+      loggedIn.phone = payload.phone || '';
+      sessionStorage.setItem('loggedInUser', JSON.stringify(loggedIn));
+      localStorage.setItem('user', JSON.stringify({ name: payload.full_name, email: payload.email, phone: payload.phone || '' }));
+      message.textContent = 'Profile updated successfully.';
+    } catch (error) {
+      message.textContent = error.message || 'Unable to update profile. Please try again.';
+    } finally {
+      button.disabled = false;
     }
-    var userApp = apps.find(function(a) { 
-        var emailMatch = a.email && loggedIn.email && a.email.toLowerCase() === loggedIn.email.toLowerCase();
-        var idMatch = a.applicantId && loggedIn.email && a.applicantId.toLowerCase() === loggedIn.email.toLowerCase();
-        return emailMatch || idMatch;
-    });
-    
-    var appData = userApp || sessionApp || {};
-
-    var appAddress = appData.shopAddress || appData.address || '';
-    if (appAddress) {
-        if (appData.city) appAddress += ', ' + appData.city;
-        if (appData.state) appAddress += ', ' + appData.state;
-        if (appData.pincode) appAddress += ' - ' + appData.pincode;
-    }
-
-    var name = stored.name || loggedIn.name || appData.fullName || appData.applicantName || '';
-    var email = stored.email || loggedIn.email || appData.email || '';
-    var phone = stored.phone || loggedIn.phone || appData.phone || '';
-    var address = stored.address || appAddress || '';
-    
-    var aadhaarRaw = (userApp && userApp.aadhaar) || (sessionApp && sessionApp.aadhaar) || appData.aadhaar;
-    var aadhaar = aadhaarRaw ? 'XXXX-XXXX-' + String(aadhaarRaw).slice(-4) : '';
-    var gender = (userApp && userApp.gender) || (sessionApp && sessionApp.gender) || appData.gender || '';
-  
-    document.getElementById('profName').value = name;
-    document.getElementById('profEmail').value = email;
-    document.getElementById('profPhone').value = phone;
-    document.getElementById('profAddress').value = address;
-    document.getElementById('profAadhaar').value = aadhaar;
-    document.getElementById('profGender').value = gender;
-  
-    var form = document.getElementById('editProfileForm');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        var dataToSave = {
-            name: document.getElementById('profName').value,
-            email: document.getElementById('profEmail').value,
-            phone: document.getElementById('profPhone').value,
-            address: document.getElementById('profAddress').value,
-            updatedAt: new Date().toISOString(),
-            // Store the original login email so profile ownership can always be verified
-            ownerEmail: loggedIn.email || document.getElementById('profEmail').value
-        };
-  
-        // 1. Update active local profile overwrite
-        localStorage.setItem('applicant_profile_data', JSON.stringify(dataToSave));
-        
-        // 2. Overwrite session user name and phone (NOT email — email is identity)
-        if (loggedIn && loggedIn.email) {
-            loggedIn.name = dataToSave.name;
-            loggedIn.phone = dataToSave.phone;
-            // Do NOT change loggedIn.email — it's the identity anchor from login
-            sessionStorage.setItem('loggedInUser', JSON.stringify(loggedIn));
-            
-            // Global registry database update
-            var reg = [];
-            try { reg = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) {}
-            var updated = false;
-            for (var i = 0; i < reg.length; i++) {
-                if (reg[i].email.toLowerCase() === loggedIn.email.toLowerCase()) {
-                    reg[i].name = dataToSave.name;
-                    reg[i].phone = dataToSave.phone;
-                    updated = true;
-                    break;
-                }
-            }
-            if(updated) {
-               localStorage.setItem('registeredUsers', JSON.stringify(reg));
-            }
-        }
-        
-        alert('Profile updated successfully!');
-        window.location.href = '../Profile/index.html';
-    });
+  });
 });

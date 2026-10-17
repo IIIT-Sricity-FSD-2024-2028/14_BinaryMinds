@@ -59,6 +59,17 @@ body{background:#f4f6fb}
 .doc-item{display:flex;align-items:center;gap:10px;padding:10px;background:#f8fafc;border-radius:6px}
 .doc-item span{font-size:13px;color:#102a72;font-weight:500}
 .doc-icon{font-size:16px}
+.do-page-inspection-report .doc-item{flex-wrap:wrap}
+.do-page-inspection-report .do-document-filename{flex:1 1 180px;overflow-wrap:anywhere}
+.do-page-inspection-report .do-document-actions{display:flex;gap:8px}
+.do-page-inspection-report .do-document-actions .btn-secondary{padding:7px 12px}
+.do-page-inspection-report .do-document-error{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#b42318;font-size:13px}
+.do-page-inspection-report .do-document-status.verified{color:#16803c}
+.do-page-inspection-report .do-document-status.rejected{color:#b42318}
+.do-page-inspection-report .do-document-rejection{flex:1 1 100%;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.do-page-inspection-report .do-document-rejection label{flex:1;display:grid;gap:6px;color:#334155;font-size:13px}
+.do-page-inspection-report .do-document-rejection textarea{min-height:64px;padding:8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#222;resize:vertical}
+.do-page-inspection-report .do-document-rejection-reason{flex:1 1 100%;color:#b42318;font-size:13px}
 
 /* Buttons */
 .back-btn{background:#102a72;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px}
