@@ -1,16 +1,25 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import CommissionerPageFrame from '../components/CommissionerPageFrame';
-import { createCommissionerUser, deleteCommissionerUser, getCommissionerUsers, updateCommissionerUser } from '../../services/api';
+import {
+  useCreateCommissionerUserMutation,
+  useDeleteCommissionerUserMutation,
+  useLazyGetCommissionerUsersQuery,
+  useUpdateCommissionerUserMutation,
+} from '../commissionerApi';
 import '../styles/CommissionerFieldOfficers.css';
 
 const blank = { full_name: '', email: '', phone: '', password: '', status: 'Active' };
 export default function CommissionerFieldOfficers() {
+  const [fetchUsers] = useLazyGetCommissionerUsersQuery();
+  const [createUser] = useCreateCommissionerUserMutation();
+  const [updateUser] = useUpdateCommissionerUserMutation();
+  const [deleteUser] = useDeleteCommissionerUserMutation();
   const [users, setUsers] = useState([]); const [query, setQuery] = useState(''); const [form, setForm] = useState(null); const [editing, setEditing] = useState(null); const [busy, setBusy] = useState(false); const [error, setError] = useState(''); const [notice, setNotice] = useState('');
-  const load = () => getCommissionerUsers().then((r) => { const list = Array.isArray(r) ? r : r?.data || []; setUsers(list.filter((u) => ['field_officer', 'field officer', 'fo'].includes(String(u.role).toLowerCase()))); }).catch((e) => setError(e.response?.data?.message || e.message));
-  useEffect(() => { load(); }, []);
+  const load = useCallback(() => fetchUsers().unwrap().then((r) => { const list = Array.isArray(r) ? r : r?.data || []; setUsers(list.filter((u) => ['field_officer', 'field officer', 'fo'].includes(String(u.role).toLowerCase()))); }).catch((e) => setError(e?.data?.message || e?.error || e?.message)), [fetchUsers]);
+  useEffect(() => { load(); }, [load]);
   const visible = useMemo(() => users.filter((u) => `${u.employee_id || ''} ${u.full_name} ${u.email} ${u.role}`.toLowerCase().includes(query.toLowerCase())), [users, query]);
-  const save = async (event) => { event.preventDefault(); setBusy(true); setError(''); setNotice(''); try { const body = { full_name: form.full_name.trim(), email: form.email.trim(), phone: form.phone.trim() }; if (form.password) body.password = form.password; if (editing) { body.status = form.status; await updateCommissionerUser(editing.user_id, body); } else { body.role = 'field_officer'; body.password = form.password; await createCommissionerUser(body); } setForm(null); setEditing(null); setNotice(editing ? 'Field Officer updated.' : 'Field Officer created.'); await load(); } catch (e) { setError(e.response?.data?.message || e.message || 'Unable to save Field Officer.'); } finally { setBusy(false); } };
-  const remove = async (user) => { if (!window.confirm(`Delete ${user.full_name}?`)) return; setError(''); try { await deleteCommissionerUser(user.user_id); setNotice('Field Officer deleted.'); await load(); } catch (e) { setError(e.response?.data?.message || e.message); } };
+  const save = async (event) => { event.preventDefault(); setBusy(true); setError(''); setNotice(''); try { const body = { full_name: form.full_name.trim(), email: form.email.trim(), phone: form.phone.trim() }; if (form.password) body.password = form.password; if (editing) { body.status = form.status; await updateUser({ id: editing.user_id, body }).unwrap(); } else { body.role = 'field_officer'; body.password = form.password; await createUser(body).unwrap(); } setForm(null); setEditing(null); setNotice(editing ? 'Field Officer updated.' : 'Field Officer created.'); await load(); } catch (e) { setError(e?.data?.message || e?.error || e?.message || 'Unable to save Field Officer.'); } finally { setBusy(false); } };
+  const remove = async (user) => { if (!window.confirm(`Delete ${user.full_name}?`)) return; setError(''); try { await deleteUser(user.user_id).unwrap(); setNotice('Field Officer deleted.'); await load(); } catch (e) { setError(e?.data?.message || e?.error || e?.message); } };
   return <CommissionerPageFrame title="Field Officer Management" subtitle="Manage field officer accounts and access">
     <div className="page-top-bar"><span /> <button className="btn-primary" onClick={() => { setEditing(null); setForm({ ...blank }); }}>+ Add Field Officer</button></div>
     {error && <div className="alert-banner red-banner">{error}</div>}{notice && <div className="alert-banner green-banner">{notice}</div>}

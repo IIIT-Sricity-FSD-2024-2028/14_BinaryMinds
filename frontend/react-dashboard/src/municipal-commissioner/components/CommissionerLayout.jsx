@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { getCommissionerProfile } from '../../services/api';
+import { useLazyGetCommissionerProfileQuery } from '../commissionerApi';
+import { logoutAndResetApi } from '../../features/auth/authLogout.js';
 
 const links = [
   ['Dashboard', '/superuser', 'dashboard'],
@@ -15,42 +17,42 @@ export default function CommissionerLayout({ children }) {
   const [state, setState] = useState('loading');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [fetchProfile] = useLazyGetCommissionerProfileQuery();
 
   useEffect(() => {
     let active = true;
     const token = sessionStorage.getItem('accessToken');
     if (!token) {
+      dispatch(logoutAndResetApi());
       navigate('/login', { replace: true });
       return undefined;
     }
-    getCommissionerProfile().then((profile) => {
+    fetchProfile().unwrap().then((profile) => {
       if (!active) return;
       const role = String(profile?.role || '').toLowerCase();
       if (!['municipal_commissioner', 'super_user'].includes(role)) {
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('loggedInUser');
+        dispatch(logoutAndResetApi());
         navigate('/login', { replace: true });
         return;
       }
       setUser(profile);
       setState('ready');
-    }).catch((err) => {
+    }).catch((profileError) => {
       if (!active) return;
-      sessionStorage.removeItem('accessToken');
-      sessionStorage.removeItem('loggedInUser');
-      if (err.response?.status === 401 || err.response?.status === 403) {
+      dispatch(logoutAndResetApi());
+      if (profileError.status === 401 || profileError.status === 403) {
         navigate('/login', { replace: true });
         return;
       }
-      setError(err.response?.data?.message || err.message || 'Unable to verify your session.');
+      setError(profileError?.data?.message || profileError?.error || 'Unable to verify your session.');
       setState('error');
     });
     return () => { active = false; };
-  }, [navigate]);
+  }, [dispatch, fetchProfile, navigate]);
 
   const signOut = () => {
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('loggedInUser');
+    dispatch(logoutAndResetApi());
     navigate('/login', { replace: true });
   };
 

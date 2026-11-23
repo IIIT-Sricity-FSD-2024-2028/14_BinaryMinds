@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { setCredentials } from '../../features/auth/authSlice';
 import { platformAdminRequest } from '../../services/platformAdminApi';
 import '../styles/PlatformAdminLogin.css';
 
 export default function PlatformAdminLogin() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
@@ -18,6 +21,7 @@ export default function PlatformAdminLogin() {
       if (result?.user?.role !== 'platform_admin' || !result.accessToken) throw new Error('Invalid Platform Admin credentials.');
       sessionStorage.setItem('accessToken', result.accessToken);
       sessionStorage.setItem('loggedInUser', JSON.stringify({ id: result.user.user_id, name: result.user.full_name, email: result.user.email, role: result.user.role, accessToken: result.accessToken }));
+      dispatch(setCredentials({ user: result.user, accessToken: result.accessToken }));
       navigate('/platform-admin', { replace: true });
     } catch (requestError) {
       setError(requestError.message || 'Unable to sign in.');

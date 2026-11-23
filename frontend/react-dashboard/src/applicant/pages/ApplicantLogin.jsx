@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import PublicNavigation from '../../common-components/PublicNavigation';
+import { setCredentials } from '../../features/auth/authSlice';
 import '../styles/ApplicantLogin.css';
 import loginStyles from '../../../../applicant_connected/connected/login/style.css?inline';
 
@@ -49,7 +51,7 @@ function clearApplicantDraftIfNeeded(nextEmail) {
   try {
     draft = JSON.parse(sessionStorage.getItem('applicationForm') || '{}');
   } catch {
-    draft = {};
+    // Keep the empty draft fallback when stored JSON is malformed.
   }
 
   const draftOwner = String(draft.ownerEmail || draft.email || '').toLowerCase();
@@ -73,6 +75,7 @@ function clearApplicantDraftIfNeeded(nextEmail) {
 }
 
 export default function ApplicantLogin() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -155,6 +158,8 @@ export default function ApplicantLogin() {
           JSON.stringify({ name: user.full_name, email: user.email, phone: user.phone || '' }),
         );
       }
+
+      dispatch(setCredentials({ user, accessToken: payload.accessToken }));
 
       setButtonText('Redirecting...');
       if (user.role === 'field_officer') {

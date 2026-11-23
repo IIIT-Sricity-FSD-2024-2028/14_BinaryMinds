@@ -1,14 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import CommissionerPageFrame from '../components/CommissionerPageFrame';
-import { getCommissionerDepartmentOfficer, saveCommissionerDepartmentOfficer } from '../../services/api';
+import {
+  useLazyGetCommissionerDepartmentOfficerQuery,
+  useSaveCommissionerDepartmentOfficerMutation,
+} from '../commissionerApi';
 import '../styles/CommissionerDepartmentOfficers.css';
 
 const empty = { full_name: '', email: '', phone: '', department: 'Trade License Department', password: '' };
 export default function CommissionerDepartmentOfficers() {
+  const [fetchDepartmentOfficer] = useLazyGetCommissionerDepartmentOfficerQuery();
+  const [saveDepartmentOfficer] = useSaveCommissionerDepartmentOfficerMutation();
   const [officer, setOfficer] = useState(null); const [form, setForm] = useState(null); const [loading, setLoading] = useState(true); const [busy, setBusy] = useState(false); const [error, setError] = useState(''); const [notice, setNotice] = useState('');
-  const load = () => getCommissionerDepartmentOfficer().then((r) => setOfficer(r?.data ?? null)).catch((e) => setError(e.response?.data?.message || e.message)).finally(() => setLoading(false));
-  useEffect(() => { load(); }, []);
-  const save = async (e) => { e.preventDefault(); setBusy(true); setError(''); setNotice(''); try { await saveCommissionerDepartmentOfficer({ full_name: form.full_name.trim(), email: form.email.trim(), phone: form.phone.trim(), department: form.department.trim(), password: form.password }, !!officer); setForm(null); setNotice(officer ? 'Department Officer replaced.' : 'Department Officer added.'); setLoading(true); await load(); } catch (err) { setError(err.response?.data?.message || err.message || 'Unable to save Department Officer.'); } finally { setBusy(false); } };
+  const load = useCallback(() => fetchDepartmentOfficer().unwrap().then((r) => setOfficer(r?.data ?? null)).catch((e) => setError(e?.data?.message || e?.error || e?.message)).finally(() => setLoading(false)), [fetchDepartmentOfficer]);
+  useEffect(() => { load(); }, [load]);
+  const save = async (e) => { e.preventDefault(); setBusy(true); setError(''); setNotice(''); try { await saveDepartmentOfficer({ body: { full_name: form.full_name.trim(), email: form.email.trim(), phone: form.phone.trim(), department: form.department.trim(), password: form.password }, replace: !!officer }).unwrap(); setForm(null); setNotice(officer ? 'Department Officer replaced.' : 'Department Officer added.'); setLoading(true); await load(); } catch (err) { setError(err?.data?.message || err?.error || err?.message || 'Unable to save Department Officer.'); } finally { setBusy(false); } };
   return <CommissionerPageFrame title="Department Officer Management" subtitle="Manage the Department Officer for this Municipal Corporation">
     <div className="page-top-bar"><span/><button className="btn-primary" onClick={() => setForm({ ...empty })}>{officer ? '⇄ Replace Department Officer' : '+ Add Department Officer'}</button></div>
     {error && <div className="alert-banner red-banner">{error}</div>}{notice && <div className="alert-banner green-banner">{notice}</div>}

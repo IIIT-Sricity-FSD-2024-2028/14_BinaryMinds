@@ -1,15 +1,22 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import CommissionerPageFrame from '../components/CommissionerPageFrame';
-import { assignCommissionerApplication, getCommissionerApplications, getCommissionerOfficers } from '../../services/api';
+import {
+  useAssignCommissionerApplicationMutation,
+  useLazyGetCommissionerApplicationsQuery,
+  useLazyGetCommissionerOfficersQuery,
+} from '../commissionerApi';
 import '../styles/CommissionerApplications.css';
 
 export default function CommissionerApplications() {
+  const [fetchApplications] = useLazyGetCommissionerApplicationsQuery();
+  const [fetchOfficers] = useLazyGetCommissionerOfficersQuery();
+  const [assignApplication] = useAssignCommissionerApplicationMutation();
   const [apps, setApps] = useState([]); const [officers, setOfficers] = useState([]); const [query, setQuery] = useState(''); const [status, setStatus] = useState(''); const [category, setCategory] = useState(''); const [loading, setLoading] = useState(true); const [busy, setBusy] = useState(null); const [error, setError] = useState(''); const [notice, setNotice] = useState('');
-  const load = () => Promise.all([getCommissionerApplications(), getCommissionerOfficers()]).then(([a,o]) => { setApps(Array.isArray(a)?a:a?.data||[]); setOfficers(Array.isArray(o)?o:o?.data||[]); }).catch((e) => setError(e.response?.data?.message || e.message || 'Unable to load application data.')).finally(() => setLoading(false));
-  useEffect(() => { load(); }, []);
+  const load = useCallback(() => Promise.all([fetchApplications().unwrap(), fetchOfficers().unwrap()]).then(([a,o]) => { setApps(Array.isArray(a)?a:a?.data||[]); setOfficers(Array.isArray(o)?o:o?.data||[]); }).catch((e) => setError(e?.data?.message || e?.error || e?.message || 'Unable to load application data.')).finally(() => setLoading(false)), [fetchApplications, fetchOfficers]);
+  useEffect(() => { load(); }, [load]);
   const categories = [...new Set(apps.map((a) => a.trade_category || a.tradeCategory).filter(Boolean))];
   const filtered = useMemo(() => apps.filter((a) => { const state = a.application_status || a.status || ''; const text = `${a.application_id} ${a.full_name} ${a.applicant_name} ${a.business_name} ${a.trade_category}`.toLowerCase(); return text.includes(query.toLowerCase()) && (!status || String(state).toLowerCase() === status.toLowerCase()) && (!category || (a.trade_category || a.tradeCategory) === category); }), [apps, query, status, category]);
-  const assign = async (app, officerId) => { if (!officerId) return; setBusy(app.application_id); setError(''); setNotice(''); try { await assignCommissionerApplication(app.application_id, officerId); setNotice(`Application #${app.application_id} assigned.`); await load(); } catch (e) { setError(e.response?.data?.message || e.message || 'Assignment failed.'); } finally { setBusy(null); } };
+  const assign = async (app, officerId) => { if (!officerId) return; setBusy(app.application_id); setError(''); setNotice(''); try { await assignApplication({ applicationId: app.application_id, officerId }).unwrap(); setNotice(`Application #${app.application_id} assigned.`); await load(); } catch (e) { setError(e?.data?.message || e?.error || e?.message || 'Assignment failed.'); } finally { setBusy(null); } };
   return <CommissionerPageFrame title="Applications Overview" subtitle="Monitor and manage submitted trade license applications">
     {error && <div className="alert-banner red-banner">{error}</div>}{notice && <div className="alert-banner green-banner">{notice}</div>}
     <div className="stat-row"><Stat label="Total Applications" value={loading?'…':apps.length}/><Stat label="Pending Review" value={loading?'…':apps.filter((a)=>/pending|submitted|review|assigned/i.test(a.application_status||a.status||'')).length}/><Stat label="Approved" value={loading?'…':apps.filter((a)=>/approved/i.test(a.application_status||a.status||'')).length}/><Stat label="Rejected" value={loading?'…':apps.filter((a)=>/rejected/i.test(a.application_status||a.status||'')).length}/></div>

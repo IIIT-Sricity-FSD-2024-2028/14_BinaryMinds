@@ -1,4 +1,6 @@
+import { useDispatch } from 'react-redux';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { logoutAndResetApi } from '../../features/auth/authLogout.js';
 import './ApplicantNavigation.css';
 
 const links = [
@@ -11,6 +13,7 @@ const links = [
 ];
 
 export default function ApplicantNavigation({ onLogout }) {
+  const dispatch = useDispatch();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -18,14 +21,12 @@ export default function ApplicantNavigation({ onLogout }) {
     event.preventDefault();
     if (onLogout) {
       onLogout(event);
-      return;
+    } else {
+      sessionStorage.removeItem('applicationRef');
+      localStorage.removeItem('user');
+      navigate('/login', { replace: true });
     }
-
-    sessionStorage.removeItem('loggedInUser');
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('applicationRef');
-    localStorage.removeItem('user');
-    navigate('/login', { replace: true });
+    dispatch(logoutAndResetApi());
   }
 
   return (

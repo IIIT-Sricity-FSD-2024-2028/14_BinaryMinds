@@ -1,4 +1,6 @@
 import { NavLink, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logoutAndResetApi } from '../../features/auth/authLogout.js';
 import './FieldOfficerLayout.css';
 
 const navigation = [
@@ -15,13 +17,14 @@ export default function FieldOfficerLayout({ activeSection = '', children }) {
   const { officerId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const activeKey = activeSection === 'detail' ? 'verification'
     : ['scheduleinspection', 'start-inspection'].includes(activeSection) ? 'recordinspection'
       : activeSection === 'inspection_report' ? 'inspectionhistory'
         : activeSection === 'profile_edit' ? 'profile' : activeSection;
 
   function logout() {
-    sessionStorage.clear();
+    dispatch(logoutAndResetApi({ clearSessionStorage: true }));
     navigate('/login', { replace: true });
   }
 

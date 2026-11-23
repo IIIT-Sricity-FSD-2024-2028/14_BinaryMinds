@@ -1,18 +1,22 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { platformAdminRequest } from '../../services/platformAdminApi';
+import { logoutAndResetApi } from '../../features/auth/authLogout.js';
 import './PlatformAdminLayout.css';
 
 const emblem = 'https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg';
 
 export default function PlatformAdminLayout() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [user, setUser] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
     let active = true;
     if (!sessionStorage.getItem('accessToken')) {
+      dispatch(logoutAndResetApi());
       navigate('/platform-admin/login', { replace: true });
       return undefined;
     }
@@ -20,8 +24,7 @@ export default function PlatformAdminLayout() {
       .then((profile) => {
         if (!active) return;
         if (profile?.role !== 'platform_admin') {
-          sessionStorage.removeItem('accessToken');
-          sessionStorage.removeItem('loggedInUser');
+          dispatch(logoutAndResetApi());
           navigate('/platform-admin/login', { replace: true });
           return;
         }
@@ -30,17 +33,15 @@ export default function PlatformAdminLayout() {
       .catch((requestError) => {
         if (!active) return;
         if (/token|unauthorized|expired/i.test(requestError.message)) {
-          sessionStorage.removeItem('accessToken');
-          sessionStorage.removeItem('loggedInUser');
+          dispatch(logoutAndResetApi());
           navigate('/platform-admin/login', { replace: true });
         } else setError(requestError.message || 'Unable to verify Platform Admin access.');
       });
     return () => { active = false; };
-  }, [navigate]);
+  }, [dispatch, navigate]);
 
   function logout() {
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('loggedInUser');
+    dispatch(logoutAndResetApi());
     navigate('/platform-admin/login', { replace: true });
   }
 

@@ -1,4 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logoutAndResetApi } from '../../features/auth/authLogout.js';
 import './DepartmentOfficerLayout.css';
 
 const links = [
@@ -10,9 +12,10 @@ const links = [
 
 export default function DepartmentOfficerLayout({ active = '', pageClass = '', children }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   function logout() {
     if (!window.confirm('Are you sure you want to logout?')) return;
-    sessionStorage.clear(); localStorage.removeItem('loggedInUser'); navigate('/login', { replace: true });
+    dispatch(logoutAndResetApi({ clearSessionStorage: true })); localStorage.removeItem('loggedInUser'); navigate('/login', { replace: true });
   }
   return <div className={`do-page-root ${pageClass}`}>
     <div className="top-header"><div className="header"><img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="India Logo"/><div className="header-text">Government of India<span>TradeZo</span><small>Municipal Corporation – Trade License Management System</small></div></div><button className="logout-btn" onClick={logout}>Logout</button></div>
