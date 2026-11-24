@@ -268,10 +268,10 @@ export class UsersController {
   getProfile(@Req() request: Request & { user: AuthenticatedUser }) {
     if (request.user.role === Role.PLATFORM_ADMIN) {
       return {
-        user_id: 0,
-        full_name: 'TradeZo Platform Admin',
-        email: 'superadmin@tradezo.gov.in',
-        role: Role.PLATFORM_ADMIN,
+        user_id: request.user.userId,
+        full_name: request.user.fullName || 'TradeZo Platform Admin',
+        email: request.user.email,
+        role: request.user.role,
       };
     }
     return this.profileResponse(this.usersService.findOne(request.user.userId));
