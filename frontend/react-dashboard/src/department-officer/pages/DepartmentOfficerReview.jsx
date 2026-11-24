@@ -1,7 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import DepartmentOfficerPageFrame from '../components/DepartmentOfficerPageFrame';
 import { useDepartmentOfficerData } from '../components/useDepartmentOfficerData';
+import { recordDepartmentDecision } from '../store/departmentReviewsSlice.js';
+import {
+  fetchDocumentsByApplication,
+  selectDocumentsByApplication,
+  selectDocumentsState,
+} from '../store/documentsSlice.js';
 import { applicationWorkflowStatus, getApplicationInspection } from '../components/inspectionWorkflow';
 import '../styles/DepartmentOfficerReview.css';
 
@@ -27,54 +34,47 @@ function documentMimeType(document) {
 
 export default function DepartmentOfficerReview() {
   const data = useDepartmentOfficerData();
+  const dispatch = useDispatch();
   const { applicationId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const [documents, setDocuments] = useState([]);
-  const [documentsLoading, setDocumentsLoading] = useState(false);
-  const [documentsError, setDocumentsError] = useState('');
   const [fileError, setFileError] = useState('');
   const [reason, setReason] = useState('');
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState('');
+  const requestedDocumentApps = useRef(new Set());
+  const documentsState = useSelector(selectDocumentsState);
   const app = data.applications.find((row) => Number(row.application_id) === Number(applicationId));
+  const applicationKey = app?.application_id == null ? null : String(app.application_id);
+  const documents = useSelector((state) => selectDocumentsByApplication(state, app?.application_id));
+  const hasDocuments = applicationKey !== null && Object.prototype.hasOwnProperty.call(
+    documentsState.byApplicationId,
+    applicationKey,
+  );
+  const documentsStatus = documentsState.requests.fetchByApplication || 'idle';
+  const documentsLoading = Boolean(applicationKey && !hasDocuments && documentsStatus !== 'rejected');
+  const documentsError = applicationKey && !hasDocuments && documentsStatus === 'rejected'
+    ? documentsState.errors.fetchByApplication || 'Unable to load supporting documents.'
+    : '';
   const { inspection } = getApplicationInspection(
     data.assignments,
     data.inspections,
     app?.application_id,
   );
 
-  async function loadDocuments(id) {
-    setDocumentsLoading(true);
-    setDocumentsError('');
+  useEffect(() => {
+    if (!applicationKey || hasDocuments || requestedDocumentApps.current.has(applicationKey)) return;
+    requestedDocumentApps.current.add(applicationKey);
+    dispatch(fetchDocumentsByApplication(app.application_id));
+  }, [app?.application_id, applicationKey, dispatch, hasDocuments]);
+
+  function loadDocuments() {
     setFileError('');
-    try {
-      const rows = await data.request(`/documents/application/${encodeURIComponent(id)}`);
-      setDocuments(Array.isArray(rows) ? rows : []);
-    } catch (error) {
-      setDocumentsError(error.message || 'Unable to load supporting documents.');
-    } finally {
-      setDocumentsLoading(false);
+    if (applicationKey) {
+      requestedDocumentApps.current.add(applicationKey);
+      dispatch(fetchDocumentsByApplication(app.application_id));
     }
   }
-
-  useEffect(() => {
-    let active = true;
-    if (!app) return undefined;
-    setDocumentsLoading(true);
-    setDocumentsError('');
-    data.request(`/documents/application/${encodeURIComponent(app.application_id)}`).then((rows) => {
-      if (active) {
-        setDocuments(Array.isArray(rows) ? rows : []);
-        setDocumentsError('');
-      }
-    }).catch((error) => {
-      if (active) setDocumentsError(error.message || 'Unable to load supporting documents.');
-    }).finally(() => {
-      if (active) setDocumentsLoading(false);
-    });
-    return () => { active = false; };
-  }, [app?.application_id, data.request]);
 
   async function accessDocument(document, download) {
     setFileError('');
@@ -127,16 +127,11 @@ export default function DepartmentOfficerReview() {
     setSaving(true);
     setNotice('');
     try {
-      const result = await data.request(
-        `/department-reviews/application/${encodeURIComponent(app.application_id)}/decision`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            status,
-            comments: reason.trim(),
-          }),
-        },
-      );
+      const result = await dispatch(recordDepartmentDecision({
+        applicationId: app.application_id,
+        status,
+        comments: reason.trim(),
+      })).unwrap();
       const expectedStatus = status === 'APPROVED'
         ? 'approved'
         : status === 'REJECTED'
@@ -165,10 +160,12 @@ export default function DepartmentOfficerReview() {
         });
       } else {
         setNotice(decisionNotice);
-        await data.reload();
       }
     } catch (error) {
-      setNotice(`Decision not saved: ${error.message}`);
+      const message = error instanceof Error
+        ? error.message
+        : errorMessage(error?.data, error?.error || 'The decision request failed.');
+      setNotice(`Decision not saved: ${message}`);
     } finally {
       setSaving(false);
     }
@@ -208,7 +205,7 @@ export default function DepartmentOfficerReview() {
             {documentsLoading ? <p>Loading supporting documents…</p> : documentsError ? (
               <div className="do-doc-error" role="alert">
                 <span>{documentsError}</span>
-                <button className="btn-outline" type="button" onClick={() => loadDocuments(app.application_id)}>Retry</button>
+                <button className="btn-outline" type="button" onClick={loadDocuments}>Retry</button>
               </div>
             ) : documents.length ? (
               <div className="doc-list">

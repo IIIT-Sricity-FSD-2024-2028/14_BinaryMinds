@@ -1,11 +1,21 @@
 import { useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import DepartmentOfficerPageFrame from '../components/DepartmentOfficerPageFrame';
 import { useDepartmentOfficerData } from '../components/useDepartmentOfficerData';
+import { recordDepartmentDecision } from '../store/departmentReviewsSlice.js';
 import '../styles/DepartmentOfficerAuthorization.css';
+
+function decisionErrorMessage(error) {
+  const message = error?.data?.message;
+  return Array.isArray(message)
+    ? message.join(' ')
+    : message || error?.error || error?.message || 'The decision request failed.';
+}
 
 export default function DepartmentOfficerAuthorization() {
   const data = useDepartmentOfficerData(); const [query, setQuery] = useState(''); const [selected, setSelected] = useState(null); const [reason, setReason] = useState(''); const [saving, setSaving] = useState(false); const [notice, setNotice] = useState('');
+  const dispatch = useDispatch();
   const rows = useMemo(() => data.applications.filter((app) => {
     const review = data.reviews.find((x) => Number(x.application_id) === Number(app.application_id));
     const assignmentIds = data.assignments.filter((x) => Number(x.application_id) === Number(app.application_id)).map((x) => Number(x.assignment_id));
@@ -19,11 +29,14 @@ export default function DepartmentOfficerAuthorization() {
     if (!reason.trim()) { setNotice('Enter a formal justification before recording this decision.'); return; }
     setSaving(true);
     setNotice('');
+    let decisionRequestSucceeded = false;
     try {
-      const result = await data.request(
-        `/department-reviews/application/${encodeURIComponent(selected.application_id)}/decision`,
-        { method: 'POST', body: JSON.stringify({ status, comments: reason.trim() }) },
-      );
+      const result = await dispatch(recordDepartmentDecision({
+        applicationId: selected.application_id,
+        status,
+        comments: reason.trim(),
+      })).unwrap();
+      decisionRequestSucceeded = true;
       const expectedStatus = status === 'APPROVED' ? 'approved' : 'rejected';
       if (result?.review?.status !== status || result?.application?.application_status !== expectedStatus) {
         throw new Error('The backend did not confirm the requested decision and application status.');
@@ -31,10 +44,9 @@ export default function DepartmentOfficerAuthorization() {
       setSelected(null);
       setReason('');
       setNotice(`Decision ${status.toLowerCase()} and its justification were saved.`);
-      await data.reload();
     } catch (error) {
-      setNotice(`Decision not saved: ${error.message}`);
-      await data.reload();
+      setNotice(`Decision not saved: ${decisionErrorMessage(error)}`);
+      if (!decisionRequestSucceeded) await data.reload();
     } finally {
       setSaving(false);
     }

@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import DepartmentOfficerPageFrame from '../components/DepartmentOfficerPageFrame';
 import { useDepartmentOfficerData } from '../components/useDepartmentOfficerData';
+import { createLicense } from '../store/licensesSlice.js';
+import { signDepartmentOfficerReview } from '../store/departmentReviewsSlice.js';
 import '../styles/DepartmentOfficerSigning.css';
 
 function defaultExpiryDate() {
@@ -25,23 +28,26 @@ function dateAtEndOfDay(value) {
   return date.toISOString();
 }
 
+function errorMessage(error, fallback) {
+  const message = error?.data?.message;
+  return Array.isArray(message)
+    ? message.join(' ')
+    : message || error?.error || error?.message || fallback;
+}
+
 export default function DepartmentOfficerSigning() {
   const data = useDepartmentOfficerData();
+  const dispatch = useDispatch();
   const { applicationId } = useParams();
   const location = useLocation();
   const [signature, setSignature] = useState('');
   const [expiryDate, setExpiryDate] = useState(defaultExpiryDate);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState(location.state?.decisionNotice || '');
-  const [issued, setIssued] = useState(null);
   const app = data.applications.find((row) => Number(row.application_id) === Number(applicationId));
   const review = data.reviews.find((row) => Number(row.application_id) === Number(applicationId));
   const existing = data.licenses.find((row) => Number(row.application_id) === Number(applicationId));
-  const license = issued || existing;
-
-  useEffect(() => {
-    if (existing?.expiry_date) setExpiryDate(String(existing.expiry_date).slice(0, 10));
-  }, [existing?.expiry_date]);
+  const license = existing;
 
   async function issue() {
     if (!app || !review || review.status !== 'APPROVED' || app.application_status !== 'approved') {
@@ -60,36 +66,25 @@ export default function DepartmentOfficerSigning() {
 
     setBusy(true);
     setNotice('');
+    let licenseCreationSucceeded = false;
     try {
       if (existing) {
-        setIssued(existing);
         setNotice(`Backend license confirmed: ${existing.license_number}.`);
         return;
       }
 
-      let signedReview = review;
       if (!review.digital_signature) {
-        signedReview = await data.request(`/department-reviews/${review.review_id}/sign`, {
-          method: 'POST',
-          body: JSON.stringify({ digital_signature: signingStatement }),
-        });
-        data.setReviews((rows) => rows.map((row) =>
-          Number(row.review_id) === Number(signedReview.review_id) ? signedReview : row,
-        ));
+        await dispatch(signDepartmentOfficerReview({
+          id: review.review_id,
+          digital_signature: signingStatement,
+        })).unwrap();
       }
 
-      await data.request('/licenses', {
-        method: 'POST',
-        body: JSON.stringify({
-          application_id: Number(app.application_id),
-          issued_by: Number(data.user.user_id),
-          expiry_date: dateAtEndOfDay(expiryDate),
-        }),
-      });
-
-      const confirmedLicense = await data.request(
-        `/licenses/application/${encodeURIComponent(app.application_id)}`,
-      );
+      const confirmedLicense = await dispatch(createLicense({
+        application_id: Number(app.application_id),
+        issued_by: Number(data.user.user_id),
+        expiry_date: dateAtEndOfDay(expiryDate),
+      })).unwrap();
       if (
         Number(confirmedLicense.application_id) !== Number(app.application_id) ||
         !confirmedLicense.license_number ||
@@ -99,13 +94,11 @@ export default function DepartmentOfficerSigning() {
         throw new Error('The backend did not return a complete saved license record.');
       }
 
-      setIssued(confirmedLicense);
-      setExpiryDate(String(confirmedLicense.expiry_date).slice(0, 10));
+      licenseCreationSucceeded = true;
       setNotice(`License issuance confirmed by the backend (${confirmedLicense.license_number}).`);
-      await data.reload();
     } catch (error) {
-      setNotice(`Issuance was not confirmed: ${error.message}. You can retry after checking the saved review/license status.`);
-      await data.reload();
+      setNotice(`Issuance was not confirmed: ${errorMessage(error, 'Request failed')}. You can retry after checking the saved review/license status.`);
+      if (!licenseCreationSucceeded) await data.reload();
     } finally {
       setBusy(false);
     }

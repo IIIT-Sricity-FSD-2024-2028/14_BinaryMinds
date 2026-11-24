@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import DepartmentOfficerPageFrame from '../components/DepartmentOfficerPageFrame';
 import { useDepartmentOfficerData } from '../components/useDepartmentOfficerData';
 import '../styles/DepartmentOfficerDashboard.css';
@@ -14,7 +13,7 @@ function appStatus(app, data) {
 }
 
 export default function DepartmentOfficerDashboard() {
-  const data = useDepartmentOfficerData(); const navigate = useNavigate(); const [search, setSearch] = useState('');
+  const data = useDepartmentOfficerData(); const [search, setSearch] = useState('');
   const rows = useMemo(() => data.applications.filter((x) => [x.application_ref, x.application_id, x.business_name, x.full_name, x.application_status].some((v) => String(v || '').toLowerCase().includes(search.toLowerCase()))), [data.applications, search]);
   const pending = data.applications.filter((x) => !data.reviews.some((r) => Number(r.application_id) === Number(x.application_id)) && !data.licenses.some((l) => Number(l.application_id) === Number(x.application_id))).length;
   const authorized = data.applications.filter((x) => x.application_status === 'approved' || data.licenses.some((l) => Number(l.application_id) === Number(x.application_id))).length;

@@ -1,7 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import DepartmentOfficerPageFrame from '../components/DepartmentOfficerPageFrame';
 import { useDepartmentOfficerData } from '../components/useDepartmentOfficerData';
+import {
+  fetchDocumentsByApplication,
+  selectDocumentsByApplication,
+  selectDocumentsState,
+} from '../store/documentsSlice.js';
+import {
+  fetchDepartmentOfficerUserById,
+  selectDepartmentOfficerUserById,
+  selectDepartmentOfficerUsersState,
+} from '../store/usersSlice.js';
 import { applicationWorkflowStatus, getApplicationInspection } from '../components/inspectionWorkflow';
 import '../styles/DepartmentOfficerInspectionReport.css';
 
@@ -27,36 +38,69 @@ function responseMessage(payload, fallback) {
 
 export default function DepartmentOfficerInspectionReport() {
   const data = useDepartmentOfficerData();
+  const dispatch = useDispatch();
   const { applicationId } = useParams();
   const navigate = useNavigate();
-  const [documents, setDocuments] = useState([]);
-  const [documentsLoading, setDocumentsLoading] = useState(false);
-  const [documentsError, setDocumentsError] = useState('');
-  const [fileError, setFileError] = useState('');
-  const [fo, setFo] = useState(null);
-  const [detailError, setDetailError] = useState('');
-  const [inspectionEvidence, setInspectionEvidence] = useState([]);
-  const [evidenceLoading, setEvidenceLoading] = useState(false);
+  const [fileErrorState, setFileErrorState] = useState({ applicationId: null, message: '' });
+  const setFileError = (message) => setFileErrorState({ applicationId, message });
+  const fileError = fileErrorState.applicationId === applicationId ? fileErrorState.message : '';
+  const [inspectionEvidenceResult, setInspectionEvidenceResult] = useState({ key: null, items: [] });
+  const requestedDocumentApps = useRef(new Set());
+  const requestedFieldOfficers = useRef(new Set());
+  const documentsState = useSelector(selectDocumentsState);
+  const usersState = useSelector(selectDepartmentOfficerUsersState);
   const app = data.applications.find((row) => Number(row.application_id) === Number(applicationId));
   const { assignment, inspection } = getApplicationInspection(
     data.assignments,
     data.inspections,
     applicationId,
   );
-  useEffect(() => {
-    let active = true;
+  const reports = useMemo(() => {
     const assignmentIds = new Set(data.assignments
       .filter((row) => Number(row.application_id) === Number(applicationId))
       .map((row) => Number(row.assignment_id)));
-    const reports = data.inspections
+    return data.inspections
       .filter((row) => assignmentIds.has(Number(row.assignment_id)) && row.evidence_files?.length)
       .sort((left, right) => new Date(right.completed_date || right.scheduled_date || 0) - new Date(left.completed_date || left.scheduled_date || 0));
-    if (!reports.length) {
-      setInspectionEvidence([]);
-      setEvidenceLoading(false);
-      return undefined;
-    }
-    setEvidenceLoading(true);
+  }, [applicationId, data.assignments, data.inspections]);
+  const evidenceKey = `${applicationId}:${reports.map((report) =>
+    `${report.inspection_id}/${report.evidence_files.map((file) => file.filename).join(',')}`,
+  ).join('|')}`;
+  const evidenceIsCurrent = inspectionEvidenceResult.key === evidenceKey;
+  const inspectionEvidence = evidenceIsCurrent ? inspectionEvidenceResult.items : [];
+  const evidenceLoading = reports.length > 0 && !evidenceIsCurrent;
+  const applicationKey = app?.application_id == null ? null : String(app.application_id);
+  const fieldOfficerKey = assignment?.field_officer_id == null
+    ? null
+    : String(assignment.field_officer_id);
+  const documents = useSelector((state) => selectDocumentsByApplication(state, app?.application_id));
+  const hasDocuments = applicationKey !== null &&
+    Object.prototype.hasOwnProperty.call(documentsState.byApplicationId, applicationKey);
+  const documentsStatus = documentsState.requests.fetchByApplication || 'idle';
+  const documentsLoading = Boolean(applicationKey && !hasDocuments && documentsStatus !== 'rejected');
+  const documentsError = applicationKey && !hasDocuments && documentsStatus === 'rejected'
+    ? documentsState.errors.fetchByApplication || 'Unable to load supporting documents.'
+    : '';
+  const fo = useSelector((state) => selectDepartmentOfficerUserById(state, assignment?.field_officer_id));
+  const detailError = fieldOfficerKey && !fo && usersState.requests.fetchById === 'rejected'
+    ? `Field Officer profile unavailable: ${usersState.errors.fetchById || 'Unable to load Field Officer profile.'}`
+    : '';
+
+  useEffect(() => {
+    if (!applicationKey || hasDocuments || requestedDocumentApps.current.has(applicationKey)) return;
+    requestedDocumentApps.current.add(applicationKey);
+    dispatch(fetchDocumentsByApplication(app.application_id));
+  }, [app?.application_id, applicationKey, dispatch, hasDocuments]);
+
+  useEffect(() => {
+    if (!fieldOfficerKey || fo || requestedFieldOfficers.current.has(fieldOfficerKey)) return;
+    requestedFieldOfficers.current.add(fieldOfficerKey);
+    dispatch(fetchDepartmentOfficerUserById(assignment.field_officer_id));
+  }, [assignment?.field_officer_id, dispatch, fieldOfficerKey, fo]);
+
+  useEffect(() => {
+    let active = true;
+    if (!reports.length) return undefined;
     const objectUrls = [];
     Promise.all(reports.flatMap((report) => report.evidence_files.map(async (file) => {
       try {
@@ -72,54 +116,23 @@ export default function DepartmentOfficerInspectionReport() {
         return { inspectionId: report.inspection_id, inspectionDate: report.completed_date || report.scheduled_date, file, error: true };
       }
     }))).then((items) => {
-      if (active) setInspectionEvidence(items.filter(Boolean));
-    }).finally(() => { if (active) setEvidenceLoading(false); });
+      if (active) setInspectionEvidenceResult({ key: evidenceKey, items: items.filter(Boolean) });
+    }).catch(() => {
+      if (active) setInspectionEvidenceResult({ key: evidenceKey, items: [] });
+    });
     return () => {
       active = false;
       objectUrls.forEach((url) => URL.revokeObjectURL(url));
     };
-  }, [applicationId, data.assignments, data.inspections, data.token]);
+  }, [applicationId, data.token, evidenceKey, reports]);
 
-  async function loadDocuments(id) {
-    setDocumentsLoading(true);
-    setDocumentsError('');
+  function loadDocuments() {
     setFileError('');
-    try {
-      const rows = await data.request(`/documents/application/${encodeURIComponent(id)}`);
-      setDocuments(Array.isArray(rows) ? rows : []);
-    } catch (error) {
-      setDocumentsError(error.message || 'Unable to load supporting documents.');
-    } finally {
-      setDocumentsLoading(false);
+    if (applicationKey) {
+      requestedDocumentApps.current.add(applicationKey);
+      dispatch(fetchDocumentsByApplication(app.application_id));
     }
   }
-
-  useEffect(() => {
-    let active = true;
-    if (!app) return undefined;
-    setDocuments([]);
-    setDocumentsLoading(true);
-    setDocumentsError('');
-    setFileError('');
-    setDetailError('');
-
-    const requests = [data.request(`/documents/application/${encodeURIComponent(app.application_id)}`)];
-    if (assignment?.field_officer_id) requests.push(data.request(`/users/${assignment.field_officer_id}`));
-    Promise.allSettled(requests).then((results) => {
-      if (!active) return;
-      if (results[0].status === 'fulfilled') {
-        setDocuments(Array.isArray(results[0].value) ? results[0].value : []);
-      } else {
-        setDocumentsError(results[0].reason?.message || 'Unable to load supporting documents.');
-      }
-      setDocumentsLoading(false);
-      if (results[1]?.status === 'fulfilled') setFo(results[1].value);
-      else if (results[1]?.status === 'rejected') {
-        setDetailError(`Field Officer profile unavailable: ${results[1].reason.message}`);
-      }
-    });
-    return () => { active = false; };
-  }, [app?.application_id, assignment?.field_officer_id, data.request]);
 
   async function accessDocument(document, download) {
     setFileError('');
@@ -251,7 +264,7 @@ export default function DepartmentOfficerInspectionReport() {
           {documentsLoading ? <p>Loading supporting documents…</p> : documentsError ? (
             <div className="do-document-error" role="alert">
               <span>{documentsError}</span>
-              <button className="btn-secondary" type="button" onClick={() => loadDocuments(app.application_id)}>Retry</button>
+              <button className="btn-secondary" type="button" onClick={loadDocuments}>Retry</button>
             </div>
           ) : documents.length ? (
             <div className="docs-list">
