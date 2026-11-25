@@ -1,24 +1,8 @@
-import { useEffect, useState } from 'react';
-import { platformAdminRequest } from '../../services/platformAdminApi';
+import { useState } from 'react';
 import './MunicipalOfficersModal.css';
 
-export default function MunicipalOfficersModal({ municipality, onClose }) {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+export default function MunicipalOfficersModal({ municipality, users, loading, error, onClose }) {
   const [statusFilter, setStatusFilter] = useState('active');
-
-  useEffect(() => {
-    let active = true;
-    platformAdminRequest('users')
-      .then((payload) => {
-        const rows = Array.isArray(payload) ? payload : payload?.data;
-        if (active) setUsers(Array.isArray(rows) ? rows.filter((user) => String(user.municipality_id || '').toLowerCase() === String(municipality.id).toLowerCase()) : []);
-      })
-      .catch((requestError) => { if (active) setError(requestError.message || 'Unable to load municipal officers.'); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, [municipality.id]);
 
   const groups = [
     ['Municipal Commissioner / Head', ['municipal_commissioner', 'super_user'], 'head'],
@@ -40,7 +24,9 @@ export default function MunicipalOfficersModal({ municipality, onClose }) {
         <div className="pa-officer-groups">{groups.map(([label, roles, tone]) => {
           const members = users.filter((user) => {
             const isActive = (user.status || 'Active').toLowerCase() !== 'inactive';
-            return roles.includes(user.role) && (statusFilter === 'active' ? isActive : !isActive);
+            return roles.includes(user.role)
+              && String(user.municipality_id || '').toLowerCase() === String(municipality.id).toLowerCase()
+              && (statusFilter === 'active' ? isActive : !isActive);
           });
           return <section className={`pa-officer-group ${tone}`} key={label}><h3>{label}</h3>{members.length ? members.map((person) => {
             const isActive = (person.status || 'Active').toLowerCase() !== 'inactive';

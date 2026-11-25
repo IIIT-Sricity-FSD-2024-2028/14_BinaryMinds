@@ -1,28 +1,116 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import CommissionerPageFrame from '../components/CommissionerPageFrame';
 import {
-  useAssignCommissionerApplicationMutation,
-  useLazyGetCommissionerApplicationsQuery,
-  useLazyGetCommissionerOfficersQuery,
-} from '../commissionerApi';
+  assignApplicationToOfficer,
+  fetchApplications,
+  selectApplications,
+  selectApplicationsState,
+} from '../../department-officer/store/applicationsSlice.js';
+import { fetchOfficers, selectOfficers, selectOfficersState } from '../../features/officers/officersSlice.js';
+import { selectIsCommissioner } from '../../features/auth/authSelectors.js';
 import '../styles/CommissionerApplications.css';
 
+const pendingReviewStatuses = new Set([
+  'submitted',
+  'assigned',
+  'verified',
+  'documents_uploaded',
+  'inspection_scheduled',
+  'inspection_completed',
+  'department_review',
+]);
+
+const formatStatus = (status) => String(status || '').replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+
 export default function CommissionerApplications() {
-  const [fetchApplications] = useLazyGetCommissionerApplicationsQuery();
-  const [fetchOfficers] = useLazyGetCommissionerOfficersQuery();
-  const [assignApplication] = useAssignCommissionerApplicationMutation();
-  const [apps, setApps] = useState([]); const [officers, setOfficers] = useState([]); const [query, setQuery] = useState(''); const [status, setStatus] = useState(''); const [category, setCategory] = useState(''); const [loading, setLoading] = useState(true); const [busy, setBusy] = useState(null); const [error, setError] = useState(''); const [notice, setNotice] = useState('');
-  const load = useCallback(() => Promise.all([fetchApplications().unwrap(), fetchOfficers().unwrap()]).then(([a,o]) => { setApps(Array.isArray(a)?a:a?.data||[]); setOfficers(Array.isArray(o)?o:o?.data||[]); }).catch((e) => setError(e?.data?.message || e?.error || e?.message || 'Unable to load application data.')).finally(() => setLoading(false)), [fetchApplications, fetchOfficers]);
-  useEffect(() => { load(); }, [load]);
-  const categories = [...new Set(apps.map((a) => a.trade_category || a.tradeCategory).filter(Boolean))];
-  const filtered = useMemo(() => apps.filter((a) => { const state = a.application_status || a.status || ''; const text = `${a.application_id} ${a.full_name} ${a.applicant_name} ${a.business_name} ${a.trade_category}`.toLowerCase(); return text.includes(query.toLowerCase()) && (!status || String(state).toLowerCase() === status.toLowerCase()) && (!category || (a.trade_category || a.tradeCategory) === category); }), [apps, query, status, category]);
-  const assign = async (app, officerId) => { if (!officerId) return; setBusy(app.application_id); setError(''); setNotice(''); try { await assignApplication({ applicationId: app.application_id, officerId }).unwrap(); setNotice(`Application #${app.application_id} assigned.`); await load(); } catch (e) { setError(e?.data?.message || e?.error || e?.message || 'Assignment failed.'); } finally { setBusy(null); } };
-  return <CommissionerPageFrame title="Applications Overview" subtitle="Monitor and manage submitted trade license applications">
-    {error && <div className="alert-banner red-banner">{error}</div>}{notice && <div className="alert-banner green-banner">{notice}</div>}
-    <div className="stat-row"><Stat label="Total Applications" value={loading?'…':apps.length}/><Stat label="Pending Review" value={loading?'…':apps.filter((a)=>/pending|submitted|review|assigned/i.test(a.application_status||a.status||'')).length}/><Stat label="Approved" value={loading?'…':apps.filter((a)=>/approved/i.test(a.application_status||a.status||'')).length}/><Stat label="Rejected" value={loading?'…':apps.filter((a)=>/rejected/i.test(a.application_status||a.status||'')).length}/></div>
-    <section className="card"><div className="filter-bar"><input className="search-input" placeholder="Search by applicant, ID, business name..." value={query} onChange={(e)=>setQuery(e.target.value)}/><select className="filter-select" value={status} onChange={(e)=>setStatus(e.target.value)}><option value="">All Status</option>{['Pending','Submitted','Under Review','Assigned','Approved','Rejected'].map(x=><option key={x}>{x}</option>)}</select><select className="filter-select" value={category} onChange={(e)=>setCategory(e.target.value)}><option value="">All Categories</option>{categories.map(x=><option key={x}>{x}</option>)}</select></div>
-      <table className="data-table"><thead><tr><th>Application ID</th><th>Applicant Name</th><th>Business Name</th><th>Trade Category</th><th>Submitted Date</th><th>Assign Field Officer</th><th>Action</th></tr></thead><tbody>{filtered.map((a)=><tr key={a.application_id}><td>#{a.application_id}</td><td>{a.full_name||a.applicant_name||'—'}</td><td>{a.business_name||'—'}</td><td>{a.trade_category||a.tradeCategory||'—'}</td><td>{a.submitted_at||a.created_at?new Date(a.submitted_at||a.created_at).toLocaleDateString():'—'}</td><td><select className="filter-select" disabled={busy===a.application_id} value={a.assignedOfficerId||a.assigned_officer_id||''} onChange={(e)=>assign(a,e.target.value)}><option value="">{busy===a.application_id?'Assigning…':'Assign Field Officer'}</option>{officers.map((o)=><option key={o.id||o.user_id} value={o.id||o.user_id}>{o.employee_id ? `${o.employee_id} — ` : ''}{o.name||o.full_name}</option>)}</select></td><td><span className={`badge ${String(a.application_status||a.status||'').toLowerCase().includes('reject')?'badge-red':'badge-blue'}`}>{a.application_status||a.status||'—'}</span></td></tr>)}{!filtered.length&&<tr><td colSpan="7" className="empty-row">{loading?'Loading submitted applications…':error?'Applications could not be loaded.':'No submitted paid applications match these filters.'}</td></tr>}</tbody></table>
+  const dispatch = useDispatch();
+  const applicationState = useSelector(selectApplicationsState);
+  const officerState = useSelector(selectOfficersState);
+  const apps = useSelector(selectApplications);
+  const officers = useSelector(selectOfficers);
+  const isCommissioner = useSelector(selectIsCommissioner);
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState('');
+  const [category, setCategory] = useState('');
+
+  useEffect(() => {
+    dispatch(fetchApplications());
+    dispatch(fetchOfficers());
+  }, [dispatch]);
+
+  const categories = useMemo(
+    () => [...new Set(apps.map((application) => application.trade_category || application.tradeCategory).filter(Boolean))],
+    [apps],
+  );
+  const statuses = useMemo(
+    () => [...new Set(apps.map((application) => application.application_status || application.status).filter(Boolean))],
+    [apps],
+  );
+  const filtered = useMemo(() => apps.filter((application) => {
+    const applicationStatus = application.application_status || application.status || '';
+    const text = `${application.application_id} ${application.full_name} ${application.applicant_name} ${application.business_name} ${application.trade_category}`.toLowerCase();
+    return text.includes(query.toLowerCase())
+      && (!status || String(applicationStatus).toLowerCase() === status.toLowerCase())
+      && (!category || (application.trade_category || application.tradeCategory) === category);
+  }), [apps, query, status, category]);
+
+  const applicationFetchStatus = applicationState.requests.fetchAll;
+  const officerFetchStatus = officerState.requests.fetchAll;
+  const assignmentStatus = applicationState.requests.assign;
+  const assignmentError = assignmentStatus === 'rejected'
+    ? applicationState.errors.assign || 'Unable to assign the Field Officer.'
+    : '';
+  const assigning = assignmentStatus === 'pending';
+  const loading = applicationFetchStatus === undefined || applicationFetchStatus === 'pending';
+  const applicationError = applicationFetchStatus === 'rejected'
+    ? applicationState.errors.fetchAll || 'Unable to load applications.'
+    : '';
+  const officerError = officerFetchStatus === 'rejected'
+    ? officerState.errors.fetchAll || 'Unable to load Field Officers.'
+    : '';
+  const pendingCount = apps.filter((application) => pendingReviewStatuses.has(String(application.application_status || application.status || '').toLowerCase())).length;
+  const approvedCount = apps.filter((application) => String(application.application_status || application.status || '').toLowerCase() === 'approved').length;
+  const rejectedCount = apps.filter((application) => String(application.application_status || application.status || '').toLowerCase() === 'rejected').length;
+
+  const assignOfficer = (application, event) => {
+    const officerId = Number(event.target.value);
+    if (!Number.isFinite(officerId) || !application.application_id) return;
+    dispatch(assignApplicationToOfficer({ id: application.application_id, officerId }));
+  };
+
+  return <CommissionerPageFrame title="Applications Overview" subtitle="Monitor municipal trade license applications">
+    {applicationError && <div className="alert-banner red-banner" role="alert">{applicationError}</div>}
+    {assigning && <div className="alert-banner blue-banner" role="status">Assigning the selected Field Officer…</div>}
+    {assignmentError && <div className="alert-banner red-banner" role="alert">{assignmentError}</div>}
+    {officerError && <div className="alert-banner red-banner" role="alert">{officerError}</div>}
+    <div className="stat-row"><Stat label="Total Applications" value={loading ? '…' : apps.length}/><Stat label="Pending Review" value={loading ? '…' : pendingCount}/><Stat label="Approved" value={loading ? '…' : approvedCount}/><Stat label="Rejected" value={loading ? '…' : rejectedCount}/></div>
+    <section className="card"><div className="filter-bar"><input className="search-input" placeholder="Search by applicant, ID, business name..." value={query} onChange={(event) => setQuery(event.target.value)}/><select className="filter-select" value={status} onChange={(event) => setStatus(event.target.value)}><option value="">All Status</option>{statuses.map((value) => <option key={value} value={value}>{formatStatus(value)}</option>)}</select><select className="filter-select" value={category} onChange={(event) => setCategory(event.target.value)}><option value="">All Categories</option>{categories.map((value) => <option key={value} value={value}>{value}</option>)}</select></div>
+      <table className="data-table"><thead><tr><th>Application ID</th><th>Applicant Name</th><th>Business Name</th><th>Trade Category</th><th>Submitted Date</th><th>Assign Field Officer</th><th>Action</th></tr></thead><tbody>{filtered.map((application) => {
+        const applicationStatus = String(application.application_status || application.status || '').toLowerCase();
+        const assignmentEligible = ['submitted', 'assigned'].includes(applicationStatus);
+        const assignedOfficerId = application.assignedOfficerId ?? application.assigned_officer_id ?? '';
+        const assignedOfficerAvailable = officers.some((officer) => String(officer.id) === String(assignedOfficerId));
+        const assignmentDisabled = !isCommissioner || !assignmentEligible || !application.application_id
+          || officerFetchStatus !== 'fulfilled' || officers.length === 0 || assigning;
+        const assignmentPlaceholder = !isCommissioner
+          ? 'Commissioner access required'
+          : !assignmentEligible
+            ? 'Not eligible for assignment'
+            : officerFetchStatus === undefined || officerFetchStatus === 'pending'
+              ? 'Loading Field Officers…'
+              : officerFetchStatus === 'rejected'
+                ? 'Field Officers unavailable'
+                : officers.length === 0
+                  ? 'No Field Officers available'
+                  : 'Select Field Officer';
+
+        return <tr key={application.application_id}><td>#{application.application_id}</td><td>{application.full_name || application.applicant_name || '—'}</td><td>{application.business_name || '—'}</td><td>{application.trade_category || application.tradeCategory || '—'}</td><td>{application.submitted_at || application.created_at ? new Date(application.submitted_at || application.created_at).toLocaleDateString() : '—'}</td><td><select className="filter-select" disabled={assignmentDisabled} aria-label={`Assign Field Officer for application ${application.application_id}`} value={assignedOfficerId === '' ? '' : String(assignedOfficerId)} onChange={(event) => assignOfficer(application, event)}><option value="">{assignmentPlaceholder}</option>{assignedOfficerId !== '' && !assignedOfficerAvailable && <option value={String(assignedOfficerId)}>Assigned officer #{assignedOfficerId} is not available in the officer list</option>}{officers.map((officer) => <option key={officer.id} value={String(officer.id)}>{officer.employee_id ? `${officer.employee_id} — ` : ''}{officer.name || officer.full_name}</option>)}</select></td><td><span className={`badge ${applicationStatus === 'rejected' ? 'badge-red' : 'badge-blue'}`}>{formatStatus(application.application_status || application.status) || '—'}</span></td></tr>;
+      })}{!filtered.length && <tr><td colSpan="7" className="empty-row">{loading ? 'Loading applications…' : applicationError ? 'Applications could not be loaded.' : 'No applications match these filters.'}</td></tr>}</tbody></table>
     </section>
   </CommissionerPageFrame>;
 }
-function Stat({label,value}) { return <div className="stat-card"><div className="stat-left"><div className="stat-label">{label}</div><div className="stat-value">{value}</div></div></div>; }
+
+function Stat({ label, value }) {
+  return <div className="stat-card"><div className="stat-left"><div className="stat-label">{label}</div><div className="stat-value">{value}</div></div></div>;
+}

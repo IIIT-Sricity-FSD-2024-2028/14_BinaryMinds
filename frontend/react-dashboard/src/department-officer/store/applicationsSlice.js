@@ -19,6 +19,13 @@ export const fetchApplicationById = createDepartmentOfficerThunk(
   'departmentOfficerApplications/fetchById',
   (id) => ({ path: `/applications/${encodeURIComponent(id)}` }),
 );
+export const assignApplicationToOfficer = createDepartmentOfficerThunk(
+  'departmentOfficerApplications/assign',
+  ({ id, officerId }) => ({
+    path: `/applications/${encodeURIComponent(id)}/assign`,
+    options: { method: 'PATCH', body: { officerId: Number(officerId) } },
+  }),
+);
 export const createApplication = createDepartmentOfficerThunk(
   'departmentOfficerApplications/create',
   (body) => ({ path: '/applications', options: { method: 'POST', body } }),
@@ -48,6 +55,14 @@ const applicationsSlice = createSlice({
     addRequestLifecycle(builder, fetchApplicationById, 'fetchById', (state, action) => {
       state.current = unwrapItem(action.payload);
       replaceOrAppend(state.items, state.current, 'application_id');
+    });
+    addRequestLifecycle(builder, assignApplicationToOfficer, 'assign', (state, action) => {
+      const application = unwrapItem(action.payload);
+      if (String(application?.application_id) !== String(action.meta.arg.id)) return;
+      replaceOrAppend(state.items, application, 'application_id');
+      if (String(state.current?.application_id) === String(application.application_id)) {
+        state.current = application;
+      }
     });
     addRequestLifecycle(builder, createApplication, 'create', (state, action) => {
       replaceOrAppend(state.items, unwrapItem(action.payload), 'application_id');
