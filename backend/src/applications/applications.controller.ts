@@ -63,9 +63,20 @@ export class ApplicationsController {
     @Body() body: CreateApplicationDto,
     @Req() request: Request & { user: AuthenticatedUser },
   ) {
-    const applicantId = body.applicant_id || request.user.userId;
+    const applicantId =
+      request.user.role === Role.APPLICANT
+        ? request.user.userId
+        : body.applicant_id || request.user.userId;
     const applicantName = body.applicantName || body.full_name || 'Applicant';
-    const bizName = body.businessName || body.business_name || 'N/A';
+    const bizName = body.businessName || body.business_name || '';
+    if (
+      request.user.role === Role.APPLICANT &&
+      (!bizName.trim() || bizName.trim().toLowerCase() === 'n/a')
+    ) {
+      throw new BadRequestException(
+        'Business name is required to check for an existing application.',
+      );
+    }
     const cat = body.tradeCategory || body.trade_category || 'General';
     const shopAddr = body.shopAddress || body.shop_address || '';
     const phone = body.phone || body.applicant_phone || '';
@@ -363,6 +374,11 @@ export class ApplicationsController {
     @Body() updateApplicationDto: UpdateApplicationDto,
     @Req() request: Request & { user: AuthenticatedUser },
   ) {
+    if (Object.prototype.hasOwnProperty.call(updateApplicationDto, 'paymentDone')) {
+      throw new BadRequestException(
+        'Application payment status can only be changed by the payment workflow',
+      );
+    }
     const existing = this.applicationsService.findOne(id);
     if (request.user.role === Role.APPLICANT) {
       if (existing.applicant_id !== request.user.userId) {

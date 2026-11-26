@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import ApplicantNavigation from '../components/ApplicantNavigation';
+import { selectCurrentUser } from '../../features/auth/authSelectors.js';
+import { fetchLicenseByApplication } from '../../department-officer/store/licensesSlice.js';
+import { fetchApplicantApplications, selectApplicantApplications, selectApplicantApplicationsError, selectApplicantApplicationsRequest } from '../store/applicantApplicationsSlice.js';
 import '../styles/ApplicantTrackStatus.css';
 
-const apiUrl = 'http://localhost:3000/api/applications/mine';
 const steps = ['Submitted', 'Documents Verified', 'Inspection Scheduled', 'Review Done', 'Approved'];
-
-function readUser() {
-  try { return JSON.parse(sessionStorage.getItem('loggedInUser') || '{}') || {}; } catch { return {}; }
-}
 
 function dateLabel(value) {
   if (!value) return '';
@@ -26,134 +25,144 @@ function currentStep(status) {
 }
 
 function statusLabel(status) {
-  const labels = {
-    submitted: 'Submitted', assigned: 'Assigned', verified: 'Documents Verified',
-    documents_uploaded: 'Documents Uploaded', inspection_scheduled: 'Inspection Scheduled',
-    inspection_completed: 'Inspection Completed', department_review: 'Under Review',
-    approved: 'Approved', rejected: 'Rejected',
-  };
-  return labels[String(status || '').toLowerCase()] || 'Status unavailable';
-}
-
-function Navigation({ onLogout }) {
-  return (
-    <>
-      <ApplicantNavigation onLogout={onLogout} />
-    </>
-  );
+  return ({
+    submitted: 'Submitted',
+    assigned: 'Assigned',
+    verified: 'Documents Verified',
+    documents_uploaded: 'Documents Uploaded',
+    inspection_scheduled: 'Inspection Scheduled',
+    inspection_completed: 'Inspection Completed',
+    department_review: 'Under Review',
+    approved: 'Approved',
+    rejected: 'Rejected',
+  })[String(status || '').toLowerCase()] || 'Status unavailable';
 }
 
 export default function ApplicantTrackStatus() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [user] = useState(readUser);
-  const [application, setApplication] = useState(null);
-  const [licenseIssueDate, setLicenseIssueDate] = useState('');
-  const [licenseIssueDateError, setLicenseIssueDateError] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const user = useSelector(selectCurrentUser);
+  const applications = useSelector(selectApplicantApplications);
+  const loading = useSelector((state) => selectApplicantApplicationsRequest(state, 'fetchMine') === 'pending');
+  const error = useSelector((state) => selectApplicantApplicationsError(state, 'fetchMine'));
+  const licenses = useSelector((state) => state.departmentOfficerLicenses.byApplicationId);
+  const licenseError = useSelector((state) => state.departmentOfficerLicenses.errors.fetchByApplication);
+  const sortedApplications = applications.slice().sort((a, b) => new Date(b.submitted_at || 0) - new Date(a.submitted_at || 0));
 
   useEffect(() => {
-    let active = true;
-    const token = sessionStorage.getItem('accessToken');
-    if (!token || user.role !== 'applicant') {
+    if (!user || user.role !== 'applicant') {
       navigate('/login', { replace: true });
-      return () => { active = false; };
+      return;
     }
+    dispatch(fetchApplicantApplications());
+  }, [dispatch, navigate, user]);
 
-    async function loadApplications() {
-      try {
-        const response = await fetch(apiUrl, { headers: { Authorization: `Bearer ${token}` } });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok) {
-          const message = Array.isArray(result.message) ? result.message.join(', ') : result.message;
-          throw new Error(message || 'Could not load your application. Please try again.');
-        }
-        if (!Array.isArray(result.data)) throw new Error('The server returned an invalid application list.');
-        const newest = result.data.slice().sort((first, second) => new Date(second.submitted_at || 0) - new Date(first.submitted_at || 0))[0] || null;
-        if (!active) return;
-        setApplication(newest);
-        if (String(newest?.application_status || '').toLowerCase() === 'approved') {
-          try {
-            const licenseResponse = await fetch(`http://localhost:3000/api/licenses/application/${encodeURIComponent(newest.application_id)}`, {
-              headers: { Authorization: 'Bearer ' + token },
-            });
-            const licensePayload = await licenseResponse.json().catch(() => ({}));
-            if (licenseResponse.ok) {
-              if (active) setLicenseIssueDate(licensePayload.data?.issued_date || licensePayload.issued_date || '');
-            } else if (licenseResponse.status !== 404) {
-              const message = Array.isArray(licensePayload.message) ? licensePayload.message.join(', ') : licensePayload.message;
-              if (active) setLicenseIssueDateError(message || 'Could not load the license issue date.');
-            }
-          } catch {
-            if (active) setLicenseIssueDateError('Could not load the license issue date. Please refresh to try again.');
-          }
-        }
-      } catch (requestError) {
-        if (active) setError(requestError.message || 'Please check your connection and try again.');
-      } finally {
-        if (active) setIsLoading(false);
-      }
-    }
-
-    loadApplications();
-    return () => { active = false; };
-  }, [navigate, user.role]);
-
-  function handleLogout(event) {
-    event.preventDefault();
-    sessionStorage.removeItem('loggedInUser');
-    sessionStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
-    navigate('/login', { replace: true });
-  }
-
-  const status = statusLabel(application?.application_status);
-  const stepIndex = currentStep(application?.application_status);
-  const isRejected = application?.application_status === 'rejected';
-  const paymentStatus = typeof application?.paymentDone === 'boolean' ? (application.paymentDone ? 'Paid' : 'Not paid') : 'Unavailable';
-  const approvedIssueLabel = licenseIssueDate
-    ? `Issue date: ${dateLabel(licenseIssueDate)}`
-    : licenseIssueDateError ? '' : 'Issue date pending';
+  useEffect(() => {
+    applications
+      .filter((application) => String(application.application_status || '').toLowerCase() === 'approved')
+      .forEach((application) => {
+        const applicationId = String(application.application_id);
+        if (!(applicationId in licenses)) dispatch(fetchLicenseByApplication(application.application_id));
+      });
+  }, [dispatch, applications, licenses]);
 
   return (
     <div className="applicant-track-status-page">
-      <Navigation onLogout={handleLogout} />
+      <ApplicantNavigation />
       <main className="track-main">
         <div className="track-content">
           <div className="track-left">
             <h1>Track Application Status</h1>
-            <p className="track-sub">Monitor the current status of your trade license application.</p>
-            {isLoading ? <div className="track-state">Loading your application...</div> : error ? (
-              <div className="track-state track-error" role="alert"><h3>Unable to Load Application</h3><p>{error}</p><button type="button" onClick={() => window.location.reload()}>Try Again</button></div>
-            ) : !application ? (
-              <div className="track-state track-empty"><h3>No Application Found</h3><p>You have not submitted a trade license application yet.</p><Link className="track-action" to="/apply-license">Apply Now</Link></div>
+            <p className="track-sub">Monitor the current status of your trade license applications.</p>
+            {loading ? (
+              <div className="track-state">Loading your applications...</div>
+            ) : error ? (
+              <div className="track-state track-error" role="alert">
+                <h3>Unable to Load Applications</h3>
+                <p>{error}</p>
+                <button type="button" onClick={() => dispatch(fetchApplicantApplications())}>Try Again</button>
+              </div>
+            ) : sortedApplications.length === 0 ? (
+              <div className="track-state track-empty">
+                <h3>No Application Found</h3>
+                <p>You have not submitted a trade license application yet.</p>
+                <Link className="track-action" to="/apply-license">Apply Now</Link>
+              </div>
             ) : (
-              <section className="app-card">
-                <div className="app-info">
-                  <div><small>APPLICATION ID</small><strong>{application.application_ref || application.application_id || 'Unavailable'}</strong></div>
-                  <div><small>APPLICATION DATE</small><strong>{dateLabel(application.submitted_at)}</strong></div>
-                  <div><small>APPLICANT NAME</small><strong>{application.full_name || user.full_name || user.name || 'Unavailable'}</strong></div>
-                  <div><small>BUSINESS NAME</small><strong>{application.business_name || 'Unavailable'}</strong></div>
-                  <div><small>PAYMENT STATUS</small><strong>{paymentStatus}</strong></div>
-                </div>
-                <div className="stepper" aria-label="Application progress">
-                  {steps.map((step, index) => (
-                    <ReactStep key={step} title={isRejected && index === 4 ? 'Approved / Rejected' : step} index={index} currentIndex={stepIndex} isRejected={isRejected} date={index === 0 ? dateLabel(application.submitted_at) : index === 4 && !isRejected ? approvedIssueLabel : ''} dateError={index === 4 && !isRejected ? licenseIssueDateError : ''} isLast={index === steps.length - 1} />
-                  ))}
-                </div>
-                <section className="detail-row" aria-label="Detailed application status">
-                  <div className="detail-left">
-                    <p className="detail-title"><span aria-hidden="true">ⓘ</span> Detailed Status</p>
-                    <div className="detail-status-grid">
-                      <div><small>CURRENT STATUS</small><p className={`track-status-value ${isRejected ? 'rejected' : application.application_status === 'approved' ? 'approved' : ''}`}>{status}</p></div>
-                      <div><small>EXPECTED UPDATE</small><p><strong>{application.application_status === 'approved' ? 'A license record is available if issued.' : application.application_status === 'rejected' ? 'Please contact support for details.' : 'No further update is available yet.'}</strong></p></div>
-                    </div>
-                  </div>
-                </section>
-                {application.application_status === 'approved' && <div className="view-btn-row"><Link className="track-button btn-view" to="/download-license">View License</Link></div>}
-              </section>
+              <div className="track-applications">
+                {sortedApplications.map((application) => {
+                  const applicationId = String(application.application_id);
+                  const license = licenses[applicationId];
+                  const rawStatus = String(application.application_status || '').toLowerCase();
+                  const isRejected = rawStatus === 'rejected';
+                  const isApproved = rawStatus === 'approved';
+                  const status = statusLabel(rawStatus);
+                  const stepIndex = currentStep(rawStatus);
+                  const paymentStatus = typeof application.paymentDone === 'boolean'
+                    ? (application.paymentDone ? 'Paid' : 'Not paid')
+                    : 'Unavailable';
+                  const issueDateLabel = license?.issued_date
+                    ? `Issue date: ${dateLabel(license.issued_date)}`
+                    : licenseError
+                      ? 'Could not load the license issue date.'
+                      : 'Issue date pending';
+
+                  return (
+                    <section className="app-card" key={application.application_id}>
+                      <header className="app-card-heading">
+                        <div>
+                          <small>APPLICATION ID</small>
+                          <strong>{application.application_ref || application.application_id || 'Unavailable'}</strong>
+                        </div>
+                        <span className={`track-status-value ${isRejected ? 'rejected' : isApproved ? 'approved' : ''}`}>{status}</span>
+                      </header>
+                      <div className="app-info">
+                        <div><small>APPLICATION DATE</small><strong>{dateLabel(application.submitted_at) || 'Unavailable'}</strong></div>
+                        <div><small>APPLICANT NAME</small><strong>{application.full_name || user.fullName || user.name || 'Unavailable'}</strong></div>
+                        <div><small>BUSINESS NAME</small><strong>{application.business_name || 'Unavailable'}</strong></div>
+                        <div><small>BUSINESS TYPE</small><strong>{application.business_type || application.trade_category || 'Unavailable'}</strong></div>
+                        <div><small>PAYMENT STATUS</small><strong>{paymentStatus}</strong></div>
+                        <div><small>MUNICIPALITY</small><strong>{application.municipality_name || application.municipality_id || 'Unavailable'}</strong></div>
+                      </div>
+                      <div className="stepper" aria-label={`Application progress for ${application.application_ref || application.application_id}`}>
+                        {steps.map((step, index) => (
+                          <ReactStep
+                            key={step}
+                            title={isRejected && index === 4 ? 'Approved / Rejected' : step}
+                            index={index}
+                            currentIndex={stepIndex}
+                            isRejected={isRejected}
+                            date={index === 0 ? dateLabel(application.submitted_at) : index === 4 && isApproved ? issueDateLabel : ''}
+                            isLast={index === steps.length - 1}
+                          />
+                        ))}
+                      </div>
+                      <section className="detail-row" aria-label={`Detailed application status for ${application.application_ref || application.application_id}`}>
+                        <div className="detail-left">
+                          <p className="detail-title"><span aria-hidden="true">i</span> Detailed Status</p>
+                          <div className="detail-status-grid">
+                            <div>
+                              <small>CURRENT STATUS</small>
+                              <p className={`track-status-value ${isRejected ? 'rejected' : isApproved ? 'approved' : ''}`}>{status}</p>
+                            </div>
+                            <div>
+                              <small>EXPECTED UPDATE</small>
+                              <p><strong>{isApproved ? 'A license record is available if issued.' : isRejected ? 'Please contact support for details.' : 'No further update is available yet.'}</strong></p>
+                            </div>
+                          </div>
+                        </div>
+                      </section>
+                      {isApproved && (
+                        <div className="view-btn-row">
+                          <Link className="track-button btn-view" to="/download-license">View License</Link>
+                        </div>
+                      )}
+                    </section>
+                  );
+                })}
+              </div>
             )}
-            <Link className="track-button btn-cancel" to="/dashboard">← Back to Dashboard</Link>
+            <Link className="track-button btn-cancel" to="/dashboard">Back to Dashboard</Link>
           </div>
         </div>
       </main>
@@ -161,11 +170,19 @@ export default function ApplicantTrackStatus() {
   );
 }
 
-function ReactStep({ title, index, currentIndex, isRejected, date, dateError, isLast }) {
+function ReactStep({ title, index, currentIndex, isRejected, date, isLast }) {
   const done = index < currentIndex || (index === currentIndex && !isRejected);
   const current = index === currentIndex;
-  return <>
-    <div className={`step ${current ? 'current' : ''}`}><div className={`circle ${done ? 'done' : current ? 'current' : 'pending'} ${isRejected && current ? 'rejected' : ''}`}>{done ? '✓' : isRejected && current ? '×' : index + 1}</div><span>{title}</span>{(date || dateError) && <small className={dateError ? 'step-error' : ''}>{dateError || date}</small>}</div>
-    {!isLast && <div className={`line ${index < currentIndex && !isRejected ? 'line-done' : ''}`} />}
-  </>;
+  return (
+    <>
+      <div className={`step ${current ? 'current' : ''}`}>
+        <div className={`circle ${done ? 'done' : current ? 'current' : 'pending'} ${isRejected && current ? 'rejected' : ''}`}>
+          {done ? '✓' : isRejected && current ? '×' : index + 1}
+        </div>
+        <span>{title}</span>
+        {date && <small>{date}</small>}
+      </div>
+      {!isLast && <div className={`line ${index < currentIndex && !isRejected ? 'line-done' : ''}`} />}
+    </>
+  );
 }

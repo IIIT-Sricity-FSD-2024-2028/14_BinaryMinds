@@ -1,5 +1,4 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { PaymentStatus } from '../../common/enums/payment-status.enum';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreatePaymentDto {
   @IsNumber()
@@ -25,10 +24,6 @@ export class CreatePaymentDto {
   @IsNumber()
   @IsOptional()
   service_tax?: number;
-
-  @IsEnum(PaymentStatus)
-  @IsOptional()
-  payment_status?: PaymentStatus;
 
   @IsString()
   @IsOptional()

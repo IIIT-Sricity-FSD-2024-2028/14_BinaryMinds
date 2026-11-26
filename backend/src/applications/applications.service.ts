@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ConflictException,
   Inject,
   forwardRef,
 } from '@nestjs/common';
@@ -141,10 +142,10 @@ export class ApplicationsService {
       municipality_id: resolvedMuni.municipality_id,
       municipalityName: resolvedMuni.name,
       application_status: ApplicationStatus.SUBMITTED,
-      paymentDone: true,
+      paymentDone: false,
       assignedOfficerId: null,
     };
-    return this.applicationsRepository.create(newAppRecord);
+    return this.createUnlessDuplicate(newAppRecord);
   }
 
   /**
@@ -183,7 +184,26 @@ export class ApplicationsService {
       paymentDone: false,
       assignedOfficerId: null,
     };
-    return this.applicationsRepository.create(newAppRecord);
+    return this.createUnlessDuplicate(newAppRecord);
+  }
+
+  private createUnlessDuplicate(
+    application: Omit<Application, 'application_id' | 'application_ref' | 'submitted_at'>,
+  ): Application {
+    const result = this.applicationsRepository.createUnlessDuplicate(application);
+    if (result.duplicate) {
+      throw new ConflictException({
+        message: 'An application for this business and municipality is already active.',
+        application: {
+          application_id: result.duplicate.application_id,
+          application_ref: result.duplicate.application_ref,
+          application_status: result.duplicate.application_status,
+          business_name: result.duplicate.business_name,
+          municipality_id: result.duplicate.municipality_id,
+        },
+      });
+    }
+    return result.application!;
   }
 
   /**
@@ -281,6 +301,12 @@ export class ApplicationsService {
   update(id: number, updateData: Partial<Application>): Application {
     const existingApplication = this.findOne(id);
 
+    if (Object.prototype.hasOwnProperty.call(updateData, 'paymentDone')) {
+      throw new BadRequestException(
+        'Application payment status can only be changed by the payment workflow',
+      );
+    }
+
     // Business Logic: Status transition validation
     if (
       updateData.application_status &&
@@ -302,6 +328,15 @@ export class ApplicationsService {
       );
     }
 
+    return updatedApplication;
+  }
+
+  markPaymentCompleted(id: number): Application {
+    this.findOne(id);
+    const updatedApplication = this.applicationsRepository.update(id, { paymentDone: true });
+    if (!updatedApplication) {
+      throw new NotFoundException(`Application with ID ${id} not found during payment completion`);
+    }
     return updatedApplication;
   }
 

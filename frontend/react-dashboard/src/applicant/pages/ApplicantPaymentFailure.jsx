@@ -1,17 +1,14 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
 import ApplicantNavigation from '../components/ApplicantNavigation';
+import { fetchPaymentById, selectPaymentById } from '../../features/payments/paymentsSlice.js';
+import { fetchApplicantApplications, selectApplicantApplications, setResultState } from '../store/applicantApplicationsSlice.js';
 import '../styles/ApplicantPaymentFailure.css';
-
-const apiBase = 'http://localhost:3000/api';
-
-function readCurrentApplication() {
-  try { return JSON.parse(sessionStorage.getItem('currentApplication') || '{}'); } catch { return {}; }
-}
 
 function formatDate(value) {
   const date = new Date(value);
-  return !value || Number.isNaN(date.getTime()) ? '—' : date.toLocaleString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return !value || Number.isNaN(date.getTime()) ? '-' : date.toLocaleString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 function formatMoney(value) {
@@ -19,62 +16,58 @@ function formatMoney(value) {
 }
 
 export default function ApplicantPaymentFailure() {
-  const navigate = useNavigate();
-  const [payment, setPayment] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { paymentId: routePaymentId } = useParams();
+  const dispatch = useDispatch();
+  const workflow = useSelector((state) => state.applicantApplications.workflow);
+  const paymentId = routePaymentId || workflow.resultPayment?.payment_id;
+  const payment = useSelector((state) => selectPaymentById(state, paymentId));
+  const applications = useSelector(selectApplicantApplications);
+  const application = applications.find((item) => String(item.application_id) === String(payment?.application_id));
+  const loading = useSelector((state) => state.payments.requests.fetchById === 'pending' || state.applicantApplications.requests.fetchMine === 'pending');
+  const error = workflow.resultError;
 
   useEffect(() => {
-    let active = true;
-    const paymentId = sessionStorage.getItem('failedPaymentId');
-    const token = sessionStorage.getItem('accessToken');
-    const application = readCurrentApplication();
-    const expectedApplicationId = Number(sessionStorage.getItem('backendApplicationId') || application.application_id || application.backendId || application.id);
-
-    async function verifyPayment() {
-      if (!paymentId || !token || !expectedApplicationId) {
-        throw new Error('Payment verification details are missing. Please return to Pay Now and check the status.');
-      }
-      const response = await fetch(`${apiBase}/payments/${encodeURIComponent(paymentId)}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        const message = Array.isArray(payload.message) ? payload.message.join(' ') : payload.message;
-        throw new Error(message || 'Unable to verify the payment record.');
-      }
-      const record = payload.data || payload;
-      if (String(record.payment_status || '').toUpperCase() !== 'FAILED') {
-        throw new Error('The backend has not confirmed a failed payment. Transaction details are hidden.');
-      }
-      if (Number(record.application_id) !== expectedApplicationId) {
-        throw new Error('The failed payment does not match the saved application. Transaction details are hidden.');
-      }
-      if (active) setPayment(record);
+    if (!/^\d+$/.test(String(paymentId || ''))) {
+      dispatch(setResultState({ resultLoading: false, resultError: 'Payment details are unavailable. Return to Pay Now and check the payment status.' }));
+      return;
     }
-
-    verifyPayment().catch((requestError) => { if (active) setError(requestError.message || 'Unable to verify payment status.'); })
-      .finally(() => { if (active) setLoading(false); });
+    let active = true;
+    dispatch(setResultState({ resultLoading: true, resultError: '' }));
+    (async () => {
+      try {
+        const paymentResponse = await dispatch(fetchPaymentById({ id: paymentId })).unwrap();
+        const record = paymentResponse?.data || paymentResponse;
+        if (String(record?.payment_id) !== String(paymentId)) throw new Error('The requested payment record could not be verified.');
+        if (String(record.payment_status || '').toUpperCase() !== 'FAILED') throw new Error('The backend has not confirmed a failed payment. Transaction details are hidden.');
+        const applicationsResponse = await dispatch(fetchApplicantApplications()).unwrap();
+        const rows = Array.isArray(applicationsResponse?.data) ? applicationsResponse.data : Array.isArray(applicationsResponse) ? applicationsResponse : [];
+        if (!rows.some((item) => String(item.application_id) === String(record.application_id))) throw new Error('This payment is not associated with an application available to your account.');
+        if (active) dispatch(setResultState({ resultPayment: record, resultLoading: false, resultError: '' }));
+      } catch (requestError) {
+        if (active) dispatch(setResultState({ resultLoading: false, resultError: requestError?.message || 'Unable to verify payment status.' }));
+      }
+    })();
     return () => { active = false; };
-  }, []);
+  }, [dispatch, paymentId]);
 
-  function logout(event) {
-    event.preventDefault();
-    sessionStorage.removeItem('loggedInUser');
-    sessionStorage.removeItem('accessToken');
-    navigate('/login', { replace: true });
-  }
-
-  const application = readCurrentApplication();
-  const applicationLabel = sessionStorage.getItem('applicationRef') || application.application_ref || (payment ? `APP-${payment.application_id}` : '—');
+  const applicationLabel = application?.application_ref || (payment?.application_id ? `APP-${payment.application_id}` : '-');
 
   return (
     <div className="applicant-payment-failure-page">
-      <ApplicantNavigation onLogout={logout} />
+      <ApplicantNavigation />
       <main className="failure-main">
-        {loading ? <p className="failure-message" role="status">Verifying payment status with TradeZo...</p> : error ? (
-          <section className="failure-card failure-error" role="alert"><h1>Payment Status Unavailable</h1><p>{error}</p><div className="failure-button-row"><Link className="failure-primary" to="/pay-now">Retry / Check Payment</Link><Link className="failure-outline" to="/dashboard">Dashboard</Link></div></section>
-        ) : payment && (
+        {loading || workflow.resultLoading ? (
+          <p className="failure-message" role="status">Verifying payment status with TradeZo...</p>
+        ) : error ? (
+          <section className="failure-card failure-error" role="alert">
+            <h1>Payment Status Unavailable</h1>
+            <p>{error}</p>
+            <div className="failure-button-row">
+              <Link className="failure-primary" to="/pay-now">Retry / Check Payment</Link>
+              <Link className="failure-outline" to="/dashboard">Dashboard</Link>
+            </div>
+          </section>
+        ) : payment && application ? (
           <>
             <h1 className="failure-title">Payment Failed</h1>
             <p className="failure-subtitle">The backend marked this simulated payment record as failed. No real money was collected by this project.</p>
@@ -85,25 +78,26 @@ export default function ApplicantPaymentFailure() {
                 <p className="failure-desc">TradeZo confirmed a FAILED payment status for this record.</p>
                 <div className="failure-info-grid">
                   <div className="failure-info-item"><label>APPLICATION ID</label><span>{applicationLabel}</span></div>
+                  <div className="failure-info-item"><label>BUSINESS NAME</label><span>{application.business_name || 'Unavailable'}</span></div>
                   <div className="failure-info-item"><label>TRANSACTION ID</label><span>{payment.transaction_id || `Payment ${payment.payment_id}`}</span></div>
                   <div className="failure-info-item"><label>AMOUNT</label><span className="failure-amount">{formatMoney(payment.amount)}</span></div>
                   <div className="failure-info-item"><label>DATE &amp; TIME</label><span>{formatDate(payment.payment_date)}</span></div>
                 </div>
                 <div className="failure-reason"><strong>Reason for Failure</strong><p>The backend payment record is marked FAILED. The project uses simulated payment records and does not connect to a bank or payment gateway.</p></div>
                 <div className="failure-button-row">
-                  <Link className="failure-primary" to="/pay-now">↻ Retry Payment</Link>
-                  <Link className="failure-outline" to="/payments">▣ Back to Payment History</Link>
+                  <Link className="failure-primary" to="/pay-now">Retry Payment</Link>
+                  <Link className="failure-outline" to="/payments">Back to Payment History</Link>
                 </div>
                 <p className="failure-note">No real payment was processed through this project. If an external transaction was made, verify it with the payment provider.</p>
               </section>
               <aside className="failure-side">
-                <section className="failure-side-card"><h3>💡 What You Can Do Next</h3><ol><li><strong>Retry payment</strong><br />Return to Pay Now and check the current record.</li><li><strong>Check payment status</strong><br />TradeZo shows only the status returned by its backend.</li><li><strong>Use support</strong><br />Contact the support team if the issue continues.</li></ol></section>
-                <section className="failure-side-card failure-help"><h3>❔ Need Help?</h3><p>If you are facing repeated payment failures, please reach out to our support team.</p><div className="failure-contact"><span>☎</span><div><small>TOLL FREE</small><strong>1800-123-4567</strong></div></div><div className="failure-contact"><span>✉</span><div><small>EMAIL SUPPORT</small><strong>support.tlms@gov.in</strong></div></div></section>
+                <section className="failure-side-card"><h3>What You Can Do Next</h3><ol><li><strong>Retry payment</strong><br/>Return to Pay Now and check the current record.</li><li><strong>Check payment status</strong><br/>TradeZo shows only the status returned by its backend.</li><li><strong>Use support</strong><br/>Contact the support team if the issue continues.</li></ol></section>
+                <section className="failure-side-card failure-help"><h3>Need Help?</h3><p>If you are facing repeated payment failures, please reach out to our support team.</p><div className="failure-contact"><span>Phone</span><div><small>TOLL FREE</small><strong>1800-123-4567</strong></div></div><div className="failure-contact"><span>Email</span><div><small>EMAIL SUPPORT</small><strong>support.tlms@gov.in</strong></div></div></section>
               </aside>
             </div>
-            <Link className="failure-cancel" to="/dashboard">← Cancel</Link>
+            <Link className="failure-cancel" to="/dashboard">Cancel</Link>
           </>
-        )}
+        ) : null}
       </main>
     </div>
   );

@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { usersApi } from '../api/usersApi.js';
 import {
   addRequestLifecycle,
   createDepartmentOfficerThunk,
@@ -11,23 +12,23 @@ import {
 
 export const fetchDepartmentOfficerProfile = createDepartmentOfficerThunk(
   'departmentOfficerUsers/fetchProfile',
-  () => ({ path: '/users/me' }),
+  usersApi.fetchProfile,
 );
 export const fetchDepartmentOfficerUsers = createDepartmentOfficerThunk(
   'departmentOfficerUsers/fetchAll',
-  () => ({ path: '/users' }),
+  usersApi.fetchAll,
 );
 export const fetchDepartmentOfficerUserById = createDepartmentOfficerThunk(
   'departmentOfficerUsers/fetchById',
-  (id) => ({ path: `/users/${encodeURIComponent(id)}` }),
+  usersApi.fetchById,
 );
 export const updateDepartmentOfficerUser = createDepartmentOfficerThunk(
   'departmentOfficerUsers/update',
-  ({ id, body }) => ({ path: `/users/${encodeURIComponent(id)}`, options: { method: 'PUT', body } }),
+  usersApi.update,
 );
 export const deleteDepartmentOfficerUser = createDepartmentOfficerThunk(
   'departmentOfficerUsers/delete',
-  (id) => ({ path: `/users/${encodeURIComponent(id)}`, options: { method: 'DELETE' } }),
+  usersApi.delete,
 );
 
 export const usersInitialState = createRequestState({ profile: null, items: [], byId: {} });

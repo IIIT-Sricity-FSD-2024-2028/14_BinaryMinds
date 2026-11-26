@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { createSelector } from '@reduxjs/toolkit';
 import { useNavigate } from 'react-router-dom';
 import {
   selectAccessToken,
@@ -44,6 +45,50 @@ function errorText(value, fallback) {
   return Array.isArray(message) ? message.join(' ') : message || value?.error || fallback;
 }
 
+export const selectDepartmentOfficerPortalStatus = createSelector(
+  [
+    selectIsAuthenticated,
+    selectIsDepartmentOfficer,
+    selectDepartmentOfficerProfile,
+    selectDepartmentOfficerUsersState,
+    selectApplicationsState,
+    selectInspectionsState,
+    selectDepartmentReviewsState,
+    selectLicensesState,
+    selectFieldOfficerAssignmentsState,
+  ],
+  (isAuthenticated, isDepartmentOfficer, profile, usersState, applicationsState, inspectionsState, reviewsState, licensesState, assignmentsState) => {
+    const profileStatus = usersState.requests.fetchProfile || 'idle';
+    const profileValid = isDepartmentOfficer &&
+      normalizeAuthRole(profile?.role) === 'department_officer';
+    const profileError = usersState.requests.fetchProfile === 'rejected'
+      ? errorText(usersState.errors.fetchProfile, 'Unable to verify the Department Officer session.')
+      : isAuthenticated && profile && !profileValid
+        ? 'This portal is available only to Department Officer accounts.'
+        : '';
+    const collectionStates = [
+      ['applications', applicationsState],
+      ['inspections', inspectionsState],
+      ['reviews', reviewsState],
+      ['licenses', licensesState],
+      ['assignments', assignmentsState],
+    ];
+    const hasLoadedCollections = profileValid &&
+      applicationsState.initialized && inspectionsState.initialized && reviewsState.initialized &&
+      licensesState.initialized && assignmentsState.initialized;
+    const loading = isAuthenticated && !profileError && (
+      profileStatus === 'idle' || profileStatus === 'pending' ||
+      (profileValid && !hasLoadedCollections)
+    );
+    const partialErrors = profileError ? [] : collectionStates.flatMap(([label, state]) =>
+      state.requests.fetchAll === 'rejected'
+        ? [`Could not load ${label}: ${errorText(state.errors.fetchAll, 'request failed')}`]
+        : [],
+    );
+    return { loading, error: profileError, partialErrors };
+  },
+);
+
 export function useDepartmentOfficerData() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -67,6 +112,7 @@ export function useDepartmentOfficerData() {
   const assignments = useSelector(selectFieldOfficerAssignments);
 
   const profileStatus = usersState.requests.fetchProfile || 'idle';
+  const portalStatus = useSelector(selectDepartmentOfficerPortalStatus);
   const profileValid = isDepartmentOfficer &&
     normalizeAuthRole(profile?.role) === 'department_officer';
 
@@ -129,43 +175,14 @@ export function useDepartmentOfficerData() {
     ]);
   }, [dispatch, profileValid]);
 
-  const profileError = usersState.requests.fetchProfile === 'rejected'
-    ? errorText(usersState.errors.fetchProfile, 'Unable to verify the Department Officer session.')
-    : isAuthenticated && profile && !profileValid
-      ? 'This portal is available only to Department Officer accounts.'
-      : '';
-
-  const collectionStates = [
-    ['applications', applicationsState],
-    ['inspections', inspectionsState],
-    ['reviews', reviewsState],
-    ['licenses', licensesState],
-    ['assignments', assignmentsState],
-  ];
-  const hasLoadedCollections = profileValid &&
-    applicationsState.initialized && inspectionsState.initialized && reviewsState.initialized &&
-    licensesState.initialized && assignmentsState.initialized;
-  const loading = isAuthenticated && !profileError && (
-    profileStatus === 'idle' || profileStatus === 'pending' ||
-    (profileValid && !hasLoadedCollections)
-  );
-  const partialErrors = profileError ? [] : collectionStates.flatMap(([label, state]) =>
-    state.requests.fetchAll === 'rejected'
-      ? [`Could not load ${label}: ${errorText(state.errors.fetchAll, 'request failed')}`]
-      : [],
-  );
-
   return {
     user: profileValid ? profile : null,
-    token,
     applications,
     inspections,
     assignments,
     reviews,
     licenses,
-    loading,
-    error: profileError,
-    partialErrors,
+    ...portalStatus,
     reload,
   };
 }

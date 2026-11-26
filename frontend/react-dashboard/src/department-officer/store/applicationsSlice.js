@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { recordDepartmentDecision } from './departmentReviewsSlice.js';
+import { applicationsApi } from '../api/applicationsApi.js';
 import {
   addRequestLifecycle,
   createDepartmentOfficerThunk,
@@ -13,30 +14,27 @@ import {
 
 export const fetchApplications = createDepartmentOfficerThunk(
   'departmentOfficerApplications/fetchAll',
-  () => ({ path: '/applications' }),
+  applicationsApi.fetchAll,
 );
 export const fetchApplicationById = createDepartmentOfficerThunk(
   'departmentOfficerApplications/fetchById',
-  (id) => ({ path: `/applications/${encodeURIComponent(id)}` }),
+  applicationsApi.fetchById,
 );
 export const assignApplicationToOfficer = createDepartmentOfficerThunk(
   'departmentOfficerApplications/assign',
-  ({ id, officerId }) => ({
-    path: `/applications/${encodeURIComponent(id)}/assign`,
-    options: { method: 'PATCH', body: { officerId: Number(officerId) } },
-  }),
+  applicationsApi.assign,
 );
 export const createApplication = createDepartmentOfficerThunk(
   'departmentOfficerApplications/create',
-  (body) => ({ path: '/applications', options: { method: 'POST', body } }),
+  applicationsApi.create,
 );
 export const updateApplication = createDepartmentOfficerThunk(
   'departmentOfficerApplications/update',
-  ({ id, body }) => ({ path: `/applications/${encodeURIComponent(id)}`, options: { method: 'PATCH', body } }),
+  applicationsApi.update,
 );
 export const deleteApplication = createDepartmentOfficerThunk(
   'departmentOfficerApplications/delete',
-  (id) => ({ path: `/applications/${encodeURIComponent(id)}`, options: { method: 'DELETE' } }),
+  applicationsApi.delete,
 );
 
 export const applicationsInitialState = createRequestState({ items: [], current: null, initialized: false });

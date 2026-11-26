@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { fieldOfficerAssignmentsApi } from '../api/fieldOfficerAssignmentsApi.js';
 import {
   addRequestLifecycle,
   createDepartmentOfficerThunk,
@@ -11,23 +12,23 @@ import {
 
 export const fetchFieldOfficerAssignments = createDepartmentOfficerThunk(
   'departmentOfficerAssignments/fetchAll',
-  () => ({ path: '/field-officer-assignments' }),
+  fieldOfficerAssignmentsApi.fetchAll,
 );
 export const fetchFieldOfficerAssignmentById = createDepartmentOfficerThunk(
   'departmentOfficerAssignments/fetchById',
-  (id) => ({ path: `/field-officer-assignments/${encodeURIComponent(id)}` }),
+  fieldOfficerAssignmentsApi.fetchById,
 );
 export const createFieldOfficerAssignment = createDepartmentOfficerThunk(
   'departmentOfficerAssignments/create',
-  (body) => ({ path: '/field-officer-assignments', options: { method: 'POST', body } }),
+  fieldOfficerAssignmentsApi.create,
 );
 export const updateFieldOfficerAssignment = createDepartmentOfficerThunk(
   'departmentOfficerAssignments/update',
-  ({ id, body }) => ({ path: `/field-officer-assignments/${encodeURIComponent(id)}`, options: { method: 'PATCH', body } }),
+  fieldOfficerAssignmentsApi.update,
 );
 export const deleteFieldOfficerAssignment = createDepartmentOfficerThunk(
   'departmentOfficerAssignments/delete',
-  (id) => ({ path: `/field-officer-assignments/${encodeURIComponent(id)}`, options: { method: 'DELETE' } }),
+  fieldOfficerAssignmentsApi.delete,
 );
 
 export const fieldOfficerAssignmentsInitialState = createRequestState({ items: [], current: null, initialized: false });

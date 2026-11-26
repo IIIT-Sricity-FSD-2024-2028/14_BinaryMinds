@@ -8,7 +8,7 @@ const roundMoney = (amount: number) => Math.round((amount + Number.EPSILON) * 10
 
 @Injectable()
 export class PlatformAdminService {
-  constructor(private readonly store: JsonStore) { this.backfillCompletedPayments(); }
+  constructor(private readonly store: JsonStore) {}
 
   overview() {
     const data = this.store.snapshot();
@@ -193,23 +193,6 @@ export class PlatformAdminService {
     };
     records.push(record);
     this.store.save();
-  }
-
-  private backfillCompletedPayments() {
-    const records = this.store.snapshot().platform.revenue_records;
-    let changed = false;
-    this.store.snapshot().payments
-      .filter((payment) => payment.payment_status === PaymentStatus.COMPLETED)
-      .forEach((payment) => {
-        if (records.some((record) => record.payment_id === payment.payment_id)) return;
-        this.recordCompletedPayment(payment);
-        const record = records.find((candidate) => candidate.payment_id === payment.payment_id);
-        if (record) {
-          record.backfilled = true;
-          changed = true;
-        }
-      });
-    if (changed) this.store.save();
   }
 
   private corporationTotals(corporationId: string, muni?: any) {

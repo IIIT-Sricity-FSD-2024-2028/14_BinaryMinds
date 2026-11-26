@@ -1,57 +1,71 @@
-import { useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import DepartmentOfficerPageFrame from '../components/DepartmentOfficerPageFrame';
 import { useDepartmentOfficerData } from '../components/useDepartmentOfficerData';
 import { recordDepartmentDecision } from '../store/departmentReviewsSlice.js';
+import {
+  selectAuthorizationUi,
+  setAuthorizationNotice,
+  setAuthorizationReason,
+  setAuthorizationSelectedApplication,
+  setPageSearch,
+  selectPageSearch,
+} from '../store/departmentOfficerUiSlice.js';
 import '../styles/DepartmentOfficerAuthorization.css';
 
 function decisionErrorMessage(error) {
   const message = error?.data?.message;
-  return Array.isArray(message)
-    ? message.join(' ')
-    : message || error?.error || error?.message || 'The decision request failed.';
+  return Array.isArray(message) ? message.join(' ') : message || error?.error || error?.message || 'The decision request failed.';
 }
 
 export default function DepartmentOfficerAuthorization() {
-  const data = useDepartmentOfficerData(); const [query, setQuery] = useState(''); const [selected, setSelected] = useState(null); const [reason, setReason] = useState(''); const [saving, setSaving] = useState(false); const [notice, setNotice] = useState('');
+  const data = useDepartmentOfficerData();
   const dispatch = useDispatch();
+  const query = useSelector((state) => selectPageSearch(state, 'authorization'));
+  const authorizationUi = useSelector(selectAuthorizationUi);
+  const saving = useSelector((state) => state.departmentOfficerReviews.requests.recordDecision === 'pending');
+  const selected = data.applications.find((app) => String(app.application_id) === String(authorizationUi.selectedApplicationId));
   const rows = useMemo(() => data.applications.filter((app) => {
     const review = data.reviews.find((x) => Number(x.application_id) === Number(app.application_id));
     const assignmentIds = data.assignments.filter((x) => Number(x.application_id) === Number(app.application_id)).map((x) => Number(x.assignment_id));
     const inspected = data.inspections.some((x) => assignmentIds.includes(Number(x.assignment_id)) && ['COMPLETED', 'FAILED'].includes(String(x.status).toUpperCase()));
     const state = String(review?.status || '').toUpperCase();
-    const ready = inspected || ['APPROVED','REJECTED','CLARIFICATION_REQUESTED'].includes(state) || ['approved','rejected','department_review'].includes(app.application_status);
+    const ready = inspected || ['APPROVED', 'REJECTED', 'CLARIFICATION_REQUESTED'].includes(state) || ['approved', 'rejected', 'department_review'].includes(app.application_status);
     return ready && [app.application_ref, app.application_id, app.business_name, app.full_name, state].some((v) => String(v || '').toLowerCase().includes(query.toLowerCase()));
   }), [data.applications, data.reviews, data.assignments, data.inspections, query]);
+
   async function decision(status) {
     if (!selected) return;
-    if (!reason.trim()) { setNotice('Enter a formal justification before recording this decision.'); return; }
-    setSaving(true);
-    setNotice('');
+    if (!authorizationUi.reason.trim()) {
+      dispatch(setAuthorizationNotice('Enter a formal justification before recording this decision.'));
+      return;
+    }
+    dispatch(setAuthorizationNotice(''));
     let decisionRequestSucceeded = false;
     try {
       const result = await dispatch(recordDepartmentDecision({
         applicationId: selected.application_id,
         status,
-        comments: reason.trim(),
+        comments: authorizationUi.reason.trim(),
       })).unwrap();
       decisionRequestSucceeded = true;
       const expectedStatus = status === 'APPROVED' ? 'approved' : 'rejected';
       if (result?.review?.status !== status || result?.application?.application_status !== expectedStatus) {
         throw new Error('The backend did not confirm the requested decision and application status.');
       }
-      setSelected(null);
-      setReason('');
-      setNotice(`Decision ${status.toLowerCase()} and its justification were saved.`);
+      dispatch(setAuthorizationSelectedApplication({ applicationId: null }));
+      dispatch(setAuthorizationNotice(`Decision ${status.toLowerCase()} and its justification were saved.`));
     } catch (error) {
-      setNotice(`Decision not saved: ${decisionErrorMessage(error)}`);
+      dispatch(setAuthorizationNotice(`Decision not saved: ${decisionErrorMessage(error)}`));
       if (!decisionRequestSucceeded) await data.reload();
-    } finally {
-      setSaving(false);
     }
   }
-  return <DepartmentOfficerPageFrame pageClass="do-page-authorization" active="/department-officer/authorization" title="Final Authorization & Signing" data={data}>{notice && <p className="do-notice" role="status">{notice}</p>}<label className="search-bar"><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by Application ID, Company Name" /></label><div className="do-table-scroll"><table className="table"><thead><tr><th>Application ID</th><th>Applicant Name</th><th>Company Name</th><th>Status</th><th>Action</th></tr></thead><tbody>{rows.map((app) => { const review = data.reviews.find((x) => Number(x.application_id) === Number(app.application_id)); const license = data.licenses.find((x) => Number(x.application_id) === Number(app.application_id)); const status = license ? 'Licensed' : review?.status || app.application_status || 'Pending'; return <tr key={app.application_id}><td>{app.application_ref || `#${app.application_id}`}</td><td>{app.full_name || '—'}</td><td>{app.business_name || '—'}</td><td>{status}</td><td>{license ? <span>{license.license_number}</span> : String(status).toUpperCase() === 'APPROVED' || app.application_status === 'approved' ? <Link className="do-action-link" to={`/department-officer/authorization/${app.application_id}/sign`}>Authorize &amp; Sign</Link> : String(status).toUpperCase() === 'REJECTED' || app.application_status === 'rejected' ? <span>Decision recorded</span> : <button className="btn-outline" onClick={() => { setSelected(app); setReason(review?.comments || ''); }}>Review Decision</button>}</td></tr>; })}{!rows.length && <tr><td colSpan="5">No inspected or reviewed applications are available.</td></tr>}</tbody></table></div>
-    {selected && <div className="modal-overlay active" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) setSelected(null); }}><section className="modal-box" role="dialog" aria-modal="true" aria-labelledby="do-decision-title"><h3 className="modal-title" id="do-decision-title">Final Application Decision</h3><p className="modal-desc">{selected.business_name || 'Application'} · {selected.application_ref || `#${selected.application_id}`}</p><label className="modal-field">Reviewer comments / rejection reason<textarea value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Enter the reason or decision notes..." /></label><div className="modal-actions"><button className="modal-btn cancel-btn" onClick={() => setSelected(null)}>Cancel</button><button className="modal-btn confirm-approve-btn" disabled={saving} onClick={() => decision('APPROVED')}>Approve</button><button className="modal-btn confirm-reject-btn" disabled={saving} onClick={() => decision('REJECTED')}>Reject</button></div></section></div>}
+
+  return <DepartmentOfficerPageFrame pageClass="do-page-authorization" active="/department-officer/authorization" title="Final Authorization & Signing">
+    {authorizationUi.notice && <p className="do-notice" role="status">{authorizationUi.notice}</p>}
+    <label className="search-bar"><input value={query} onChange={(event) => dispatch(setPageSearch({ page: 'authorization', value: event.target.value }))} placeholder="Search by Application ID, Company Name" /></label>
+    <div className="do-table-scroll"><table className="table"><thead><tr><th>Application ID</th><th>Applicant Name</th><th>Company Name</th><th>Status</th><th>Action</th></tr></thead><tbody>{rows.map((app) => { const review = data.reviews.find((x) => Number(x.application_id) === Number(app.application_id)); const license = data.licenses.find((x) => Number(x.application_id) === Number(app.application_id)); const status = license ? 'Licensed' : review?.status || app.application_status || 'Pending'; return <tr key={app.application_id}><td>{app.application_ref || `#${app.application_id}`}</td><td>{app.full_name || '—'}</td><td>{app.business_name || '—'}</td><td>{status}</td><td>{license ? <span>{license.license_number}</span> : String(status).toUpperCase() === 'APPROVED' || app.application_status === 'approved' ? <Link className="do-action-link" to={`/department-officer/authorization/${app.application_id}/sign`}>Authorize &amp; Sign</Link> : String(status).toUpperCase() === 'REJECTED' || app.application_status === 'rejected' ? <span>Decision recorded</span> : <button className="btn-outline" onClick={() => dispatch(setAuthorizationSelectedApplication({ applicationId: app.application_id, reason: review?.comments || '' }))}>Review Decision</button>}</td></tr>; })}{!rows.length && <tr><td colSpan="5">No inspected or reviewed applications are available.</td></tr>}</tbody></table></div>
+    {selected && <div className="modal-overlay active" role="presentation" onClick={(event) => { if (event.target === event.currentTarget) dispatch(setAuthorizationSelectedApplication({ applicationId: null })); }}><section className="modal-box" role="dialog" aria-modal="true" aria-labelledby="do-decision-title"><h3 className="modal-title" id="do-decision-title">Final Application Decision</h3><p className="modal-desc">{selected.business_name || 'Application'} · {selected.application_ref || `#${selected.application_id}`}</p><label className="modal-field">Reviewer comments / rejection reason<textarea value={authorizationUi.reason} onChange={(event) => dispatch(setAuthorizationReason(event.target.value))} placeholder="Enter the reason or decision notes..." /></label><div className="modal-actions"><button className="modal-btn cancel-btn" onClick={() => dispatch(setAuthorizationSelectedApplication({ applicationId: null }))}>Cancel</button><button className="modal-btn confirm-approve-btn" disabled={saving} onClick={() => decision('APPROVED')}>Approve</button><button className="modal-btn confirm-reject-btn" disabled={saving} onClick={() => decision('REJECTED')}>Reject</button></div></section></div>}
   </DepartmentOfficerPageFrame>;
 }

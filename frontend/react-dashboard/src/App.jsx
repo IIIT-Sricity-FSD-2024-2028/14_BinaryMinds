@@ -69,8 +69,8 @@ export default function App() {
         <Route path="/paynow/index.html" element={<Navigate to="/pay-now" replace />} />
         <Route path="/paynow/" element={<Navigate to="/pay-now" replace />} />
         <Route path="/download-license" element={<ApplicantDownloadLicense />} />
-        <Route path="/payment-success" element={<ApplicantPaymentSuccess />} />
-        <Route path="/payment-failure" element={<ApplicantPaymentFailure />} />
+        <Route path="/payment-success/:paymentId?" element={<ApplicantPaymentSuccess />} />
+        <Route path="/payment-failure/:paymentId?" element={<ApplicantPaymentFailure />} />
         <Route path="/payments" element={<ApplicantPaymentHistory />} />
         <Route path="/platform-admin/login" element={<PlatformAdminLogin />} />
         <Route path="/platform-admin" element={<PlatformAdminLayout />}>

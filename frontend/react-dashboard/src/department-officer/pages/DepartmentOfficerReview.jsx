@@ -1,18 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import DepartmentOfficerPageFrame from '../components/DepartmentOfficerPageFrame';
 import { useDepartmentOfficerData } from '../components/useDepartmentOfficerData';
 import { recordDepartmentDecision } from '../store/departmentReviewsSlice.js';
 import {
+  clearDocumentPreview,
+  downloadDocumentFile,
+  fetchDocumentPreview,
   fetchDocumentsByApplication,
   selectDocumentsByApplication,
   selectDocumentsState,
 } from '../store/documentsSlice.js';
 import { applicationWorkflowStatus, getApplicationInspection } from '../components/inspectionWorkflow';
+import {
+  selectReviewForm,
+  setReviewFileError,
+  setReviewNotice,
+  setReviewReason,
+  setSigningNotice,
+  setWorklistNotice,
+} from '../store/departmentOfficerUiSlice.js';
 import '../styles/DepartmentOfficerReview.css';
-
-const apiBase = 'http://localhost:3000/api';
 
 function errorMessage(payload, fallback) {
   return Array.isArray(payload?.message) ? payload.message.join(' ') : payload?.message || fallback;
@@ -38,11 +47,12 @@ export default function DepartmentOfficerReview() {
   const { applicationId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const [fileError, setFileError] = useState('');
-  const [reason, setReason] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [notice, setNotice] = useState('');
+  const form = useSelector((state) => selectReviewForm(state, applicationId));
+  const saving = useSelector((state) => state.departmentOfficerReviews.requests.recordDecision === 'pending');
   const requestedDocumentApps = useRef(new Set());
+  const previewWindows = useRef(new Map());
+  const previewRequests = useRef(new Map());
+  const previewUrls = useRef(new Map());
   const documentsState = useSelector(selectDocumentsState);
   const app = data.applications.find((row) => Number(row.application_id) === Number(applicationId));
   const applicationKey = app?.application_id == null ? null : String(app.application_id);
@@ -56,6 +66,11 @@ export default function DepartmentOfficerReview() {
   const documentsError = applicationKey && !hasDocuments && documentsStatus === 'rejected'
     ? documentsState.errors.fetchByApplication || 'Unable to load supporting documents.'
     : '';
+  const visibleDocumentErrors = documents.flatMap((document) => {
+    const errors = documentsState.fileErrorsByDocumentId[String(document.document_id)] || {};
+    return [errors.preview, errors.download].filter(Boolean);
+  });
+  const documentFileError = visibleDocumentErrors[0] || '';
   const { inspection } = getApplicationInspection(
     data.assignments,
     data.inspections,
@@ -68,69 +83,91 @@ export default function DepartmentOfficerReview() {
     dispatch(fetchDocumentsByApplication(app.application_id));
   }, [app?.application_id, applicationKey, dispatch, hasDocuments]);
 
+  useEffect(() => {
+    Object.entries(documentsState.previewsByDocumentId).forEach(([id, preview]) => {
+      const pending = previewWindows.current.get(id);
+      if (!pending || pending.requestId !== preview.requestId) return;
+      previewWindows.current.delete(id);
+      if (pending.window.closed) {
+        URL.revokeObjectURL(preview.url);
+        dispatch(clearDocumentPreview({ documentId: id, requestId: preview.requestId }));
+        return;
+      }
+      const urlKey = `${id}:${preview.requestId}`;
+      const releasePreview = () => {
+        URL.revokeObjectURL(preview.url);
+        previewUrls.current.delete(urlKey);
+        dispatch(clearDocumentPreview({ documentId: id, requestId: preview.requestId }));
+      };
+      previewUrls.current.set(urlKey, releasePreview);
+      pending.window.location.href = preview.url;
+      pending.window.addEventListener('beforeunload', releasePreview, { once: true });
+    });
+  }, [dispatch, documentsState.previewsByDocumentId]);
+
+  useEffect(() => () => {
+    previewRequests.current.forEach((request) => request.abort());
+    previewRequests.current.clear();
+    previewWindows.current.forEach(({ window: previewWindow }) => previewWindow.close());
+    previewWindows.current.clear();
+    previewUrls.current.forEach((releasePreview) => releasePreview());
+    previewUrls.current.clear();
+  }, []);
+
   function loadDocuments() {
-    setFileError('');
+    dispatch(setReviewFileError({ applicationId, value: '' }));
     if (applicationKey) {
       requestedDocumentApps.current.add(applicationKey);
       dispatch(fetchDocumentsByApplication(app.application_id));
     }
   }
 
-  async function accessDocument(document, download) {
-    setFileError('');
-    const previewWindow = download ? null : window.open('', '_blank');
-    if (!download && !previewWindow) {
-      setFileError('Allow pop-ups to view this document.');
+  function accessDocument(document, download) {
+    dispatch(setReviewFileError({ applicationId, value: '' }));
+    const id = String(document.document_id);
+    const filename = documentFilename(document);
+    if (download) {
+      dispatch(downloadDocumentFile({ id, filename }));
+      return;
+    }
+
+    const previewWindow = window.open('', '_blank');
+    if (!previewWindow) {
+      dispatch(setReviewFileError({ applicationId, value: 'Allow pop-ups to view this document.' }));
       return;
     }
     if (previewWindow) previewWindow.opener = null;
-
-    try {
-      const endpoint = download ? 'download' : 'file';
-      const response = await fetch(
-        `${apiBase}/documents/${encodeURIComponent(document.document_id)}/${endpoint}`,
-        { headers: { Authorization: `Bearer ${data.token}` } },
-      );
-      if (!response.ok) {
-        const payload = await response.json().catch(() => ({}));
-        throw new Error(errorMessage(payload, `The document could not be retrieved (${response.status}).`));
+    previewRequests.current.get(id)?.abort();
+    previewWindows.current.get(id)?.window.close();
+    const request = dispatch(fetchDocumentPreview({ id, filename }));
+    previewWindows.current.set(id, { window: previewWindow, requestId: request.requestId });
+    previewRequests.current.set(id, request);
+    request.then((action) => {
+      if (fetchDocumentPreview.rejected.match(action)) {
+        const pending = previewWindows.current.get(id);
+        if (pending?.requestId === request.requestId) {
+          pending.window.close();
+          previewWindows.current.delete(id);
+        }
       }
-
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      if (download) {
-        const link = window.document.createElement('a');
-        link.href = objectUrl;
-        link.download = documentFilename(document);
-        window.document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
-      } else {
-        previewWindow.location.href = objectUrl;
-        previewWindow.addEventListener('beforeunload', () => URL.revokeObjectURL(objectUrl), { once: true });
-      }
-    } catch (error) {
-      previewWindow?.close();
-      setFileError(error.message || 'The document could not be retrieved. Please try again.');
-    }
+      if (previewRequests.current.get(id) === request) previewRequests.current.delete(id);
+    });
   }
 
   async function decide(status) {
     if (!app) return;
-    if (!reason.trim()) {
-      setNotice(status === 'REJECTED'
+    if (!form.reason.trim()) {
+      dispatch(setReviewNotice({ applicationId, value: status === 'REJECTED'
         ? 'Enter a reason before rejecting.'
-        : 'Enter a formal justification before recording this decision.');
+        : 'Enter a formal justification before recording this decision.' }));
       return;
     }
-    setSaving(true);
-    setNotice('');
+    dispatch(setReviewNotice({ applicationId, value: '' }));
     try {
       const result = await dispatch(recordDepartmentDecision({
         applicationId: app.application_id,
         status,
-        comments: reason.trim(),
+        comments: form.reason.trim(),
       })).unwrap();
       const expectedStatus = status === 'APPROVED'
         ? 'approved'
@@ -149,33 +186,33 @@ export default function DepartmentOfficerReview() {
           ? 'Application rejection and justification were saved.'
           : 'Clarification request was saved.';
       if (status === 'APPROVED') {
+        dispatch(setReviewReason({ applicationId, value: '' }));
+        dispatch(setSigningNotice({ applicationId: app.application_id, value: decisionNotice }));
         navigate(`/department-officer/authorization/${app.application_id}/sign`, {
           replace: true,
-          state: { decisionNotice },
         });
       } else if (status === 'REJECTED') {
+        dispatch(setReviewReason({ applicationId, value: '' }));
+        dispatch(setWorklistNotice(decisionNotice));
         navigate('/department-officer/worklist', {
           replace: true,
-          state: { decisionNotice },
         });
       } else {
-        setNotice(decisionNotice);
+        dispatch(setReviewNotice({ applicationId, value: decisionNotice }));
       }
     } catch (error) {
       const message = error instanceof Error
         ? error.message
         : errorMessage(error?.data, error?.error || 'The decision request failed.');
-      setNotice(`Decision not saved: ${message}`);
-    } finally {
-      setSaving(false);
+      dispatch(setReviewNotice({ applicationId, value: `Decision not saved: ${message}` }));
     }
   }
 
   const inspectionStatus = String(inspection?.status || 'No inspection record').toUpperCase();
   const review = data.reviews.find((row) => Number(row.application_id) === Number(app?.application_id));
   return (
-    <DepartmentOfficerPageFrame pageClass="do-page-review" active="/department-officer/worklist" title="Application Review" data={data}>
-      {notice && <p className="do-notice" role="status">{notice}</p>}
+    <DepartmentOfficerPageFrame pageClass="do-page-review" active="/department-officer/worklist" title="Application Review">
+      {form.notice && <p className="do-notice" role="status">{form.notice}</p>}
       {app ? <>
         <section className="card company-card">
           <div className="badge-pending">{applicationWorkflowStatus(app, review, inspection)}</div>
@@ -212,21 +249,22 @@ export default function DepartmentOfficerReview() {
                 {documents.map((document) => {
                   const mimeType = documentMimeType(document);
                   const canPreview = ['application/pdf', 'image/jpeg', 'image/png'].includes(mimeType);
+                  const fileRequests = documentsState.fileRequestsByDocumentId[String(document.document_id)] || {};
                   return (
                     <div className="doc-item" key={document.document_id}>
                       <span>{document.document_type || 'Document'}</span>
                       <span className="do-doc-filename">{documentFilename(document)}</span>
                       <span className="verified">{document.verification_status || 'pending'}</span>
                       <div className="do-doc-actions">
-                        {canPreview && <button className="btn-outline" type="button" onClick={() => accessDocument(document, false)}>View</button>}
-                        <button className="btn-outline" type="button" onClick={() => accessDocument(document, true)}>Download</button>
+                        {canPreview && <button className="btn-outline" type="button" disabled={fileRequests.preview === 'pending'} onClick={() => accessDocument(document, false)}>{fileRequests.preview === 'pending' ? 'Opening…' : 'View'}</button>}
+                        <button className="btn-outline" type="button" disabled={fileRequests.download === 'pending'} onClick={() => accessDocument(document, true)}>{fileRequests.download === 'pending' ? 'Downloading…' : 'Download'}</button>
                       </div>
                     </div>
                   );
                 })}
               </div>
             ) : <p>No supporting documents are available for this application.</p>}
-            {fileError && <p className="do-doc-error" role="alert">{fileError}</p>}
+          {(form.fileError || documentFileError) && <p className="do-doc-error" role="alert">{form.fileError || documentFileError}</p>}
           </section>
         </div>
         <section className="card">
@@ -237,7 +275,7 @@ export default function DepartmentOfficerReview() {
         <section className="card dark-card">
           <h3>Final Review &amp; Decision</h3>
           <p className="dark-sub">Provide the final administrative justification to record this review.</p>
-          <label className="justify-label">Reviewer Justification<textarea value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Enter formal justification for the decision..." /></label>
+          <label className="justify-label">Reviewer Justification<textarea value={form.reason} onChange={(event) => dispatch(setReviewReason({ applicationId, value: event.target.value }))} placeholder="Enter formal justification for the decision..." /></label>
           <div className="decision-actions">
             <button className="btn-approve" disabled={saving} onClick={() => decide('APPROVED')}>Approve Application</button>
             <button className="btn-defer" disabled={saving} onClick={() => decide('CLARIFICATION_REQUESTED')}>Defer Decision</button>

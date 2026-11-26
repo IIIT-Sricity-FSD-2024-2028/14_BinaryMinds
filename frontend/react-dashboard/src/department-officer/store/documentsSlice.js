@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { documentsApi } from '../api/documentsApi.js';
 import {
   addRequestLifecycle,
   createDepartmentOfficerThunk,
@@ -10,35 +11,84 @@ import {
 
 export const fetchDocumentsByApplication = createDepartmentOfficerThunk(
   'departmentOfficerDocuments/fetchByApplication',
-  (applicationId) => ({ path: `/documents/application/${encodeURIComponent(applicationId)}` }),
+  documentsApi.fetchByApplication,
 );
 export const fetchDocumentById = createDepartmentOfficerThunk(
   'departmentOfficerDocuments/fetchById',
-  (id) => ({ path: `/documents/${encodeURIComponent(id)}` }),
+  documentsApi.fetchById,
 );
 export const createDocument = createDepartmentOfficerThunk(
   'departmentOfficerDocuments/create',
-  ({ application_id, document_type, file }) => {
-    const body = new FormData();
-    body.append('application_id', String(application_id));
-    body.append('document_type', document_type);
-    body.append('file', file);
-    return { path: '/documents', options: { method: 'POST', body } };
-  },
+  documentsApi.create,
 );
 export const updateDocumentStatus = createDepartmentOfficerThunk(
   'departmentOfficerDocuments/updateStatus',
-  ({ id, status, rejection_reason }) => ({
-    path: `/documents/${encodeURIComponent(id)}/status`,
-    options: { method: 'PATCH', body: { status, rejection_reason } },
-  }),
+  documentsApi.updateStatus,
 );
 export const deleteDocument = createDepartmentOfficerThunk(
   'departmentOfficerDocuments/delete',
-  (id) => ({ path: `/documents/${encodeURIComponent(id)}`, options: { method: 'DELETE' } }),
+  documentsApi.delete,
+);
+export const fetchDocumentPreview = createAsyncThunk(
+  'departmentOfficerDocuments/fetchPreview',
+  async ({ id, filename }, thunkApi) => {
+    const { blob, mimeType } = await documentsApi.fetchPreview({ id }, thunkApi);
+    const requestIsCurrent = thunkApi.getState().departmentOfficerDocuments.fileRequestIdsByDocumentId[String(id)]?.preview === thunkApi.requestId;
+    if (thunkApi.signal.aborted) throw new Error('Document preview request was cancelled.');
+    if (!requestIsCurrent) return { documentId: String(id), requestId: thunkApi.requestId, stale: true };
+    return {
+      documentId: String(id),
+      requestId: thunkApi.requestId,
+      filename,
+      mimeType,
+      url: URL.createObjectURL(blob),
+    };
+  },
+);
+export const downloadDocumentFile = createAsyncThunk(
+  'departmentOfficerDocuments/downloadFile',
+  async ({ id, filename }, thunkApi) => {
+    const { blob, mimeType } = await documentsApi.fetchDownload({ id }, thunkApi);
+    if (thunkApi.signal.aborted) throw new Error('Document download request was cancelled.');
+    const url = URL.createObjectURL(new Blob([blob], { type: mimeType || blob.type }));
+    try {
+      const link = window.document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      window.document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } finally {
+      window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+    }
+    return { documentId: String(id), filename };
+  },
 );
 
-export const documentsInitialState = createRequestState({ byApplicationId: {}, byId: {} });
+export const documentsInitialState = createRequestState({
+  byApplicationId: {},
+  byId: {},
+  previewsByDocumentId: {},
+  fileRequestsByDocumentId: {},
+  fileErrorsByDocumentId: {},
+  fileRequestIdsByDocumentId: {},
+});
+
+function setFileRequest(state, action, operation, status, error = null) {
+  const id = String(action.meta.arg.id);
+  state.fileRequestsByDocumentId[id] = {
+    ...state.fileRequestsByDocumentId[id],
+    [operation]: status,
+  };
+  state.fileRequestIdsByDocumentId[id] = {
+    ...state.fileRequestIdsByDocumentId[id],
+    [operation]: action.meta.requestId,
+  };
+  state.fileErrorsByDocumentId[id] = {
+    ...state.fileErrorsByDocumentId[id],
+    [operation]: error,
+  };
+}
 
 function replaceDocument(state, document) {
   if (document?.document_id === undefined || document?.document_id === null) return;
@@ -70,7 +120,14 @@ function removeDocument(state, id) {
 const documentsSlice = createSlice({
   name: 'departmentOfficerDocuments',
   initialState: documentsInitialState,
-  reducers: {},
+  reducers: {
+    clearDocumentPreview(state, action) {
+      const id = String(action.payload.documentId);
+      const preview = state.previewsByDocumentId[id];
+      if (!preview || preview.requestId !== action.payload.requestId) return;
+      delete state.previewsByDocumentId[id];
+    },
+  },
   extraReducers: (builder) => {
     addRequestLifecycle(builder, fetchDocumentsByApplication, 'fetchByApplication', (state, action) => {
       state.byApplicationId[String(action.meta.arg)] = unwrapList(action.payload);
@@ -92,6 +149,42 @@ const documentsSlice = createSlice({
     addRequestLifecycle(builder, deleteDocument, 'delete', (state, action) => {
       removeDocument(state, action.meta.arg);
     });
+    builder
+      .addCase(fetchDocumentPreview.pending, (state, action) => {
+        setFileRequest(state, action, 'preview', 'pending');
+      })
+      .addCase(fetchDocumentPreview.fulfilled, (state, action) => {
+        const id = action.payload.documentId;
+        if (state.fileRequestIdsByDocumentId[id]?.preview !== action.meta.requestId) return;
+        state.fileRequestsByDocumentId[id].preview = 'fulfilled';
+        state.fileErrorsByDocumentId[id].preview = null;
+        state.previewsByDocumentId[id] = action.payload;
+      })
+      .addCase(fetchDocumentPreview.rejected, (state, action) => {
+        const id = String(action.meta.arg.id);
+        if (state.fileRequestIdsByDocumentId[id]?.preview !== action.meta.requestId) return;
+        state.fileRequestsByDocumentId[id].preview = action.meta.aborted ? 'idle' : 'rejected';
+        state.fileErrorsByDocumentId[id].preview = action.meta.aborted
+          ? null
+          : action.error?.message || 'The document could not be retrieved.';
+      })
+      .addCase(downloadDocumentFile.pending, (state, action) => {
+        setFileRequest(state, action, 'download', 'pending');
+      })
+      .addCase(downloadDocumentFile.fulfilled, (state, action) => {
+        const id = action.payload.documentId;
+        if (state.fileRequestIdsByDocumentId[id]?.download !== action.meta.requestId) return;
+        state.fileRequestsByDocumentId[id].download = 'fulfilled';
+        state.fileErrorsByDocumentId[id].download = null;
+      })
+      .addCase(downloadDocumentFile.rejected, (state, action) => {
+        const id = String(action.meta.arg.id);
+        if (state.fileRequestIdsByDocumentId[id]?.download !== action.meta.requestId) return;
+        state.fileRequestsByDocumentId[id].download = action.meta.aborted ? 'idle' : 'rejected';
+        state.fileErrorsByDocumentId[id].download = action.meta.aborted
+          ? null
+          : action.error?.message || 'The document could not be retrieved.';
+      });
     resetOnAuthChange(builder, documentsInitialState);
   },
 });
@@ -100,4 +193,5 @@ export const selectDocumentsState = (state) => state.departmentOfficerDocuments;
 const EMPTY_DOCUMENTS = Object.freeze([]);
 export const selectDocumentsByApplication = (state, applicationId) =>
   selectDocumentsState(state).byApplicationId[String(applicationId)] || EMPTY_DOCUMENTS;
+export const { clearDocumentPreview } = documentsSlice.actions;
 export default documentsSlice.reducer;

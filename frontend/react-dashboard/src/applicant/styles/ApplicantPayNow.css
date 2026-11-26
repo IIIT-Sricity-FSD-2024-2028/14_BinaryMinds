@@ -38,6 +38,7 @@
 .applicant-pay-now-page .pay-btn { width: 100%; padding: 13px; background: #1e3a8a; color: #fff; border: 0; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: background .2s; }
 .applicant-pay-now-page .pay-btn:hover:not(:disabled) { background: #162e6e; }
 .applicant-pay-now-page .pay-btn:disabled { opacity: .7; cursor: not-allowed; }
+.applicant-pay-now-page .pay-btn.pay-btn-paid:disabled { background: #94a3b8; color: #f8fafc; opacity: 1; cursor: not-allowed; box-shadow: inset 0 0 0 1px #64748b; }
 .applicant-pay-now-page .pay-result { margin: 10px 0 0; padding: 10px; border-radius: 7px; color: #1e3a8a; background: #eff6ff; font-size: 12px; line-height: 1.45; text-align: center; }
 .applicant-pay-now-page .pay-result.pay-error, .applicant-pay-now-page .pay-message.pay-error { color: #b91c1c; background: #fef2f2; }
 .applicant-pay-now-page .pay-result.pay-completed { border: 1px solid #fbbf24; background: #fffbeb; color: #92400e; }

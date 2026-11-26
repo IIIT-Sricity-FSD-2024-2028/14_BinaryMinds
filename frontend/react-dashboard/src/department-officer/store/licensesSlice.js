@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { licensesApi } from '../api/licensesApi.js';
 import {
   addRequestLifecycle,
   createDepartmentOfficerThunk,
@@ -11,38 +12,35 @@ import {
 
 export const fetchLicenses = createDepartmentOfficerThunk(
   'departmentOfficerLicenses/fetchAll',
-  () => ({ path: '/licenses' }),
+  licensesApi.fetchAll,
 );
 export const fetchLicenseById = createDepartmentOfficerThunk(
   'departmentOfficerLicenses/fetchById',
-  (id) => ({ path: `/licenses/${encodeURIComponent(id)}` }),
+  licensesApi.fetchById,
 );
 export const fetchLicenseByApplication = createDepartmentOfficerThunk(
   'departmentOfficerLicenses/fetchByApplication',
-  (applicationId) => ({ path: `/licenses/application/${encodeURIComponent(applicationId)}` }),
+  licensesApi.fetchByApplication,
 );
 export const createLicense = createDepartmentOfficerThunk(
   'departmentOfficerLicenses/create',
-  ({ application_id, issued_by, expiry_date }) => ({
-    path: '/licenses',
-    options: { method: 'POST', body: { application_id, issued_by, expiry_date } },
-  }),
+  licensesApi.create,
 );
 export const updateLicense = createDepartmentOfficerThunk(
   'departmentOfficerLicenses/update',
-  ({ id, body }) => ({ path: `/licenses/${encodeURIComponent(id)}`, options: { method: 'PATCH', body } }),
+  licensesApi.update,
 );
 export const suspendLicense = createDepartmentOfficerThunk(
   'departmentOfficerLicenses/suspend',
-  (id) => ({ path: `/licenses/${encodeURIComponent(id)}/suspend`, options: { method: 'POST' } }),
+  licensesApi.suspend,
 );
 export const revokeLicense = createDepartmentOfficerThunk(
   'departmentOfficerLicenses/revoke',
-  (id) => ({ path: `/licenses/${encodeURIComponent(id)}/revoke`, options: { method: 'POST' } }),
+  licensesApi.revoke,
 );
 export const renewLicense = createDepartmentOfficerThunk(
   'departmentOfficerLicenses/renew',
-  ({ id, body }) => ({ path: `/licenses/${encodeURIComponent(id)}/renew`, options: { method: 'POST', body } }),
+  licensesApi.renew,
 );
 
 export const licensesInitialState = createRequestState({ items: [], current: null, byApplicationId: {}, initialized: false });

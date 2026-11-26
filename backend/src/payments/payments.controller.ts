@@ -42,8 +42,50 @@ export class PaymentsController {
     status: 201,
     responseExample: { payment_id: 1, payment_status: 'pending', transaction_id: 'TXN-...' },
   })
-  create(@Body() createDto: CreatePaymentDto) {
+  create(
+    @Body() createDto: CreatePaymentDto,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
+    const application = this.applicationsService.findOne(createDto.application_id);
+    if (request.user.role === Role.APPLICANT) {
+      if (application.applicant_id !== request.user.userId) {
+        throw new ForbiddenException(
+          'Applicants can only create payments for their own applications',
+        );
+      }
+    } else if (request.user.role !== Role.PLATFORM_ADMIN) {
+      const userMuni = request.user.municipalityId;
+      if (
+        !userMuni ||
+        (application.municipality_id || '').toLowerCase() !== userMuni.toLowerCase()
+      ) {
+        throw new ForbiddenException('Access denied to create payments outside your municipality');
+      }
+    }
     return this.paymentsService.create(createDto);
+  }
+
+  @Post('simulate')
+  @Roles(Role.APPLICANT)
+  @ApiRoute({
+    summary: 'Complete an Applicant payment through the explicit simulation flow',
+    description: 'Explicitly completes this Applicant payment as a no-money simulation.',
+    roles: [Role.APPLICANT],
+    bodyType: CreatePaymentDto,
+    status: 201,
+    responseExample: { payment_id: 1, payment_status: 'COMPLETED', transaction_id: 'TXN-...' },
+  })
+  simulateApplicantPayment(
+    @Body() createDto: CreatePaymentDto,
+    @Req() request: Request & { user: AuthenticatedUser },
+  ) {
+    const application = this.applicationsService.findOne(createDto.application_id);
+    if (application.applicant_id !== request.user.userId) {
+      throw new ForbiddenException(
+        'Applicants can only simulate payment for their own applications',
+      );
+    }
+    return this.paymentsService.simulateApplicantPayment(createDto);
   }
 
   @Get()

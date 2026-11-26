@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { departmentReviewsApi } from '../api/departmentReviewsApi.js';
 import {
   addRequestLifecycle,
   createDepartmentOfficerThunk,
@@ -12,33 +13,27 @@ import {
 
 export const fetchDepartmentReviews = createDepartmentOfficerThunk(
   'departmentOfficerReviews/fetchAll',
-  () => ({ path: '/department-reviews' }),
+  departmentReviewsApi.fetchAll,
 );
 export const fetchDepartmentReviewById = createDepartmentOfficerThunk(
   'departmentOfficerReviews/fetchById',
-  (id) => ({ path: `/department-reviews/${encodeURIComponent(id)}` }),
+  departmentReviewsApi.fetchById,
 );
 export const createDepartmentReview = createDepartmentOfficerThunk(
   'departmentOfficerReviews/create',
-  (body) => ({ path: '/department-reviews', options: { method: 'POST', body } }),
+  departmentReviewsApi.create,
 );
 export const updateDepartmentReview = createDepartmentOfficerThunk(
   'departmentOfficerReviews/update',
-  ({ id, body }) => ({ path: `/department-reviews/${encodeURIComponent(id)}`, options: { method: 'PATCH', body } }),
+  departmentReviewsApi.update,
 );
 export const recordDepartmentDecision = createDepartmentOfficerThunk(
   'departmentOfficerReviews/recordDecision',
-  ({ applicationId, status, comments }) => ({
-    path: `/department-reviews/application/${encodeURIComponent(applicationId)}/decision`,
-    options: { method: 'POST', body: { status, comments } },
-  }),
+  departmentReviewsApi.recordDecision,
 );
 export const signDepartmentOfficerReview = createDepartmentOfficerThunk(
   'departmentOfficerReviews/sign',
-  ({ id, digital_signature }) => ({
-    path: `/department-reviews/${encodeURIComponent(id)}/sign`,
-    options: { method: 'POST', body: { digital_signature } },
-  }),
+  departmentReviewsApi.sign,
 );
 
 export const departmentReviewsInitialState = createRequestState({

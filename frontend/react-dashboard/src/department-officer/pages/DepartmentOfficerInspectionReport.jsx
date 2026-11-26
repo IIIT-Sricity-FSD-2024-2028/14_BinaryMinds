@@ -1,22 +1,33 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import DepartmentOfficerPageFrame from '../components/DepartmentOfficerPageFrame';
 import { useDepartmentOfficerData } from '../components/useDepartmentOfficerData';
 import {
+  clearDocumentPreview,
+  downloadDocumentFile,
+  fetchDocumentPreview,
   fetchDocumentsByApplication,
   selectDocumentsByApplication,
   selectDocumentsState,
 } from '../store/documentsSlice.js';
+import {
+  clearInspectionEvidence,
+  fetchInspectionEvidenceByApplication,
+  selectInspectionEvidenceByApplication,
+  selectInspectionEvidenceError,
+  selectInspectionEvidenceRequest,
+} from '../store/inspectionsSlice.js';
 import {
   fetchDepartmentOfficerUserById,
   selectDepartmentOfficerUserById,
   selectDepartmentOfficerUsersState,
 } from '../store/usersSlice.js';
 import { applicationWorkflowStatus, getApplicationInspection } from '../components/inspectionWorkflow';
+import { selectInspectionReportFileError, setInspectionReportFileError } from '../store/departmentOfficerUiSlice.js';
 import '../styles/DepartmentOfficerInspectionReport.css';
 
-const apiBase = 'http://localhost:3000/api';
+const EMPTY_INSPECTION_EVIDENCE = Object.freeze([]);
 
 function documentFilename(document) {
   const filename = document.original_filename || document.file_name || document.file_path?.split(/[\\/]/).pop();
@@ -32,21 +43,18 @@ function documentMimeType(document) {
   return '';
 }
 
-function responseMessage(payload, fallback) {
-  return Array.isArray(payload?.message) ? payload.message.join(' ') : payload?.message || fallback;
-}
-
 export default function DepartmentOfficerInspectionReport() {
   const data = useDepartmentOfficerData();
   const dispatch = useDispatch();
   const { applicationId } = useParams();
   const navigate = useNavigate();
-  const [fileErrorState, setFileErrorState] = useState({ applicationId: null, message: '' });
-  const setFileError = (message) => setFileErrorState({ applicationId, message });
-  const fileError = fileErrorState.applicationId === applicationId ? fileErrorState.message : '';
-  const [inspectionEvidenceResult, setInspectionEvidenceResult] = useState({ key: null, items: [] });
+  const fileError = useSelector((state) => selectInspectionReportFileError(state, applicationId));
   const requestedDocumentApps = useRef(new Set());
   const requestedFieldOfficers = useRef(new Set());
+  const evidenceTask = useRef(null);
+  const previewWindows = useRef(new Map());
+  const previewRequests = useRef(new Map());
+  const previewUrls = useRef(new Map());
   const documentsState = useSelector(selectDocumentsState);
   const usersState = useSelector(selectDepartmentOfficerUsersState);
   const app = data.applications.find((row) => Number(row.application_id) === Number(applicationId));
@@ -66,9 +74,15 @@ export default function DepartmentOfficerInspectionReport() {
   const evidenceKey = `${applicationId}:${reports.map((report) =>
     `${report.inspection_id}/${report.evidence_files.map((file) => file.filename).join(',')}`,
   ).join('|')}`;
-  const evidenceIsCurrent = inspectionEvidenceResult.key === evidenceKey;
-  const inspectionEvidence = evidenceIsCurrent ? inspectionEvidenceResult.items : [];
-  const evidenceLoading = reports.length > 0 && !evidenceIsCurrent;
+  const evidenceRecord = useSelector((state) => selectInspectionEvidenceByApplication(state, applicationId));
+  const evidenceRequest = useSelector((state) => selectInspectionEvidenceRequest(state, applicationId));
+  const evidenceRequestKey = useSelector((state) => state.departmentOfficerInspections.evidenceRequestKeysByApplicationId[String(applicationId)] || '');
+  const evidenceRequestError = useSelector((state) => selectInspectionEvidenceError(state, applicationId));
+  const evidenceIsCurrent = evidenceRecord?.key === evidenceKey;
+  const inspectionEvidence = evidenceIsCurrent ? evidenceRecord.items : EMPTY_INSPECTION_EVIDENCE;
+  const evidenceLoading = reports.length > 0 && !evidenceIsCurrent &&
+    (!evidenceRequestKey || evidenceRequestKey !== evidenceKey || evidenceRequest === 'pending');
+  const evidenceError = evidenceRequestKey === evidenceKey && evidenceRequest === 'rejected' ? evidenceRequestError : '';
   const applicationKey = app?.application_id == null ? null : String(app.application_id);
   const fieldOfficerKey = assignment?.field_officer_id == null
     ? null
@@ -81,6 +95,12 @@ export default function DepartmentOfficerInspectionReport() {
   const documentsError = applicationKey && !hasDocuments && documentsStatus === 'rejected'
     ? documentsState.errors.fetchByApplication || 'Unable to load supporting documents.'
     : '';
+  const visibleDocumentErrors = documents.flatMap((document) => {
+    const errors = documentsState.fileErrorsByDocumentId[String(document.document_id)] || {};
+    return [errors.preview, errors.download].filter(Boolean);
+  });
+  const documentFileError = visibleDocumentErrors[0] || '';
+  const documentFileRequests = documentsState.fileRequestsByDocumentId;
   const fo = useSelector((state) => selectDepartmentOfficerUserById(state, assignment?.field_officer_id));
   const detailError = fieldOfficerKey && !fo && usersState.requests.fetchById === 'rejected'
     ? `Field Officer profile unavailable: ${usersState.errors.fetchById || 'Unable to load Field Officer profile.'}`
@@ -99,90 +119,108 @@ export default function DepartmentOfficerInspectionReport() {
   }, [assignment?.field_officer_id, dispatch, fieldOfficerKey, fo]);
 
   useEffect(() => {
-    let active = true;
     if (!reports.length) return undefined;
-    const objectUrls = [];
-    Promise.all(reports.flatMap((report) => report.evidence_files.map(async (file) => {
-      try {
-        const response = await fetch(`${apiBase}/inspections/${encodeURIComponent(report.inspection_id)}/evidence/${encodeURIComponent(file.filename)}`, {
-          headers: { Authorization: `Bearer ${data.token}` },
-        });
-        if (!response.ok) throw new Error('Evidence is unavailable.');
-        const url = URL.createObjectURL(await response.blob());
-        if (!active) { URL.revokeObjectURL(url); return null; }
-        objectUrls.push(url);
-        return { inspectionId: report.inspection_id, inspectionDate: report.completed_date || report.scheduled_date, file, url };
-      } catch {
-        return { inspectionId: report.inspection_id, inspectionDate: report.completed_date || report.scheduled_date, file, error: true };
-      }
-    }))).then((items) => {
-      if (active) setInspectionEvidenceResult({ key: evidenceKey, items: items.filter(Boolean) });
-    }).catch(() => {
-      if (active) setInspectionEvidenceResult({ key: evidenceKey, items: [] });
-    });
+    const request = dispatch(fetchInspectionEvidenceByApplication({
+      applicationId,
+      evidenceKey,
+      reports,
+    }));
+    evidenceTask.current = request;
     return () => {
-      active = false;
-      objectUrls.forEach((url) => URL.revokeObjectURL(url));
+      request.abort();
+      if (evidenceTask.current === request) evidenceTask.current = null;
     };
-  }, [applicationId, data.token, evidenceKey, reports]);
+  }, [applicationId, dispatch, evidenceKey, reports]);
+
+  useEffect(() => {
+    const urls = evidenceIsCurrent ? inspectionEvidence.map((item) => item.url).filter(Boolean) : [];
+    return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, [evidenceIsCurrent, evidenceKey, evidenceRecord, inspectionEvidence]);
+
+  useEffect(() => () => {
+    evidenceTask.current?.abort();
+    dispatch(clearInspectionEvidence({ applicationId: String(applicationId) }));
+  }, [applicationId, dispatch]);
+
+  useEffect(() => {
+    Object.entries(documentsState.previewsByDocumentId).forEach(([id, preview]) => {
+      const pending = previewWindows.current.get(id);
+      if (!pending || pending.requestId !== preview.requestId) return;
+      previewWindows.current.delete(id);
+      if (pending.window.closed) {
+        URL.revokeObjectURL(preview.url);
+        dispatch(clearDocumentPreview({ documentId: id, requestId: preview.requestId }));
+        return;
+      }
+      const urlKey = `${id}:${preview.requestId}`;
+      const releasePreview = () => {
+        URL.revokeObjectURL(preview.url);
+        previewUrls.current.delete(urlKey);
+        dispatch(clearDocumentPreview({ documentId: id, requestId: preview.requestId }));
+      };
+      previewUrls.current.set(urlKey, releasePreview);
+      pending.window.location.href = preview.url;
+      pending.window.addEventListener('beforeunload', releasePreview, { once: true });
+    });
+  }, [dispatch, documentsState.previewsByDocumentId]);
+
+  useEffect(() => () => {
+    previewRequests.current.forEach((request) => request.abort());
+    previewRequests.current.clear();
+    previewWindows.current.forEach(({ window: previewWindow }) => previewWindow.close());
+    previewWindows.current.clear();
+    previewUrls.current.forEach((releasePreview) => releasePreview());
+    previewUrls.current.clear();
+  }, []);
 
   function loadDocuments() {
-    setFileError('');
+    dispatch(setInspectionReportFileError({ applicationId, value: '' }));
     if (applicationKey) {
       requestedDocumentApps.current.add(applicationKey);
       dispatch(fetchDocumentsByApplication(app.application_id));
     }
   }
 
-  async function accessDocument(document, download) {
-    setFileError('');
-    const previewWindow = download ? null : window.open('', '_blank');
-    if (!download && !previewWindow) {
-      setFileError('Allow pop-ups to view this document.');
+  function accessDocument(document, download) {
+    dispatch(setInspectionReportFileError({ applicationId, value: '' }));
+    const id = String(document.document_id);
+    const filename = documentFilename(document);
+    if (download) {
+      dispatch(downloadDocumentFile({ id, filename }));
+      return;
+    }
+
+    const previewWindow = window.open('', '_blank');
+    if (!previewWindow) {
+      dispatch(setInspectionReportFileError({ applicationId, value: 'Allow pop-ups to view this document.' }));
       return;
     }
     if (previewWindow) previewWindow.opener = null;
-
-    try {
-      const endpoint = download ? 'download' : 'file';
-      const response = await fetch(
-        `${apiBase}/documents/${encodeURIComponent(document.document_id)}/${endpoint}`,
-        { headers: { Authorization: `Bearer ${data.token}` } },
-      );
-      if (!response.ok) {
-        const payload = await response.json().catch(() => ({}));
-        throw new Error(responseMessage(payload, `The document could not be retrieved (${response.status}).`));
+    previewRequests.current.get(id)?.abort();
+    previewWindows.current.get(id)?.window.close();
+    const request = dispatch(fetchDocumentPreview({ id, filename }));
+    previewWindows.current.set(id, { window: previewWindow, requestId: request.requestId });
+    previewRequests.current.set(id, request);
+    request.then((action) => {
+      if (fetchDocumentPreview.rejected.match(action)) {
+        const pending = previewWindows.current.get(id);
+        if (pending?.requestId === request.requestId) {
+          pending.window.close();
+          previewWindows.current.delete(id);
+        }
       }
-
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      if (download) {
-        const link = window.document.createElement('a');
-        link.href = objectUrl;
-        link.download = documentFilename(document);
-        window.document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
-      } else {
-        previewWindow.location.href = objectUrl;
-        previewWindow.addEventListener('beforeunload', () => URL.revokeObjectURL(objectUrl), { once: true });
-      }
-    } catch (error) {
-      previewWindow?.close();
-      setFileError(error.message || 'The document could not be retrieved. Please try again.');
-    }
+      if (previewRequests.current.get(id) === request) previewRequests.current.delete(id);
+    });
   }
 
   function toReview() {
-    sessionStorage.setItem('selectedAppDO', String(app.application_id));
     navigate(`/department-officer/review/${app.application_id}`, {
       state: { from: `/department-officer/inspection-report/${app.application_id}` },
     });
   }
 
   return (
-    <DepartmentOfficerPageFrame pageClass="do-page-inspection-report" active="/department-officer/worklist" title="Inspection Report" data={data}>
+    <DepartmentOfficerPageFrame pageClass="do-page-inspection-report" active="/department-officer/worklist" title="Inspection Report">
       {detailError && <p className="do-error">{detailError}</p>}
       {app ? <div className="report-container">
         <section className="card info-card">
@@ -240,7 +278,7 @@ export default function DepartmentOfficerInspectionReport() {
         </section>
         <section className="card docs-card">
           <h3>Field Officer Inspection Evidence</h3>
-          {evidenceLoading ? <p>Loading field inspection evidence…</p> : inspectionEvidence.length ? (
+          {evidenceLoading ? <p>Loading field inspection evidence…</p> : evidenceError ? <p className="do-document-error" role="alert">{evidenceError}</p> : inspectionEvidence.length ? (
             <div className="docs-list">
               {inspectionEvidence.map((item, index) => (
                 <div className="doc-item" key={`${item.inspectionId}-${item.file.filename}`} style={{ alignItems: 'center' }}>
@@ -271,6 +309,7 @@ export default function DepartmentOfficerInspectionReport() {
               {documents.map((document) => {
                 const mimeType = documentMimeType(document);
                 const canPreview = ['application/pdf', 'image/jpeg', 'image/png'].includes(mimeType);
+                  const fileRequests = documentFileRequests[String(document.document_id)] || {};
                 return (
                   <div className="doc-item" key={document.document_id}>
                     <span>{document.document_type || 'Document'}</span>
@@ -279,8 +318,8 @@ export default function DepartmentOfficerInspectionReport() {
                       {document.verification_status || 'pending'}
                     </span>
                     <div className="do-document-actions">
-                      {canPreview && <button className="btn-secondary" type="button" onClick={() => accessDocument(document, false)}>View</button>}
-                      <button className="btn-secondary" type="button" onClick={() => accessDocument(document, true)}>Download</button>
+                      {canPreview && <button className="btn-secondary" type="button" disabled={fileRequests.preview === 'pending'} onClick={() => accessDocument(document, false)}>{fileRequests.preview === 'pending' ? 'Opening…' : 'View'}</button>}
+                      <button className="btn-secondary" type="button" disabled={fileRequests.download === 'pending'} onClick={() => accessDocument(document, true)}>{fileRequests.download === 'pending' ? 'Downloading…' : 'Download'}</button>
                     </div>
                     {document.verification_status === 'rejected' && document.rejection_reason && (
                       <p className="do-document-rejection-reason">Rejection reason: {document.rejection_reason}</p>
@@ -290,7 +329,7 @@ export default function DepartmentOfficerInspectionReport() {
               })}
             </div>
           ) : <p>No supporting documents are available for this application.</p>}
-          {fileError && <p className="do-document-error" role="alert">{fileError}</p>}
+          {(fileError || documentFileError) && <p className="do-document-error" role="alert">{fileError || documentFileError}</p>}
         </section>
         <div className="actions-bar">
           <button className="btn-primary" disabled={inspection?.status !== 'COMPLETED'} onClick={toReview}>

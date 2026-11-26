@@ -8,6 +8,7 @@ import fieldOfficerAssignmentsReducer from '../department-officer/store/fieldOff
 import inspectionsReducer from '../department-officer/store/inspectionsSlice.js';
 import licensesReducer from '../department-officer/store/licensesSlice.js';
 import usersReducer from '../department-officer/store/usersSlice.js';
+import departmentOfficerUiReducer from '../department-officer/store/departmentOfficerUiSlice.js';
 import auditLogsReducer from '../features/auditLogs/auditLogsSlice.js';
 import complianceReducer from '../features/compliance/complianceSlice.js';
 import documentVerificationsReducer from '../features/documentVerifications/documentVerificationsSlice.js';
@@ -15,6 +16,7 @@ import municipalitiesReducer from '../features/municipalities/municipalitiesSlic
 import officersReducer from '../features/officers/officersSlice.js';
 import paymentsReducer from '../features/payments/paymentsSlice.js';
 import platformAdminReadModelReducer from '../features/platformAdmin/platformAdminReadModelSlice.js';
+import applicantApplicationsReducer from '../applicant/store/applicantApplicationsSlice.js';
 
 const resetApiCacheOnCredentials = ({ dispatch }) => (next) => (action) => {
   const result = next(action);
@@ -27,6 +29,7 @@ const resetApiCacheOnCredentials = ({ dispatch }) => (next) => (action) => {
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    applicantApplications: applicantApplicationsReducer,
     departmentOfficerApplications: applicationsReducer,
     departmentOfficerReviews: departmentReviewsReducer,
     departmentOfficerDocuments: documentsReducer,
@@ -34,6 +37,7 @@ export const store = configureStore({
     departmentOfficerInspections: inspectionsReducer,
     departmentOfficerLicenses: licensesReducer,
     departmentOfficerUsers: usersReducer,
+    departmentOfficerUi: departmentOfficerUiReducer,
     auditLogs: auditLogsReducer,
     compliance: complianceReducer,
     documentVerifications: documentVerificationsReducer,
@@ -44,5 +48,11 @@ export const store = configureStore({
     [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(baseApi.middleware, resetApiCacheOnCredentials),
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredPaths: ['applicantApplications.workflow.files', 'applicantApplications.workflow.renewalFiles'],
+        ignoredActionPaths: ['meta.arg.file', 'payload.file'],
+        ignoredActions: ['applicantApplications/setUploadFile', 'applicantApplications/setRenewalFile'],
+      },
+    }).concat(baseApi.middleware, resetApiCacheOnCredentials),
 });

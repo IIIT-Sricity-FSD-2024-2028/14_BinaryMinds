@@ -3,8 +3,8 @@ import { clearCredentials, setCredentials } from '../../features/auth/authSlice.
 import { selectAccessToken } from '../../features/auth/authSelectors.js';
 import { API_BASE } from '../../services/baseApi.js';
 
-export async function departmentOfficerRequest(path, options = {}, thunkApi) {
-  const { getState, signal, rejectWithValue } = thunkApi;
+async function sendDepartmentOfficerRequest(path, options, thunkApi) {
+  const { getState, signal } = thunkApi;
   const token = selectAccessToken(getState());
   const headers = new Headers(options.headers || {});
   if (token) headers.set('Authorization', `Bearer ${token}`);
@@ -19,13 +19,30 @@ export async function departmentOfficerRequest(path, options = {}, thunkApi) {
     body = JSON.stringify(options.body);
   }
 
+  return fetch(`${API_BASE}${path}`, {
+    method: options.method || 'GET',
+    headers,
+    body,
+    signal,
+  });
+}
+
+async function readErrorResponse(response) {
+  const payload = await response.json().catch(() => null);
+  const serverMessage = Array.isArray(payload?.message)
+    ? payload.message.join(' ')
+    : payload?.message || payload?.error;
+  return {
+    status: response.status,
+    message: serverMessage || `Request failed (${response.status}).`,
+    data: payload,
+  };
+}
+
+export async function departmentOfficerRequest(path, options = {}, thunkApi) {
+  const { rejectWithValue } = thunkApi;
   try {
-    const response = await fetch(`${API_BASE}${path}`, {
-      method: options.method || 'GET',
-      headers,
-      body,
-      signal,
-    });
+    const response = await sendDepartmentOfficerRequest(path, options, thunkApi);
     const payload = response.status === 204
       ? null
       : await response.json().catch(() => null);
@@ -47,6 +64,20 @@ export async function departmentOfficerRequest(path, options = {}, thunkApi) {
       message: error?.message || 'The request could not be completed.',
     });
   }
+}
+
+export async function departmentOfficerBinaryRequest(path, options = {}, thunkApi) {
+  const response = await sendDepartmentOfficerRequest(path, options, thunkApi);
+  if (!response.ok) {
+    const error = await readErrorResponse(response);
+    const requestError = new Error(error.message);
+    requestError.status = error.status;
+    requestError.data = error.data;
+    throw requestError;
+  }
+
+  const blob = await response.blob();
+  return { blob, mimeType: response.headers.get('content-type') || blob.type || '' };
 }
 
 export function addRequestLifecycle(builder, thunk, operation, onFulfilled, onRejected) {
@@ -113,9 +144,8 @@ export function replaceOrAppend(items, item, idField) {
   return items;
 }
 
-export function createDepartmentOfficerThunk(typePrefix, requestFactory) {
-  return createAsyncThunk(typePrefix, (argument, thunkApi) => {
-    const request = requestFactory(argument);
-    return departmentOfficerRequest(request.path, request.options, thunkApi);
-  });
+export function createDepartmentOfficerThunk(typePrefix, repositoryRequest) {
+  return createAsyncThunk(typePrefix, (argument, thunkApi) =>
+    repositoryRequest(argument, thunkApi),
+  );
 }

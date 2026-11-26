@@ -1,10 +1,18 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
 import DepartmentOfficerPageFrame from '../components/DepartmentOfficerPageFrame';
 import { useDepartmentOfficerData } from '../components/useDepartmentOfficerData';
 import { createLicense } from '../store/licensesSlice.js';
 import { signDepartmentOfficerReview } from '../store/departmentReviewsSlice.js';
+import {
+  initializeSigningForm,
+  selectSigningForm,
+  setSigningBusy,
+  setSigningExpiryDate,
+  setSigningNotice,
+  setSigningSignature,
+} from '../store/departmentOfficerUiSlice.js';
 import '../styles/DepartmentOfficerSigning.css';
 
 function defaultExpiryDate() {
@@ -39,11 +47,11 @@ export default function DepartmentOfficerSigning() {
   const data = useDepartmentOfficerData();
   const dispatch = useDispatch();
   const { applicationId } = useParams();
-  const location = useLocation();
-  const [signature, setSignature] = useState('');
-  const [expiryDate, setExpiryDate] = useState(defaultExpiryDate);
-  const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState(location.state?.decisionNotice || '');
+  const form = useSelector((state) => selectSigningForm(state, applicationId));
+  const { signature, expiryDate, busy, notice } = form;
+  useEffect(() => {
+    dispatch(initializeSigningForm({ applicationId, expiryDate: defaultExpiryDate() }));
+  }, [applicationId, dispatch]);
   const app = data.applications.find((row) => Number(row.application_id) === Number(applicationId));
   const review = data.reviews.find((row) => Number(row.application_id) === Number(applicationId));
   const existing = data.licenses.find((row) => Number(row.application_id) === Number(applicationId));
@@ -51,25 +59,25 @@ export default function DepartmentOfficerSigning() {
 
   async function issue() {
     if (!app || !review || review.status !== 'APPROVED' || app.application_status !== 'approved') {
-      setNotice('A Department Officer approved review and an approved application record are required before issuance.');
+      dispatch(setSigningNotice({ applicationId, value: 'A Department Officer approved review and an approved application record are required before issuance.' }));
       return;
     }
     const signingStatement = signature.trim() || data.user?.full_name || '';
     if (!signingStatement) {
-      setNotice('Enter the signing officer name/statement before signing.');
+      dispatch(setSigningNotice({ applicationId, value: 'Enter the signing officer name/statement before signing.' }));
       return;
     }
     if (!expiryDate || dateAtEndOfDay(expiryDate) <= new Date().toISOString()) {
-      setNotice('Choose a future expiry date.');
+      dispatch(setSigningNotice({ applicationId, value: 'Choose a future expiry date.' }));
       return;
     }
 
-    setBusy(true);
-    setNotice('');
+    dispatch(setSigningBusy({ applicationId, value: true }));
+    dispatch(setSigningNotice({ applicationId, value: '' }));
     let licenseCreationSucceeded = false;
     try {
       if (existing) {
-        setNotice(`Backend license confirmed: ${existing.license_number}.`);
+        dispatch(setSigningNotice({ applicationId, value: `Backend license confirmed: ${existing.license_number}.` }));
         return;
       }
 
@@ -95,12 +103,12 @@ export default function DepartmentOfficerSigning() {
       }
 
       licenseCreationSucceeded = true;
-      setNotice(`License issuance confirmed by the backend (${confirmedLicense.license_number}).`);
+      dispatch(setSigningNotice({ applicationId, value: `License issuance confirmed by the backend (${confirmedLicense.license_number}).` }));
     } catch (error) {
-      setNotice(`Issuance was not confirmed: ${errorMessage(error, 'Request failed')}. You can retry after checking the saved review/license status.`);
+      dispatch(setSigningNotice({ applicationId, value: `Issuance was not confirmed: ${errorMessage(error, 'Request failed')}. You can retry after checking the saved review/license status.` }));
       if (!licenseCreationSucceeded) await data.reload();
     } finally {
-      setBusy(false);
+      dispatch(setSigningBusy({ applicationId, value: false }));
     }
   }
 
@@ -117,7 +125,6 @@ export default function DepartmentOfficerSigning() {
       pageClass="do-page-signing"
       active="/department-officer/authorization"
       title="Final Authorization & Signing"
-      data={data}
     >
       {notice && <p className="do-notice" role="status">{notice}</p>}
       {app ? <>
@@ -178,7 +185,7 @@ export default function DepartmentOfficerSigning() {
                     Signing officer name / statement
                     <input
                       value={signature}
-                      onChange={(event) => setSignature(event.target.value)}
+                      onChange={(event) => dispatch(setSigningSignature({ applicationId, value: event.target.value }))}
                       placeholder={data.user?.full_name || 'Enter your name'}
                     />
                   </label>
@@ -188,7 +195,7 @@ export default function DepartmentOfficerSigning() {
                       type="date"
                       min={new Date().toISOString().slice(0, 10)}
                       value={expiryDate}
-                      onChange={(event) => setExpiryDate(event.target.value)}
+                      onChange={(event) => dispatch(setSigningExpiryDate({ applicationId, value: event.target.value }))}
                     />
                   </label>
                 </>

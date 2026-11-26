@@ -1,7 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { Application } from './application.interface';
 import { ApplicationStatus } from '../common/enums/application-status.enum';
+import { LicenseStatus } from '../common/enums/license-status.enum';
 import { JsonStore } from '../common/persistence/json-store';
+
+const activelyProcessedStatuses = new Set<string>([
+  ApplicationStatus.SUBMITTED,
+  ApplicationStatus.ASSIGNED,
+  ApplicationStatus.VERIFIED,
+  ApplicationStatus.DOCUMENTS_UPLOADED,
+  ApplicationStatus.INSPECTION_SCHEDULED,
+  ApplicationStatus.INSPECTION_COMPLETED,
+  ApplicationStatus.DEPARTMENT_REVIEW,
+]);
+
+function normalizeBusinessName(value: unknown): string {
+  return (typeof value === 'string' ? value : '').trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function normalizeMunicipalityId(value: unknown): string {
+  return (typeof value === 'string' ? value : '').trim().toLowerCase();
+}
 
 @Injectable()
 export class ApplicationsRepository {
@@ -24,6 +43,52 @@ export class ApplicationsRepository {
     application: Omit<Application, 'application_id' | 'application_ref' | 'submitted_at'>,
   ): Application {
     const data = this.store.snapshot();
+    return this.insert(data, application);
+  }
+
+  createUnlessDuplicate(
+    application: Omit<Application, 'application_id' | 'application_ref' | 'submitted_at'>,
+    now = new Date(),
+  ): { application?: Application; duplicate?: Application } {
+    const data = this.store.snapshot();
+    const businessName = normalizeBusinessName(application.business_name);
+    const municipalityId = normalizeMunicipalityId(application.municipality_id);
+
+    if (businessName && businessName !== 'n/a' && municipalityId) {
+      const duplicate = data.applications.find((existing) => {
+        if (
+          Number(existing.applicant_id) !== Number(application.applicant_id) ||
+          normalizeBusinessName(existing.business_name) !== businessName ||
+          normalizeMunicipalityId(existing.municipality_id) !== municipalityId
+        ) {
+          return false;
+        }
+
+        const status = String(existing.application_status || '').toLowerCase();
+        if (activelyProcessedStatuses.has(status)) return true;
+        if (status !== String(ApplicationStatus.APPROVED)) return false;
+
+        const license = data.licenses.find(
+          (item) => Number(item.application_id) === Number(existing.application_id),
+        );
+        const expiryTime = license ? new Date(license.expiry_date).getTime() : Number.NaN;
+        return (
+          String(license?.status || '').toUpperCase() === String(LicenseStatus.ACTIVE) &&
+          Number.isFinite(expiryTime) &&
+          expiryTime > now.getTime()
+        );
+      });
+
+      if (duplicate) return { duplicate };
+    }
+
+    return { application: this.insert(data, application) };
+  }
+
+  private insert(
+    data: ReturnType<JsonStore['snapshot']>,
+    application: Omit<Application, 'application_id' | 'application_ref' | 'submitted_at'>,
+  ): Application {
     const applicationId = data.counters.applications++;
     const newApplication: Application = {
       ...application,
