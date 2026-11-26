@@ -27,5 +27,9 @@ export class CreatePaymentDto {
 
   @IsString()
   @IsOptional()
+  payment_method?: string;
+
+  @IsString()
+  @IsOptional()
   transaction_id?: string;
 }

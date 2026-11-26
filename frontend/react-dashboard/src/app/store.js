@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer, { setCredentials } from '../features/auth/authSlice';
+import authReducer, { loginApplicant, setCredentials } from '../features/auth/authSlice';
 import { baseApi } from '../services/baseApi';
 import applicationsReducer from '../department-officer/store/applicationsSlice.js';
 import departmentReviewsReducer from '../department-officer/store/departmentReviewsSlice.js';
@@ -20,7 +20,7 @@ import applicantApplicationsReducer from '../applicant/store/applicantApplicatio
 
 const resetApiCacheOnCredentials = ({ dispatch }) => (next) => (action) => {
   const result = next(action);
-  if (setCredentials.match(action)) {
+  if (setCredentials.match(action) || loginApplicant.fulfilled.match(action)) {
     dispatch(baseApi.util.resetApiState());
   }
   return result;

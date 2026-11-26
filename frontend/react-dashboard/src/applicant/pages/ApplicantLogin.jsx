@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import PublicNavigation from '../../common-components/PublicNavigation';
-import { setCredentials } from '../../features/auth/authSlice';
+import { loginApplicant, selectLoginError, selectLoginStatus } from '../../features/auth/authSlice.js';
 import '../styles/ApplicantLogin.css';
 import loginStyles from '../../../../applicant_connected/connected/login/style.css?inline';
 
@@ -77,12 +77,12 @@ function clearApplicantDraftIfNeeded(nextEmail) {
 export default function ApplicantLogin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const loginStatus = useSelector(selectLoginStatus);
+  const loginError = useSelector(selectLoginError);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [buttonText, setButtonText] = useState('Login');
 
   useEffect(() => {
     const styleElement = document.createElement('style');
@@ -105,27 +105,12 @@ export default function ApplicantLogin() {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    setIsSubmitting(true);
-    setButtonText('Signing in...');
-
     try {
-      const response = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), password, role: requestedRole }),
-      });
-      const payload = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        const message = Array.isArray(payload.message)
-          ? payload.message.join(' ')
-          : payload.message;
-        throw new Error(message || 'Invalid email, password, or role.');
-      }
-
-      if (!payload.accessToken || !payload.user || payload.user.role !== requestedRole) {
-        throw new Error('The server returned an invalid login response.');
-      }
+      const payload = await dispatch(loginApplicant({
+        email: email.trim(),
+        password,
+        role: requestedRole,
+      })).unwrap();
 
       const user = payload.user;
       const sessionUser = {
@@ -151,17 +136,6 @@ export default function ApplicantLogin() {
       sessionStorage.setItem('accessToken', payload.accessToken);
       sessionStorage.setItem('loggedInUser', JSON.stringify(sessionUser));
       sessionStorage.removeItem('applicationRef');
-
-      if (user.role === 'applicant') {
-        localStorage.setItem(
-          'user',
-          JSON.stringify({ name: user.full_name, email: user.email, phone: user.phone || '' }),
-        );
-      }
-
-      dispatch(setCredentials({ user, accessToken: payload.accessToken }));
-
-      setButtonText('Redirecting...');
       if (user.role === 'field_officer') {
         navigate(`/officer/${user.user_id}`);
       } else if (user.role === 'municipal_commissioner') {
@@ -171,10 +145,8 @@ export default function ApplicantLogin() {
       } else if (user.role === 'department_officer') {
         window.location.assign('../../../do_connected/dashboard/index.html');
       }
-    } catch (error) {
-      setErrors({ email: error.message || 'Unable to sign in. Check the server connection and try again.' });
-      setIsSubmitting(false);
-      setButtonText('Login');
+    } catch {
+      // Request errors are stored by the auth thunk and rendered from Redux state.
     }
   };
 
@@ -228,7 +200,7 @@ export default function ApplicantLogin() {
               }}
               style={errors.email ? { borderColor: '#dc2626' } : undefined}
             />
-            {errors.email && <span className="login-error">{errors.email}</span>}
+            {(errors.email || loginError) && <span className="login-error">{errors.email || loginError}</span>}
 
             <input
               type="password"
@@ -261,8 +233,8 @@ export default function ApplicantLogin() {
             </select>
             {errors.role && <span className="login-error">{errors.role}</span>}
 
-            <button id="loginBtn" type="submit" disabled={isSubmitting}>
-              {buttonText}
+            <button id="loginBtn" type="submit" disabled={loginStatus === 'pending'}>
+              {loginStatus === 'pending' ? 'Signing in...' : loginStatus === 'fulfilled' ? 'Redirecting...' : 'Login'}
             </button>
           </form>
 

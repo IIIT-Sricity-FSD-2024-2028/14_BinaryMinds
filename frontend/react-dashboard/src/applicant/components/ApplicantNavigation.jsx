@@ -12,21 +12,15 @@ const links = [
   { label: 'Profile', to: '/profile', activeOn: ['/profile', '/profile/edit'] },
 ];
 
-export default function ApplicantNavigation({ onLogout }) {
+export default function ApplicantNavigation() {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
   function handleLogout(event) {
     event.preventDefault();
-    if (onLogout) {
-      onLogout(event);
-    } else {
-      sessionStorage.removeItem('applicationRef');
-      localStorage.removeItem('user');
-      navigate('/login', { replace: true });
-    }
     dispatch(logoutAndResetApi());
+    navigate('/login', { replace: true });
   }
 
   return (

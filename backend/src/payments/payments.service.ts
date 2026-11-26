@@ -109,7 +109,11 @@ export class PaymentsService {
       throw new BadRequestException('A completed payment already exists for this application');
     }
     let payment = existing.find((item) => item.payment_status === PaymentStatus.PENDING);
-    if (!payment) payment = this.create(data);
+    if (!payment) {
+      payment = this.create(data);
+    } else if (data.payment_method) {
+      payment = this.repository.update(payment.payment_id, { payment_method: data.payment_method }) || payment;
+    }
     return this.completePendingPayment(payment.payment_id);
   }
 

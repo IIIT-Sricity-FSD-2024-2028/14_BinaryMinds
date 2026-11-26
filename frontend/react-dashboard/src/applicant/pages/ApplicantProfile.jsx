@@ -1,9 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import ApplicantNavigation from '../components/ApplicantNavigation';
+import { selectCurrentUser } from '../../features/auth/authSelectors.js';
+import {
+  fetchApplicantApplications,
+  selectApplicantApplications,
+  selectApplicantApplicationsError,
+  selectApplicantApplicationsRequest,
+} from '../store/applicantApplicationsSlice.js';
 import '../styles/ApplicantProfile.css';
-
-const apiBase = 'http://localhost:3000/api';
 
 function formatDate(value) {
   if (!value) return '—';
@@ -30,69 +36,30 @@ function makeSafeApplication(application) {
 }
 
 export default function ApplicantProfile() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState({ name: '—', email: '—', phone: '—' });
-  const [applications, setApplications] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const applicant = useSelector(selectCurrentUser);
+  const applications = useSelector(selectApplicantApplications);
+  const applicationRequest = useSelector((state) => selectApplicantApplicationsRequest(state, 'fetchMine'));
+  const applicationError = useSelector((state) => selectApplicantApplicationsError(state, 'fetchMine'));
+  const isLoading = applicationRequest === undefined || applicationRequest === 'pending';
+  const error = applicationRequest === 'rejected' ? applicationError : '';
 
   useEffect(() => {
-    let isActive = true;
-
-    async function loadProfile() {
-      const accessToken = sessionStorage.getItem('accessToken');
-      if (!accessToken) {
-        navigate('/login', { replace: true });
-        return;
-      }
-
-      const headers = { Authorization: `Bearer ${accessToken}` };
-      try {
-        const [userResponse, applicationsResponse] = await Promise.all([
-          fetch(`${apiBase}/users/me`, { headers }),
-          fetch(`${apiBase}/applications/mine`, { headers }),
-        ]);
-        if (!userResponse.ok || !applicationsResponse.ok) {
-          throw new Error('Could not load your profile. Please sign in again or try later.');
-        }
-
-        const user = await userResponse.json();
-        const result = await applicationsResponse.json();
-        if (isActive) {
-          setProfile({
-            name: user.full_name || '—',
-            email: user.email || '—',
-            phone: user.phone || '—',
-          });
-          setApplications(Array.isArray(result.data) ? result.data.map(makeSafeApplication) : []);
-        }
-      } catch (requestError) {
-        if (isActive) setError(requestError.message || 'Could not load your profile.');
-      } finally {
-        if (isActive) setIsLoading(false);
-      }
+    if (applicant?.role !== 'applicant') {
+      navigate('/login', { replace: true });
+      return undefined;
     }
+    const request = dispatch(fetchApplicantApplications());
+    return () => request.abort();
+  }, [applicant?.role, dispatch, navigate]);
 
-    loadProfile();
-    return () => { isActive = false; };
-  }, [navigate]);
-
-  const handleLogout = () => {
-    sessionStorage.removeItem('loggedInUser');
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('applicationRef');
-    Object.keys(sessionStorage).forEach((key) => {
-      if (key.startsWith('notifsRead_')) sessionStorage.removeItem(key);
-    });
-    localStorage.removeItem('user');
-    navigate('/login', { replace: true });
-  };
-
-  const latestApplication = applications[0];
+  const safeApplications = applications.map(makeSafeApplication);
+  const latestApplication = safeApplications[0];
 
   return (
     <div className="applicant-profile-page">
-      <ApplicantNavigation onLogout={handleLogout} />
+      <ApplicantNavigation />
 
       <main>
         <h1>Applicant Profile</h1>
@@ -108,9 +75,9 @@ export default function ApplicantProfile() {
                 <div className="cam-icon" aria-hidden="true"><i className="fa-solid fa-camera" /></div>
               </div>
               <div className="profile-info">
-                <h2>{profile.name}</h2>
-                <p><i className="fa-solid fa-at" /> <span>{profile.email}</span></p>
-                <p><i className="fa-solid fa-phone" /> <span>{profile.phone}</span></p>
+                <h2>{applicant?.name || '—'}</h2>
+                <p><i className="fa-solid fa-at" /> <span>{applicant?.email || '—'}</span></p>
+                <p><i className="fa-solid fa-phone" /> <span>{applicant?.phone || '—'}</span></p>
                 <Link className="btn-edit" to="/profile/edit"><i className="fa-solid fa-pen" /> Edit Profile</Link>
               </div>
             </section>
@@ -126,7 +93,7 @@ export default function ApplicantProfile() {
 
             <section className="activity-card">
               <div className="act-header"><h3>Recent Activity</h3><Link to="/track-status">View All</Link></div>
-              {applications.map((application) => (
+              {safeApplications.map((application) => (
                 <div className="act-item" key={application.applicationId}>
                   <div className="act-icon orange"><i className="fa-solid fa-file-circle-check" /></div>
                   <div className="act-info">
@@ -136,7 +103,7 @@ export default function ApplicantProfile() {
                   <span className="act-time">{formatDate(application.submittedAt)}</span>
                 </div>
               ))}
-              {!isLoading && applications.length === 0 && <p className="profile-message">No recent application activity.</p>}
+              {!isLoading && !error && safeApplications.length === 0 && <p className="profile-message">No recent application activity.</p>}
             </section>
 
             <Link className="btn-cancel" to="/dashboard">← Back to Dashboard</Link>

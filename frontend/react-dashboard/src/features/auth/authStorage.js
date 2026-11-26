@@ -86,6 +86,51 @@ export function readAuthStorage() {
   return { user, accessToken };
 }
 
+export function writeAuthUserSnapshot(value) {
+  const user = normalizeAuthUser(value);
+  if (!user) return { status: 'unavailable' };
+
+  if (typeof sessionStorage === 'undefined') return { status: 'unavailable' };
+
+  const invalidateStaleSnapshot = () => {
+    try {
+      sessionStorage.removeItem(SESSION_USER_KEY);
+      return { status: 'invalidated' };
+    } catch {
+      return { status: 'unavailable' };
+    }
+  };
+
+  let existing = {};
+  try {
+    const storedUser = sessionStorage.getItem(SESSION_USER_KEY);
+    const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+    if (parsedUser && typeof parsedUser === 'object' && !Array.isArray(parsedUser)) {
+      existing = parsedUser;
+    }
+  } catch {
+    return invalidateStaleSnapshot();
+  }
+
+  const snapshot = {
+    ...existing,
+    id: user.userId,
+    user_id: user.userId,
+    name: user.name ?? existing.name ?? existing.full_name,
+    full_name: user.name ?? existing.full_name ?? existing.name,
+    email: user.email ?? existing.email,
+    phone: user.phone ?? existing.phone ?? '',
+    role: existing.role ?? user.role,
+  };
+
+  try {
+    sessionStorage.setItem(SESSION_USER_KEY, JSON.stringify(snapshot));
+    return { status: 'persisted' };
+  } catch {
+    return invalidateStaleSnapshot();
+  }
+}
+
 export function clearAuthStorage({ clearSessionStorage = false } = {}) {
   try {
     if (typeof sessionStorage === 'undefined') return;

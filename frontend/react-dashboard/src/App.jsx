@@ -13,7 +13,6 @@ import ApplicantDownloadLicense from './applicant/pages/ApplicantDownloadLicense
 import ApplicantPaymentSuccess from './applicant/pages/ApplicantPaymentSuccess';
 import ApplicantPaymentFailure from './applicant/pages/ApplicantPaymentFailure';
 import ApplicantPaymentHistory from './applicant/pages/ApplicantPaymentHistory';
-import ApplicantForgotPassword from './applicant/pages/ApplicantForgotPassword';
 import ApplicantProfileEdit from './applicant/pages/ApplicantProfileEdit';
 import CommissionerDashboard from './municipal-commissioner/pages/CommissionerDashboard';
 import CommissionerFieldOfficers from './municipal-commissioner/pages/CommissionerFieldOfficers';
@@ -56,7 +55,6 @@ export default function App() {
         <Route path="/" element={<ApplicantLandingPage />} />
         <Route path="/login" element={<ApplicantLogin />} />
         <Route path="/login/index.html" element={<Navigate to="/login" replace />} />
-        <Route path="/forgot-password" element={<ApplicantForgotPassword />} />
         <Route path="/register" element={<ApplicantRegistration />} />
         <Route path="/dashboard" element={<ApplicantDashboard />} />
         <Route path="/profile" element={<ApplicantProfile />} />

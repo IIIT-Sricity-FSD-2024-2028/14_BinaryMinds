@@ -1,10 +1,15 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import PublicNavigation from '../../common-components/PublicNavigation';
+import { registerApplicant, selectRegistrationError, selectRegistrationStatus } from '../../features/auth/authSlice.js';
 import '../styles/ApplicantRegistration.css';
 
 export default function ApplicantRegistration() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const registrationStatus = useSelector(selectRegistrationStatus);
+  const registrationError = useSelector(selectRegistrationError);
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -13,8 +18,6 @@ export default function ApplicantRegistration() {
     confirmPassword: '',
   });
   const [message, setMessage] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [visiblePasswords, setVisiblePasswords] = useState({ password: false, confirmPassword: false });
 
   const togglePasswordVisibility = (field) => {
@@ -32,8 +35,6 @@ export default function ApplicantRegistration() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setIsSuccess(false);
-
     const normalizedFullName = form.fullName.trim().replace(/ +/g, ' ');
     if (!normalizedFullName) {
       setMessage('Full Name is required. Enter at least two name parts using English letters and spaces.');
@@ -71,28 +72,15 @@ export default function ApplicantRegistration() {
       setMessage('Passwords do not match.');
       return;
     }
-    setIsSubmitting(true);
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:3000/api/users/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          full_name: normalizedFullName,
-          email: form.email.trim(),
-          phone: form.phone.trim(),
-          password: form.password,
-        }),
-      });
-
-      if (response.status !== 201) {
-        const payload = await response.json().catch(() => ({}));
-        const errorMessage = Array.isArray(payload.message)
-          ? payload.message.join(' ')
-          : payload.message;
-        throw new Error(errorMessage || 'Registration failed. Please try again.');
-      }
+      await dispatch(registerApplicant({
+        full_name: normalizedFullName,
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        password: form.password,
+      })).unwrap();
 
       setForm({
         fullName: '',
@@ -101,13 +89,10 @@ export default function ApplicantRegistration() {
         password: '',
         confirmPassword: '',
       });
-      setIsSuccess(true);
       setMessage('Account created. Redirecting to login...');
       window.setTimeout(() => navigate('/login'), 1000);
-    } catch (error) {
-      setMessage(error.message || 'Unable to register. Check your connection and try again.');
-    } finally {
-      setIsSubmitting(false);
+    } catch {
+      // Request errors are stored by the auth thunk and rendered from Redux state.
     }
   };
 
@@ -163,12 +148,12 @@ export default function ApplicantRegistration() {
             id="registrationMessage"
             role="status"
             aria-live="polite"
-            style={{ margin: '0 0 12px', color: isSuccess ? '#047857' : '#b91c1c', fontSize: '13px' }}
+            style={{ margin: '0 0 12px', color: registrationStatus === 'fulfilled' ? '#047857' : '#b91c1c', fontSize: '13px' }}
           >
-            {message}
+            {registrationError || message}
           </p>
-          <button className="btn-register" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Registering...' : 'Register'}
+          <button className="btn-register" type="submit" disabled={registrationStatus === 'pending'}>
+            {registrationStatus === 'pending' ? 'Registering...' : 'Register'}
           </button>
 
           <p className="login-text">

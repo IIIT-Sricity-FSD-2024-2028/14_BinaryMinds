@@ -8,6 +8,7 @@ export interface Payment {
   processing_fee?: number;
   platform_fee?: number;
   service_tax?: number;
+  payment_method?: string;
   payment_status: PaymentStatus;
   transaction_id?: string;
   payment_date?: Date;

@@ -72,7 +72,7 @@ export default function ApplicantPayNow() {
     if (!paymentsReady) { dispatch(setPaymentError('Existing payment records are not ready for this application. Please retry before continuing.')); return; }
     let ownsAttempt = true;
     try {
-      const paymentRequest = dispatch(simulateApplicantPayment({ body: { application_id: Number(selected.application_id), municipality_id: selected.municipality_id || selected.municipalityId, amount: fees.total, processing_fee: fees.processing, platform_fee: fees.platform, service_tax: fees.tax } }));
+      const paymentRequest = dispatch(simulateApplicantPayment({ body: { application_id: Number(selected.application_id), municipality_id: selected.municipality_id || selected.municipalityId, amount: fees.total, processing_fee: fees.processing, platform_fee: fees.platform, service_tax: fees.tax, payment_method: workflow.paymentMethod.toUpperCase() } }));
       let record;
       try {
         record = await paymentRequest.unwrap();

@@ -1,17 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import ApplicantNavigation from '../components/ApplicantNavigation';
+import { selectCurrentUser } from '../../features/auth/authSelectors.js';
+import {
+  fetchApplicantApplications,
+  fetchApplicantLicenseByApplication,
+  selectApplicantApplications,
+  selectApplicantApplicationsError,
+  selectApplicantApplicationsRequest,
+  selectApplicantLicenseErrorsByApplicationId,
+  selectApplicantLicenseRequestsByApplicationId,
+  selectApplicantLicensesByApplicationId,
+} from '../store/applicantApplicationsSlice.js';
 import '../styles/ApplicantDashboard.css';
-
-const apiBase = 'http://localhost:3000/api';
-
-function readSessionUser() {
-  try {
-    return JSON.parse(sessionStorage.getItem('loggedInUser') || '{}');
-  } catch {
-    return {};
-  }
-}
 
 function formatDate(value) {
   if (!value) return '—';
@@ -20,88 +22,56 @@ function formatDate(value) {
 }
 
 export default function ApplicantDashboard() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [applicant] = useState(readSessionUser);
-  const [applications, setApplications] = useState([]);
-  const [license, setLicense] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const applicant = useSelector(selectCurrentUser);
+  const applications = useSelector(selectApplicantApplications);
+  const applicationRequest = useSelector((state) => selectApplicantApplicationsRequest(state, 'fetchMine'));
+  const applicationError = useSelector((state) => selectApplicantApplicationsError(state, 'fetchMine'));
+  const licensesByApplicationId = useSelector(selectApplicantLicensesByApplicationId);
+  const licenseRequestsByApplicationId = useSelector(selectApplicantLicenseRequestsByApplicationId);
+  const licenseErrorsByApplicationId = useSelector(selectApplicantLicenseErrorsByApplicationId);
+  const isLoading = applicationRequest === undefined || applicationRequest === 'pending';
+  const error = applicationRequest === 'rejected' ? applicationError : '';
 
   useEffect(() => {
-    let isActive = true;
-
-    async function loadApplications() {
-      const accessToken = sessionStorage.getItem('accessToken');
-      if (!accessToken || applicant.role !== 'applicant') {
-        navigate('/login', { replace: true });
-        return;
-      }
-
-      try {
-        const response = await fetch(`${apiBase}/applications/mine`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        if (!response.ok) throw new Error('Could not load applications. Please sign in again or try later.');
-
-        const result = await response.json();
-        if (isActive) setApplications(Array.isArray(result.data) ? result.data : []);
-      } catch (requestError) {
-        if (isActive) setError(requestError.message || 'Could not load applications.');
-      } finally {
-        if (isActive) setIsLoading(false);
-      }
+    if (applicant?.role !== 'applicant') {
+      navigate('/login', { replace: true });
+      return undefined;
     }
-
-    loadApplications();
-    return () => { isActive = false; };
-  }, [applicant.role, navigate]);
+    const request = dispatch(fetchApplicantApplications());
+    return () => request.abort();
+  }, [applicant?.role, dispatch, navigate]);
 
   const currentApplication = applications[0];
+  const currentApplicationId = currentApplication?.application_id;
+  const licenseRequest = currentApplicationId
+    ? licenseRequestsByApplicationId[String(currentApplicationId)]
+    : undefined;
+  const license = currentApplicationId
+    ? licensesByApplicationId[String(currentApplicationId)]
+    : null;
+  const licenseError = currentApplicationId
+    ? licenseErrorsByApplicationId[String(currentApplicationId)]
+    : null;
 
   useEffect(() => {
-    let isActive = true;
-    setLicense(null);
+    if (
+      !currentApplicationId ||
+      currentApplication?.application_status !== 'approved'
+    ) return undefined;
+    const request = dispatch(fetchApplicantLicenseByApplication(currentApplicationId));
+    return () => request.abort();
+  }, [currentApplication?.application_status, currentApplicationId, dispatch]);
 
-    async function loadLicense() {
-      if (!currentApplication || currentApplication.application_status !== 'approved' || !currentApplication.application_id) return;
-      const accessToken = sessionStorage.getItem('accessToken');
-      if (!accessToken) return;
-
-      try {
-        const response = await fetch(`${apiBase}/licenses/application/${currentApplication.application_id}`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        if (!response.ok) return;
-        const record = await response.json();
-        if (isActive) setLicense(record);
-      } catch {
-        // License details are optional; the application card remains visible.
-      }
-    }
-
-    loadLicense();
-    return () => { isActive = false; };
-  }, [currentApplication]);
-
-  const handleLogout = () => {
-    sessionStorage.removeItem('loggedInUser');
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('applicationRef');
-    Object.keys(sessionStorage).forEach((key) => {
-      if (key.startsWith('notifsRead_')) sessionStorage.removeItem(key);
-    });
-    localStorage.removeItem('user');
-    navigate('/login', { replace: true });
-  };
-
-  const applicantName = applicant.full_name || applicant.name || 'Applicant';
-  const applicantEmail = applicant.email || '';
+  const applicantName = applicant?.name || 'Applicant';
+  const applicantEmail = applicant?.email || '';
   const currentStatus = currentApplication?.application_status || '';
   const hasPaid = currentApplication?.paymentDone === true;
 
   return (
     <div className="applicant-dashboard-page">
-      <ApplicantNavigation onLogout={handleLogout} />
+      <ApplicantNavigation />
 
       <div className="main">
         <aside className="sidebar">
@@ -157,8 +127,11 @@ export default function ApplicantDashboard() {
                   <p><b>Valid:</b> {formatDate(license.issued_date)} - {formatDate(license.expiry_date)}</p>
                   <button type="button" onClick={() => navigate('/download-license')}>Download License</button>
                 </>
+              ) : licenseRequest === 'pending' ? (
+                <p className="page-message" role="status">Loading your license details...</p>
               ) : currentApplication ? (
                 <>
+                  {licenseError && <p className="page-message error" role="alert">License details could not be loaded. Your application information is shown below.</p>}
                   <p><b>Application ID:</b> {currentApplication.application_ref || currentApplication.application_id || '—'}</p>
                   <p><b>Business:</b> {currentApplication.business_name || '—'}</p>
                   <p><b>Fee:</b> — ({hasPaid ? 'Paid' : 'Payment status unavailable'})</p>
