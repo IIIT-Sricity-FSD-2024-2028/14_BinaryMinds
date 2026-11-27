@@ -5,12 +5,12 @@ import {
   fetchApplications,
   selectApplications,
   selectApplicationsState,
-} from '../../department-officer/store/applicationsSlice.js';
+} from '../../features/applications/applicationsSlice.js';
 import {
   fetchDepartmentOfficerUsers,
   selectDepartmentOfficerUsersState,
-} from '../../department-officer/store/usersSlice.js';
-import { fetchLicenses, selectLicenses, selectLicensesState } from '../../department-officer/store/licensesSlice.js';
+} from '../../features/users/usersSlice.js';
+import { fetchLicenses, selectLicenses, selectLicensesState } from '../../features/licenses/licensesSlice.js';
 import { fetchAuditLogs, selectAuditLogs, selectAuditLogsState } from '../../features/auditLogs/auditLogsSlice.js';
 import '../styles/CommissionerDashboard.css';
 

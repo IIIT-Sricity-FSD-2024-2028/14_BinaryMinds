@@ -4,7 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import ApplicantNavigation from '../components/ApplicantNavigation';
 import { selectCurrentUser } from '../../features/auth/authSelectors.js';
 import { fetchActiveMunicipalities, selectMunicipalities } from '../../features/municipalities/municipalitiesSlice.js';
-import { checkApplicantApplicationsForDuplicates, fetchApplicantLicenseByApplication, selectApplicantApplicationWorkflow, selectApplicantApplications, selectApplicantApplicationsError, selectApplicantApplicationsRequest, selectApplicantLicenseErrorsByApplicationId, selectApplicantLicenseRequestsByApplicationId, selectApplicantLicensesByApplicationId, setApplicationError, setApplicationErrors, setApplicationForm, setSelectedApplicationId, updateApplicationField } from '../store/applicantApplicationsSlice.js';
+import { checkApplicantApplicationsForDuplicates, selectApplicantApplications, selectApplicantApplicationsError, selectApplicantApplicationsRequest } from '../../features/applications/applicationsSlice.js';
+import { fetchApplicantLicenseByApplication, selectApplicantApplicationWorkflow, selectApplicantLicenseErrorsByApplicationId, selectApplicantLicenseRequestsByApplicationId, selectApplicantLicensesByApplicationId, setApplicationError, setApplicationErrors, setApplicationForm, setSelectedApplicationId, updateApplicationField } from '../state/applicantWorkflowSlice.js';
 import '../styles/ApplicantApplyLicense.css';
 
 const emptyForm = { fullName: '', email: '', phone: '', aadhaar: '', motherName: '', gender: '', fatherName: '', municipalityId: '', businessName: '', businessType: 'Retail Shop', shopAddress: '', city: '', district: '', state: '', pincode: '', shopArea: '' };

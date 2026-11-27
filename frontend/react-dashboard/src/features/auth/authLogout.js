@@ -1,11 +1,9 @@
-import { baseApi } from '../../services/baseApi.js';
-import { clearCredentials } from './authSlice.js';
+import { clearCredentials } from './authActions.js';
 import { clearAuthStorage } from './authStorage.js';
 
-export function logoutAndResetApi(options = {}) {
+export function logoutAndResetApi() {
   return (dispatch) => {
-    clearAuthStorage(options);
+    clearAuthStorage();
     dispatch(clearCredentials());
-    dispatch(baseApi.util.resetApiState());
   };
 }

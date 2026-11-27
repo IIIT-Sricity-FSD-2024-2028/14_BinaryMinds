@@ -1,8 +1,11 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
+import { useFieldOfficerState } from '../hooks/useFieldOfficerState.js';
 import { Link } from 'react-router-dom';
 import FieldOfficerPageShell from '../components/FieldOfficerPageShell';
 import { dateInputValue } from '../components/fieldOfficerUtils';
 import { useFieldOfficerData } from '../components/useFieldOfficerData';
+import { recoverFieldOfficerAssignment } from '../../features/fieldOfficerAssignments/fieldOfficerAssignmentsSlice.js';
+import { createInspection } from '../../features/inspections/inspectionsSlice.js';
 import '../styles/ScheduleInspection.css';
 
 function formatSchedule(value) {
@@ -14,12 +17,12 @@ function formatSchedule(value) {
 export default function ScheduleInspection() {
   const d = useFieldOfficerData();
   const submitting = useRef(false);
-  const [form, setForm] = useState({
-    applicationId: sessionStorage.getItem('selectedApp') || '',
+  const [form, setForm] = useFieldOfficerState({
+    applicationId: d.activeApplicationId || '',
     date: '',
     time: '',
   });
-  const [recovering, setRecovering] = useState(false);
+  const [recovering, setRecovering] = useFieldOfficerState(false);
   const app = d.applications.find((row) => String(row.application_id) === String(form.applicationId));
   const assignment = d.assignments.find((row) =>
     Number(row.application_id) === Number(form.applicationId) &&
@@ -43,14 +46,7 @@ export default function ScheduleInspection() {
     d.setError('');
     d.setMessage('');
     try {
-      const recovered = await d.request(
-        `/field-officer-assignments/application/${encodeURIComponent(app.application_id)}/recover`,
-        { method: 'POST' },
-      );
-      d.setAssignments((rows) => [
-        ...rows.filter((row) => Number(row.assignment_id) !== Number(recovered.assignment_id)),
-        recovered,
-      ]);
+      await d.dispatch(recoverFieldOfficerAssignment({ applicationId: app.application_id })).unwrap();
       d.setMessage('The saved application assignment was recovered. You can now schedule the inspection.');
     } catch (error) {
       d.setError(error.message || 'Unable to recover the saved application assignment.');
@@ -81,21 +77,13 @@ export default function ScheduleInspection() {
       if (picked < today) throw new Error('Please select a future date for inspection.');
 
       const scheduledDate = new Date(`${form.date}T${form.time}`).toISOString();
-      const created = await d.request('/inspections', {
-        method: 'POST',
-        body: JSON.stringify({
+      const created = await d.dispatch(createInspection({
           assignment_id: Number(assignment.assignment_id),
           field_officer_id: Number(d.officerId),
           scheduled_date: scheduledDate,
           status: 'SCHEDULED',
-        }),
-      });
-      d.setInspections((rows) => [
-        ...rows.filter((row) => Number(row.inspection_id) !== Number(created.inspection_id)),
-        created,
-      ]);
-      sessionStorage.setItem('selectedInspection', String(created.inspection_id));
-      d.navigate(`/officer/${d.officerId}/recordinspection`, {
+        })).unwrap();
+      d.navigate(`/officer/${d.officerId}/recordinspection/${created.inspection_id}`, {
         state: { scheduleMessage: `Inspection scheduled successfully for ${formatSchedule(created.scheduled_date)}.` },
       });
     } catch (error) {
@@ -169,7 +157,6 @@ export default function ScheduleInspection() {
                   value={form.applicationId}
                   onChange={(event) => {
                     setForm({ ...form, applicationId: event.target.value });
-                    sessionStorage.setItem('selectedApp', event.target.value);
                     d.setError('');
                     d.setMessage('');
                   }}

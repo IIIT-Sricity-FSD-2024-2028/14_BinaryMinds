@@ -7,7 +7,7 @@ import {
   replaceOrAppend,
   unwrapItem,
   unwrapList,
-} from '../../department-officer/store/requestUtils.js';
+} from '../../services/asyncThunkUtils.js';
 
 const roles = {
   readAll: ['department_officer', 'municipal_commissioner'],

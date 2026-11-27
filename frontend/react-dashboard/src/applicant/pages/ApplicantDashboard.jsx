@@ -5,14 +5,16 @@ import ApplicantNavigation from '../components/ApplicantNavigation';
 import { selectCurrentUser } from '../../features/auth/authSelectors.js';
 import {
   fetchApplicantApplications,
-  fetchApplicantLicenseByApplication,
   selectApplicantApplications,
   selectApplicantApplicationsError,
   selectApplicantApplicationsRequest,
+} from '../../features/applications/applicationsSlice.js';
+import {
+  fetchApplicantLicenseByApplication,
   selectApplicantLicenseErrorsByApplicationId,
   selectApplicantLicenseRequestsByApplicationId,
   selectApplicantLicensesByApplicationId,
-} from '../store/applicantApplicationsSlice.js';
+} from '../state/applicantWorkflowSlice.js';
 import '../styles/ApplicantDashboard.css';
 
 function formatDate(value) {

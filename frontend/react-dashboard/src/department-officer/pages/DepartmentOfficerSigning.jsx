@@ -12,7 +12,7 @@ import {
   setSigningExpiryDate,
   setSigningNotice,
   setSigningSignature,
-} from '../store/departmentOfficerUiSlice.js';
+} from '../state/departmentOfficerUiSlice.js';
 import '../styles/DepartmentOfficerSigning.css';
 
 function defaultExpiryDate() {

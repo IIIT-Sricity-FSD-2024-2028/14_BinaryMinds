@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ApplicantNavigation from '../components/ApplicantNavigation';
 import { selectCurrentUser } from '../../features/auth/authSelectors.js';
-import { createDocument, fetchDocumentsByApplication, selectDocumentsByApplication } from '../../department-officer/store/documentsSlice.js';
-import { createApplicantApplication, fetchApplicantApplications, selectApplicantApplicationWorkflow, selectApplicantApplications, setSelectedApplicationId, setUploadError, setUploadFile, setUploadMessage, updateApplicantApplication } from '../store/applicantApplicationsSlice.js';
+import { createDocument, fetchDocumentsByApplication, selectDocumentsByApplication } from '../../features/documents/documentsSlice.js';
+import { createApplication, fetchApplicantApplications, selectApplicantApplications, selectApplicantApplicationsRequest, selectCurrentApplication, updateApplication } from '../../features/applications/applicationsSlice.js';
+import { selectApplicantApplicationWorkflow, setSelectedApplicationId, setUploadError, setUploadFile, setUploadMessage } from '../state/applicantWorkflowSlice.js';
 import '../styles/ApplicantUploadDocuments.css';
 
 const maxFileBytes = 5 * 1024 * 1024;
@@ -21,9 +22,9 @@ export default function ApplicantUploadDocuments() {
   const user = useSelector(selectCurrentUser);
   const workflow = useSelector(selectApplicantApplicationWorkflow);
   const applications = useSelector(selectApplicantApplications);
-  const applicationId = useSelector((state) => state.applicantApplications.current?.application_id);
+  const applicationId = useSelector((state) => selectCurrentApplication(state)?.application_id);
   const documents = useSelector((state) => selectDocumentsByApplication(state, applicationId));
-  const isUploading = useSelector((state) => ['create', 'update'].some((key) => state.applicantApplications.requests[key] === 'pending') || state.departmentOfficerDocuments.requests.create === 'pending');
+  const isUploading = useSelector((state) => ['create', 'update'].some((key) => selectApplicantApplicationsRequest(state, key) === 'pending') || state.documents.requests.create === 'pending');
 
   useEffect(() => {
     if (!user || user.role !== 'applicant') navigate('/login', { replace: true });
@@ -55,10 +56,10 @@ export default function ApplicantUploadDocuments() {
     if (existing) {
       const details = { father_name: draft.fatherName, mother_name: draft.motherName, shop_area: draft.shopArea };
       const missing = Object.fromEntries(Object.entries(details).filter(([key, value]) => value && !String(existing[key] || '').trim()));
-      if (Object.keys(missing).length) { const response = await dispatch(updateApplicantApplication({ id: existing.application_id, body: missing })).unwrap(); return response?.data || response; }
+      if (Object.keys(missing).length) { const response = await dispatch(updateApplication({ id: existing.application_id, body: missing })).unwrap(); return response?.data || response; }
       return existing;
     }
-    const response = await dispatch(createApplicantApplication({
+    const response = await dispatch(createApplication({
       applicantName: draft.fullName || user?.fullName || 'Applicant', aadhaar_number: draft.aadhaar || undefined, gender: draft.gender || undefined,
       father_name: draft.fatherName || undefined, mother_name: draft.motherName || undefined, shop_area: draft.shopArea || undefined,
       businessName: draft.businessName || '', businessType: draft.businessType || 'General', tradeCategory: draft.businessType || 'General',

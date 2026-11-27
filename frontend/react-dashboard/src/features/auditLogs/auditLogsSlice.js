@@ -5,7 +5,7 @@ import {
   departmentOfficerRequest,
   resetOnAuthChange,
   unwrapList,
-} from '../../department-officer/store/requestUtils.js';
+} from '../../services/asyncThunkUtils.js';
 
 const readRoles = ['municipal_commissioner', 'platform_admin'];
 

@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchDepartmentOfficerUsers, selectDepartmentOfficerUsersState } from '../../department-officer/store/usersSlice.js';
+import { fetchDepartmentOfficerUsers, selectDepartmentOfficerUsersState } from '../../features/users/usersSlice.js';
 import { fetchAllMunicipalities, selectMunicipalities, selectMunicipalitiesError, selectMunicipalitiesRequest } from '../../features/municipalities/municipalitiesSlice.js';
-import { fetchPlatformAdminCorporationSummaries, selectPlatformAdminCorporationSummaries, selectPlatformAdminReadModelError, selectPlatformAdminReadModelRequest } from '../../features/platformAdmin/platformAdminReadModelSlice.js';
+import { fetchPlatformAdminCorporationSummaries, selectPlatformAdminCorporationSummaries, selectPlatformAdminReadModelError, selectPlatformAdminReadModelRequest } from '../state/platformAdminReadModelSlice.js';
 import MunicipalOfficersModal from '../components/MunicipalOfficersModal';
 import '../styles/PlatformAdminDashboard.css';
 
@@ -54,7 +54,7 @@ export default function PlatformAdminDashboard() {
       <section className="pa-dashboard-section"><h2>Municipal Corporations</h2><p>Configured cities, municipal heads, and application access</p>
         {corporations.length ? <div className="pa-table-wrap"><table><thead><tr><th>Municipality / Corporation</th><th>State / District</th><th>Municipal Head</th><th>Applications</th></tr></thead><tbody>{corporations.map((row) => {
           const id = row.corporation_id || row.municipality_id;
-          return <tr key={id}><td><button className="pa-text-action" type="button" onClick={() => openMunicipalityOfficers(row)}>{row.name || 'Unnamed'} <small>({id})</small></button></td><td>{row.state || '—'} / {row.district || '—'}</td><td>{row.municipal_head ? `${row.municipal_head.name}${row.municipal_head.email ? ` (${row.municipal_head.email})` : ''}` : <button className="pa-action-button" type="button" onClick={() => navigate('/platform-admin/corporations')}>+ Add Head</button>}</td><td><button className="pa-action-button" type="button" onClick={() => navigate(`/platform-admin/corporations/${encodeURIComponent(id)}/applications`, { state: { municipalityName: row.name || id, returnTo: '/platform-admin' } })}>View</button></td></tr>;
+          return <tr key={id}><td><button className="pa-text-action" type="button" onClick={() => openMunicipalityOfficers(row)}>{row.name || 'Unnamed'} <small>({id})</small></button></td><td>{row.state || '—'} / {row.district || '—'}</td><td>{row.municipal_head ? `${row.municipal_head.full_name || row.municipal_head.name || 'Name unavailable'}${row.municipal_head.email ? ` (${row.municipal_head.email})` : ''}` : <button className="pa-action-button" type="button" onClick={() => navigate('/platform-admin/corporations')}>+ Add Head</button>}</td><td><button className="pa-action-button" type="button" onClick={() => navigate(`/platform-admin/corporations/${encodeURIComponent(id)}/applications`, { state: { municipalityName: row.name || id, returnTo: '/platform-admin' } })}>View</button></td></tr>;
         })}</tbody></table></div> : <p className="pa-empty">No municipal corporations are available.</p>}
       </section>
     </>}

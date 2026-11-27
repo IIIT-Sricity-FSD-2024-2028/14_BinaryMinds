@@ -762,6 +762,15 @@
       "role": "applicant",
       "user_id": 104,
       "created_at": "2026-10-17T02:23:56.630Z"
+    },
+    {
+      "full_name": "manas jadhav",
+      "email": "manas123@gmail.com",
+      "phone": "9949184847",
+      "password_hash": "man@122",
+      "role": "applicant",
+      "user_id": 105,
+      "created_at": "2026-11-27T16:36:01.198Z"
     }
   ],
   "applications": [
@@ -1744,6 +1753,35 @@
       "application_id": 64,
       "application_ref": "TL-2026-000064",
       "submitted_at": "2026-10-17T02:28:45.752Z"
+    },
+    {
+      "applicant_id": 105,
+      "municipality_id": "muni-hyd",
+      "municipalityName": "Greater Hyderabad Municipal Corporation (GHMC)",
+      "full_name": "manas jadhav",
+      "aadhaar_number": "098765432123",
+      "gender": "Male",
+      "father_name": "hanmanth",
+      "mother_name": "kantha",
+      "shop_area": "104",
+      "business_name": "sandhuuu",
+      "business_type": "Retail Shop",
+      "trade_category": "Retail Shop",
+      "shop_address": "road ",
+      "city": "Hyderabad",
+      "district": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500072",
+      "applicant_phone": "9949184847",
+      "application_status": "approved",
+      "paymentDone": true,
+      "assignedOfficerId": 2,
+      "application_id": 65,
+      "application_ref": "TL-2026-000065",
+      "submitted_at": "2026-11-27T16:37:10.328Z",
+      "verification_decision": "verified",
+      "verification_decision_at": "2026-11-27T16:39:04.223Z",
+      "verification_officer_id": 2
     }
   ],
   "assignments": [
@@ -1764,6 +1802,15 @@
       "deadline": "2026-10-24T00:45:23.939Z",
       "assignment_id": 2,
       "assigned_at": "2026-10-17T00:45:23.939Z"
+    },
+    {
+      "application_id": 65,
+      "field_officer_id": 2,
+      "assigned_by": 1,
+      "status": "PENDING",
+      "deadline": "2026-12-04T16:38:22.771Z",
+      "assignment_id": 3,
+      "assigned_at": "2026-11-27T16:38:22.772Z"
     }
   ],
   "inspections": [
@@ -1798,6 +1845,23 @@
       "scheduled_date": "2026-10-17T12:48:00.000Z",
       "status": "SCHEDULED",
       "inspection_id": 4
+    },
+    {
+      "assignment_id": 3,
+      "field_officer_id": 2,
+      "scheduled_date": "2026-11-28T16:41:00.000Z",
+      "status": "COMPLETED",
+      "notes": "done verified",
+      "inspection_id": 5,
+      "completed_date": "2026-11-27T16:40:03.135Z",
+      "evidence_files": [
+        {
+          "filename": "5356824a-3d4d-4543-bec9-47151c588412.png",
+          "original_filename": "Screenshot 2026-11-24 211754.png",
+          "mime_type": "image/png",
+          "uploaded_at": "2026-11-27T16:40:03.132Z"
+        }
+      ]
     }
   ],
   "reviews": [
@@ -1820,6 +1884,16 @@
       "review_id": 2,
       "digital_signature": "kumara",
       "signed_at": "2026-10-17T01:49:06.986Z"
+    },
+    {
+      "application_id": 65,
+      "reviewer_id": 76,
+      "status": "APPROVED",
+      "comments": "verified",
+      "reviewed_at": "2026-11-27T16:41:05.607Z",
+      "review_id": 3,
+      "digital_signature": "kumara",
+      "signed_at": "2026-11-27T16:41:10.847Z"
     }
   ],
   "documents": [
@@ -1912,6 +1986,36 @@
       "verification_status": "pending",
       "document_id": 9,
       "uploaded_at": "2026-10-17T02:28:45.849Z"
+    },
+    {
+      "application_id": 65,
+      "document_type": "aadhar_card",
+      "file_path": "uploads/documents/fe982388-bd92-4631-aa83-32733267418f.png",
+      "original_filename": "Screenshot 2026-11-24 103416.png",
+      "mime_type": "image/png",
+      "verification_status": "pending",
+      "document_id": 10,
+      "uploaded_at": "2026-11-27T16:37:10.400Z"
+    },
+    {
+      "application_id": 65,
+      "document_type": "business_affidavit",
+      "file_path": "uploads/documents/469165a3-ed3c-44c3-80ab-082274b627ef.png",
+      "original_filename": "Screenshot 2026-11-24 105223.png",
+      "mime_type": "image/png",
+      "verification_status": "pending",
+      "document_id": 11,
+      "uploaded_at": "2026-11-27T16:37:10.423Z"
+    },
+    {
+      "application_id": 65,
+      "document_type": "passport_photo",
+      "file_path": "uploads/documents/2b3619c4-9ab5-4f07-ac7c-1db27a59fc67.png",
+      "original_filename": "Screenshot 2026-11-24 203418.png",
+      "mime_type": "image/png",
+      "verification_status": "pending",
+      "document_id": 12,
+      "uploaded_at": "2026-11-27T16:37:10.448Z"
     }
   ],
   "payments": [
@@ -2286,6 +2390,19 @@
       "transaction_id": "TXN-7b3a59c2-4156-4032-ba65-700a3f4b4c3b",
       "payment_id": 48,
       "payment_date": "2026-10-17T02:30:39.563Z"
+    },
+    {
+      "application_id": 65,
+      "municipality_id": "muni-hyd",
+      "amount": 1510,
+      "processing_fee": 1200,
+      "platform_fee": 250,
+      "service_tax": 60,
+      "payment_method": "UPI",
+      "transaction_id": "TXN-b504b1b9-91e8-4308-9bc5-52e0d57f9db3",
+      "payment_status": "COMPLETED",
+      "payment_id": 49,
+      "payment_date": "2026-11-27T16:37:15.932Z"
     }
   ],
   "licenses": [
@@ -2308,6 +2425,16 @@
       "expiry_date": "2027-10-17T18:29:59.000Z",
       "status": "ACTIVE",
       "license_id": 2
+    },
+    {
+      "application_id": 65,
+      "municipality_id": "muni-hyd",
+      "issued_by": 76,
+      "license_number": "LIC-20261127-8311",
+      "issued_date": "2026-11-27T16:41:10.873Z",
+      "expiry_date": "2027-11-27T18:29:59.000Z",
+      "status": "ACTIVE",
+      "license_id": 3
     }
   ],
   "platform": {
@@ -2701,17 +2828,29 @@
         "payment_status": "COMPLETED",
         "created_at": "2026-10-17T02:30:39.563Z",
         "backfilled": false
+      },
+      {
+        "payment_id": 49,
+        "transaction_id": "TXN-b504b1b9-91e8-4308-9bc5-52e0d57f9db3",
+        "corporation_id": "muni-hyd",
+        "gross_amount": 1510,
+        "revenue_percentage_used": 20,
+        "tradezo_revenue": 302,
+        "municipal_share": 1208,
+        "payment_status": "COMPLETED",
+        "created_at": "2026-11-27T16:37:15.932Z",
+        "backfilled": false
       }
     ]
   },
   "counters": {
-    "users": 105,
-    "applications": 65,
-    "assignments": 3,
-    "inspections": 5,
-    "reviews": 3,
-    "documents": 10,
-    "payments": 49,
-    "licenses": 3
+    "users": 106,
+    "applications": 66,
+    "assignments": 4,
+    "inspections": 6,
+    "reviews": 4,
+    "documents": 13,
+    "payments": 50,
+    "licenses": 4
   }
 }

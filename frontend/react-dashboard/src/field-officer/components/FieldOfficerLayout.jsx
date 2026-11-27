@@ -24,7 +24,7 @@ export default function FieldOfficerLayout({ activeSection = '', children }) {
         : activeSection === 'profile_edit' ? 'profile' : activeSection;
 
   function logout() {
-    dispatch(logoutAndResetApi({ clearSessionStorage: true }));
+    dispatch(logoutAndResetApi());
     navigate('/login', { replace: true });
   }
 

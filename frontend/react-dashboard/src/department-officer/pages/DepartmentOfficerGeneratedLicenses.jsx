@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DepartmentOfficerPageFrame from '../components/DepartmentOfficerPageFrame';
 import { useDepartmentOfficerData } from '../components/useDepartmentOfficerData';
-import { selectPageSearch, setPageSearch } from '../store/departmentOfficerUiSlice.js';
+import { selectPageSearch, setPageSearch } from '../state/departmentOfficerUiSlice.js';
 import '../styles/DepartmentOfficerGeneratedLicenses.css';
 
 export default function DepartmentOfficerGeneratedLicenses() {

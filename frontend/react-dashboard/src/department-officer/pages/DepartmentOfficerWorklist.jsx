@@ -10,7 +10,7 @@ import {
   selectWorklistNotice,
   setPageSearch,
   setWorklistFilter,
-} from '../store/departmentOfficerUiSlice.js';
+} from '../state/departmentOfficerUiSlice.js';
 import '../styles/DepartmentOfficerWorklist.css';
 
 export default function DepartmentOfficerWorklist() {

@@ -12,7 +12,7 @@ import {
   fetchApplications,
   selectApplications,
   selectApplicationsState,
-} from '../store/applicationsSlice.js';
+} from '../../features/applications/applicationsSlice.js';
 import {
   fetchDepartmentReviews,
   selectDepartmentReviews,

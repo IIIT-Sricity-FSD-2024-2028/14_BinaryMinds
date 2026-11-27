@@ -11,7 +11,7 @@ import {
   setAuthorizationSelectedApplication,
   setPageSearch,
   selectPageSearch,
-} from '../store/departmentOfficerUiSlice.js';
+} from '../state/departmentOfficerUiSlice.js';
 import '../styles/DepartmentOfficerAuthorization.css';
 
 function decisionErrorMessage(error) {
@@ -24,7 +24,7 @@ export default function DepartmentOfficerAuthorization() {
   const dispatch = useDispatch();
   const query = useSelector((state) => selectPageSearch(state, 'authorization'));
   const authorizationUi = useSelector(selectAuthorizationUi);
-  const saving = useSelector((state) => state.departmentOfficerReviews.requests.recordDecision === 'pending');
+  const saving = useSelector((state) => state.departmentReviews.requests.recordDecision === 'pending');
   const selected = data.applications.find((app) => String(app.application_id) === String(authorizationUi.selectedApplicationId));
   const rows = useMemo(() => data.applications.filter((app) => {
     const review = data.reviews.find((x) => Number(x.application_id) === Number(app.application_id));

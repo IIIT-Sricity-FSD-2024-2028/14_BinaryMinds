@@ -6,7 +6,7 @@ import {
   fetchApplications,
   selectApplications,
   selectApplicationsState,
-} from '../../department-officer/store/applicationsSlice.js';
+} from '../../features/applications/applicationsSlice.js';
 import { fetchOfficers, selectOfficers, selectOfficersState } from '../../features/officers/officersSlice.js';
 import { selectIsCommissioner } from '../../features/auth/authSelectors.js';
 import '../styles/CommissionerApplications.css';

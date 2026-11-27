@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { normalizeAuthUser, readAuthStorage, writeAuthUserSnapshot } from './authStorage.js';
-import { API_BASE } from '../../services/baseApi.js';
+import { normalizeAuthUser, readAuthStorage, writeAuthSession, writeAuthUserSnapshot } from './authStorage.js';
+import { clearCredentials } from './authActions.js';
+import { API_BASE } from '../../services/apiClient.js';
+import { clearSessionOnUnauthorized } from '../../services/unauthorizedSession.js';
 
 async function postAuthRequest(path, body, thunkApi) {
   const { signal } = thunkApi;
@@ -34,6 +36,10 @@ export const loginApplicant = createAsyncThunk(
       payload.user.role !== credentials.role
     ) {
       return thunkApi.rejectWithValue('The server returned an invalid login response.');
+    }
+    const storageResult = writeAuthSession(payload.user, payload.accessToken);
+    if (storageResult.status !== 'persisted') {
+      return thunkApi.rejectWithValue('Sign-in succeeded, but this browser could not save the authentication session.');
     }
     thunkApi.dispatch(setCredentials({ user: payload.user, accessToken: payload.accessToken }));
     return payload;
@@ -69,6 +75,7 @@ async function requestApplicantUserUpdate(path, body, thunkApi) {
       body: JSON.stringify(body),
       signal,
     });
+    clearSessionOnUnauthorized(response, thunkApi);
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) {
       const message = Array.isArray(payload?.message) ? payload.message.join(' ') : payload?.message;
@@ -135,6 +142,11 @@ const initialState = {
   status: storedAuth.user && storedAuth.accessToken ? 'authenticated' : 'anonymous',
   loginStatus: 'idle',
   loginError: null,
+  loginForm: { email: '', password: '', role: '' },
+  loginFormErrors: {},
+  registrationForm: { fullName: '', email: '', phone: '', password: '', confirmPassword: '' },
+  applicantProfileForm: { fullName: '', email: '', phone: '' },
+  applicantPasswordForm: { currentPassword: '', newPassword: '', confirmPassword: '' },
   registrationStatus: 'idle',
   registrationError: null,
   profileUpdateStatus: 'idle',
@@ -147,6 +159,30 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setLoginFormField(state, action) {
+      state.loginForm[action.payload.field] = action.payload.value;
+    },
+    setLoginFormErrors(state, action) {
+      state.loginFormErrors = action.payload || {};
+    },
+    setRegistrationFormField(state, action) {
+      state.registrationForm[action.payload.field] = action.payload.value;
+    },
+    resetRegistrationForm(state) {
+      state.registrationForm = { fullName: '', email: '', phone: '', password: '', confirmPassword: '' };
+    },
+    setApplicantProfileForm(state, action) {
+      state.applicantProfileForm = action.payload;
+    },
+    setApplicantProfileFormField(state, action) {
+      state.applicantProfileForm[action.payload.field] = action.payload.value;
+    },
+    setApplicantPasswordFormField(state, action) {
+      state.applicantPasswordForm[action.payload.field] = action.payload.value;
+    },
+    clearApplicantPasswordForm(state) {
+      state.applicantPasswordForm = { currentPassword: '', newPassword: '', confirmPassword: '' };
+    },
     setCredentials(state, action) {
       const accessToken = action.payload?.accessToken;
       const user = normalizeAuthUser(action.payload?.user);
@@ -166,7 +202,9 @@ const authSlice = createSlice({
       state.profileUpdateStatus = 'idle';
       state.profileUpdateError = null;
     },
-    clearCredentials(state) {
+  },
+  extraReducers: (builder) => {
+    builder.addCase(clearCredentials, (state) => {
       state.user = null;
       state.accessToken = null;
       state.status = 'anonymous';
@@ -174,9 +212,12 @@ const authSlice = createSlice({
       state.loginError = null;
       state.profileUpdateStatus = 'idle';
       state.profileUpdateError = null;
-    },
-  },
-  extraReducers: (builder) => {
+      state.loginForm.password = '';
+      state.registrationForm.password = '';
+      state.registrationForm.confirmPassword = '';
+      state.applicantProfileForm = { fullName: '', email: '', phone: '' };
+      state.applicantPasswordForm = { currentPassword: '', newPassword: '', confirmPassword: '' };
+    });
     builder
       .addCase(loginApplicant.pending, (state) => {
         state.loginStatus = 'pending';
@@ -195,6 +236,9 @@ const authSlice = createSlice({
         state.status = 'authenticated';
         state.loginStatus = 'fulfilled';
         state.loginError = null;
+        state.loginForm.password = '';
+        state.loginFormErrors = {};
+        state.applicantPasswordForm = { currentPassword: '', newPassword: '', confirmPassword: '' };
       })
       .addCase(loginApplicant.rejected, (state, action) => {
         state.loginStatus = 'rejected';
@@ -251,11 +295,27 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, clearCredentials } = authSlice.actions;
+export const {
+  setCredentials,
+  setLoginFormField,
+  setLoginFormErrors,
+  setRegistrationFormField,
+  resetRegistrationForm,
+  setApplicantProfileForm,
+  setApplicantProfileFormField,
+  setApplicantPasswordFormField,
+  clearApplicantPasswordForm,
+} = authSlice.actions;
+export { clearCredentials };
 export const selectLoginStatus = (state) => state.auth.loginStatus;
 export const selectLoginError = (state) => state.auth.loginError;
+export const selectLoginForm = (state) => state.auth.loginForm;
+export const selectLoginFormErrors = (state) => state.auth.loginFormErrors;
 export const selectRegistrationStatus = (state) => state.auth.registrationStatus;
 export const selectRegistrationError = (state) => state.auth.registrationError;
+export const selectRegistrationForm = (state) => state.auth.registrationForm;
+export const selectApplicantProfileForm = (state) => state.auth.applicantProfileForm;
+export const selectApplicantPasswordForm = (state) => state.auth.applicantPasswordForm;
 export const selectApplicantProfileUpdateStatus = (state) => state.auth.profileUpdateStatus;
 export const selectApplicantProfileUpdateError = (state) => state.auth.profileUpdateError;
 export const selectApplicantPasswordChangeStatus = (state) => state.auth.passwordChangeStatus;

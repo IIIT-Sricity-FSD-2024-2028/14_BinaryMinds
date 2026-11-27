@@ -5,7 +5,7 @@ import {
   selectPlatformAdminReadModelError,
   selectPlatformAdminReadModelRequest,
   selectPlatformAdminRevenue,
-} from '../../features/platformAdmin/platformAdminReadModelSlice.js';
+} from '../state/platformAdminReadModelSlice.js';
 import '../styles/PlatformAdminRevenue.css';
 
 const dash = '—';

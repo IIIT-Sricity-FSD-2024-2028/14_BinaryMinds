@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import DepartmentOfficerPageFrame from '../components/DepartmentOfficerPageFrame';
 import { useDepartmentOfficerData } from '../components/useDepartmentOfficerData';
-import { selectPageSearch, setPageSearch } from '../store/departmentOfficerUiSlice.js';
+import { selectPageSearch, setPageSearch } from '../state/departmentOfficerUiSlice.js';
 import '../styles/DepartmentOfficerCompliance.css';
 
 export default function DepartmentOfficerCompliance() {

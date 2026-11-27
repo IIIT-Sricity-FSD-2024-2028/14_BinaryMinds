@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import PublicNavigation from '../../common-components/PublicNavigation';
-import { loginApplicant, selectLoginError, selectLoginStatus } from '../../features/auth/authSlice.js';
+import PublicNavigation from '../../shared/components/PublicNavigation.jsx';
+import { loginApplicant, selectLoginError, selectLoginForm, selectLoginFormErrors, selectLoginStatus, setLoginFormErrors, setLoginFormField } from '../../features/auth/authSlice.js';
 import '../styles/ApplicantLogin.css';
 import loginStyles from '../../../../applicant_connected/connected/login/style.css?inline';
 
@@ -46,43 +46,13 @@ const codeStyle = {
   borderRadius: '3px',
 };
 
-function clearApplicantDraftIfNeeded(nextEmail) {
-  let draft = {};
-  try {
-    draft = JSON.parse(sessionStorage.getItem('applicationForm') || '{}');
-  } catch {
-    // Keep the empty draft fallback when stored JSON is malformed.
-  }
-
-  const draftOwner = String(draft.ownerEmail || draft.email || '').toLowerCase();
-  if (draftOwner && draftOwner === String(nextEmail || '').toLowerCase()) return;
-
-  [
-    'applicationForm',
-    'uploadedDocs',
-    'documentsUploaded',
-    'documentsUploadedCount',
-    'currentApplication',
-    'calculatedFeeString',
-    'backendApplicationId',
-  ].forEach((key) => sessionStorage.removeItem(key));
-
-  Object.keys(sessionStorage).forEach((key) => {
-    if (key.startsWith('upload_status') || key.startsWith('upload_error')) {
-      sessionStorage.removeItem(key);
-    }
-  });
-}
-
 export default function ApplicantLogin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const loginStatus = useSelector(selectLoginStatus);
   const loginError = useSelector(selectLoginError);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('');
-  const [errors, setErrors] = useState({});
+  const { email, password, role } = useSelector(selectLoginForm);
+  const errors = useSelector(selectLoginFormErrors);
 
   useEffect(() => {
     const styleElement = document.createElement('style');
@@ -102,7 +72,7 @@ export default function ApplicantLogin() {
     if (!password) nextErrors.password = 'Password is required.';
     if (!requestedRole) nextErrors.role = 'Please select your role.';
 
-    setErrors(nextErrors);
+    dispatch(setLoginFormErrors(nextErrors));
     if (Object.keys(nextErrors).length > 0) return;
 
     try {
@@ -113,37 +83,14 @@ export default function ApplicantLogin() {
       })).unwrap();
 
       const user = payload.user;
-      const sessionUser = {
-        id: user.user_id,
-        user_id: user.user_id,
-        name: user.full_name,
-        full_name: user.full_name,
-        email: user.email,
-        phone: user.phone || '',
-        employee_id: user.employee_id || '',
-        empId: user.employee_id || '',
-        role:
-          user.role === 'field_officer'
-            ? 'field officer'
-            : user.role === 'department_officer'
-              ? 'department officer'
-              : user.role,
-        municipality_id: user.municipality_id || '',
-        accessToken: payload.accessToken,
-      };
-
-      clearApplicantDraftIfNeeded(user.email);
-      sessionStorage.setItem('accessToken', payload.accessToken);
-      sessionStorage.setItem('loggedInUser', JSON.stringify(sessionUser));
-      sessionStorage.removeItem('applicationRef');
-      if (user.role === 'field_officer') {
+      if (user.role === 'applicant') {
+        navigate('/dashboard');
+      } else if (user.role === 'field_officer') {
         navigate(`/officer/${user.user_id}`);
       } else if (user.role === 'municipal_commissioner') {
         navigate('/superuser');
-      } else if (user.role === 'applicant') {
-        navigate('/dashboard');
       } else if (user.role === 'department_officer') {
-        window.location.assign('../../../do_connected/dashboard/index.html');
+        navigate('/department-officer');
       }
     } catch {
       // Request errors are stored by the auth thunk and rendered from Redux state.
@@ -151,10 +98,10 @@ export default function ApplicantLogin() {
   };
 
   const quickFill = (account) => {
-    setEmail(account.email);
-    setPassword(account.password || demoPassword);
-    setRole(account.role);
-    setErrors({});
+    dispatch(setLoginFormField({ field: 'email', value: account.email }));
+    dispatch(setLoginFormField({ field: 'password', value: account.password || demoPassword }));
+    dispatch(setLoginFormField({ field: 'role', value: account.role }));
+    dispatch(setLoginFormErrors({}));
   };
 
   return (
@@ -195,8 +142,8 @@ export default function ApplicantLogin() {
               placeholder="Enter Email or Phone Number"
               value={email}
               onChange={(event) => {
-                setEmail(event.target.value);
-                setErrors((current) => ({ ...current, email: '' }));
+                dispatch(setLoginFormField({ field: 'email', value: event.target.value }));
+                dispatch(setLoginFormErrors({ ...errors, email: '' }));
               }}
               style={errors.email ? { borderColor: '#dc2626' } : undefined}
             />
@@ -208,8 +155,8 @@ export default function ApplicantLogin() {
               placeholder="Enter Password"
               value={password}
               onChange={(event) => {
-                setPassword(event.target.value);
-                setErrors((current) => ({ ...current, password: '' }));
+                dispatch(setLoginFormField({ field: 'password', value: event.target.value }));
+                dispatch(setLoginFormErrors({ ...errors, password: '' }));
               }}
               style={errors.password ? { borderColor: '#dc2626' } : undefined}
             />
@@ -220,8 +167,8 @@ export default function ApplicantLogin() {
               required
               value={role}
               onChange={(event) => {
-                setRole(event.target.value);
-                setErrors((current) => ({ ...current, role: '' }));
+                dispatch(setLoginFormField({ field: 'role', value: event.target.value }));
+                dispatch(setLoginFormErrors({ ...errors, role: '' }));
               }}
               style={errors.role ? { borderColor: '#dc2626' } : undefined}
             >

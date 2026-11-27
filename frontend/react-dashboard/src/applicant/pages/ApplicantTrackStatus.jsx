@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import ApplicantNavigation from '../components/ApplicantNavigation';
 import { selectCurrentUser } from '../../features/auth/authSelectors.js';
-import { fetchLicenseByApplication } from '../../department-officer/store/licensesSlice.js';
-import { fetchApplicantApplications, selectApplicantApplications, selectApplicantApplicationsError, selectApplicantApplicationsRequest } from '../store/applicantApplicationsSlice.js';
+import { fetchLicenseByApplication } from '../../features/licenses/licensesSlice.js';
+import { fetchApplicantApplications, selectApplicantApplications, selectApplicantApplicationsError, selectApplicantApplicationsRequest } from '../../features/applications/applicationsSlice.js';
 import '../styles/ApplicantTrackStatus.css';
 
 const steps = ['Submitted', 'Documents Verified', 'Inspection Scheduled', 'Review Done', 'Approved'];
@@ -45,8 +45,8 @@ export default function ApplicantTrackStatus() {
   const applications = useSelector(selectApplicantApplications);
   const loading = useSelector((state) => selectApplicantApplicationsRequest(state, 'fetchMine') === 'pending');
   const error = useSelector((state) => selectApplicantApplicationsError(state, 'fetchMine'));
-  const licenses = useSelector((state) => state.departmentOfficerLicenses.byApplicationId);
-  const licenseError = useSelector((state) => state.departmentOfficerLicenses.errors.fetchByApplication);
+  const licenses = useSelector((state) => state.licenses.byApplicationId);
+  const licenseError = useSelector((state) => state.licenses.errors.fetchByApplication);
   const sortedApplications = applications.slice().sort((a, b) => new Date(b.submitted_at || 0) - new Date(a.submitted_at || 0));
 
   useEffect(() => {

@@ -4,7 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import ApplicantNavigation from '../components/ApplicantNavigation';
 import { selectCurrentUser } from '../../features/auth/authSelectors.js';
 import { fetchPaymentsByApplication, selectPayments } from '../../features/payments/paymentsSlice.js';
-import { fetchApplicantApplications, selectApplicantApplications, selectApplicantApplicationsError, selectApplicantApplicationsRequest, setSelectedApplicationId } from '../store/applicantApplicationsSlice.js';
+import { fetchApplicantApplications, selectApplicantApplications, selectApplicantApplicationsError, selectApplicantApplicationsRequest } from '../../features/applications/applicationsSlice.js';
+import { setSelectedApplicationId } from '../state/applicantWorkflowSlice.js';
 import '../styles/ApplicantPaymentHistory.css';
 function formatDate(value){if(!value)return'—';const date=new Date(value);return Number.isNaN(date.getTime())?'—':date.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});}
 function formatMoney(value){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR'}).format(Number(value)||0);}

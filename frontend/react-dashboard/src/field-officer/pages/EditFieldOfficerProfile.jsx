@@ -1,17 +1,18 @@
-import { useState } from 'react';
+import { useFieldOfficerState } from '../hooks/useFieldOfficerState.js';
 import FieldOfficerPageShell from '../components/FieldOfficerPageShell';
 import { useFieldOfficerData } from '../components/useFieldOfficerData';
+import { updateDepartmentOfficerUser } from '../../features/users/usersSlice.js';
 import '../styles/EditFieldOfficerProfile.css';
 
 function ProfileEditForm({ data }) {
   const profile = data.profile;
-  const [form, setForm] = useState({
+  const [form, setForm] = useFieldOfficerState({
     full_name: profile.full_name || '',
     email: profile.email || '',
     phone: profile.phone || '',
   });
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
+  const [saving, setSaving] = useFieldOfficerState(false);
+  const [error, setError] = useFieldOfficerState('');
 
   function updateField(event) {
     const { name, value } = event.target;
@@ -23,14 +24,11 @@ function ProfileEditForm({ data }) {
     setError('');
     setSaving(true);
     try {
-      await data.request(`/users/${encodeURIComponent(data.officerId)}`, {
-        method: 'PUT',
-        body: JSON.stringify({
+      await data.dispatch(updateDepartmentOfficerUser({ id: data.officerId, body: {
           full_name: form.full_name.trim(),
           email: form.email.trim(),
           phone: form.phone.trim(),
-        }),
-      });
+        } })).unwrap();
       data.navigate(`/officer/${data.officerId}/profile`, {
         state: { profileUpdated: true },
       });

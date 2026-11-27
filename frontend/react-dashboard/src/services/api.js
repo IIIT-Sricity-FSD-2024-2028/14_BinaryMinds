@@ -1,52 +1,12 @@
-import axios from 'axios';
-
-const API_BASE = 'http://localhost:3000/api';
-
 /**
- * Create an axios instance that attaches the authenticated bearer token.
+ * @deprecated Legacy API helpers are now Redux thunk action creators.
+ * Dispatch these exports and select their results from the central store.
  */
-function createClient() {
-  const client = axios.create({ baseURL: API_BASE });
-
-  client.interceptors.request.use((config) => {
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    } else {
-      delete config.headers.Authorization;
-    }
-    return config;
-  });
-
-  return client;
-}
-
-// ── Superuser APIs ──────────────────────────────────────────────────────
-
-const superuserClient = createClient();
-
-export const getSubmittedApplications = () =>
-  superuserClient.get('/applications/submitted').then((r) => r.data);
-
-export const getOfficers = () =>
-  superuserClient.get('/officers').then((r) => r.data);
-
-export const assignApplication = (id, officerId) =>
-  superuserClient.patch(`/applications/${id}/assign`, { officerId }).then((r) => r.data);
-
-export const createApplication = (applicantName) =>
-  superuserClient
-    .post('/applications', { applicantName })
-    .then((r) => r.data);
-
-// ── Officer APIs ────────────────────────────────────────────────────────
-
-const officerClient = createClient();
-
-export const getOfficerApplications = (officerId) =>
-  officerClient
-    .get(`/applications/officer/${officerId}`)
-    .then((r) => r.data);
-
-export const verifyApplication = (id) =>
-  officerClient.patch(`/applications/${id}/verify`).then((r) => r.data);
+export {
+  fetchApplications as getSubmittedApplications,
+  assignApplicationToOfficer as assignApplication,
+  createApplication,
+  fetchApplicationsByFieldOfficer as getOfficerApplications,
+  verifyFieldOfficerApplication as verifyApplication,
+} from '../features/applications/applicationsSlice.js';
+export { fetchOfficers as getOfficers } from '../features/officers/officersSlice.js';

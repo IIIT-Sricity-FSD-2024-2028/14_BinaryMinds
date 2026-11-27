@@ -5,18 +5,24 @@ import ApplicantNavigation from '../components/ApplicantNavigation';
 import { selectCurrentUser } from '../../features/auth/authSelectors.js';
 import {
   changeApplicantPassword,
+  clearApplicantPasswordForm,
+  selectApplicantPasswordForm,
+  selectApplicantProfileForm,
   selectApplicantPasswordChangeError,
   selectApplicantPasswordChangeStatus,
   selectApplicantProfileUpdateError,
   selectApplicantProfileUpdateStatus,
   updateApplicantProfile,
+  setApplicantPasswordFormField,
+  setApplicantProfileForm,
+  setApplicantProfileFormField,
 } from '../../features/auth/authSlice.js';
 import {
   fetchApplicantApplications,
   selectApplicantApplications,
   selectApplicantApplicationsError,
   selectApplicantApplicationsRequest,
-} from '../store/applicantApplicationsSlice.js';
+} from '../../features/applications/applicationsSlice.js';
 import '../styles/ApplicantProfileEdit.css';
 
 function getAddress(application) {
@@ -44,12 +50,10 @@ export default function ApplicantProfileEdit() {
   const aadhaar = aadhaarNumber ? `XXXX-XXXX-${aadhaarNumber.slice(-4)}` : 'Unavailable';
   const gender = latestApplication?.gender || 'Unavailable';
   const address = getAddress(latestApplication);
-  const [profile, setProfile] = useState({ fullName: '', email: '', phone: '' });
+  const profile = useSelector(selectApplicantProfileForm);
+  const passwordForm = useSelector(selectApplicantPasswordForm);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordNotice, setPasswordNotice] = useState('');
   const [visiblePasswords, setVisiblePasswords] = useState({
@@ -72,15 +76,15 @@ export default function ApplicantProfileEdit() {
   }, [applicant?.role, dispatch, navigate]);
 
   useEffect(() => {
-    setProfile({
+    dispatch(setApplicantProfileForm({
       fullName: applicant?.name || '',
       email: applicant?.email || '',
       phone: applicant?.phone || '',
-    });
-  }, [applicant?.email, applicant?.name, applicant?.phone]);
+    }));
+  }, [applicant?.email, applicant?.name, applicant?.phone, dispatch]);
 
   function updateField(field, value) {
-    setProfile((current) => ({ ...current, [field]: value }));
+    dispatch(setApplicantProfileFormField({ field, value }));
     setNotice('');
   }
 
@@ -88,32 +92,30 @@ export default function ApplicantProfileEdit() {
     event.preventDefault();
     setPasswordError('');
     setPasswordNotice('');
-    if (!currentPassword || !newPassword) {
+    if (!passwordForm.currentPassword || !passwordForm.newPassword) {
       setPasswordError('Enter your current password and a new password.');
       return;
     }
-    if (newPassword.length < 6) {
+    if (passwordForm.newPassword.length < 6) {
       setPasswordError('New password must be at least 6 characters long.');
       return;
     }
-    if (!/[A-Za-z]/.test(newPassword) || !/\d/.test(newPassword) || !/[^A-Za-z0-9]/.test(newPassword)) {
+    if (!/[A-Za-z]/.test(passwordForm.newPassword) || !/\d/.test(passwordForm.newPassword) || !/[^A-Za-z0-9]/.test(passwordForm.newPassword)) {
       setPasswordError('New password must include at least one letter, one number, and one special character.');
       return;
     }
-    if (currentPassword === newPassword) {
+    if (passwordForm.currentPassword === passwordForm.newPassword) {
       setPasswordError('New password must be different from your current password.');
       return;
     }
-    if (newPassword !== confirmPassword) {
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       setPasswordError('New password and confirmation do not match.');
       return;
     }
 
     try {
-      await dispatch(changeApplicantPassword({ currentPassword, newPassword })).unwrap();
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
+      await dispatch(changeApplicantPassword({ currentPassword: passwordForm.currentPassword, newPassword: passwordForm.newPassword })).unwrap();
+      dispatch(clearApplicantPasswordForm());
       setPasswordNotice('Password changed successfully. Use the new password the next time you sign in.');
     } catch {
       // API errors are shown from Redux auth request state.
@@ -136,11 +138,11 @@ export default function ApplicantProfileEdit() {
         email: profile.email.trim(),
         phone: profile.phone.trim(),
       })).unwrap();
-      setProfile({
+      dispatch(setApplicantProfileForm({
         fullName: updatedUser.name || profile.fullName.trim(),
         email: updatedUser.email || profile.email.trim(),
         phone: updatedUser.phone || profile.phone.trim(),
-      });
+      }));
       setNotice('Profile updated successfully.');
     } catch {
       // API errors are shown from Redux auth request state.
@@ -180,9 +182,9 @@ export default function ApplicantProfileEdit() {
             <h2>Password &amp; Security</h2>
             <p className="profile-password-help">Change your sign-in password. Your current password is required to confirm this change.</p>
             <div className="profile-edit-grid">
-              <div className="profile-edit-group"><label htmlFor="current-password">Current Password</label><div className="profile-password-field"><input id="current-password" type={visiblePasswords.currentPassword ? 'text' : 'password'} autoComplete="current-password" required value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} disabled={!applicant?.userId || passwordSaving} /><PasswordVisibilityButton visible={visiblePasswords.currentPassword} onClick={() => togglePasswordVisibility('currentPassword')} label="current password" /></div></div>
-              <div className="profile-edit-group"><label htmlFor="new-password">New Password</label><div className="profile-password-field"><input id="new-password" type={visiblePasswords.newPassword ? 'text' : 'password'} autoComplete="new-password" minLength={6} required value={newPassword} onChange={(event) => setNewPassword(event.target.value)} disabled={!applicant?.userId || passwordSaving} aria-describedby="new-password-help" /><PasswordVisibilityButton visible={visiblePasswords.newPassword} onClick={() => togglePasswordVisibility('newPassword')} label="new password" /></div><small id="new-password-help">Must be at least 6 characters, include a letter, number, and special character, and differ from your current password.</small></div>
-              <div className="profile-edit-group"><label htmlFor="confirm-password">Confirm New Password</label><div className="profile-password-field"><input id="confirm-password" type={visiblePasswords.confirmPassword ? 'text' : 'password'} autoComplete="new-password" minLength={6} required value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} disabled={!applicant?.userId || passwordSaving} /><PasswordVisibilityButton visible={visiblePasswords.confirmPassword} onClick={() => togglePasswordVisibility('confirmPassword')} label="confirm new password" /></div></div>
+              <div className="profile-edit-group"><label htmlFor="current-password">Current Password</label><div className="profile-password-field"><input id="current-password" type={visiblePasswords.currentPassword ? 'text' : 'password'} autoComplete="current-password" required value={passwordForm.currentPassword} onChange={(event) => dispatch(setApplicantPasswordFormField({ field: 'currentPassword', value: event.target.value }))} disabled={!applicant?.userId || passwordSaving} /><PasswordVisibilityButton visible={visiblePasswords.currentPassword} onClick={() => togglePasswordVisibility('currentPassword')} label="current password" /></div></div>
+              <div className="profile-edit-group"><label htmlFor="new-password">New Password</label><div className="profile-password-field"><input id="new-password" type={visiblePasswords.newPassword ? 'text' : 'password'} autoComplete="new-password" minLength={6} required value={passwordForm.newPassword} onChange={(event) => dispatch(setApplicantPasswordFormField({ field: 'newPassword', value: event.target.value }))} disabled={!applicant?.userId || passwordSaving} aria-describedby="new-password-help" /><PasswordVisibilityButton visible={visiblePasswords.newPassword} onClick={() => togglePasswordVisibility('newPassword')} label="new password" /></div><small id="new-password-help">Must be at least 6 characters, include a letter, number, and special character, and differ from your current password.</small></div>
+              <div className="profile-edit-group"><label htmlFor="confirm-password">Confirm New Password</label><div className="profile-password-field"><input id="confirm-password" type={visiblePasswords.confirmPassword ? 'text' : 'password'} autoComplete="new-password" minLength={6} required value={passwordForm.confirmPassword} onChange={(event) => dispatch(setApplicantPasswordFormField({ field: 'confirmPassword', value: event.target.value }))} disabled={!applicant?.userId || passwordSaving} /><PasswordVisibilityButton visible={visiblePasswords.confirmPassword} onClick={() => togglePasswordVisibility('confirmPassword')} label="confirm new password" /></div></div>
             </div>
             {(passwordError || passwordChangeError) && <p className="profile-edit-message profile-edit-error" role="alert">{passwordError || passwordChangeError}</p>}
             {passwordNotice && <p className="profile-edit-message" role="status">{passwordNotice}</p>}

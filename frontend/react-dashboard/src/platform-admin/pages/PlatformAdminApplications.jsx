@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { fetchApplications, selectApplications, selectApplicationsState } from '../../department-officer/store/applicationsSlice.js';
+import { fetchApplications, selectApplications, selectApplicationsState } from '../../features/applications/applicationsSlice.js';
 import '../styles/PlatformAdminApplications.css';
 
 const dash = '—';

@@ -2,21 +2,24 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CommissionerPageFrame from '../components/CommissionerPageFrame';
 import {
+  createDepartmentOfficerUser,
   deleteDepartmentOfficerUser,
   fetchDepartmentOfficerUsers,
   selectDepartmentOfficerUsersState,
   updateDepartmentOfficerUser,
-} from '../../department-officer/store/usersSlice.js';
+} from '../../features/users/usersSlice.js';
 import '../styles/CommissionerFieldOfficers.css';
+import { selectCommissionerUi, setFieldOfficerEditor, setFieldOfficerFormField } from '../state/commissionerUiSlice.js';
 
 const blank = { full_name: '', email: '', phone: '', password: '', status: 'Active' };
 
 export default function CommissionerFieldOfficers() {
   const dispatch = useDispatch();
   const userState = useSelector(selectDepartmentOfficerUsersState);
+  const editor = useSelector(selectCommissionerUi);
+  const form = editor.fieldOfficerForm;
+  const editing = editor.fieldOfficerEditingId == null ? null : userState.items.find((user) => String(user.user_id) === String(editor.fieldOfficerEditingId)) || { user_id: editor.fieldOfficerEditingId };
   const [query, setQuery] = useState('');
-  const [form, setForm] = useState(null);
-  const [editing, setEditing] = useState(null);
   const [notice, setNotice] = useState('');
 
   useEffect(() => {
@@ -34,11 +37,12 @@ export default function CommissionerFieldOfficers() {
 
   const fetchStatus = userState.requests.fetchAll;
   const loading = fetchStatus === undefined || fetchStatus === 'pending';
-  const saving = userState.requests.update === 'pending';
+  const saving = userState.requests.update === 'pending' || userState.requests.create === 'pending';
   const deleting = userState.requests.delete === 'pending';
   const busy = saving || deleting;
   const error = [
     ['fetchAll', 'Unable to load Field Officers.'],
+    ['create', 'Unable to create Field Officer.'],
     ['update', 'Unable to update Field Officer.'],
     ['delete', 'Unable to delete Field Officer.'],
   ].find(([operation]) => userState.requests[operation] === 'rejected');
@@ -48,8 +52,6 @@ export default function CommissionerFieldOfficers() {
 
   const save = async (event) => {
     event.preventDefault();
-    if (!editing) return;
-
     setNotice('');
     const body = {
       full_name: form.full_name.trim(),
@@ -59,11 +61,12 @@ export default function CommissionerFieldOfficers() {
     };
     if (form.password) body.password = form.password;
 
-    const result = await dispatch(updateDepartmentOfficerUser({ id: editing.user_id, body }));
-    if (updateDepartmentOfficerUser.fulfilled.match(result)) {
-      setForm(null);
-      setEditing(null);
-      setNotice('Field Officer updated.');
+    const result = editing
+      ? await dispatch(updateDepartmentOfficerUser({ id: editing.user_id, body }))
+      : await dispatch(createDepartmentOfficerUser({ ...body, role: 'field_officer' }));
+    if (updateDepartmentOfficerUser.fulfilled.match(result) || createDepartmentOfficerUser.fulfilled.match(result)) {
+      dispatch(setFieldOfficerEditor({ form: null, editingId: null }));
+      setNotice(editing ? 'Field Officer updated.' : 'Field Officer created.');
     }
   };
 
@@ -77,16 +80,15 @@ export default function CommissionerFieldOfficers() {
   };
 
   return <CommissionerPageFrame title="Field Officer Management" subtitle="Manage field officer accounts and access">
-    <div className="page-top-bar"><span /> <button className="btn-primary" onClick={() => { setEditing(null); setForm({ ...blank }); }}>+ Add Field Officer</button></div>
+    <div className="page-top-bar"><span /> <button className="btn-primary" onClick={() => { dispatch(setFieldOfficerEditor({ form: { ...blank }, editingId: null })); }}>+ Add Field Officer</button></div>
     {errorMessage && <div className="alert-banner red-banner" role="alert">{errorMessage}</div>}
     {notice && <div className="alert-banner green-banner" role="status">{notice}</div>}
     <section className="card"><div className="um-filter-bar"><div className="um-stats"><span>Total Field Officers: <strong>{users.length}</strong></span><span className="green">Active: <strong>{users.filter((user) => (user.status || 'Active').toLowerCase() === 'active').length}</strong></span><span className="blue">Field Officers: <strong>{users.length}</strong></span></div><input className="search-input" placeholder="Search by name, email, or ID..." value={query} onChange={(event) => setQuery(event.target.value)}/></div>
-      <table className="data-table"><thead><tr><th>Employee ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>{visible.map((user) => <tr key={user.user_id}><td>{user.employee_id || 'Not assigned'}</td><td><span className="avatar-circle">{(user.full_name || 'F')[0]}</span> {user.full_name}</td><td>{user.email}</td><td><span className="badge badge-blue">Field Officer</span></td><td><span className={`badge ${(user.status || 'Active').toLowerCase() === 'active' ? 'badge-green' : 'badge-grey'}`}>{user.status || 'Active'}</span></td><td className="action-btns"><button className="btn-sm btn-edit" disabled={busy} onClick={() => { setEditing(user); setForm({ full_name: user.full_name || '', email: user.email || '', phone: user.phone || '', password: '', status: user.status || 'Active' }); }}>✎ Edit</button><button className="btn-sm btn-delete" disabled={busy} onClick={() => remove(user)}>Delete</button></td></tr>)}{!visible.length && <tr><td colSpan="6" className="empty-row">{loading ? 'Loading Field Officers…' : errorMessage ? 'Field Officers could not be loaded.' : 'No Field Officers found.'}</td></tr>}</tbody></table>
+      <table className="data-table"><thead><tr><th>Employee ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>{visible.map((user) => <tr key={user.user_id}><td>{user.employee_id || 'Not assigned'}</td><td><span className="avatar-circle">{(user.full_name || 'F')[0]}</span> {user.full_name}</td><td>{user.email}</td><td><span className="badge badge-blue">Field Officer</span></td><td><span className={`badge ${(user.status || 'Active').toLowerCase() === 'active' ? 'badge-green' : 'badge-grey'}`}>{user.status || 'Active'}</span></td><td className="action-btns"><button className="btn-sm btn-edit" disabled={busy} onClick={() => { dispatch(setFieldOfficerEditor({ editingId: user.user_id, form: { full_name: user.full_name || '', email: user.email || '', phone: user.phone || '', password: '', status: user.status || 'Active' } })); }}>✎ Edit</button><button className="btn-sm btn-delete" disabled={busy} onClick={() => remove(user)}>Delete</button></td></tr>)}{!visible.length && <tr><td colSpan="6" className="empty-row">{loading ? 'Loading Field Officers…' : errorMessage ? 'Field Officers could not be loaded.' : 'No Field Officers found.'}</td></tr>}</tbody></table>
     </section>
-    {form && <Modal title={editing ? 'Edit Field Officer Details' : 'Add Field Officer'} close={() => { if (!busy) { setForm(null); setEditing(null); } }}><form onSubmit={save}>
-      {!editing && <div className="alert-banner blue-banner" role="status">Field Officer creation is unavailable through the existing shared Users Redux actions. No account will be created from this form.</div>}
-      <div className="form-grid-2"><Field label="Full Name *" value={form.full_name} onChange={(value) => setForm({ ...form, full_name: value })} required minLength={3}/><Field label="Email *" type="email" value={form.email} onChange={(value) => setForm({ ...form, email: value })} required/><Field label="Phone *" value={form.phone} onChange={(value) => setForm({ ...form, phone: value })} required/>{!editing && <Field label="Password *" type="password" value={form.password} onChange={(value) => setForm({ ...form, password: value })} required minLength={6} />}{editing && <label className="form-group">Status<select className="form-input" value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value })}><option>Active</option><option>Inactive</option></select></label>}</div>
-      <div className="form-actions"><button type="button" className="btn-outline" disabled={busy} onClick={() => { setForm(null); setEditing(null); }}>Cancel</button><button className="btn-primary" disabled={busy || !editing}>{busy ? 'Saving…' : editing ? 'Save Changes' : 'Creation unavailable'}</button></div>
+    {form && <Modal title={editing ? 'Edit Field Officer Details' : 'Add Field Officer'} close={() => { if (!busy) { dispatch(setFieldOfficerEditor({ form: null, editingId: null })); } }}><form onSubmit={save}>
+      <div className="form-grid-2"><Field label="Full Name *" value={form.full_name} onChange={(value) => dispatch(setFieldOfficerFormField({ field: 'full_name', value }))} required minLength={3}/><Field label="Email *" type="email" value={form.email} onChange={(value) => dispatch(setFieldOfficerFormField({ field: 'email', value }))} required/><Field label="Phone *" value={form.phone} onChange={(value) => dispatch(setFieldOfficerFormField({ field: 'phone', value }))} required/>{!editing && <Field label="Password *" type="password" value={form.password} onChange={(value) => dispatch(setFieldOfficerFormField({ field: 'password', value }))} required minLength={6} />}{editing && <label className="form-group">Status<select className="form-input" value={form.status} onChange={(event) => dispatch(setFieldOfficerFormField({ field: 'status', value: event.target.value }))}><option>Active</option><option>Inactive</option></select></label>}</div>
+      <div className="form-actions"><button type="button" className="btn-outline" disabled={busy} onClick={() => { dispatch(setFieldOfficerEditor({ form: null, editingId: null })); }}>Cancel</button><button className="btn-primary" disabled={busy}>{busy ? 'Saving…' : editing ? 'Save Changes' : 'Create Field Officer'}</button></div>
     </form></Modal>}
   </CommissionerPageFrame>;
 }

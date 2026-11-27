@@ -1,69 +1,91 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-
-const API = 'http://localhost:3000/api';
-const unwrap = (value) => value?.data ?? value;
-const messageOf = (payload, fallback) => Array.isArray(payload?.message) ? payload.message.join(' ') : payload?.message || fallback;
+import {
+  selectAccessToken, selectCurrentUser, selectIsFieldOfficer,
+} from '../../features/auth/authSelectors.js';
+import {
+  fetchApplicationsByFieldOfficer, selectApplicationsByFieldOfficer, selectApplicationsState, selectApplicationById,
+} from '../../features/applications/applicationsSlice.js';
+import {
+  fetchDocumentsByApplication, selectDocumentsByApplication, selectDocumentsState,
+} from '../../features/documents/documentsSlice.js';
+import {
+  fetchAssignmentsByFieldOfficer, selectFieldOfficerAssignmentsState,
+} from '../../features/fieldOfficerAssignments/fieldOfficerAssignmentsSlice.js';
+import { fetchInspectionsByFieldOfficer, selectInspectionsState } from '../../features/inspections/inspectionsSlice.js';
+import {
+  fetchDepartmentOfficerProfile, selectDepartmentOfficerProfile, selectDepartmentOfficerUsersState,
+} from '../../features/users/usersSlice.js';
+import { useFieldOfficerState } from '../hooks/useFieldOfficerState.js';
 
 export function useFieldOfficerData(loadDocuments = false) {
   const { officerId, recordId } = useParams();
+  const activeApplicationId = recordId || new URLSearchParams(window.location.search).get('applicationId') || '';
   const navigate = useNavigate();
-  const token = sessionStorage.getItem('accessToken');
-  const [profile, setProfile] = useState(null);
-  const [applications, setApplications] = useState([]);
-  const [assignments, setAssignments] = useState([]);
-  const [inspections, setInspections] = useState([]);
-  const [documents, setDocuments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
-
-  async function request(path, options = {}) {
-    const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
-    const response = await fetch(`${API}${path}`, {
-      ...options,
-      headers: { Authorization: `Bearer ${token}`, ...(options.body && !isFormData ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) },
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(messageOf(payload, `Request failed (${response.status}).`));
-    return unwrap(payload);
-  }
+  const dispatch = useDispatch();
+  const token = useSelector(selectAccessToken);
+  const user = useSelector(selectCurrentUser);
+  const isFieldOfficer = useSelector(selectIsFieldOfficer);
+  const profileRecord = useSelector(selectDepartmentOfficerProfile);
+  const profile = profileRecord || user;
+  const applications = useSelector((state) => selectApplicationsByFieldOfficer(state, officerId));
+  const applicationsState = useSelector(selectApplicationsState);
+  const assignmentsState = useSelector(selectFieldOfficerAssignmentsState);
+  const inspectionsState = useSelector(selectInspectionsState);
+  const usersState = useSelector(selectDepartmentOfficerUsersState);
+  const documentsState = useSelector(selectDocumentsState);
+  const assignments = assignmentsState.byFieldOfficerId[String(officerId)] || [];
+  const inspections = inspectionsState.items.filter((inspection) =>
+    assignments.some((assignment) => String(assignment.assignment_id) === String(inspection.assignment_id)),
+  );
+  const documents = useSelector((state) => selectDocumentsByApplication(state, activeApplicationId));
+  const [error, setError] = useFieldOfficerState('');
+  const [message, setMessage] = useFieldOfficerState('');
+  const [saving, setSaving] = useFieldOfficerState(false);
 
   useEffect(() => {
-    let active = true;
-    async function load() {
-      if (!token) { navigate('/login', { replace: true }); return; }
-      try {
-        const user = await request('/users/me');
-        if (user.role !== 'field_officer' || Number(user.user_id) !== Number(officerId)) throw new Error('This Field Officer page is not available for the current account.');
-        const [appResult, assignmentResult, inspectionResult] = await Promise.allSettled([
-          request(`/applications/officer/${encodeURIComponent(officerId)}`),
-          request(`/field-officer-assignments/field-officer/${encodeURIComponent(officerId)}`),
-          request(`/inspections/field-officer/${encodeURIComponent(officerId)}`),
-        ]);
-        if (!active) return;
-        if (appResult.status === 'rejected') throw appResult.reason;
-        setApplications(Array.isArray(appResult.value) ? appResult.value : []);
-        setAssignments(assignmentResult.status === 'fulfilled' && Array.isArray(assignmentResult.value) ? assignmentResult.value : []);
-        setInspections(inspectionResult.status === 'fulfilled' && Array.isArray(inspectionResult.value) ? inspectionResult.value : []);
-        setProfile(user);
-        if (assignmentResult.status === 'rejected' || inspectionResult.status === 'rejected') setMessage('Some inspection information could not be loaded. Affected sections may be incomplete.');
-      } catch (e) { if (active) setError(e.message || 'Unable to load Field Officer data.'); }
-      finally { if (active) setLoading(false); }
+    if (!token || !user || !isFieldOfficer || String(user.userId) !== String(officerId)) {
+      navigate('/login', { replace: true });
+      return;
     }
-    load();
-    return () => { active = false; };
-  }, [officerId, token, navigate]);
+    if (!profileRecord && !['pending', 'fulfilled', 'rejected'].includes(usersState.requests.fetchProfile)) dispatch(fetchDepartmentOfficerProfile());
+    if (!Object.hasOwn(applicationsState.byFieldOfficerId, String(officerId)) && !['pending', 'fulfilled', 'rejected'].includes(applicationsState.requests.fetchByFieldOfficer)) {
+      dispatch(fetchApplicationsByFieldOfficer(officerId));
+    }
+    if (!Object.hasOwn(assignmentsState.byFieldOfficerId, String(officerId)) && !['pending', 'fulfilled', 'rejected'].includes(assignmentsState.requests.fetchByFieldOfficer)) {
+      dispatch(fetchAssignmentsByFieldOfficer(officerId));
+    }
+    if (!['pending', 'fulfilled', 'rejected'].includes(inspectionsState.requests.fetchByFieldOfficer)) {
+      dispatch(fetchInspectionsByFieldOfficer(officerId));
+    }
+  }, [dispatch, isFieldOfficer, navigate, officerId, token, user, profileRecord, usersState.requests.fetchProfile, applicationsState.byFieldOfficerId, applicationsState.requests.fetchByFieldOfficer, assignmentsState.byFieldOfficerId, assignmentsState.requests.fetchByFieldOfficer, inspectionsState.requests.fetchByFieldOfficer]);
 
   useEffect(() => {
-    let active = true;
-    const applicationId = recordId || sessionStorage.getItem('selectedApp');
-    if (!loadDocuments || !applicationId || !token) return undefined;
-    request(`/documents/application/${encodeURIComponent(applicationId)}`).then((rows) => { if (active) setDocuments(Array.isArray(rows) ? rows : []); })
-      .catch((e) => { if (active) setError(e.message || 'Unable to load application documents.'); });
-    return () => { active = false; };
-  }, [loadDocuments, recordId, token]);
+    if (loadDocuments && activeApplicationId) dispatch(fetchDocumentsByApplication(activeApplicationId));
+  }, [dispatch, loadDocuments, activeApplicationId]);
 
-  return { officerId, recordId, navigate, token, profile, applications, setApplications, assignments, setAssignments, inspections, setInspections, documents, loading, saving, setSaving, error, setError, message, setMessage, request };
+  return {
+    officerId,
+    recordId,
+    activeApplicationId,
+    navigate,
+    token,
+    profile,
+    applications,
+    applicationById: useSelector((state) => selectApplicationById(state, activeApplicationId)),
+    assignments,
+    inspections,
+    inspectionsState,
+    documents,
+    loading: applicationsState.requests.fetchByFieldOfficer === 'pending' && !applications.length,
+    saving,
+    setSaving,
+    error: error || usersState.errors.fetchProfile || applicationsState.errors.fetchByFieldOfficer || assignmentsState.errors.fetchByFieldOfficer || inspectionsState.errors.fetchByFieldOfficer || '',
+    setError,
+    message,
+    setMessage,
+    documentsState,
+    dispatch,
+  };
 }

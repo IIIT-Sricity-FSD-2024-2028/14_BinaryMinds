@@ -86,6 +86,23 @@ export function readAuthStorage() {
   return { user, accessToken };
 }
 
+export function writeAuthSession(value, accessToken) {
+  const user = normalizeAuthUser(value);
+  if (!user || typeof accessToken !== 'string' || !accessToken.trim()) return { status: 'unavailable' };
+  try {
+    if (typeof sessionStorage === 'undefined') return { status: 'unavailable' };
+    sessionStorage.setItem(SESSION_TOKEN_KEY, accessToken);
+    sessionStorage.setItem(SESSION_USER_KEY, JSON.stringify({
+      id: user.userId, user_id: user.userId, name: user.name, full_name: user.name,
+      email: user.email, phone: user.phone ?? '', role: user.role,
+    }));
+    return { status: 'persisted' };
+  } catch {
+    clearAuthStorage();
+    return { status: 'unavailable' };
+  }
+}
+
 export function writeAuthUserSnapshot(value) {
   const user = normalizeAuthUser(value);
   if (!user) return { status: 'unavailable' };
@@ -131,14 +148,9 @@ export function writeAuthUserSnapshot(value) {
   }
 }
 
-export function clearAuthStorage({ clearSessionStorage = false } = {}) {
+export function clearAuthStorage() {
   try {
     if (typeof sessionStorage === 'undefined') return;
-
-    if (clearSessionStorage) {
-      sessionStorage.clear();
-      return;
-    }
 
     sessionStorage.removeItem(SESSION_TOKEN_KEY);
     sessionStorage.removeItem(SESSION_USER_KEY);

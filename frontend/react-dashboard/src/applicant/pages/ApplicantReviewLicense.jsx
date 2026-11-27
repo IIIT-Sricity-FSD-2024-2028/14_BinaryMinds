@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import ApplicantNavigation from '../components/ApplicantNavigation';
 import { selectCurrentUser } from '../../features/auth/authSelectors.js';
-import { fetchLicenseByApplication } from '../../department-officer/store/licensesSlice.js';
-import { fetchApplicantApplications, selectApplicantApplications } from '../store/applicantApplicationsSlice.js';
-import { selectApplicantApplicationWorkflow, setLicensePageError, setRenewalField, setRenewalFile, setRenewalMessage, setRenewalValidation } from '../store/applicantApplicationsSlice.js';
+import { fetchLicenseByApplication } from '../../features/licenses/licensesSlice.js';
+import { fetchApplicantApplications, selectApplicantApplications, selectApplicantApplicationsError } from '../../features/applications/applicationsSlice.js';
+import { selectApplicantApplicationWorkflow, setLicensePageError, setRenewalField, setRenewalFile, setRenewalMessage, setRenewalValidation } from '../state/applicantWorkflowSlice.js';
 import '../styles/ApplicantReviewLicense.css';
 
 function formatDate(value) { if (!value) return '—'; const date=new Date(value); return Number.isNaN(date.getTime())?'—':date.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'}); }
@@ -14,11 +14,11 @@ const renewalSteps=['Submitted','Inspection Scheduled','Inspection Completed','D
 export default function ApplicantReviewLicense() {
   const dispatch=useDispatch(),navigate=useNavigate(),user=useSelector(selectCurrentUser),applications=useSelector(selectApplicantApplications),workflow=useSelector(selectApplicantApplicationWorkflow);
   const approved=applications.filter((item)=>String(item.application_status||'').toLowerCase()==='approved').sort((a,b)=>new Date(b.submitted_at||0)-new Date(a.submitted_at||0));
-  const licenseMap=useSelector((state)=>state.departmentOfficerLicenses.byApplicationId);
+  const licenseMap=useSelector((state)=>state.licenses.byApplicationId);
   const selected=approved.find((item)=>licenseMap[String(item.application_id)]?.license_id);
   const license=selected?licenseMap[String(selected.application_id)]:null;
-  const loading=useSelector((state)=>state.applicantApplications.requests.fetchMine==='pending'||state.departmentOfficerLicenses.requests.fetchByApplication==='pending');
-  const loadError=useSelector((state)=>state.applicantApplications.errors.fetchMine||state.applicantApplications.workflow.licensePageError);
+  const loading=useSelector((state)=>state.applications.requests.fetchMine==='pending'||state.licenses.requests.fetchByApplication==='pending');
+  const loadError=useSelector((state)=>selectApplicantApplicationsError(state,'fetchMine')||state.applicantWorkflow.workflow.licensePageError);
   useEffect(()=>{if(!user||user.role!=='applicant'){navigate('/login',{replace:true});return;}dispatch(fetchApplicantApplications());},[dispatch,navigate,user]);
   useEffect(()=>{dispatch(setLicensePageError(''));applications.filter((item)=>String(item.application_status||'').toLowerCase()==='approved').forEach((item)=>{if(!licenseMap[String(item.application_id)])dispatch(fetchLicenseByApplication(item.application_id)).unwrap().catch((error)=>{if(error?.status!==404)dispatch(setLicensePageError(error?.message||'Could not load the license record.'));});});},[dispatch,applications,licenseMap]);
   function submitRenewal(event){event.preventDefault();dispatch(setRenewalMessage(''));const errors={};if(!workflow.renewalPeriod)errors.period='Please select a renewal period.';if(!workflow.licenseCategory)errors.category='Please select a category.';if(!workflow.renewalShopArea||Number(workflow.renewalShopArea)<=0)errors.area='Please enter a valid shop area.';if(workflow.renewalFiles.some((file)=>!file))errors.files='Please upload all required documents before submitting.';dispatch(setRenewalValidation(errors));if(Object.keys(errors).length)return;dispatch(setRenewalMessage('Online renewal submission is not currently supported. No renewal was submitted or saved.'));}

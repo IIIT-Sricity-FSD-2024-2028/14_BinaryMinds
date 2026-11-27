@@ -1,16 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useFieldOfficerState } from '../hooks/useFieldOfficerState.js';
 import { Link } from 'react-router-dom';
 import FieldOfficerPageShell from '../components/FieldOfficerPageShell';
 import { useFieldOfficerData } from '../components/useFieldOfficerData';
+import { fetchApplicationById, updateApplication, verifyFieldOfficerApplication } from '../../features/applications/applicationsSlice.js';
+import { fetchDocumentsByApplication, fetchDocumentPreview, downloadDocumentFile } from '../../features/documents/documentsSlice.js';
 import '../styles/ApplicationDetails.css';
 
-const apiBase = 'http://localhost:3000/api';
 const supportedPreviewTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-
-function responseMessage(payload, fallback) {
-  if (Array.isArray(payload?.message)) return payload.message.join(' ');
-  return payload?.message || fallback;
-}
 
 function getFilename(document) {
   const savedName = document.original_filename || document.file_name;
@@ -35,47 +32,35 @@ function displayValue(value) {
 
 export default function ApplicationDetails() {
   const d = useFieldOfficerData();
-  const [saving, setSaving] = useState(false);
-  const [documents, setDocuments] = useState([]);
-  const [documentsLoading, setDocumentsLoading] = useState(false);
-  const [documentsError, setDocumentsError] = useState('');
-  const [fileError, setFileError] = useState('');
-  const [detailedApplication, setDetailedApplication] = useState(null);
-  const id = d.recordId || sessionStorage.getItem('selectedApp');
+  const [saving, setSaving] = useFieldOfficerState(false);
+  const [documentsLoading, setDocumentsLoading] = useFieldOfficerState(false);
+  const [documentsError, setDocumentsError] = useFieldOfficerState('');
+  const [fileError, setFileError] = useFieldOfficerState('');
+  const documents = d.documents;
+  const id = d.activeApplicationId;
   const listApplication = d.applications.find((item) => String(item.application_id) === String(id));
-  const app = detailedApplication
-    ? { ...(listApplication || {}), ...detailedApplication }
-    : listApplication || null;
+  const app = d.applicationById || listApplication || null;
 
   useEffect(() => {
     let active = true;
     if (!id) {
-      setDetailedApplication(null);
       return undefined;
     }
-    setDetailedApplication(null);
-    d.request(`/applications/${encodeURIComponent(id)}`)
-      .then((record) => {
-        if (active && record && typeof record === 'object') setDetailedApplication(record);
-      })
+    d.dispatch(fetchApplicationById(id)).unwrap()
       .catch((error) => {
         if (active) d.setError(error.message || 'Unable to load application details.');
       });
     return () => { active = false; };
-  }, [id, d.token]);
+  }, [id, d.dispatch, d.setError]);
 
   useEffect(() => {
     let active = true;
-    setDocuments([]);
     setDocumentsError('');
     setFileError('');
     if (!id) return undefined;
 
     setDocumentsLoading(true);
-    d.request(`/documents/application/${encodeURIComponent(id)}`)
-      .then((rows) => {
-        if (active) setDocuments(Array.isArray(rows) ? rows : []);
-      })
+    d.dispatch(fetchDocumentsByApplication(id)).unwrap()
       .catch((error) => {
         if (active) setDocumentsError(error.message || 'Unable to load uploaded documents.');
       })
@@ -83,14 +68,13 @@ export default function ApplicationDetails() {
         if (active) setDocumentsLoading(false);
       });
     return () => { active = false; };
-  }, [id, d.token]);
+  }, [id, d.dispatch, setDocumentsError, setFileError, setDocumentsLoading]);
 
   async function retryDocuments() {
     setDocumentsLoading(true);
     setDocumentsError('');
     try {
-      const rows = await d.request(`/documents/application/${encodeURIComponent(id)}`);
-      setDocuments(Array.isArray(rows) ? rows : []);
+      await d.dispatch(fetchDocumentsByApplication(id)).unwrap();
     } catch (error) {
       setDocumentsError(error.message || 'Unable to load uploaded documents.');
     } finally {
@@ -108,30 +92,13 @@ export default function ApplicationDetails() {
     if (previewWindow) previewWindow.opener = null;
 
     try {
-      const endpoint = download ? 'download' : 'file';
-      const response = await fetch(
-        `${apiBase}/documents/${encodeURIComponent(document.document_id)}/${endpoint}`,
-        { headers: { Authorization: `Bearer ${d.token}` } },
-      );
-      if (!response.ok) {
-        const payload = await response.json().catch(() => ({}));
-        throw new Error(responseMessage(payload, `The document could not be retrieved (${response.status}).`));
-      }
-
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
       const filename = getFilename(document);
       if (download) {
-        const link = window.document.createElement('a');
-        link.href = objectUrl;
-        link.download = filename;
-        window.document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+        await d.dispatch(downloadDocumentFile({ id: document.document_id, filename })).unwrap();
       } else {
-        previewWindow.location.href = objectUrl;
-        previewWindow.addEventListener('beforeunload', () => URL.revokeObjectURL(objectUrl), { once: true });
+        const preview = await d.dispatch(fetchDocumentPreview({ id: document.document_id, filename })).unwrap();
+        previewWindow.location.href = preview.url;
+        previewWindow.addEventListener('beforeunload', () => URL.revokeObjectURL(preview.url), { once: true });
       }
     } catch (error) {
       previewWindow?.close();
@@ -148,23 +115,12 @@ export default function ApplicationDetails() {
     setSaving(true);
     d.setError('');
     try {
-      await d.request(
-        status === 'verified' ? `/applications/${app.application_id}/verify` : `/applications/${app.application_id}`,
-        status === 'verified'
-          ? { method: 'PATCH' }
-          : { method: 'PATCH', body: JSON.stringify({ application_status: status }) },
-      );
-      d.setApplications((rows) => rows.map((row) => row.application_id === app.application_id
-        ? { ...row, application_status: status }
-        : row));
-      setDetailedApplication((record) => record ? { ...record, application_status: status } : record);
+      await d.dispatch(status === 'verified'
+        ? verifyFieldOfficerApplication(app.application_id)
+        : updateApplication({ id: app.application_id, body: { application_status: status } })).unwrap();
       d.setMessage(`Application ${app.application_ref || `#${app.application_id}`} updated to ${status}.`);
     } catch (error) {
       if (status === 'verified' && /not in 'assigned' status \(current: verified\)/i.test(error.message)) {
-        d.setApplications((rows) => rows.map((row) => row.application_id === app.application_id
-          ? { ...row, application_status: 'verified' }
-          : row));
-        setDetailedApplication((record) => record ? { ...record, application_status: 'verified' } : record);
         d.setMessage(`Application ${app.application_ref || `#${app.application_id}`} is already verified. No duplicate change was made.`);
       } else {
         d.setError(error.message);
@@ -258,7 +214,7 @@ export default function ApplicationDetails() {
             )}
             <div className="fo-react-actions">
               <Link className="fo-react-link-button secondary" to={`/officer/${d.officerId}/verification`}>Back to Verification</Link>
-              {app.application_status === 'verified' && <Link className="fo-react-link-button" to={`/officer/${d.officerId}/scheduleinspection`} onClick={() => sessionStorage.setItem('selectedApp', String(app.application_id))}>Schedule Inspection</Link>}
+              {app.application_status === 'verified' && <Link className="fo-react-link-button" to={`/officer/${d.officerId}/scheduleinspection?applicationId=${app.application_id}`}>Schedule Inspection</Link>}
             </div>
           </section>
         </>

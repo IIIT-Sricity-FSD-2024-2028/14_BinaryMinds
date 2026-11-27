@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import ApplicantNavigation from '../components/ApplicantNavigation';
 import { fetchPaymentById, selectPaymentById } from '../../features/payments/paymentsSlice.js';
-import { fetchApplicantApplications, selectApplicantApplications, setResultState } from '../store/applicantApplicationsSlice.js';
+import { fetchApplicantApplications, selectApplicantApplications } from '../../features/applications/applicationsSlice.js';
+import { setResultState } from '../state/applicantWorkflowSlice.js';
 import '../styles/ApplicantPaymentFailure.css';
 
 function formatDate(value) {
@@ -18,12 +19,12 @@ function formatMoney(value) {
 export default function ApplicantPaymentFailure() {
   const { paymentId: routePaymentId } = useParams();
   const dispatch = useDispatch();
-  const workflow = useSelector((state) => state.applicantApplications.workflow);
+  const workflow = useSelector((state) => state.applicantWorkflow.workflow);
   const paymentId = routePaymentId || workflow.resultPayment?.payment_id;
   const payment = useSelector((state) => selectPaymentById(state, paymentId));
   const applications = useSelector(selectApplicantApplications);
   const application = applications.find((item) => String(item.application_id) === String(payment?.application_id));
-  const loading = useSelector((state) => state.payments.requests.fetchById === 'pending' || state.applicantApplications.requests.fetchMine === 'pending');
+  const loading = useSelector((state) => state.payments.requests.fetchById === 'pending' || state.applications.requests.fetchMine === 'pending');
   const error = workflow.resultError;
 
   useEffect(() => {

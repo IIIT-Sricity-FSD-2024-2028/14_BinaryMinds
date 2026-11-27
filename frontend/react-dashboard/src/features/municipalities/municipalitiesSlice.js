@@ -7,7 +7,7 @@ import {
   replaceOrAppend,
   unwrapItem,
   unwrapList,
-} from '../../department-officer/store/requestUtils.js';
+} from '../../services/asyncThunkUtils.js';
 
 const isPlatformAdmin = (state) => state?.auth?.user?.role === 'platform_admin';
 

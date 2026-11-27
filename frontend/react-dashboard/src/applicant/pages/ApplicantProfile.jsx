@@ -8,7 +8,7 @@ import {
   selectApplicantApplications,
   selectApplicantApplicationsError,
   selectApplicantApplicationsRequest,
-} from '../store/applicantApplicationsSlice.js';
+} from '../../features/applications/applicationsSlice.js';
 import '../styles/ApplicantProfile.css';
 
 function formatDate(value) {

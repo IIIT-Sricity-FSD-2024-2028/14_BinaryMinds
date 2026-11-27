@@ -24,7 +24,7 @@ import {
   selectDepartmentOfficerUsersState,
 } from '../store/usersSlice.js';
 import { applicationWorkflowStatus, getApplicationInspection } from '../components/inspectionWorkflow';
-import { selectInspectionReportFileError, setInspectionReportFileError } from '../store/departmentOfficerUiSlice.js';
+import { selectInspectionReportFileError, setInspectionReportFileError } from '../state/departmentOfficerUiSlice.js';
 import '../styles/DepartmentOfficerInspectionReport.css';
 
 const EMPTY_INSPECTION_EVIDENCE = Object.freeze([]);
@@ -76,7 +76,7 @@ export default function DepartmentOfficerInspectionReport() {
   ).join('|')}`;
   const evidenceRecord = useSelector((state) => selectInspectionEvidenceByApplication(state, applicationId));
   const evidenceRequest = useSelector((state) => selectInspectionEvidenceRequest(state, applicationId));
-  const evidenceRequestKey = useSelector((state) => state.departmentOfficerInspections.evidenceRequestKeysByApplicationId[String(applicationId)] || '');
+  const evidenceRequestKey = useSelector((state) => state.inspections.evidenceRequestKeysByApplicationId[String(applicationId)] || '');
   const evidenceRequestError = useSelector((state) => selectInspectionEvidenceError(state, applicationId));
   const evidenceIsCurrent = evidenceRecord?.key === evidenceKey;
   const inspectionEvidence = evidenceIsCurrent ? evidenceRecord.items : EMPTY_INSPECTION_EVIDENCE;

@@ -20,7 +20,7 @@ import {
   setReviewReason,
   setSigningNotice,
   setWorklistNotice,
-} from '../store/departmentOfficerUiSlice.js';
+} from '../state/departmentOfficerUiSlice.js';
 import '../styles/DepartmentOfficerReview.css';
 
 function errorMessage(payload, fallback) {
@@ -48,7 +48,7 @@ export default function DepartmentOfficerReview() {
   const location = useLocation();
   const navigate = useNavigate();
   const form = useSelector((state) => selectReviewForm(state, applicationId));
-  const saving = useSelector((state) => state.departmentOfficerReviews.requests.recordDecision === 'pending');
+  const saving = useSelector((state) => state.departmentReviews.requests.recordDecision === 'pending');
   const requestedDocumentApps = useRef(new Set());
   const previewWindows = useRef(new Map());
   const previewRequests = useRef(new Map());

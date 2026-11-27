@@ -5,7 +5,8 @@ import ApplicantNavigation from '../components/ApplicantNavigation';
 import { selectCurrentUser } from '../../features/auth/authSelectors.js';
 import { fetchActiveMunicipalities, selectMunicipalities } from '../../features/municipalities/municipalitiesSlice.js';
 import { clearApplicantPaymentAttempt, fetchPaymentById, fetchPaymentsByApplication, selectPayments, simulateApplicantPayment } from '../../features/payments/paymentsSlice.js';
-import { fetchApplicantApplications, selectApplicantApplicationWorkflow, selectApplicantApplications, setPaymentError, setPaymentMessage, setPaymentMethod, setResultState, setSelectedApplicationId } from '../store/applicantApplicationsSlice.js';
+import { fetchApplicantApplications, selectApplicantApplications } from '../../features/applications/applicationsSlice.js';
+import { selectApplicantApplicationWorkflow, setPaymentError, setPaymentMessage, setPaymentMethod, setResultState, setSelectedApplicationId } from '../state/applicantWorkflowSlice.js';
 import '../styles/ApplicantPayNow.css';
 
 const errorText = (error, fallback) => error?.message || error?.payload?.message || fallback;
@@ -21,12 +22,12 @@ export default function ApplicantPayNow() {
     : null;
   const selectedApplicationId = selected?.application_id ? String(selected.application_id) : '';
   const payments = useSelector(selectPayments).filter((item) => selectedApplicationId && String(item.application_id) === selectedApplicationId);
-  const appLoading = useSelector((state) => state.applicantApplications.requests.fetchMine === 'pending');
+  const appLoading = useSelector((state) => state.applications.requests.fetchMine === 'pending');
   const paymentsReady = useSelector((state) => selectedApplicationId && state.payments.applicationRequests[selectedApplicationId] === 'fulfilled');
   const paymentAttemptPending = useSelector((state) => Boolean(selectedApplicationId && state.payments.submittingByApplication[selectedApplicationId]));
   const verifyingPayment = useSelector((state) => state.payments.requests.fetchById === 'pending');
   const paying = paymentAttemptPending || verifyingPayment;
-  const requestError = useSelector((state) => (selectedApplicationId && (state.payments.applicationErrors[selectedApplicationId] || state.payments.submissionErrorsByApplication[selectedApplicationId])) || state.applicantApplications.errors.fetchMine);
+  const requestError = useSelector((state) => (selectedApplicationId && (state.payments.applicationErrors[selectedApplicationId] || state.payments.submissionErrorsByApplication[selectedApplicationId])) || state.applications.errors.fetchMine);
   const selectedApplicationUnavailable = Boolean(requestedApplicationId && !selected && !appLoading);
 
   useEffect(() => {

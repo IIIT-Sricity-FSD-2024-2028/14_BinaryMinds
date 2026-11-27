@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import PublicNavigation from '../../common-components/PublicNavigation';
-import { registerApplicant, selectRegistrationError, selectRegistrationStatus } from '../../features/auth/authSlice.js';
+import PublicNavigation from '../../shared/components/PublicNavigation.jsx';
+import { registerApplicant, resetRegistrationForm, selectRegistrationError, selectRegistrationForm, selectRegistrationStatus, setRegistrationFormField } from '../../features/auth/authSlice.js';
 import '../styles/ApplicantRegistration.css';
 
 export default function ApplicantRegistration() {
@@ -10,14 +10,9 @@ export default function ApplicantRegistration() {
   const navigate = useNavigate();
   const registrationStatus = useSelector(selectRegistrationStatus);
   const registrationError = useSelector(selectRegistrationError);
-  const [form, setForm] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-  });
+  const form = useSelector(selectRegistrationForm);
   const [message, setMessage] = useState('');
+  const [nameError, setNameError] = useState('');
   const [visiblePasswords, setVisiblePasswords] = useState({ password: false, confirmPassword: false });
 
   const togglePasswordVisibility = (field) => {
@@ -26,10 +21,8 @@ export default function ApplicantRegistration() {
 
   const updateField = (event) => {
     const { name, value } = event.target;
-    setForm((current) => ({
-      ...current,
-      [name]: value,
-    }));
+    dispatch(setRegistrationFormField({ field: name, value }));
+    if (name === 'fullName') setNameError('');
     setMessage('');
   };
 
@@ -37,7 +30,7 @@ export default function ApplicantRegistration() {
     event.preventDefault();
     const normalizedFullName = form.fullName.trim().replace(/ +/g, ' ');
     if (!normalizedFullName) {
-      setMessage('Full Name is required. Enter at least two name parts using English letters and spaces.');
+      setNameError('Full Name is required. Enter at least two name parts using English letters and spaces.');
       return;
     }
     if (
@@ -45,9 +38,10 @@ export default function ApplicantRegistration() {
       !/^[A-Za-z]+(?: [A-Za-z]+)+$/.test(normalizedFullName) ||
       normalizedFullName.replace(/ /g, '').length < 3
     ) {
-      setMessage('Enter at least two name parts using English letters and spaces, with at least 3 letters and no more than 100 characters.');
+      setNameError('Enter at least two name parts using English letters and spaces, with at least 3 letters and no more than 100 characters.');
       return;
     }
+    setNameError('');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()) || form.email.trim().length > 120) {
       setMessage('Enter a valid email address (maximum 120 characters).');
       return;
@@ -60,8 +54,8 @@ export default function ApplicantRegistration() {
       setMessage('Password must be between 6 and 255 characters.');
       return;
     }
-    if (!/[A-Za-z]/.test(form.password) || !/\d/.test(form.password) || !/[^A-Za-z0-9]/.test(form.password)) {
-      setMessage('Password must include at least one letter, one number, and one special character.');
+    if (!/[A-Za-z]/.test(form.password) || !/\d/.test(form.password)) {
+      setMessage('Password must include at least one letter and one number.');
       return;
     }
     if (form.confirmPassword.length < 6 || form.confirmPassword.length > 255) {
@@ -82,13 +76,7 @@ export default function ApplicantRegistration() {
         password: form.password,
       })).unwrap();
 
-      setForm({
-        fullName: '',
-        email: '',
-        phone: '',
-        password: '',
-        confirmPassword: '',
-      });
+      dispatch(resetRegistrationForm());
       setMessage('Account created. Redirecting to login...');
       window.setTimeout(() => navigate('/login'), 1000);
     } catch {
@@ -118,7 +106,8 @@ export default function ApplicantRegistration() {
           <h3>Create an Account</h3>
 
           <div className="form-group">
-            <input type="text" name="fullName" placeholder="Full Name" autoComplete="name" minLength={3} maxLength={100} required value={form.fullName} onChange={updateField} />
+            <input type="text" name="fullName" placeholder="Full Name" autoComplete="name" minLength={3} maxLength={100} required value={form.fullName} onChange={updateField} aria-invalid={Boolean(nameError)} aria-describedby={nameError ? 'full-name-error' : undefined} />
+            {nameError && <small id="full-name-error" role="alert" style={{ color: '#b91c1c' }}>{nameError}</small>}
           </div>
 
           <div className="form-group">
@@ -131,10 +120,10 @@ export default function ApplicantRegistration() {
 
           <div className="form-group">
             <div className="registration-page-password-field">
-              <input type={visiblePasswords.password ? 'text' : 'password'} name="password" placeholder="Password (letter, number, special character)" autoComplete="new-password" minLength={6} maxLength={255} required value={form.password} onChange={updateField} aria-describedby="registration-password-help" />
+              <input type={visiblePasswords.password ? 'text' : 'password'} name="password" placeholder="Password (letter and number)" autoComplete="new-password" minLength={6} maxLength={255} required value={form.password} onChange={updateField} aria-describedby="registration-password-help" />
               <PasswordVisibilityButton visible={visiblePasswords.password} onClick={() => togglePasswordVisibility('password')} label="password" />
             </div>
-            <small id="registration-password-help">Use at least one letter, one number, and one special character.</small>
+            <small id="registration-password-help">Use at least one letter and one number.</small>
           </div>
 
           <div className="form-group">
